@@ -8,13 +8,14 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { catchError, of } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, of, pipe } from 'rxjs';
 import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +25,7 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
     ReactiveFormsModule,
     InputPasswordComponent,
     InputEmailComponent,
+    ButtonComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -35,7 +37,7 @@ export default class LoginComponent {
   private store = inject(Store);
   private _router = inject(Router);
 
-  public isLoading: boolean = false;
+  public isLoading$ = new BehaviorSubject<boolean>(false);
 
   formularioLogin = new FormGroup({
     username: new FormControl('', [Validators.email, Validators.required]),
@@ -52,18 +54,18 @@ export default class LoginComponent {
   enviar() {
     if (this.formularioLogin.invalid) {
       this.formularioLogin.markAllAsTouched();
-      this.formularioLogin.markAsDirty()
+      this.formularioLogin.markAsDirty();
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading$.next(true);
     this.authService
       .login(this.formularioLogin.value)
       .pipe(
         catchError(() => {
-          this.isLoading = false;
           return of(null);
-        })
+        }),
+        finalize(() => this.isLoading$.next(false))
       )
       .subscribe((resultado: RespuestaLogin) => {
         if (resultado.token) {

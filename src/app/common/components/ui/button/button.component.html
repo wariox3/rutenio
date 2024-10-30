@@ -1,0 +1,7 @@
+<button (click)="presionarBoton()" [className]="clases" [disabled]="estaCargando">
+    @if (!estaCargando) {
+    {{ texto }}
+    } @else {
+    {{ textoCargando}}
+    }
+</button>
