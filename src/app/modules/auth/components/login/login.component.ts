@@ -36,8 +36,6 @@ export default class LoginComponent {
   private _router = inject(Router);
 
   public isLoading: boolean = false;
-  public mostrarClave: boolean = false;
-  public tipoClaveInput: 'text' | 'password' = 'password';
 
   formularioLogin = new FormGroup({
     username: new FormControl('', [Validators.email, Validators.required]),
@@ -50,11 +48,6 @@ export default class LoginComponent {
       ])
     ),
   });
-
-  toggleMostrarClave() {
-    this.tipoClaveInput =
-      this.tipoClaveInput === 'password' ? 'text' : 'password';
-  }
 
   enviar() {
     if (this.formularioLogin.invalid) {
