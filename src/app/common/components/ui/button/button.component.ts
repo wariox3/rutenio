@@ -18,6 +18,7 @@ import {
 export class ButtonComponent {
   @Input() texto = '';
   @Input() textoCargando = '';
+  @Input() type: 'submit' | 'button' = 'submit';
   @Input() clases = 'btn btn-primary';
   @Input() estaCargando = false;
   @Output() emitirBotonClicked: EventEmitter<void>;

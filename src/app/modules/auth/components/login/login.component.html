@@ -12,7 +12,7 @@
             <span class="text-2sm text-gray-700 me-1.5">
               ¿Necesitas una cuenta?
             </span>
-            <a class="text-2sm link" href="html/demo1/authentication/classic/sign-up.html">
+            <a class="text-2sm link" routerLink="/auth/register">
               Registrarse
             </a>
           </div>
@@ -29,7 +29,7 @@
             <label class="form-label font-normal text-gray-900">
               Contraseña
             </label>
-            <a class="text-2sm link shrink-0" href="html/demo1/authentication/classic/reset-password/enter-email.html">
+            <a class="text-2sm link shrink-0" routerLink="/">
               ¿Olvidaste tu contraseña?
             </a>
           </div>
@@ -42,7 +42,8 @@
           </span>
         </label>
         <div class="w-full">
-          <app-button [texto]="'Ingresar'" [textoCargando]="'Ingresando...'" [estaCargando]="isLoading$ | async"
+          <app-button [type]="'submit'" [texto]="'Ingresar'" [textoCargando]="'Ingresando...'"
+            [estaCargando]="isLoading$ | async"
             [clases]="'btn btn-primary w-full text-center justify-center'"></app-button>
         </div>
       </form>

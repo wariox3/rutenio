@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, catchError, finalize, of, pipe } from 'rxjs';
 import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
@@ -26,6 +26,7 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
     InputPasswordComponent,
     InputEmailComponent,
     ButtonComponent,
+    RouterLink,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
