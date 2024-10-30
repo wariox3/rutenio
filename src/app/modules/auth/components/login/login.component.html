@@ -4,7 +4,6 @@
       <!-- form start here -->
       <form [formGroup]="formularioLogin" class="card-body flex flex-col gap-5 p-10" id="sign_in_form" method="get"
         (submit)="enviar()">
-        <pre>{{ formularioLogin.value | json }}</pre>
         <div class="text-center mb-2.5">
           <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
             Sign in
@@ -23,7 +22,7 @@
           <label class="form-label font-normal text-gray-900">
             Email
           </label>
-          <input formControlName="username" class="input" placeholder="email@email.com" type="text" value="" />
+          <app-input-email [control]="formularioLogin.controls.username"></app-input-email>
         </div>
         <div class="flex flex-col gap-1">
           <div class="flex items-center justify-between gap-1">

@@ -14,11 +14,17 @@ import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputPasswordComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputPasswordComponent,
+    InputEmailComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,8 +58,11 @@ export default class LoginComponent {
 
   enviar() {
     if (this.formularioLogin.invalid) {
+      this.formularioLogin.markAllAsTouched();
+      this.formularioLogin.markAsDirty()
       return;
     }
+
     this.isLoading = true;
     this.authService
       .login(this.formularioLogin.value)
