@@ -23,7 +23,7 @@ import KTLayout from '../metronic/app/layouts/demo1';
 })
 export class AppComponent implements AfterViewInit, OnInit {
   title = 'metronic-tailwind-angular';
-  @HostBinding('class') hostClass = 'flex grow';
+  @HostBinding('class') hostClass = '';
 
   ngAfterViewInit(): void {
     KTComponents.init();

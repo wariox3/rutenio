@@ -36,16 +36,20 @@ export default class RecoverPasswordComponent {
   });
 
   recuperar() {
-    this.estaCargando$.next(true);
-    const emailValue = this.formulario.get('email').value;
-    this.authService
-      .recuperarClave(emailValue)
-      .pipe(finalize(() => this.estaCargando$.next(false)))
-      .subscribe((resultado: any) => {
-        if (resultado.verificacion) {
-          // this.alerta.mensajaExitoso('Hemos enviado un enlace al correo electrónico para restablecer tu contraseña .', 'Solicitud exitosa.')
-          this._router.navigate(['auth/login']);
-        }
-      });
+    if (this.formulario.valid) {
+      this.estaCargando$.next(true);
+      const emailValue = this.formulario.get('email').value;
+      this.authService
+        .recuperarClave(emailValue)
+        .pipe(finalize(() => this.estaCargando$.next(false)))
+        .subscribe((resultado: any) => {
+          if (resultado.verificacion) {
+            // this.alerta.mensajaExitoso('Hemos enviado un enlace al correo electrónico para restablecer tu contraseña .', 'Solicitud exitosa.')
+            this._router.navigate(['auth/login']);
+          }
+        });
+    } else {
+      this.formulario.markAllAsTouched();
+    }
   }
 }

@@ -1,4 +1,4 @@
-<button (click)="presionarBoton()" [className]="clases" [type]="type" [disabled]="estaCargando">
+<button (click)="presionarBoton()" [className]="clases" [type]="type" [disabled]="estaCargando || estaDeshabilitado">
     @if (!estaCargando) {
     {{ texto }}
     } @else {

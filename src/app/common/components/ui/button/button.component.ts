@@ -21,6 +21,7 @@ export class ButtonComponent {
   @Input() type: 'submit' | 'button' = 'submit';
   @Input() clases = 'btn btn-primary';
   @Input() estaCargando = false;
+  @Input() estaDeshabilitado = false;
   @Output() emitirBotonClicked: EventEmitter<void>;
 
   constructor() {
