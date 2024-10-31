@@ -11,4 +11,14 @@ export default [
       },
     ],
   },
+  {
+    path: 'admin',
+    loadComponent: () => import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('../modules/dashboard/dashboard.routes'),
+      },
+    ],
+  },
 ] as Routes;

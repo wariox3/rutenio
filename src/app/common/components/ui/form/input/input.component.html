@@ -1,0 +1,23 @@
+<input [formControl]="control" class="input" [placeholder]="placeholder" type="text" [ngClass]="{
+    'border-danger':
+      control.touched &&
+      control.invalid,
+    'border-success':
+      control.touched &&
+      control.valid
+  }" />
+
+<ng-container *ngIf="control.invalid && control.touched">
+    <span *ngIf="control.hasError('required')" class="text-danger text-xs">
+        El campo es requerido.
+    </span>
+    <span *ngIf="control.hasError('minlength')" class="text-danger text-xs">
+        El campo debe tener un mínimo de caracteres de {{ minLength }}.
+    </span>
+    <span *ngIf="control.hasError('maxlength')" class="text-danger text-xs">
+        El campo debe tener un máximo de caracteres de {{ maxLenght }}.
+    </span>
+    <span *ngIf="control.hasError('pattern')" class="text-danger text-xs">
+        Formato inválido.
+    </span>
+</ng-container>

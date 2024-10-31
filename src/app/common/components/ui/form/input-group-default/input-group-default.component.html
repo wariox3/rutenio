@@ -1,0 +1,28 @@
+<div class="input-group">
+    @if(posicion === 'izquierda') {
+    <span class="btn btn-input">
+        {{ textoAgregado }}
+    </span>
+    }
+
+    <input [formControl]="control" class="input" [placeholder]="placeholder" type="text" [ngClass]="{
+        'border-danger':
+          control.touched &&
+          control.invalid,
+        'border-success':
+          control.touched &&
+          control.valid
+      }" />
+
+    @if(posicion === 'derecha') {
+    <span class="btn btn-input">
+        {{ textoAgregado }}
+    </span>
+    }
+</div>
+
+<ng-container *ngIf="control.invalid && control.touched">
+    <span *ngIf="control.hasError('required')" class="text-danger text-xs">
+        El campo es requerido.
+    </span>
+</ng-container>

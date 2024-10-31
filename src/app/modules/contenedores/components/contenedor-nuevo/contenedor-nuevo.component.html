@@ -1,0 +1,13 @@
+<div class="card min-w-full">
+    <div class="card-header">
+        <h3 class="card-title">
+            Contenedores
+        </h3>
+    </div>
+    <div class="card-body">
+        <app-contenedor-formulario (dataFormulario)="enviarFormulario($event)" />
+    </div>
+</div>
+<div *ngIf="procesando" class="fake-loading">
+    <span>Creando contenedor espere un momento...</span>
+</div>

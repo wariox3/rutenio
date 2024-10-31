@@ -11,4 +11,9 @@ export default [
     loadComponent: () =>
       import('./components/contenedor-lista/contenedor-lista.component'),
   },
+  {
+    path: 'nuevo',
+    loadComponent: () =>
+      import('./components/contenedor-nuevo/contenedor-nuevo.component'),
+  },
 ] as Routes;

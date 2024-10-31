@@ -1,18 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ContenedorService } from '../../services/contenedor.service';
+import { RouterLink } from '@angular/router';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
-import { General } from '../../../../common/clases/general';
-import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
-import { Contenedor, ContenedorDetalle, ListaContenedoresRespuesta } from '../../../../interfaces/contenedor/contenedor.interface';
 import { environment } from '../../../../../environments/environment';
+import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import {
+  Contenedor,
+  ContenedorDetalle,
+  ListaContenedoresRespuesta,
+} from '../../../../interfaces/contenedor/contenedor.interface';
 import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
+import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
+import { ContenedorService } from '../../services/contenedor.service';
 
 @Component({
   selector: 'app-contenedor-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, RouterLink],
   templateUrl: './contenedor-lista.component.html',
   styleUrl: './contenedor-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,7 +90,7 @@ export default class ContenedorListaComponent extends General {
           id: respuesta.id,
           usuario_id: respuesta.usuario_id,
           seleccion: true,
-          rol: "",
+          rol: '',
           plan_id: respuesta.plan_id,
           plan_nombre: respuesta.plan_nombre,
           usuarios: respuesta.plan_limite_usuarios,
@@ -96,7 +101,7 @@ export default class ContenedorListaComponent extends General {
         };
         this.store.dispatch(ContenedorActionInit({ contenedor }));
         this.arrConectando[indexContenedor] = false;
-        this.router.navigateByUrl("/dashboard");
+        this.router.navigateByUrl('/admin/dashboard');
       });
   }
 
