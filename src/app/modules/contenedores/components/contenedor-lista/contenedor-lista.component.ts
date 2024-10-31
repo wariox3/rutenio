@@ -28,11 +28,6 @@ export default class ContenedorListaComponent extends General {
   arrContenedores: any[] = [];
   contenedor: any = [];
   dominioApp = environment.dominioApp;
-  items = [
-    // { title: "Invitaciones" },
-    // { title: "Mi contenedor" },
-    { title: 'Eliminar' },
-  ];
 
   ngOnInit() {
     this.consultarLista();

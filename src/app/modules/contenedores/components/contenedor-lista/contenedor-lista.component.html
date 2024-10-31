@@ -61,8 +61,9 @@
                     <td>
                         <div class="flex gap-4">
                             <app-button (emitirBotonClicked)="seleccionarEmpresa(contenedor.contenedor_id, idx)"
-                                [texto]="'Conectar'" textoCargando="Espere..." [estaCargando]="arrConectando[idx]"></app-button>
-                            <div>
+                                [texto]="'Conectar'" textoCargando="Espere..."
+                                [estaCargando]="arrConectando[idx]"></app-button>
+                            <div *ngIf="contenedor.rol === 'propietario'">
                                 <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click">
                                     <button class="dropdown-toggle btn btn-light">
                                         <i class="ki-filled ki-setting-2"></i>
