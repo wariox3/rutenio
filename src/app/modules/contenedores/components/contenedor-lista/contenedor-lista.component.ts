@@ -4,13 +4,15 @@ import { ContenedorService } from '../../services/contenedor.service';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
-import { ListaContenedoresRespuesta } from '../../../../interfaces/contenedor/contenedor.interface';
+import { Contenedor, ContenedorDetalle, ListaContenedoresRespuesta } from '../../../../interfaces/contenedor/contenedor.interface';
 import { environment } from '../../../../../environments/environment';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
 
 @Component({
   selector: 'app-contenedor-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './contenedor-lista.component.html',
   styleUrl: './contenedor-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,39 +71,39 @@ export default class ContenedorListaComponent extends General {
       .subscribe();
   }
 
-  // seleccionarEmpresa(contenedor_id: string, indexContenedor: number) {
-  //   this.arrConectando[indexContenedor] = true;
-  //   this.contenedorService
-  //     .detalle(contenedor_id)
-  //     .pipe(
-  //       catchError(() => {
-  //         this.arrConectando[indexContenedor] = false;
-  //         return of(null);
-  //       })
-  //     )
-  //     .subscribe((respuesta: ContenedorDetalle) => {
-  //       const contenedor: Contenedor = {
-  //         nombre: respuesta.nombre,
-  //         imagen: respuesta.imagen,
-  //         contenedor_id: respuesta.id,
-  //         subdominio: respuesta.subdominio,
-  //         id: respuesta.id,
-  //         usuario_id: respuesta.usuario_id,
-  //         seleccion: true,
-  //         rol: "",
-  //         plan_id: respuesta.plan_id,
-  //         plan_nombre: respuesta.plan_nombre,
-  //         usuarios: respuesta.plan_limite_usuarios,
-  //         usuarios_base: respuesta.plan_usuarios_base,
-  //         reddoc: respuesta.reddoc,
-  //         ruteo: respuesta.ruteo,
-  //         acceso_restringido: respuesta.acceso_restringido,
-  //       };
-  //       this.store.dispatch(ContenedorActionInit({ contenedor }));
-  //       this.arrConectando[indexContenedor] = false;
-  //       this.router.navigateByUrl("/dashboard");
-  //     });
-  // }
+  seleccionarEmpresa(contenedor_id: string, indexContenedor: number) {
+    this.arrConectando[indexContenedor] = true;
+    this.contenedorService
+      .detalle(contenedor_id)
+      .pipe(
+        catchError(() => {
+          this.arrConectando[indexContenedor] = false;
+          return of(null);
+        })
+      )
+      .subscribe((respuesta: ContenedorDetalle) => {
+        const contenedor: Contenedor = {
+          nombre: respuesta.nombre,
+          imagen: respuesta.imagen,
+          contenedor_id: respuesta.id,
+          subdominio: respuesta.subdominio,
+          id: respuesta.id,
+          usuario_id: respuesta.usuario_id,
+          seleccion: true,
+          rol: "",
+          plan_id: respuesta.plan_id,
+          plan_nombre: respuesta.plan_nombre,
+          usuarios: respuesta.plan_limite_usuarios,
+          usuarios_base: respuesta.plan_usuarios_base,
+          reddoc: respuesta.reddoc,
+          ruteo: respuesta.ruteo,
+          acceso_restringido: respuesta.acceso_restringido,
+        };
+        this.store.dispatch(ContenedorActionInit({ contenedor }));
+        this.arrConectando[indexContenedor] = false;
+        this.router.navigateByUrl("/dashboard");
+      });
+  }
 
   // eliminarContenedor() {
   //   this.windowRef = this.windowService.open(this.contentTemplate, {

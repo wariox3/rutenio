@@ -3,8 +3,10 @@
         <h3 class="card-title">
             Contenedores
         </h3>
+
+        <app-button texto="Nuevo"></app-button>
     </div>
-    <div class="card-table">
+    <div class="card-table scrollable-x-auto">
         <table class="table align-middle text-gray-700 font-medium text-sm">
             <thead>
                 <tr>
@@ -12,7 +14,6 @@
                         Nombre
                     </th>
                     <th>
-
                     </th>
                     <th>
                         Plan
@@ -20,65 +21,72 @@
                     <th>
                         Usuarios
                     </th>
+                    <th>
+                    </th>
                 </tr>
             </thead>
             <tbody>
+                @for (contenedor of arrContenedores; let idx = $index; track idx;) {
                 <tr>
-                    <td>
-                        Customer 1
+                    <td class="flex items-center">
+                        <ng-container *ngIf="contenedor.imagen">
+                            <img [src]="contenedor.imagen" [alt]="'Error al cargar logo'" width="120" height="120"
+                                style="min-width: 120px" class="img-thumbnail border border-1 rounded-lg" />
+                        </ng-container>
+
+                        <div class="flex flex-col items-start ml-4">
+                            <span class="text-dark font-bold">
+                                {{ contenedor.nombre }}
+                            </span>
+                            <span class="text-slate-400 mb-3 text-xs">{{ contenedor.subdominio }}{{
+                                dominioApp
+                                }}</span>
+                            <div>
+                                <span class="badge badge-info">{{ contenedor.rol }}</span>
+                            </div>
+                        </div>
                     </td>
                     <td>
-                        $100.00
                     </td>
                     <td>
-                        5 Jan, 2024
+                        <div>
+                            <span class="badge badge-outline badge-success">{{ contenedor.plan_nombre }}</span>
+                        </div>
                     </td>
                     <td>
-                        Pending
+                        <div class="text-xs">
+                            {{ contenedor.usuarios }} / {{ contenedor.usuarios_base }}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex gap-4">
+                            <app-button (emitirBotonClicked)="seleccionarEmpresa(contenedor.contenedor_id, idx)"
+                                [texto]="'Conectar'" textoCargando="Espere..." [estaCargando]="arrConectando[idx]"></app-button>
+                            <div>
+                                <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click">
+                                    <button class="dropdown-toggle btn btn-light">
+                                        <i class="ki-filled ki-setting-2"></i>
+                                    </button>
+                                    <div class="dropdown-content w-full max-w-36 py-2">
+                                        <div class="menu menu-default flex flex-col w-full">
+                                            <div class="menu-item">
+                                                <a class="menu-link" href="#">
+                                                    <span class="menu-icon">
+                                                        <i class="ki-filled ki-trash"></i>
+                                                    </span>
+                                                    <span class="menu-title">
+                                                        Eliminar
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        Customer 2
-                    </td>
-                    <td>
-                        $250.50
-                    </td>
-                    <td>
-                        29 Feb, 2024
-                    </td>
-                    <td>
-                        Shipped
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Customer 3
-                    </td>
-                    <td>
-                        $75.75
-                    </td>
-                    <td>
-                        2 Mar, 2024
-                    </td>
-                    <td>
-                        Delivered
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Customer 4
-                    </td>
-                    <td>
-                        $32.99
-                    </td>
-                    <td>
-                        20 Feb, 2024
-                    </td>
-                    <td>
-                        Cancelled
-                    </td>
-                </tr>
+                }
             </tbody>
         </table>
     </div>
