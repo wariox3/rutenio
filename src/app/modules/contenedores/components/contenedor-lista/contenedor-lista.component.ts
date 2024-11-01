@@ -5,6 +5,7 @@ import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import {
   Contenedor,
   ContenedorDetalle,
@@ -13,11 +14,18 @@ import {
 import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';
+import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-eliminar.component';
 
 @Component({
   selector: 'app-contenedor-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterLink],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    RouterLink,
+    ModalDefaultComponent,
+    ContenedorEliminarComponent,
+  ],
   templateUrl: './contenedor-lista.component.html',
   styleUrl: './contenedor-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,7 +39,7 @@ export default class ContenedorListaComponent extends General {
   // windowRef: NbWindowRef | null;
   arrConectando: boolean[] = [];
   arrContenedores: any[] = [];
-  contenedor: any = [];
+  contenedor: Contenedor;
   dominioApp = environment.dominioApp;
 
   ngOnInit() {
@@ -105,27 +113,17 @@ export default class ContenedorListaComponent extends General {
       });
   }
 
-  // eliminarContenedor() {
-  //   this.windowRef = this.windowService.open(this.contentTemplate, {
-  //     title: `Eliminar contenedor`,
-  //     context: {
-  //       contenedor: this.contenedor,
-  //     },
-  //   });
-  //   this.changeDetectorRef.detectChanges();
-  // }
-
-  // recibirEliminarContenedor() {
-  //   this.consultarLista();
-  //   this.windowRef.close();
-  // }
-
-  // cerrar() {
-  //   this.windowRef.close();
-  // }
+  eliminarContenedor() {
+    this.consultarLista();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  seleccionarContenedorParaEliminar(contenedor: Contenedor) {
+    this.contenedor = contenedor;
+    this.changeDetectorRef.detectChanges();
   }
 }

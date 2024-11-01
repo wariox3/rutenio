@@ -42,7 +42,7 @@
                                 dominioApp
                                 }}</span>
                             <div>
-                                <span class="badge badge-info">{{ contenedor.rol }}</span>
+                                <span class="badge badge-outline badge-xs ">{{ contenedor.rol }}</span>
                             </div>
                         </div>
                     </td>
@@ -64,21 +64,23 @@
                                 [texto]="'Conectar'" textoCargando="Espere..."
                                 [estaCargando]="arrConectando[idx]"></app-button>
                             <div *ngIf="contenedor.rol === 'propietario'">
-                                <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click">
+                                <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click"
+                                    data-dropdown-dismiss="true">
                                     <button class="dropdown-toggle btn btn-light">
                                         <i class="ki-filled ki-setting-2"></i>
                                     </button>
                                     <div class="dropdown-content w-full max-w-36 py-2">
                                         <div class="menu menu-default flex flex-col w-full">
                                             <div class="menu-item">
-                                                <a class="menu-link" href="#">
+                                                <button (click)="seleccionarContenedorParaEliminar(contenedor)"
+                                                    class="menu-link" data-modal-toggle="#eliminarContenedor">
                                                     <span class="menu-icon">
                                                         <i class="ki-filled ki-trash"></i>
                                                     </span>
                                                     <span class="menu-title">
                                                         Eliminar
                                                     </span>
-                                                </a>
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -90,5 +92,13 @@
                 }
             </tbody>
         </table>
+
     </div>
 </div>
+
+<!-- Eliminar contenedor -->
+<app-modal-default titulo="Eliminar contenedor" size="small" [id]="'eliminarContenedor'">
+    <div modal-body>
+        <app-contenedor-eliminar [contenedor]="contenedor" (emitirEliminarContenedor)="eliminarContenedor()"></app-contenedor-eliminar>
+    </div>
+</app-modal-default>

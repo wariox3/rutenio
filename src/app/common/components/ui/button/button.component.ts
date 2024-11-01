@@ -19,7 +19,8 @@ export class ButtonComponent {
   @Input() texto = '';
   @Input() textoCargando = '';
   @Input() type: 'submit' | 'button' = 'submit';
-  @Input() clases = 'btn btn-primary';
+  @Input() color: 'primary' | 'danger' = 'primary';
+  @Input() clases = '';
   @Input() estaCargando = false;
   @Input() estaDeshabilitado = false;
   @Output() emitirBotonClicked: EventEmitter<void>;

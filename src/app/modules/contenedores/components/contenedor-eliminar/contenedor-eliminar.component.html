@@ -1,0 +1,31 @@
+<form (ngSubmit)="eliminarContenedor()" [formGroup]="formularioEliminar" aria-labelledby="title">
+  <div class="mb-3 flex flex-col">
+    <div class="mb-3 flex flex-col items-center">
+      <div class="flex justify-center">
+        <p class="font-bold texto-danger flex items-center"><i class="ki-filled ki-information-1 text-lg mr-2"></i> Este
+          proceso es irreversible
+        </p>
+      </div>
+      <div class="pr-3 pl-3 text-sm">
+        <span>Para confirmar, escriba: </span>
+        <span class="text-slate-600 text-sm">{{ contenedor?.subdominio }}</span>
+      </div>
+    </div>
+    <div class="">
+      <label class="form-label font-normal text-gray-900">Subdominio</label>
+      <app-input [control]="formularioEliminar.controls.nombre"></app-input>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end">
+    <div class="flex justify-end gap-4 w-full" modal-footer>
+      <button type="button" class="btn btn-light" data-modal-dismiss="true">
+        Cancel
+      </button>
+      <app-button texto="Eliminar" color="danger" type="button"
+        [estaDeshabilitado]="formularioEliminar.controls.nombre.value !== contenedor?.subdominio"
+        [estaCargando]="estaEliminandoContenedor$ | async"
+        textoCargando="Eliminando..."
+        (click)="eliminarContenedor()"></app-button>
+    </div>
+  </div>
+</form>

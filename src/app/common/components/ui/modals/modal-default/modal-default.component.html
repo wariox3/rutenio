@@ -1,0 +1,22 @@
+<div class="modal" data-modal="true" [id]="id">
+    <div class="modal-content max-w-[400px] top-[20%]"
+        [ngClass]="{ 'max-w-[400px]': size === 'small', 'lg:max-w-[800px]': size === 'medium', 'lg:max-w-[1100px]': size === 'large' }">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                {{ titulo }}
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <ng-content select="[modal-body]"></ng-content>
+        </div>
+        @if (displayFooter) {
+        <div class="modal-footer">
+            <ng-content select="[modal-footer]"></ng-content>
+        </div>
+        }
+    </div>
+</div>
