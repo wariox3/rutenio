@@ -3,7 +3,8 @@ import { Routes } from '@angular/router';
 export default [
   {
     path: 'contenedor',
-    loadComponent: () => import('./contenedor-layout/contenedor-layout.component'),
+    loadComponent: () =>
+      import('./contenedor-layout/contenedor-layout.component'),
     children: [
       {
         path: '',
@@ -42,6 +43,13 @@ export default [
       {
         path: 'visita',
         loadChildren: () => import('../modules/visita/visita.routes'),
+      },
+      {
+        path: 'rutear',
+        loadComponent: () =>
+          import(
+            '../modules/visita/componentes/visita-rutear/visita-rutear.component'
+          ),
       },
     ],
   },

@@ -27,7 +27,7 @@ export class SidebarComponent {
     },
     {
       nombre: 'Rutear',
-      link: '/admin/utilidad/rutear',
+      link: '/admin/rutear',
       iconoClase: 'ki-filled ki-map',
       activo: false,
     },
