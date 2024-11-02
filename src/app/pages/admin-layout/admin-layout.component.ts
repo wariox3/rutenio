@@ -1,10 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+} from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from '../../layouts/footer/footer.component';
 import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
+import KTLayout from '../../../metronic/app/layouts/demo1';
 
 @Component({
   selector: 'app-admin-layout',
@@ -21,4 +26,8 @@ import { SearchModalComponent } from '../../partials/search-modal/search-modal.c
   styleUrl: './admin-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class AdminLayoutComponent {}
+export default class AdminLayoutComponent implements AfterViewInit {
+  ngAfterViewInit(): void {
+    KTLayout.init();
+  }
+}

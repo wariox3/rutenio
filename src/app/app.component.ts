@@ -4,9 +4,8 @@ import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from './partials/search-modal/search-modal.component';
-// Precaucion: Siempre deben ir de ultimos y en este orden (KTComponents, KTlayout)
+// Precaucion: Siempre deben ir de ultimos y en este orden (KTComponents)
 import KTComponents from '../metronic/core/index';
-import KTLayout from '../metronic/app/layouts/demo1';
 
 @Component({
   selector: 'body[root]',
@@ -23,11 +22,10 @@ import KTLayout from '../metronic/app/layouts/demo1';
 })
 export class AppComponent implements AfterViewInit, OnInit {
   title = 'metronic-tailwind-angular';
-  @HostBinding('class') hostClass = '';
+  @HostBinding('class') hostClass = '' ;
 
   ngAfterViewInit(): void {
     KTComponents.init();
-    KTLayout.init();
   }
 
   ngOnInit(): void {}
