@@ -32,7 +32,7 @@ export class SidebarComponent {
       activo: false,
     },
     {
-      nombre: 'Trafico',
+      nombre: 'Tráfico',
       link: '/admin/trafico',
       iconoClase: 'ki-filled ki-delivery',
       activo: false,
