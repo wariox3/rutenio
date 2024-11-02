@@ -22,51 +22,30 @@
 			data-scrollable-wrappers="#sidebar_content" id="sidebar_scrollable">
 			<div class="menu flex flex-col grow gap-0.5" data-menu="true" data-menu-accordion-expand-all="false"
 				id="sidebar_menu">
+
+				@for (menu of sidebarMenu; track $index) {
+				@if (!menu.tipoAcordion) {
 				<div class="menu-item">
-					<div class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent" href=""
-						tabindex="0">
+					<div class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent"
+						[routerLink]="menu.link" tabindex="0">
 						<span class="menu-icon items-start w-[20px] text-gray-500 dark:text-gray-400">
-							<i class="ki-filled ki-home text-lg"></i>
+							<i [class]="menu.iconoClase + ' text-lg'"></i>
 						</span>
 						<span class="menu-title text-sm font-semibold text-gray-700">
-							Inicio
+							{{ menu.nombre }}
 						</span>
 					</div>
 				</div>
-
-				<div class="menu-item">
-					<div class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent" href=""
-						tabindex="0">
-						<span class="menu-icon items-start w-[20px] text-gray-500 dark:text-gray-400">
-							<i class="ki-filled ki-map text-lg"></i>
-						</span>
-						<span class="menu-title text-sm font-semibold text-gray-700">
-							Rutear
-						</span>
-					</div>
-				</div>
-
-				<div class="menu-item">
-					<div class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent" href=""
-						tabindex="0">
-						<span class="menu-icon items-start w-[20px] text-gray-500 dark:text-gray-400">
-							<i class="ki-filled ki-delivery text-lg"></i>
-						</span>
-						<span class="menu-title text-sm font-semibold text-gray-700">
-							Tráfico
-						</span>
-					</div>
-				</div>
-
+				} @else {
 				<div class="menu-item" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
 					<div class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
 						tabindex="0">
 						<span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-							<i class="ki-filled ki-book text-lg"></i>
+							<i [class]="menu.iconoClase + ' text-lg'"></i>
 						</span>
 						<span
 							class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-							Movimiento
+							{{ menu.nombre }}
 						</span>
 						<span class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
 							<i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
@@ -77,136 +56,25 @@
 					</div>
 					<div
 						class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200">
-						<div class="menu-item">
-							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
-								<span
-									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
-								</span>
-								<span
-									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Visita
-								</span>
-							</a>
-						</div>
-						<div class="menu-item">
-							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
-								<span
-									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
-								</span>
-								<span
-									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Despacho
-								</span>
-							</a>
-						</div>
-					</div>
-				</div>
 
-				<div class="menu-item" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
-					<div class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
-						tabindex="0">
-						<span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-							<i class="ki-filled ki-setting-2 text-lg"></i>
-						</span>
-						<span
-							class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-							Administración
-						</span>
-						<span class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
-							<i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
-							</i>
-							<i class="ki-filled ki-minus text-2xs hidden menu-item-show:inline-flex">
-							</i>
-						</span>
-					</div>
-					<div
-						class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200">
+						@for (subMenu of menu?.children; track $index) {
 						<div class="menu-item">
 							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
+								[routerLink]="subMenu.link" tabindex="0">
 								<span
 									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
 								</span>
 								<span
 									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Vehículos
+									{{ subMenu.nombre }}
 								</span>
 							</a>
 						</div>
-						<div class="menu-item">
-							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
-								<span
-									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
-								</span>
-								<span
-									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Contactos
-								</span>
-							</a>
-						</div>
-						<div class="menu-item">
-							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
-								<span
-									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
-								</span>
-								<span
-									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Franjas
-								</span>
-							</a>
-						</div>
+						}
 					</div>
 				</div>
-
-				<div class="menu-item" data-menu-item-toggle="accordion" data-menu-item-trigger="click">
-					<div class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
-						tabindex="0">
-						<span class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]">
-							<i class="ki-filled ki-folder text-lg"></i>
-						</span>
-						<span
-							class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary">
-							Utilidad
-						</span>
-						<span class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]">
-							<i class="ki-filled ki-plus text-2xs menu-item-show:hidden">
-							</i>
-							<i class="ki-filled ki-minus text-2xs hidden menu-item-show:inline-flex">
-							</i>
-						</span>
-					</div>
-					<div
-						class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200">
-						<div class="menu-item">
-							<a class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow menu-item-active:bg-secondary-active dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 menu-item-active:rounded-lg hover:bg-secondary-active dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
-								href="html/demo1/public-profile/works.html" tabindex="0">
-								<span
-									class="menu-bullet flex w-[6px] relative before:absolute before:top-0 before:size-[6px] before:rounded-full before:-translate-x-1/2 before:-translate-y-1/2 menu-item-active:before:bg-primary menu-item-hover:before:bg-primary">
-								</span>
-								<span
-									class="menu-title text-2sm font-medium text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-link-hover:!text-primary">
-									Importar visitas
-								</span>
-							</a>
-						</div>
-					</div>
-				</div>
-
-				<div class="menu-item">
-					<div class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent hover:" href=""
-						tabindex="0">
-						<span class="menu-icon items-start w-[20px] text-gray-500 dark:text-gray-400">
-							<i class="ki-filled ki-plus-squared text-lg"></i>
-						</span>
-						<span class="menu-title text-sm font-semibold text-gray-700">
-							Complementos
-						</span>
-					</div>
-				</div>
+				}
+				}
 			</div>
 		</div>
 	</div>
