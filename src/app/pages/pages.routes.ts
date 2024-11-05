@@ -51,6 +51,13 @@ export default [
             '../modules/visita/componentes/visita-rutear/visita-rutear.component'
           ),
       },
+      {
+        path: 'complemento',
+        loadChildren: () =>
+          import(
+            '../modules/complementos/complemento.routes'
+          ),
+      },
     ],
   },
 ] as Routes;

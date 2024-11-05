@@ -90,7 +90,7 @@ export class SidebarComponent {
     },
     {
       nombre: 'Complementos',
-      link: '/admin/complementos',
+      link: '/admin/complemento/lista',
       iconoClase: 'ki-filled ki-plus-squared',
       activo: false,
     },

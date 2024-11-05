@@ -1,0 +1,55 @@
+<div class="bg-white rounded-lg shadow p-4">
+    <div class="flex justify-between items-center mb-4">
+      <span class="text-lg font-semibold">Complementos</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div *ngFor="let complemento of arrComplementos; let i = index" class="bg-gray-100 rounded-lg p-4 shadow-md">
+        <div class="flex items-center mb-2">
+          <span *ngIf="complemento.instalado" class="text-green-500 mr-2"><i class="ki-filled ki-check-circle text-lg"></i></span>
+          <span *ngIf="!complemento.instalado" class="text-red-500 mr-2"><i class="ki-filled ki-cross-circle text-lg"></i></span>
+          <span class="font-medium">{{ complemento.nombre }}</span>
+        </div>
+  
+        <div class="flex justify-end mt-4">
+          <button *ngIf="!complemento.instalado" class="btn btn-success" (click)="instalar(complemento)">
+            Instalar
+          </button>
+          <button *ngIf="complemento.instalado" class="btn btn-dark" data-modal-toggle="#configurarComplemento">
+            Configurar
+            <i class="ki-filled ki-setting-2 text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- <ng-template #contentTemplate let-data>
+    <div>
+      <form [formGroup]="formularios[data.indexFormulario]">
+        <div formArrayName="datos_json">
+          <div class="flex flex-col mb-3"
+            *ngFor="let control of formularios[data.indexFormulario].get('datos_json').controls; let j = index"
+            [formGroupName]="j">
+            <label class="font-semibold">{{ control.get('nombre').value }}:</label>
+            <input formControlName="valor" class="border rounded px-2 py-1 mt-1 focus:ring focus:ring-blue-500"
+                   [ngClass]="{
+                     'border-green-500': control.get('valor').dirty && control.get('valor').valid,
+                     'border-red-500': control.get('valor').dirty && control.get('valor').invalid
+                   }" />
+  
+            <p *ngIf="control.get('valor').invalid && control.get('valor').touched && control.get('valor').errors?.required"
+               class="text-red-500 text-sm mt-1">
+              El campo es requerido!
+            </p>
+          </div>
+        </div>
+      </form>
+      <div class="flex justify-end mt-4">
+        <button class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
+                (click)="guardarInformacion(data.indexFormulario)">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </ng-template> -->
+  
