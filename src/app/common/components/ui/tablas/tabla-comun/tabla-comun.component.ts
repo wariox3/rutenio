@@ -5,7 +5,6 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { mapeo } from '../../../../mapeos/administradores';
 import { TablaCampoComponent } from '../tabla-campo/tabla-campo.component';
 
 @Component({
@@ -17,12 +16,14 @@ import { TablaCampoComponent } from '../tabla-campo/tabla-campo.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TablaComunComponent implements OnInit {
-  @Input() campoMapeo: string;
-  @Input() datos: any[];
+  @Input({ required: true }) campoMapeo: string;
+  @Input({ required: true }) mapeo: any[];
+  @Input() datos: any[] = [];
+
   public encabezados: any[];
 
   ngOnInit(): void {
-    this.encabezados = mapeo?.[this.campoMapeo]?.datos
+    this.encabezados = this.mapeo?.[this.campoMapeo]?.datos
       ?.filter((dato) => dato.visibleTabla === true)
       ?.map((dato) => dato);
   }

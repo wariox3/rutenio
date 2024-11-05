@@ -37,6 +37,7 @@ export default class VehiculoListaComponent extends General implements OnInit {
   cantidad_registros!: number;
   arrVehiculos: ListaVehiculo[];
   encabezados: any[];
+  public mapeoAdministrador = mapeo;
 
   private vehiculoService = inject(VehiculoService);
 
