@@ -35,7 +35,7 @@ export class AuthService {
     this.tokenService.eliminar();
     removeCookie("usuario", { path: "/" });
     removeCookie("contenedor", { path: "/" });
-    window.location.href = "";
+    window.location.href = "/auth/login ";
   }
 
   recuperarClave(email: string) {
