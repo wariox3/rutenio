@@ -1,369 +1,117 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component
+  Component,
+  inject,
+  OnInit,
+  ViewChild
 } from '@angular/core';
+import { General } from '../../../../common/clases/general';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
+import { forkJoin, tap } from 'rxjs';
+import { VehiculoService } from '../../../vehiculo/servicios/vehiculo.service';
+import { VisitaService } from '../../servicios/visita.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { GoogleMapsModule, MapInfoWindow, MapMarker } from '@angular/google-maps';
 
 @Component({
   selector: 'app-visita-rutear',
   standalone: true,
-  imports: [CommonModule],
-  template: `<div class="grid">
-    <div class="card card-grid min-w-full">
-      <div class="card-header py-5 flex-wrap">
-        <h3 class="card-title">Static DataTable</h3>
-        <label class="switch switch-sm">
-          <input
-            checked=""
-            class="order-2"
-            name="check"
-            type="checkbox"
-            value="1"
-          />
-          <span class="switch-label order-1"> Push Alerts </span>
-        </label>
-      </div>
-      <div class="card-body">
-        <div
-          data-datatable="true"
-          data-datatable-page-size="5"
-          data-datatable-state-save="true"
-          id="datatable_1"
-        >
-          <div class="scrollable-x-auto">
-            <table
-              class="table table-auto table-border"
-              data-datatable-table="true"
-            >
-              <thead>
-                <tr>
-                  <th class="w-[100px] text-center">
-                    <span class="sort asc">
-                      <span class="sort-label"> Status </span>
-                      <span class="sort-icon"> </span>
-                    </span>
-                  </th>
-                  <th class="min-w-[185px]">
-                    <span class="sort">
-                      <span class="sort-label"> Last Session </span>
-                      <span class="sort-icon"> </span>
-                    </span>
-                  </th>
-                  <th class="w-[185px]">
-                    <span class="sort">
-                      <span class="sort-label"> Label </span>
-                      <span class="sort-icon"> </span>
-                    </span>
-                  </th>
-                  <th class="w-[185px]">
-                    <span class="sort">
-                      <span class="sort-label">
-                        <span
-                          class="pt-px"
-                          data-tooltip="true"
-                          data-tooltip-offset="0, 5px"
-                          data-tooltip-placement="top"
-                        >
-                          <i
-                            class="ki-outline ki-information-2 text-lg leading-none"
-                          >
-                          </i>
-                          <span
-                            class="tooltip max-w-48"
-                            data-tooltip-content="true"
-                          >
-                            Merchant account providers
-                          </span>
-                        </span>
-                        Method
-                      </span>
-                      <span class="sort-icon"> </span>
-                    </span>
-                  </th>
-                  <th class="w-[60px]"></th>
-                  <th class="w-[60px]"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>6 Aug, 2024</td>
-                  <td>HR Dept</td>
-                  <td>Basic auth</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>22 Jul 2024</td>
-                  <td>Guy Hawkins</td>
-                  <td>Web</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-danger"> </span>
-                  </td>
-                  <td>18 Jul, 2024</td>
-                  <td>Sales Dept</td>
-                  <td>SSH</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>15 Jul, 2024</td>
-                  <td>Sales Dept</td>
-                  <td>Kerberos</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-warning"> </span>
-                  </td>
-                  <td>30 Jul, 2024</td>
-                  <td>Legal Dept</td>
-                  <td>Token</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-warning"> </span>
-                  </td>
-                  <td>28 Jul, 2024</td>
-                  <td>Finance Dept</td>
-                  <td>API Key</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>16 Jul, 2024</td>
-                  <td>Design Dept</td>
-                  <td>FIDO U2F</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-danger"> </span>
-                  </td>
-                  <td>11 Aug, 2024</td>
-                  <td>Compliance Dept</td>
-                  <td>OpenID</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>19 Jul, 2024</td>
-                  <td>Alice Smith</td>
-                  <td>Biometric</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>6 Aug, 2024</td>
-                  <td>HR Dept</td>
-                  <td>Basic auth</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>22 Jul 2024</td>
-                  <td>Guy Hawkins</td>
-                  <td>Web</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-danger"> </span>
-                  </td>
-                  <td>18 Jul, 2024</td>
-                  <td>Sales Dept</td>
-                  <td>SSH</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-success"> </span>
-                  </td>
-                  <td>15 Jul, 2024</td>
-                  <td>Sales Dept</td>
-                  <td>Kerberos</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="text-center">
-                    <span class="badge badge-dot size-2 bg-warning"> </span>
-                  </td>
-                  <td>30 Jul, 2024</td>
-                  <td>Legal Dept</td>
-                  <td>Token</td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-notepad-edit"> </i>
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-sm btn-icon btn-clear btn-light" href="#">
-                      <i class="ki-outline ki-trash"> </i>
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div
-            class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium"
-          >
-            <div class="flex items-center gap-2">
-              Show
-              <select
-                class="select select-sm w-16"
-                data-datatable-size="true"
-                name="perpage"
-              ></select>
-              per page
-            </div>
-            <div class="flex items-center gap-4">
-              <span data-datatable-info="true"> </span>
-              <div class="pagination" data-datatable-pagination="true"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>`,
+  imports: [CommonModule, ButtonComponent, GoogleMapsModule],
+  templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class VisitaRutearComponent {
-  ngOnInit(): void {}
+export default class VisitaRutearComponent extends General implements OnInit {
+
+  @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+
+  center: google.maps.LatLngLiteral = { lat: 6.200713725811437, lng: -75.58609508555918 };
+  zoom = 11;
+  markerPositions: google.maps.LatLngLiteral[] = [];
+  polylineOptions: google.maps.PolylineOptions = {
+    strokeColor: "#FF0000",
+    strokeOpacity: 1.0,
+    strokeWeight: 3,
+  };
+  directionsResults: google.maps.DirectionsResult | undefined;
+
+  arrParametrosConsulta: ParametrosConsulta = {
+    filtros: [],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: [],
+    limite_conteo: 10000,
+    modelo: "RutVehiculo",
+  };
+
+  arrParametrosConsultaVisita: ParametrosConsulta = {
+    filtros: [
+      {"propiedad":"estado_despacho","valor1": false},
+      {"propiedad": "estado_decodificado", "valor1": true},
+    ],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: [],
+    limite_conteo: 10000,
+    modelo: "RutVisita",
+  };
+
+  arrVehiculos: ListaVehiculo[] = [];
+  arrVisitas: Visita[];
+
+  private vehiculoService = inject(VehiculoService);
+  private visitaService = inject(VisitaService);
+
+  ngOnInit(): void {
+    this.consultarLista();
+    this.changeDetectorRef.detectChanges();
+  }
+
+  consultarLista() {
+    forkJoin({
+      vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
+      visitas: this.visitaService.lista(this.arrParametrosConsultaVisita) 
+    }).pipe(
+      tap(({ vehiculos, visitas }) => {
+        visitas.forEach((punto) => {          
+          this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+          this.changeDetectorRef.detectChanges();
+        });
+        this.arrVehiculos = vehiculos.registros;
+        this.arrVisitas = visitas;
+        this.changeDetectorRef.detectChanges();
+      })
+    ).subscribe();    
+  }
+
+  ordenar() {
+    this.visitaService.ordenar().subscribe((respuesta: any) => {
+      // this.alerta.mensajaExitoso(
+      //   "Se ha ordenado correctamente",
+      //   "Guardado con éxito."
+      // );
+    });
+  }
+
+  rutear(){
+    this.visitaService.rutear().subscribe(() => {
+      this.consultarLista();
+      // this.alerta.mensajaExitoso(
+      //   "Se ha ruteado correctamente correctamente",
+      //   "Guardado con éxito."
+      // );
+      this.router.navigate(['/trafico']);
+    });
+  }
+
+  addMarker(position: google.maps.LatLngLiteral) {
+    this.markerPositions.push(position);
+  }
+
+  openInfoWindow(marker: MapMarker) {
+    this.infoWindow.open(marker);
+  }
 }
