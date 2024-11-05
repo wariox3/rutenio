@@ -1,6 +1,11 @@
 <div class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Vehículo</h3>
+    <app-button
+      routerLink="/admin/vehiculo/nuevo"
+      type="button"
+      texto="Nuevo"
+    ></app-button>
   </div>
   <div class="card-table">
     <div data-datatable="true" data-datatable-page-size="5">
@@ -8,9 +13,9 @@
         <table class="table table-border text-sm" data-datatable-table="true">
           <thead>
             <tr>
-                <th *ngFor="let encabezado of encabezados">
-                    {{ encabezado }}
-                  </th>
+              <th *ngFor="let encabezado of encabezados">
+                {{ encabezado }}
+              </th>
               <th class="w-[60px]">
                 <input
                   class="checkbox checkbox-sm"
@@ -22,38 +27,38 @@
           </thead>
           <tbody>
             <tr *ngFor="let vehiculo of arrVehiculos">
-                <td>{{ vehiculo.id }}</td>
-                <td>{{ vehiculo.placa }}</td>
-                <td>{{ vehiculo.capacidad }}</td>
-                <td>
-                    @if (vehiculo.estado_activo) {
-                    <span class="badge badge-sm badge-outline badge-success">
-                        Activo
-                    </span>
-                    } @else {
-                    <span class="badge badge-sm badge-outline badge-danger">
-                        Inactivo
-                    </span>
-                    }
-                </td>
-                <td>
-                    @if (vehiculo.estado_asignado) {
-                    <span class="badge badge-sm badge-outline badge-success">
-                        Asignado
-                    </span>
-                    } @else {
-                    <span class="badge badge-sm badge-outline badge-danger">
-                        Sin asignar
-                    </span>
-                    }
-                </td>
-                <td class="w-[60px]">
-                    <input
-                      class="checkbox checkbox-sm"
-                      data-datatable-check="true"
-                      type="checkbox"
-                    />
-                  </td>
+              <td>{{ vehiculo.id }}</td>
+              <td>{{ vehiculo.placa }}</td>
+              <td>{{ vehiculo.capacidad }}</td>
+              <td>
+                @if (vehiculo.estado_activo) {
+                <span class="badge badge-sm badge-outline badge-success">
+                  Activo
+                </span>
+                } @else {
+                <span class="badge badge-sm badge-outline badge-danger">
+                  Inactivo
+                </span>
+                }
+              </td>
+              <td>
+                @if (vehiculo.estado_asignado) {
+                <span class="badge badge-sm badge-outline badge-success">
+                  Asignado
+                </span>
+                } @else {
+                <span class="badge badge-sm badge-outline badge-danger">
+                  Sin asignar
+                </span>
+                }
+              </td>
+              <td class="w-[60px]">
+                <input
+                  class="checkbox checkbox-sm"
+                  data-datatable-check="true"
+                  type="checkbox"
+                />
+              </td>
             </tr>
           </tbody>
         </table>

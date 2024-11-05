@@ -8,13 +8,18 @@ import {
 import { mapeo } from '../../../../common/mapeos/administradores';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { ListaVehiculo, Vehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import {
+  ListaVehiculo,
+  Vehiculo,
+} from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-vehiculo-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent, RouterLink],
   templateUrl: './vehiculo-lista.component.html',
   styleUrl: './vehiculo-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
