@@ -61,14 +61,15 @@ export const mapeo: any = {
         },
         {
           encabezado: "Tipo",
-          campoNombre: 'id',
-          campoTipo: "IntegerField",
+          campoNombre: 'identificacion_abreviatura',
+          campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: false,
           ordenable: false,
         },
         {
           encabezado: "Identificación",
+          campoNombre: 'numero_identificacion',
           campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: true,
@@ -83,6 +84,7 @@ export const mapeo: any = {
         },
         {
           encabezado: "Nombre",
+          campoNombre: 'nombre_corto',
           campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: true,
@@ -90,6 +92,7 @@ export const mapeo: any = {
         },
         {
           encabezado: "Correo",
+          campoNombre : "correo",
           campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: false,
@@ -139,6 +142,7 @@ export const mapeo: any = {
         },
         {
           encabezado: "Teléfono",
+          campoNombre: "telefono",
           campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: false,
@@ -146,6 +150,7 @@ export const mapeo: any = {
         },
         {
           encabezado: "Celular",
+          campoNombre: "celular",
           campoTipo: "CharField",
           visibleTabla: true,
           visibleFiltro: false,
