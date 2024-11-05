@@ -1,0 +1,59 @@
+<div class="card-table">
+  <div data-datatable="true" data-datatable-page-size="5">
+    <div class="scrollable-x-auto">
+      <table class="table table-border text-sm" data-datatable-table="true">
+        <thead>
+          <tr>
+            <th *ngFor="let encabezado of encabezados">
+              {{ encabezado.nombre }}
+            </th>
+            <th class="w-[60px]">
+              <input
+                class="checkbox checkbox-sm"
+                data-datatable-check="true"
+                type="checkbox"
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            @for (encabezado of encabezados; track $index) { @for (item of
+            datos; track $index) {
+            <td>
+              <app-tabla-campo
+                [datoCampo]="item[encabezado.campoNombre]"
+                [tipoCampo]="encabezado.campoTipo"
+              ></app-tabla-campo>
+            </td>
+            } }
+            <td class="w-[60px]">
+              <input
+                class="checkbox checkbox-sm"
+                data-datatable-check="true"
+                type="checkbox"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div
+        class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium"
+      >
+        <div class="flex items-center gap-2">
+          Show
+          <select
+            class="select select-sm w-16"
+            data-datatable-size="true"
+            name="perpage"
+          ></select>
+          per page
+        </div>
+        <div class="flex items-center gap-4">
+          <span data-datatable-info="true"> </span>
+          <div class="pagination" data-datatable-pagination="true"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

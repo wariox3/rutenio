@@ -1,100 +1,76 @@
 <div class="grid grid-cols-1 gap-5 xl:grid-cols-[.5fr,1fr]">
+  <div>
     <div>
-        <div>
-            <div class="card min-w-full">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Flota
-                    </h3>
-                </div>
-                <div class="card-table scrollable-y-auto">
-                    <table class="table align-middle text-gray-700 font-medium text-sm">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Placa
-                                </th>
-                                <th>
-                                    Capacidad
-                                </th>
-                                <th>
-                                    Estado
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (vehiculo of arrVehiculos; track $index) {
-                            <tr>
-                                <td>{{ vehiculo.placa }}</td>
-                                <td>{{ vehiculo.capacidad }}</td>
-                                <td>
-                                    @if (vehiculo.estado_activo) {
-                                    <span class="badge badge-sm badge-outline badge-success">
-                                        Activo
-                                    </span>
-                                    } @else {
-                                    <span class="badge badge-sm badge-outline badge-danger">
-                                        Inactivo
-                                    </span>
-                                    }
-                                </td>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+      <div class="card min-w-full">
+        <div class="card-header">
+          <h3 class="card-title">Flota</h3>
         </div>
-    </div>
-    <div>
-        <div class="card min-w-full">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Visitas
-                </h3>
-            </div>
-            <div class="card-table scrollable-y-auto">
-                <table class="table align-middle text-gray-700 font-medium text-sm">
-                    <thead>
-                        <tr>
-                            <th>
-                                Id
-                            </th>
-                            <th>
-                                Guia
-                            </th>
-                            <th>
-                                Fecha
-                            </th>
-                            <th>
-                                Destinatario
-                            </th>
-                            <th>
-                                Dirección
-                            </th>
-                            <th>
-                                Peso
-                            </th>
-                            <th>
-                                Volumen
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (visita of arrVisitas; track $index) {
-                        <tr>
-                            <td>{{ visita.id }}</td>
-                            <td>{{ visita.guia }}</td>
-                            <td>{{ visita.fecha }}</td>
-                            <td>{{ visita.destinatario }}</td>
-                            <td>{{ visita.destinatario_direccion }}</td>
-                            <td>{{ visita.peso }}</td>
-                            <td>{{ visita.volumen }}</td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+        <div class="card-table scrollable-y-auto">
+          <table class="table align-middle text-gray-700 font-medium text-sm">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Capacidad</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vehiculo of arrVehiculos; track $index) {
+              <tr>
+                <td>{{ vehiculo.placa }}</td>
+                <td>{{ vehiculo.capacidad }}</td>
+                <td>
+                  @if (vehiculo.estado_activo) {
+                  <span class="badge badge-sm badge-outline badge-success">
+                    Activo
+                  </span>
+                  } @else {
+                  <span class="badge badge-sm badge-outline badge-danger">
+                    Inactivo
+                  </span>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
+      </div>
     </div>
+  </div>
+  <div>
+    <div class="card min-w-full">
+      <div class="card-header">
+        <h3 class="card-title">Visitas</h3>
+      </div>
+      <div class="card-table scrollable-y-auto">
+        <table class="table align-middle text-gray-700 font-medium text-sm">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Guia</th>
+              <th>Fecha</th>
+              <th>Destinatario</th>
+              <th>Dirección</th>
+              <th>Peso</th>
+              <th>Volumen</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (visita of arrVisitas; track $index) {
+            <tr>
+              <td>{{ visita.id }}</td>
+              <td>{{ visita.guia }}</td>
+              <td>{{ visita.fecha }}</td>
+              <td>{{ visita.destinatario }}</td>
+              <td>{{ visita.destinatario_direccion }}</td>
+              <td>{{ visita.peso }}</td>
+              <td>{{ visita.volumen }}</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

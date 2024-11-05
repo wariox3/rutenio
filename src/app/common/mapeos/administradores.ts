@@ -6,6 +6,7 @@ export const mapeo: any = {
     datos: [
       {
         nombre: 'ID',
+        campoNombre: 'id',
         campoTipo: 'IntegerField',
         visibleTabla: true,
         visibleFiltro: true,
@@ -13,6 +14,7 @@ export const mapeo: any = {
       },
       {
         nombre: 'Placa',
+        campoNombre: 'placa',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
@@ -20,6 +22,7 @@ export const mapeo: any = {
       },
       {
         nombre: 'Capacidad',
+        campoNombre: 'capacidad',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: true,
@@ -27,6 +30,7 @@ export const mapeo: any = {
       },
       {
         nombre: "Activo",
+        campoNombre: 'estado_activo',
         campoTipo: "Boolean",
         visibleTabla: true,
         visibleFiltro: true,
@@ -34,6 +38,7 @@ export const mapeo: any = {
       },
       {
         nombre: "Asignado",
+        campoNombre: 'estado_asignado',
         campoTipo: "Boolean",
         visibleTabla: true,
         visibleFiltro: true,

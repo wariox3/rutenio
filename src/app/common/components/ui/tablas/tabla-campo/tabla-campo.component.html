@@ -1,0 +1,9 @@
+@switch (tipoCampo) { @case ('IntegerField') {
+{{ datoCampo }}
+} @case ('CharField') {
+{{ datoCampo }}
+}@case ('Boolean') { @if (datoCampo) {
+<span class="badge badge-sm badge-outline badge-success"> Si </span>
+} @else {
+<span class="badge badge-sm badge-outline badge-danger"> No </span>
+} } }
