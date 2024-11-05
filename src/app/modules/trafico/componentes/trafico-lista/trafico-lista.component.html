@@ -33,7 +33,31 @@
           <div class="card-header">
             <h3 class="card-title">Visitas por despacho</h3>
           </div>
-          <ul class="space-y-2 p-4"> <!-- Padding added here -->
+          <div class="card-table scrollable-y-auto h-full">
+            <table
+            class="table align-middle text-gray-700 font-medium text-sm w-full"
+          >
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Destinatario</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (visita of arrVisitasPorDespacho; track $index) {
+              <tr>
+                <td>{{ visita.id }}</td>
+                <td>{{ visita.destinatario }}</td>
+                <td>{{ visita.ciudad_nombre }}</td>
+                <td>{{ visita.destinatario_direccion }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+          </div>
+          <!-- <ul class="space-y-2 p-4"> validar su funcionamiento
             <li
               *ngFor="let visita of arrVisitasPorDespacho"
               class="p-3 border rounded-md"
@@ -43,11 +67,11 @@
                 <span>{{ visita.destinatario }}</span>
               </div>
               <div class="flex justify-between text-gray-500 text-sm">
-                <span>Ciudad: {{ visita.ciudad }}</span>
+                <span>Ciudad: {{ visita.ciudad_nombre }}</span>
                 <span>Dirección: {{ visita.destinatario_direccion }}</span>
               </div>
             </li>
-          </ul>
+          </ul> -->
         </div>
       </div>
     </div>
