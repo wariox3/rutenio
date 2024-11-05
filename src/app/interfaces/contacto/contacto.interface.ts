@@ -1,0 +1,66 @@
+export interface Contacto {
+  numero_identificacion: string;
+  digito_verificacion: string;
+  nombre_corto: string;
+  nombre1: string | null;
+  nombre2: string | null;
+  apellido1: string | null;
+  apellido2: string | null;
+  direccion: string;
+  correo: string;
+  ciudad: number;
+  ciudad_nombre: string;
+  identificacion: string;
+  telefono: string;
+  celular: string;
+  tipo_persona: number | null;
+  regimen: string;
+  codigo_ciuu: number | null;
+  barrio: string;
+  precio: string;
+  plazo_pago: string;
+  asesor: string;
+}
+
+export interface RespuestaContacto {
+  id: number;
+  identificacion_id: number;
+  identificacion_abreviatura: string;
+  numero_identificacion: string;
+  digito_verificacion: string;
+  nombre_corto: string;
+  nombre1: string;
+  nombre2: string;
+  apellido1: string;
+  apellido2: string;
+  correo: string;
+  telefono: string;
+  celular: string;
+  direccion: string;
+  ciudad_id: number;
+  ciudad_nombre: string;
+  departamento_nombre: string;
+  barrio: string;
+  codigo_postal: any;
+  tipo_persona_id: number;
+  tipo_persona: string;
+  regimen_id: number;
+  regimen_nombre: string;
+  codigo_ciuu: any;
+  numero_cuenta: any;
+  asesor_id: any;
+  asesor_nombre_corto: any;
+  precio_id: any;
+  precio_nombre: any;
+  plazo_pago_id: number;
+  plazo_pago_nombre: string;
+  plazo_pago_dias: number;
+  plazo_pago_proveedor_id: any;
+  plazo_pago_proveedor_nombre: any;
+  plazo_pago_proveedor_dias: number;
+  cliente: boolean;
+  proveedor: boolean;
+  empleado: boolean;
+  banco_id: any;
+  banco_nombre: string;
+}

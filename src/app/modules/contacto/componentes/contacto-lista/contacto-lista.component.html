@@ -1,0 +1,16 @@
+<div class="card min-w-full">
+    <div class="card-header">
+      <h3 class="card-title">Contacto</h3>
+      <app-button
+        routerLink="/admin/contacto/nuevo"
+        type="button"
+        texto="Nuevo"
+      ></app-button>
+    </div>
+    <app-tabla-comun
+      campoMapeo="Contacto"
+      [mapeo]="mapeoAdministrador"
+      [datos]="arrContactos"
+    ></app-tabla-comun>
+  </div>
+  
