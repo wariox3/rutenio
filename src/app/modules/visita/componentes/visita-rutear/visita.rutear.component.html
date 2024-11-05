@@ -1,101 +1,97 @@
 <div class="card h-full">
-    <div class="card-header flex justify-between items-center">
-      <h3 class="card-title">Rutear</h3>
-      <app-button type="button" texto="Rutear"></app-button>
-    </div>
-    <div class="card-body h-full">
-      <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
-        
-        <!-- Columna izquierda para Flota y Visita -->
-        <div class="flex flex-col space-y-5 h-full">
-          
-          <!-- Card Flota -->
-          <div class="card flex-1">
-            <div class="card-header">
-              <h3 class="card-title">Flota</h3>
-            </div>
-            <div class="card-table scrollable-y-auto h-full">
-              <table class="table align-middle text-gray-700 font-medium text-sm w-full">
-                <thead>
-                  <tr>
-                    <th>Placa</th>
-                    <th>Capacidad</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (vehiculo of arrVehiculos; track $index) {
-                    <tr>
-                      <td>{{ vehiculo.placa }}</td>
-                      <td>{{ vehiculo.capacidad }}</td>
-                      <td>
-                        @if (vehiculo.estado_activo) {
-                          <span class="badge badge-sm badge-outline badge-success">
-                            Activo
-                          </span>
-                        } @else {
-                          <span class="badge badge-sm badge-outline badge-danger">
-                            Inactivo
-                          </span>
-                        }
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
+  <div class="card-header flex justify-between items-center">
+    <h3 class="card-title">Rutear</h3>
+    <app-button type="button" texto="Rutear"></app-button>
+  </div>
+  <div class="card-body h-full">
+    <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
+      <div class="flex flex-col space-y-5 h-full">
+        <div class="card flex-1">
+          <div class="card-header">
+            <h3 class="card-title">Flota</h3>
           </div>
-          
-          <!-- Card Visita -->
-          <div class="card flex-1">
-            <div class="card-header flex justify-between items-center">
-              <h3 class="card-title">Visita</h3>
-              <button class="btn btn-sm btn-primary" (click)="ordenar()">Ordenar</button>
-            </div>
-            <div class="card-table scrollable-y-auto h-full">
-              <table class="table align-middle text-gray-700 font-medium text-sm w-full">
-                <thead>
-                  <tr>
-                    <th>Guía</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (visita of arrVisitas; track $index) {
-                    <tr>
-                      <td>{{ visita.guia }}</td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
+          <div class="card-table scrollable-y-auto h-full">
+            <table
+              class="table align-middle text-gray-700 font-medium text-sm w-full"
+            >
+              <thead>
+                <tr>
+                  <th>Placa</th>
+                  <th>Capacidad</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (vehiculo of arrVehiculos; track $index) {
+                <tr>
+                  <td>{{ vehiculo.placa }}</td>
+                  <td>{{ vehiculo.capacidad }}</td>
+                  <td>
+                    @if (vehiculo.estado_activo) {
+                    <span class="badge badge-sm badge-outline badge-success">
+                      Activo
+                    </span>
+                    } @else {
+                    <span class="badge badge-sm badge-outline badge-danger">
+                      Inactivo
+                    </span>
+                    }
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
           </div>
-  
         </div>
-  
-        <!-- Columna derecha para el Mapa -->
-        <div class="card h-full">
-            <div class="card-header">
-              <h3 class="card-title">Mapa</h3>
-            </div>
-            <div class="card-body h-full">
-              <google-map
-                height="100%"
-                width="100%"
-                [center]="center"
-                [zoom]="zoom">
-                <map-marker
-                  *ngFor="let markerPosition of markerPositions"
-                  [position]="markerPosition"
-                  #marker="mapMarker"
-                  (mapClick)="openInfoWindow(marker)"
-                >
-                </map-marker>
-                <map-info-window>Info Window</map-info-window>
-              </google-map>
-            </div>
+        <div class="card flex-1">
+          <div class="card-header flex justify-between items-center">
+            <h3 class="card-title">Visita</h3>
+            <button class="btn btn-sm btn-primary" (click)="ordenar()">
+              Ordenar
+            </button>
           </div>
-  
+          <div class="card-table scrollable-y-auto h-full">
+            <table
+              class="table align-middle text-gray-700 font-medium text-sm w-full"
+            >
+              <thead>
+                <tr>
+                  <th>Guía</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (visita of arrVisitas; track $index) {
+                <tr>
+                  <td>{{ visita.guia }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="card h-full">
+        <div class="card-header">
+          <h3 class="card-title">Mapa</h3>
+        </div>
+        <div class="card-body h-full">
+          <google-map
+            height="100%"
+            width="100%"
+            [center]="center"
+            [zoom]="zoom"
+          >
+            <map-marker
+              *ngFor="let markerPosition of markerPositions"
+              [position]="markerPosition"
+              #marker="mapMarker"
+              (mapClick)="openInfoWindow(marker)"
+            >
+            </map-marker>
+            <map-info-window>Info Window</map-info-window>
+          </google-map>
+        </div>
       </div>
     </div>
   </div>
-  
+</div>

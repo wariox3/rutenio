@@ -1,0 +1,55 @@
+<div class="card h-full">
+    <div class="card-header flex justify-between items-center">
+      <h3 class="card-title">Trafico</h3>
+      <app-button type="button" texto="Mapa"></app-button>
+    </div>
+    <div class="card-body h-full">
+      <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
+        <div class="card flex-1">
+          <div class="card-header">
+            <h3 class="card-title">Despacho</h3>
+          </div>
+          <ul class="space-y-2 p-4"> <!-- Padding added here -->
+            <li
+              *ngFor="let despacho of arrDespachos"
+              (click)="seleccionarDespacho(despacho)"
+              [class.selected]="
+                despachoSeleccionado && despachoSeleccionado.id === despacho.id
+              "
+              class="p-3 border rounded-md cursor-pointer hover:bg-gray-100"
+            >
+              <div class="flex justify-between">
+                <span>{{ despacho.id }}</span>
+                <span>{{ despacho.vehiculo_placa }}</span>
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>Peso: {{ despacho.peso }}</span>
+                <span>Volumen: {{ despacho.volumen }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="card flex-1">
+          <div class="card-header">
+            <h3 class="card-title">Visitas por despacho</h3>
+          </div>
+          <ul class="space-y-2 p-4"> <!-- Padding added here -->
+            <li
+              *ngFor="let visita of arrVisitasPorDespacho"
+              class="p-3 border rounded-md"
+            >
+              <div class="flex justify-between">
+                <span>{{ visita.id }}</span>
+                <span>{{ visita.destinatario }}</span>
+              </div>
+              <div class="flex justify-between text-gray-500 text-sm">
+                <span>Ciudad: {{ visita.ciudad }}</span>
+                <span>Dirección: {{ visita.destinatario_direccion }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
