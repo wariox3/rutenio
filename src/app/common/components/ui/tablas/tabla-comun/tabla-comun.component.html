@@ -17,16 +17,16 @@
           </tr>
         </thead>
         <tbody>
+          @for (item of datos; track $index) {
           <tr>
-            @for (encabezado of encabezados; track $index) { @for (item of
-            datos; track $index) {
+            @for (encabezado of encabezados; track $index) {
             <td>
               <app-tabla-campo
                 [datoCampo]="item[encabezado.campoNombre]"
                 [tipoCampo]="encabezado.campoTipo"
               ></app-tabla-campo>
             </td>
-            } }
+            }
             <td class="w-[60px]">
               <input
                 class="checkbox checkbox-sm"
@@ -35,6 +35,7 @@
               />
             </td>
           </tr>
+          }
         </tbody>
       </table>
       <div
