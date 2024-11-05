@@ -1,0 +1,29 @@
+export interface RespuestaGeneralLista<T> {
+    cantidad_registros: number;
+    registros: T[];
+  }
+  
+  export interface ParametrosConsulta {
+      filtros: FiltrosAplicados[],
+      limite: number;
+      desplazar: number;
+      ordenamientos: object[],
+      limite_conteo: number;
+      modelo: string;
+  }
+  
+  export interface Listafiltros {
+    nombre: string;
+    etiqueta: string;
+    titulo: string;
+    tipo: 'Texto' | 'Numero' | 'Booleano' | 'Fecha';
+  }
+  
+  export interface FiltrosAplicados {
+    id?: string;
+    propiedad: string;
+    operador?: string;
+    valor1: string | boolean;
+    valor2?: string | boolean;
+    visualizarBtnAgregarFiltro?: boolean;
+  }
