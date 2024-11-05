@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Vehiculo } from '../../../interfaces/vehiculo/vehiculo.interface';
+import {
+  ListaVehiculo,
+  Vehiculo,
+} from '../../../interfaces/vehiculo/vehiculo.interface';
 import { HttpService } from '../../../common/services/http.service';
-import { ParametrosConsulta, RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
-import { AutocompletarCiudades, RespuestaAutocompletar } from '../../../interfaces/general/autocompletar.interface';
+import {
+  ParametrosConsulta,
+  RespuestaGeneralLista,
+} from '../../../interfaces/general/api.interface';
+import {
+  AutocompletarCiudades,
+  RespuestaAutocompletar,
+} from '../../../interfaces/general/autocompletar.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +20,7 @@ export class VehiculoService {
   constructor(private http: HttpService) {}
 
   lista(parametros: ParametrosConsulta) {
-    return this.http.post<RespuestaGeneralLista<Vehiculo>>(
+    return this.http.post<RespuestaGeneralLista<ListaVehiculo>>(
       `general/funcionalidad/lista/`,
       parametros
     );
