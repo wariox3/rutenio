@@ -1,14 +1,120 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/documentos';
+import { VisitaService } from '../../servicios/visita.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { General } from '../../../../common/clases/general';
+import { MapDirectionsService } from '@angular/google-maps';
 
 @Component({
   selector: 'app-visita-lista',
   standalone: true,
-  imports: [
-    CommonModule,
-  ],
-  template: `<p>visita-lista works!</p>`,
+  imports: [CommonModule, ButtonComponent, TablaComunComponent],
+  templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class VisitaListaComponent { }
+export default class VisitaListaComponent extends General implements OnInit {
+  private _visitaService = inject(VisitaService);
+  private _directionsService = inject(MapDirectionsService);
+
+  public cantidadRegistros: number = 0;
+  public arrGuia: any[];
+  public arrGuiasOrdenadas: any[];
+  public mapeoDocumento = mapeo;
+  public markerPositions: google.maps.LatLngLiteral[] = [];
+  public directionsResults: google.maps.DirectionsResult | undefined;
+  public marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [
+    { lat: 6.200713725811437, lng: -75.58609508555918 },
+  ];
+  public arrParametrosConsulta: ParametrosConsulta = {
+    filtros: [],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: [],
+    limite_conteo: 10000,
+    modelo: 'RutVisita',
+  };
+
+  constructor() {
+    super();
+  }
+
+  ngOnInit(): void {
+    this.consultaLista(this.arrParametrosConsulta);
+  }
+
+  consultaLista(filtros: any) {
+    // this.isCheckedSeleccionarTodos = false;
+    // this.registrosAEliminar = [];
+    this._visitaService.lista(filtros).subscribe((respuesta) => {
+      this.arrGuia = respuesta.map((guia) => ({
+        ...guia,
+        selected: false,
+      }));
+      this.cantidadRegistros = respuesta?.length;
+      respuesta.forEach((punto) => {
+        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+      });
+      this.changeDetectorRef.detectChanges();
+    });
+    if (this.arrGuiasOrdenadas?.length >= 1) {
+      this.arrGuiasOrdenadas.forEach((punto) => {
+        this.addMarkerOrdenadas({ lat: punto.latitud, lng: punto.longitud });
+      });
+      this.calculateRoute();
+      this.changeDetectorRef.detectChanges();
+    }
+  }
+
+  addMarker(position: google.maps.LatLngLiteral) {
+    this.markerPositions.push(position);
+  }
+
+  addMarkerOrdenadas(position: google.maps.LatLngLiteral) {
+    this.marcarPosicionesVisitasOrdenadas.push(position);
+  }
+
+  calculateRoute() {
+    if (this.marcarPosicionesVisitasOrdenadas.length < 2) {
+      console.error('Se necesitan al menos dos puntos para calcular la ruta.');
+      return;
+    }
+
+    const origin = this.marcarPosicionesVisitasOrdenadas[0];
+    const destination =
+      this.marcarPosicionesVisitasOrdenadas[
+        this.marcarPosicionesVisitasOrdenadas.length - 1
+      ];
+
+    const waypoints = this.marcarPosicionesVisitasOrdenadas
+      .slice(1, -1)
+      .map((position) => ({
+        location: new google.maps.LatLng(position.lat, position.lng),
+        stopover: true,
+      }));
+
+    const request: google.maps.DirectionsRequest = {
+      origin: new google.maps.LatLng(origin.lat, origin.lng),
+      destination: new google.maps.LatLng(destination.lat, destination.lng),
+      waypoints: waypoints,
+      travelMode: google.maps.TravelMode.DRIVING,
+      optimizeWaypoints: false, // Cambia a true si quieres optimizar el orden de las paradas
+    };
+
+    this._directionsService.route(request).subscribe({
+      next: (response) => {
+        this.directionsResults = response.result;
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (e) => console.error(e),
+    });
+  }
+}
