@@ -1,0 +1,15 @@
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Despachos</h3>
+    <!-- <app-button
+      routerLink="/admin/vehiculo/nuevo"
+      type="button"
+      texto="Nuevo"
+    ></app-button> -->
+  </div>
+  <app-tabla-comun
+    campoMapeo="Despacho"
+    [mapeo]="mapeoDocumento"
+    [datos]="despachos$ | async"
+  ></app-tabla-comun>
+</div>
