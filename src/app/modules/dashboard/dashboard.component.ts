@@ -4,7 +4,7 @@ import { FooterComponent } from '../../layouts/footer/footer.component';
 import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
-import { Vehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
+import { ListaVehiculo, Vehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
 import { Visita } from '../../interfaces/visita/visita.interface';
 import { General } from '../../common/clases/general';
 import { forkJoin, tap } from 'rxjs';
@@ -43,7 +43,7 @@ export default class DashboardComponent extends General {
     modelo: 'RutVisita',
   };
 
-  arrVehiculos: Vehiculo[] = [];
+  arrVehiculos: ListaVehiculo[] = [];
   arrVisitas: Visita[];
 
   constructor(
