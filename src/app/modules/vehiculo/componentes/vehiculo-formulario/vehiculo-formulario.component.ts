@@ -60,7 +60,7 @@ export default class VehiculoFormularioComponent
       this.formularioVehiculo.patchValue({
         placa: this.informacionVehiculo.placa,
         capacidad: this.informacionVehiculo.capacidad,
-        estado_activo: this.informacionVehiculo.placa,
+        estado_activo: this.informacionVehiculo.estado_activo,
         estado_asignado: this.informacionVehiculo.estado_asignado,
       });
     }
