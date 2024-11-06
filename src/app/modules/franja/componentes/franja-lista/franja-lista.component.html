@@ -1,0 +1,84 @@
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Franjas</h3>
+    <app-button
+      routerLink="/admin/vehiculo/nuevo"
+      type="button"
+      texto="Nuevo"
+    ></app-button>
+  </div>
+  <div class="grid md:grid-cols-[.5fr,1fr]">
+    <div class="card m-4">
+      <div class="card-header">
+        <div class="flex gap-2">
+          <app-button
+            routerLink="/admin/vehiculo/nuevo"
+            type="button"
+            texto="Importar"
+          ></app-button>
+          <app-button
+            routerLink="/admin/vehiculo/nuevo"
+            type="button"
+            texto="Nuevo"
+          ></app-button>
+        </div>
+      </div>
+      <div class="card-body scrollable max-h-[37rem]">
+        @for (franja of franjas$ | async; track $index) {
+        <div class="card mb-2">
+          <div class="card-body flex items-center justify-between">
+            <div>
+              <p>{{ franja.nombre }}</p>
+              @if(franja.codigo) {
+              <p class="text-xs text-slate-500">{{ franja.codigo }}</p>
+              }
+            </div>
+            <div class="flex gap-2">
+              <button>
+                <i class="ki-filled ki-pencil text-xl"></i>
+              </button>
+              <button>
+                <i class="ki-filled ki-trash text-xl"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <div class="card m-4 h-full">
+      <div class="card-header">
+        <div class="card-title">Mapa</div>
+      </div>
+    </div>
+    <div class="card-body h-full">
+      <google-map
+        id="map"
+        height="100%"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        (mapClick)="clickMap($event)"
+      >
+        <map-polygon
+          *ngFor="let franja of franjas$ | async"
+          [paths]="franja.coordenadas"
+        />
+        <map-polygon
+          *ngIf="estaCreando"
+          [paths]="nuevaVertice"
+          [options]="polylineOptions"
+        ></map-polygon>
+        <map-marker
+          *ngFor="let markerPosition of markerPositions"
+          [position]="markerPosition"
+          #marker="mapMarker"
+          (mapClick)="openInfoWindow(marker)"
+        >
+        </map-marker>
+        <map-info-window>Info Window</map-info-window>
+      </google-map>
+    </div>
+  </div>
+</div>
