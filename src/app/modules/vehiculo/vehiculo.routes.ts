@@ -21,4 +21,9 @@ export default [
     loadComponent: () =>
       import('./componentes/vehiculo-editar/vehiculo-editar.component'),
   },
+  {
+    path: 'detalle/:id',
+    loadComponent: () =>
+      import('./componentes/vehiculo-detalle/vehiculo-detalle.component'),
+  },
 ] as Routes;
