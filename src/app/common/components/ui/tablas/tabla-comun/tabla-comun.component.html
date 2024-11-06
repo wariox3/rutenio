@@ -8,6 +8,7 @@
               {{ item.encabezado }}
             </th>
             <th class="w-[60px]"></th>
+            <th class="w-[60px]"></th>
             <th class="w-[60px]">
               <input
                 class="checkbox checkbox-sm"
@@ -35,6 +36,15 @@
                 href="#"
               >
                 <i class="ki-filled ki-notepad-edit"> </i>
+              </button>
+            </td>
+            <td>
+              <button
+                (click)="detalleItem(item.id)"
+                class="btn btn-sm btn-icon btn-clear btn-light"
+                href="#"
+              >
+                <i class="ki-filled ki-eye"> </i>
               </button>
             </td>
             <td class="w-[60px]">

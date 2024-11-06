@@ -58,4 +58,8 @@ export default class VehiculoListaComponent extends General implements OnInit {
   editarVehiculo(id: number) {
     this.router.navigateByUrl(`/admin/vehiculo/editar/${id}`);
   }
+
+  detalleVehiculo(id: number) {
+    this.router.navigateByUrl(`/admin/vehiculo/detalle/${id}`);
+  }
 }

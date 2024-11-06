@@ -22,11 +22,13 @@ export class TablaComunComponent implements OnInit {
   @Input({ required: true }) mapeo: any[];
   @Input() datos: any[] = [];
   @Output() emitirEditarItem: EventEmitter<number>;
+  @Output() emitirDetalleItem: EventEmitter<number>;
 
   public encabezados: any[];
 
   constructor() {
     this.emitirEditarItem = new EventEmitter();
+    this.emitirDetalleItem = new EventEmitter();
   }
 
   ngOnInit(): void {
@@ -37,5 +39,9 @@ export class TablaComunComponent implements OnInit {
 
   editarItem(id: number) {
     this.emitirEditarItem.emit(id);
+  }
+
+  detalleItem(id: number) {
+    this.emitirDetalleItem.emit(id);
   }
 }
