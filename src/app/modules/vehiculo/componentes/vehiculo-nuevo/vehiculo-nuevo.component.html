@@ -1,13 +1,12 @@
 <div class="card min-w-full">
-    <div class="card-header">
-        <h3 class="card-title">
-            Vehículo
-        </h3>
-    </div>
-    <div class="card-body">
-        <app-vehiculo-formulario
-        [informacionVehiculo]="informacionVehiculo"
-        (dataFormulario)="enviarFormulario($event)"
-      ></app-vehiculo-formulario>
-    </div>
+  <div class="card-header">
+    <h3 class="card-title">Vehículo</h3>
+  </div>
+  <div class="card-body">
+    <app-vehiculo-formulario
+      formularioTipo="crear"
+      [informacionVehiculo]="informacionVehiculo"
+      (dataFormulario)="enviarFormulario($event)"
+    ></app-vehiculo-formulario>
+  </div>
 </div>
