@@ -57,10 +57,9 @@ export default class ContenedorNuevoComponent extends General {
         }),
         tap((respuestaNuevo: NuevoContenedorRespuesta) => {
           if (respuestaNuevo.contenedor) {
-            // this.alerta.mensajaExitoso(
-            //   "Se ha creado el contenedor exitosamente.",
-            //   "Guardado con éxito."
-            // );
+            this.alerta.mensajaExitoso(
+              'Se ha creado el contenedor exitosamente.'
+            );
             this.router.navigate(['/contenedor/lista']);
             this.procesando = false;
           }

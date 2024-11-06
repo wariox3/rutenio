@@ -68,10 +68,10 @@ export default class ContenedorListaComponent extends General {
           this.changeDetectorRef.detectChanges();
         }),
         catchError(({ error }) => {
-          // this.alerta.mensajeError(
-          //   "Error consulta",
-          //   `Código: ${error.codigo} <br/> Mensaje: ${error.mensaje}`
-          // );
+          this.alerta.mensajeError(
+            'Error consulta',
+            `Código: ${error.codigo} <br/> Mensaje: ${error.mensaje}`
+          );
           console.error(error);
           return of(null);
         })

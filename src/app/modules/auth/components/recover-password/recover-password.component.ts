@@ -11,6 +11,7 @@ import { AuthService } from '../services/auth.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { BehaviorSubject, finalize } from 'rxjs';
+import { General } from '../../../../common/clases/general';
 
 @Component({
   selector: 'app-recover-password',
@@ -25,11 +26,10 @@ import { BehaviorSubject, finalize } from 'rxjs';
   styleUrl: './recover-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class RecoverPasswordComponent {
+export default class RecoverPasswordComponent extends General {
   private authService = inject(AuthService);
   private _router = inject(Router);
   public estaCargando$ = new BehaviorSubject<boolean>(false);
-  // private alerta = inject(AlertaService)
 
   formulario = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -44,7 +44,10 @@ export default class RecoverPasswordComponent {
         .pipe(finalize(() => this.estaCargando$.next(false)))
         .subscribe((resultado: any) => {
           if (resultado.verificacion) {
-            // this.alerta.mensajaExitoso('Hemos enviado un enlace al correo electrónico para restablecer tu contraseña .', 'Solicitud exitosa.')
+            this.alerta.mensajaExitoso(
+              'Hemos enviado un enlace al correo electrónico para restablecer tu contraseña .',
+              'Solicitud exitosa.'
+            );
             this._router.navigate(['auth/login']);
           }
         });

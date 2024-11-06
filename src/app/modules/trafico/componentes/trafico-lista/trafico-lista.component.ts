@@ -1,10 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -15,8 +20,6 @@ import { ButtonComponent } from "../../../../common/components/ui/button/button.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TraficoListaComponent extends General implements OnInit {
-
-
   private despachoService = inject(DespachoService);
   private visitaService = inject(VisitaService);
   private directionsService: MapDirectionsService;
@@ -30,7 +33,7 @@ export default class TraficoListaComponent extends General implements OnInit {
   zoom = 8;
   marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [];
   polylineOptions: google.maps.PolylineOptions = {
-    strokeColor: "#FF0000",
+    strokeColor: '#FF0000',
     strokeOpacity: 1.0,
     strokeWeight: 3,
   };
@@ -42,23 +45,23 @@ export default class TraficoListaComponent extends General implements OnInit {
     desplazar: 0,
     ordenamientos: [],
     limite_conteo: 10000,
-    modelo: "RutDespacho",
+    modelo: 'RutDespacho',
   };
 
   arrDespachos: any = [];
   arrVisitasPorDespacho: any = [];
 
   ngOnInit(): void {
-
     this.consultarLista();
-
   }
 
   consultarLista() {
-    this.despachoService.lista(this.arrParametrosConsulta).subscribe((respuesta) => {
-      this.arrDespachos = respuesta;
-      this.changeDetectorRef.detectChanges();
-    });
+    this.despachoService
+      .lista(this.arrParametrosConsulta)
+      .subscribe((respuesta) => {
+        this.arrDespachos = respuesta;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   seleccionarDespacho(despacho: any) {
@@ -69,17 +72,19 @@ export default class TraficoListaComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
 
     const parametrosConsultaVisitas = {
-      filtros: [{ propiedad: "despacho_id", valor1: despacho.id }],
+      filtros: [{ propiedad: 'despacho_id', valor1: despacho.id }],
       limite: 50,
       desplazar: 0,
       ordenamientos: [],
       limite_conteo: 10000,
-      modelo: "RutVisita",
+      modelo: 'RutVisita',
     };
-    this.visitaService.listarVisitas(parametrosConsultaVisitas).subscribe((respuesta) => {
-      this.arrVisitasPorDespacho = respuesta;
-      this.changeDetectorRef.detectChanges();
-    });
+    this.visitaService
+      .listarVisitas(parametrosConsultaVisitas)
+      .subscribe((respuesta) => {
+        this.arrVisitasPorDespacho = respuesta;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   addMarker(position: google.maps.LatLngLiteral) {
@@ -88,13 +93,17 @@ export default class TraficoListaComponent extends General implements OnInit {
 
   mostrarMapa(despachoSeleccionado: number) {
     if (despachoSeleccionado) {
-      this.marcarPosicionesVisitasOrdenadas = [{ lat: 6.200713725811437, lng: -75.58609508555918 }];
+      this.marcarPosicionesVisitasOrdenadas = [
+        { lat: 6.200713725811437, lng: -75.58609508555918 },
+      ];
       this.arrVisitasPorDespacho.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
       });
 
       if (this.marcarPosicionesVisitasOrdenadas.length < 1) {
-        console.error("Se necesitan al menos dos puntos para calcular la ruta.");
+        console.error(
+          'Se necesitan al menos dos puntos para calcular la ruta.'
+        );
         return;
       }
 
@@ -129,7 +138,10 @@ export default class TraficoListaComponent extends General implements OnInit {
       this.mostrarMapaFlag = true;
       this.changeDetectorRef.detectChanges();
     } else {
-      // this.alerta.mensajeError("No se ha seleccionado ningún despacho", "Error");
+      this.alerta.mensajeError(
+        'No se ha seleccionado ningún despacho',
+        'Error'
+      );
     }
   }
 }

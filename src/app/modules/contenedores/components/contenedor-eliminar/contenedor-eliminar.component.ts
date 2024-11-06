@@ -21,6 +21,7 @@ import { InputComponent } from '../../../../common/components/ui/form/input/inpu
 import { Contenedor } from '../../../../interfaces/contenedor/contenedor.interface';
 import { ContenedorService } from '../../services/contenedor.service';
 import { KTModal } from '../../../../../metronic/core';
+import { General } from '../../../../common/clases/general';
 
 @Component({
   selector: 'app-contenedor-eliminar',
@@ -30,7 +31,7 @@ import { KTModal } from '../../../../../metronic/core';
   styleUrl: './contenedor-eliminar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ContenedorEliminarComponent {
+export class ContenedorEliminarComponent extends General {
   @Input({ required: true }) contenedor: Contenedor;
   @Output() emitirEliminarContenedor: EventEmitter<any> = new EventEmitter();
 
@@ -55,7 +56,7 @@ export class ContenedorEliminarComponent {
     ) {
       const contenedorId = this.contenedor.contenedor_id;
       this.estaEliminandoContenedor$.next(true);
-            
+
       this.contenedorService
         .eliminarContenedor(contenedorId)
         .pipe(
@@ -70,10 +71,7 @@ export class ContenedorEliminarComponent {
         )
         .subscribe((response) => {
           this.emitirEliminarContenedor.emit(true);
-          // this.alerta.mensajaExitoso(
-          //   'Se eliminó correctamente el contenedor.',
-          //   'Guardado con éxito.'
-          // );
+          this.alerta.mensajaExitoso('Se eliminó correctamente el contenedor.');
         });
     }
   }

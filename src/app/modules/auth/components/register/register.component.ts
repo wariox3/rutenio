@@ -16,6 +16,7 @@ import { RespuestaRegistro } from '../../../../interfaces/auth/auth.interface';
 import { AuthService } from '../services/auth.service';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
+import { General } from '../../../../common/clases/general';
 
 @Component({
   selector: 'app-register',
@@ -26,15 +27,14 @@ import { InputPasswordComponent } from '../../../../common/components/ui/form/in
     ButtonComponent,
     InputEmailComponent,
     InputPasswordComponent,
-    RouterLink
+    RouterLink,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class RegisterComponent {
+export default class RegisterComponent extends General {
   private authService = inject(AuthService);
-  // private alerta = inject(AlertaService);
   private _router = inject(Router);
   public registrando$ = new BehaviorSubject<boolean>(false);
 
@@ -74,10 +74,7 @@ export default class RegisterComponent {
       .pipe(finalize(() => this.registrando$.next(false)))
       .subscribe((resultado: RespuestaRegistro) => {
         if (resultado.usuario.id) {
-          // this.alerta.mensajaExitoso(
-          //   'Se ha creado el usuario exitosamente.',
-          //   'Guardado con éxito.'
-          // );
+          this.alerta.mensajaExitoso('Se ha creado el usuario exitosamente.');
           this._router.navigate(['auth/login']);
         }
       });

@@ -11,7 +11,11 @@ import { General } from '../../../../common/clases/general';
 import { FranjaService } from '../../servicios/franja.service';
 import { Observable, tap } from 'rxjs';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
-import { GoogleMapsModule, MapInfoWindow, MapMarker } from '@angular/google-maps';
+import {
+  GoogleMapsModule,
+  MapInfoWindow,
+  MapMarker,
+} from '@angular/google-maps';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -113,10 +117,7 @@ export default class FranjaListaComponent extends General implements OnInit {
       this._franjaService
         .guardarFranja(this.formularioFranja.value)
         .subscribe((respuesta: any) => {
-          // this.alerta.mensajaExitoso(
-          //   'Se ha creado franja exitosamente.',
-          //   'Guardado con éxito.'
-          // );
+          this.alerta.mensajaExitoso('Se ha creado franja exitosamente.');
           this.consultarLista();
           this.consultarFranjas();
           this.estaCreando = false;
