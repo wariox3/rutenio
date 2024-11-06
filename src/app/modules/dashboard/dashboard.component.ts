@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { forkJoin, tap } from 'rxjs';
+import { General } from '../../common/clases/general';
+import { ListaVehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
+import { Visita } from '../../interfaces/visita/visita.interface';
 import { FooterComponent } from '../../layouts/footer/footer.component';
 import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
-import { ListaVehiculo, Vehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
-import { Visita } from '../../interfaces/visita/visita.interface';
-import { General } from '../../common/clases/general';
-import { forkJoin, tap } from 'rxjs';
 import { VehiculoService } from '../vehiculo/servicios/vehiculo.service';
 import { VisitaService } from '../visita/servicios/visita.service';
 
@@ -54,6 +54,7 @@ export default class DashboardComponent extends General {
   }
 
   ngOnInit(): void {
+    this.alerta.mensajaExitoso('Se ha creado el usuario exitosamente.');
     forkJoin({
       vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
       visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
