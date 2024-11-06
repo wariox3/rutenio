@@ -38,9 +38,9 @@ export default class VehiculoEditarComponent extends General implements OnInit {
         }),
         tap((respuestaConsultaDetalle) => {
           this.informacionVehiculo = respuestaConsultaDetalle;
+          this.cargando$.next(false);
           this.changeDetectorRef.detectChanges();
-        }),
-        finalize(() => this.cargando$.next(false))
+        })
       )
       .subscribe();
   }
