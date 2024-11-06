@@ -28,9 +28,9 @@ export class AlertaService {
     });
   }
 
-  async mensajaExitoso(text: string) {
+  async mensajaExitoso(text: string, titulo = 'Guardado con éxito.') {
     return await Swal.fire({
-      title: 'Guardado con éxito.',
+      title: titulo,
       html: text,
       icon: 'success',
       position: 'bottom-right',
