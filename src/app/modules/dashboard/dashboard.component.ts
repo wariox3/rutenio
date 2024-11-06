@@ -54,7 +54,6 @@ export default class DashboardComponent extends General {
   }
 
   ngOnInit(): void {
-    this.alerta.mensajaExitoso('Se ha creado el usuario exitosamente.');
     forkJoin({
       vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
       visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
