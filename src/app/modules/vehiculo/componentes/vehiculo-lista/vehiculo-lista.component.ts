@@ -5,17 +5,14 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { mapeo } from '../../../../common/mapeos/administradores';
-import { VehiculoService } from '../../servicios/vehiculo.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import {
-  ListaVehiculo,
-  Vehiculo,
-} from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { Router, RouterLink } from '@angular/router';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { RouterLink } from '@angular/router';
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/administradores';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { VehiculoService } from '../../servicios/vehiculo.service';
 
 @Component({
   selector: 'app-vehiculo-lista',
@@ -56,5 +53,9 @@ export default class VehiculoListaComponent extends General implements OnInit {
         this.arrVehiculos = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
+  }
+
+  editarVehiculo(id: number) {
+    this.router.navigateByUrl(`/admin/vehiculo/editar/${id}`);
   }
 }

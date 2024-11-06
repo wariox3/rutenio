@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
 } from '@angular/core';
 import { TablaCampoComponent } from '../tabla-campo/tabla-campo.component';
 
@@ -19,12 +21,21 @@ export class TablaComunComponent implements OnInit {
   @Input({ required: true }) campoMapeo: string;
   @Input({ required: true }) mapeo: any[];
   @Input() datos: any[] = [];
+  @Output() emitirEditarItem: EventEmitter<number>;
 
   public encabezados: any[];
+
+  constructor() {
+    this.emitirEditarItem = new EventEmitter();
+  }
 
   ngOnInit(): void {
     this.encabezados = this.mapeo?.[this.campoMapeo]?.datos
       ?.filter((dato) => dato.visibleTabla === true)
       ?.map((dato) => dato);
+  }
+
+  editarItem(id: number) {
+    this.emitirEditarItem.emit(id);
   }
 }
