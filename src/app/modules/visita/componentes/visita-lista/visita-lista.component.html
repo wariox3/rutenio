@@ -1,15 +1,132 @@
 <div class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Visita</h3>
-    <app-button
-      routerLink="/admin/vehiculo/nuevo"
-      type="button"
-      texto="Nuevo"
-    ></app-button>
+    <div class="flex">
+      <app-button
+        routerLink="/admin/vehiculo/nuevo"
+        type="button"
+        texto="Nuevo"
+      ></app-button>
+      <!-- <button class="btn btn-secondary">Acciones</button> -->
+    </div>
   </div>
-  <app-tabla-comun
-    campoMapeo="Visita"
-    [mapeo]="mapeoDocumento"
-    [datos]="arrGuia"
-  ></app-tabla-comun>
+
+  <div class="max-h-[44rem] scrollable">
+    <div class="btn-group flex justify-end items-center mr-4">
+      <div class="menu menu-default" data-menu="true">
+        <div
+          class="menu-item"
+          data-menu-item-placement="bottom-start"
+          data-menu-item-toggle="dropdown"
+          data-menu-item-trigger="click"
+        >
+          <button class="menu-toggle btn btn-light">
+            <span class="menu-title"> Importar </span>
+            <span class="menu-arrow">
+              <i class="ki-outline ki-down"> </i>
+            </span>
+          </button>
+          <div class="menu-dropdown w-48 py-2">
+            <div class="menu-item" data-menu-dismiss="true">
+              <button
+                class="menu-link"
+                data-modal-toggle="#importar-por-excel-modal"
+              >
+                <!-- <span class="menu-icon">
+           <i class="ki-outline ki-badge">
+           </i>
+          </span> -->
+                <span class="menu-title"> Por excel </span>
+              </button>
+            </div>
+            <div class="menu-item" data-menu-dismiss="true">
+              <button
+                class="menu-link"
+                data-modal-toggle="#importar-por-complemento-modal"
+              >
+                <!-- <span class="menu-icon">
+           <i class="ki-outline ki-profile-circle">
+           </i>
+          </span> -->
+                <span class="menu-title"> Por complemento </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-light btn-success" (click)="decodificar()">
+        Decodificar
+      </button>
+
+      <button class="btn btn-light btn-success" (click)="ordenar()">
+        Ordenar
+      </button>
+
+      <div class="menu menu-default" data-menu="true">
+        <div
+          class="menu-item"
+          data-menu-item-placement="bottom-start"
+          data-menu-item-toggle="dropdown"
+          data-menu-item-trigger="click"
+        >
+          <button class="menu-toggle btn btn-light">
+            <span class=""> Acciones </span>
+            <span class="menu-arrow">
+              <i class="ki-outline ki-down"> </i>
+            </span>
+          </button>
+          <div class="menu-dropdown w-48 py-2">
+            <div class="menu-item" data-menu-dismiss="true">
+              <button class="menu-link">
+                <!-- <span class="menu-icon">
+           <i class="ki-outline ki-badge">
+           </i>
+          </span> -->
+                <span class="menu-title"> Eliminar </span>
+              </button>
+            </div>
+            <div class="menu-item" data-menu-dismiss="true">
+              <button class="menu-link" (click)="confirmarEliminarTodos()">
+                <!-- <span class="menu-icon">
+           <i class="ki-outline ki-profile-circle">
+           </i>
+          </span> -->
+                <span class="menu-title"> Eliminar todas </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-tabla-comun
+      campoMapeo="Visita"
+      [mapeo]="mapeoDocumento"
+      [datos]="arrGuia"
+    ></app-tabla-comun>
+  </div>
 </div>
+
+<app-modal-default
+  size="small"
+  [id]="'importar-por-complemento-modal'"
+  titulo="Importar por complemento"
+>
+  <section modal-body>
+    <app-visita-importar-por-complemento
+      (emitirCerrarModal)="cerrarModalPorId('#importar-por-complemento-modal')"
+      (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
+    ></app-visita-importar-por-complemento>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="small"
+  [id]="'importar-por-excel-modal'"
+  titulo="Importar por excel"
+>
+  <section modal-body>
+    <app-visita-importar-por-excel></app-visita-importar-por-excel>
+  </section>
+</app-modal-default>

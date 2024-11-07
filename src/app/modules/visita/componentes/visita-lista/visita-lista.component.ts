@@ -12,11 +12,23 @@ import { VisitaService } from '../../servicios/visita.service';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { General } from '../../../../common/clases/general';
 import { MapDirectionsService } from '@angular/google-maps';
+import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita-importar-por-excel.component';
+import { finalize } from 'rxjs';
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-visita-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, TablaComunComponent],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    TablaComunComponent,
+    VisitaImportarPorComplementoComponent,
+    VisitaImportarPorExcelComponent,
+    ModalDefaultComponent,
+  ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,6 +94,60 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.marcarPosicionesVisitasOrdenadas.push(position);
   }
 
+  decodificar() {
+    this._visitaService.decodificar().subscribe(() => {
+      this.consultaLista(this.arrParametrosConsulta);
+      this.alerta.mensajaExitoso('Se ha decodificado correctamente');
+    });
+  }
+
+  ordenar() {
+    this._visitaService.ordenar().subscribe((respuesta: any) => {
+      this.arrGuiasOrdenadas = respuesta.visitas_ordenadas;
+      this.consultaLista(this.arrParametrosConsulta);
+      this.alerta.mensajaExitoso('Se ha ordenado correctamente');
+    });
+  }
+
+  confirmarEliminarTodos() {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.eliminarTodosLosRegistros();
+        }
+      });
+  }
+
+  eliminarTodosLosRegistros() {
+    if (this.arrGuia.length > 0) {
+      // this.eliminandoRegistros = true;
+      this._visitaService
+        .eliminarTodosLasGuias()
+        .pipe(
+          finalize(() => {
+            // this.eliminandoRegistros = false;
+            // this.isCheckedSeleccionarTodos = false;
+          })
+        )
+        .subscribe(() => {
+          this.alerta.mensajaExitoso(
+            'Se han eliminado los regsitros correctamente.'
+          );
+          this.consultaLista(this.arrParametrosConsulta);
+        });
+    } else {
+      this.alerta.mensajeError(
+        'No se han seleccionado registros para eliminar',
+        'Error'
+      );
+    }
+  }
+
   calculateRoute() {
     if (this.marcarPosicionesVisitasOrdenadas.length < 2) {
       console.error('Se necesitan al menos dos puntos para calcular la ruta.');
@@ -116,5 +182,12 @@ export default class VisitaListaComponent extends General implements OnInit {
       },
       error: (e) => console.error(e),
     });
+  }
+
+  cerrarModalPorId(id: string) {
+    const modalEl: HTMLElement = document.querySelector(id);
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.hide();
   }
 }

@@ -164,8 +164,7 @@ export class AlertaService {
       icon: 'warning',
       text: configuracion.texto,
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#d33',
       confirmButtonText: configuracion.textoBotonCofirmacion,
       cancelButtonText: 'Cancelar',
     });
