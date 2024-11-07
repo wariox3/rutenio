@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -30,7 +30,7 @@ import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-e
   styleUrl: './contenedor-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ContenedorListaComponent extends General {
+export default class ContenedorListaComponent extends General implements OnInit {
   // @ViewChild("contentTemplate") contentTemplate: TemplateRef<any>;
   private contenedorService = inject(ContenedorService);
   // private menuService = inject(NbMenuService);

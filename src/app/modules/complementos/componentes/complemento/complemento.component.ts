@@ -5,14 +5,13 @@ import { General } from '../../../../common/clases/general';
 import { RespuestaComplemento } from '../../../../interfaces/complemento/complemento.interface';
 import { ComplementoService } from '../../servicios/complemento.service';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-
 @Component({
   selector: 'app-complemento',
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ModalDefaultComponent,
+    ModalDefaultComponent
   ],
   templateUrl: './complemento.component.html',
   styleUrl: './complemento.component.css',
@@ -29,18 +28,13 @@ export default class ComplementoComponent extends General implements OnInit {
 
   private complementoService = inject(ComplementoService);
 
+  indexFormularioSeleccionado: number | null = null;
+
+  arrayDatosJson: FormArray<FormGroup> | null = null;
+
   ngOnInit(): void {
     this.consultarLista();
   }
-
-  // openWindow(indexFormulario: number, nombreFormulario: string) {
-  //   this.windowRef = this.windowService.open(this.contentTemplate, {
-  //     title: `Configurar ${nombreFormulario}`,
-  //     context: {
-  //       indexFormulario,
-  //     },
-  //   });
-  // }
 
   consultarLista(){
     this.complementoService.listarComplementos().subscribe((respuesta) => {
@@ -88,8 +82,22 @@ export default class ComplementoComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  guardarInformacion(indexFormulario: string){
-
+  guardarInformacion(indexFormulario: number | null) {
+    if (indexFormulario !== null && this.formularios[indexFormulario].valid) {
+      const formularioSeleccionado = this.formularios[indexFormulario];
+      const id = formularioSeleccionado.get("id")?.value;
+  
+      this.complementoService
+        .actualizarComplemento(id, formularioSeleccionado.value)
+        .subscribe(() => {
+          this.consultarLista();
+          this.alerta.mensajaExitoso(
+            "Se actualizó correctamente el complemento.",
+            "Guardado con éxito."
+          );
+          this.changeDetectorRef.detectChanges();
+        });
+    }
   }
 
 
@@ -101,6 +109,12 @@ export default class ComplementoComponent extends General implements OnInit {
         this.consultarLista();
         this.changeDetectorRef.detectChanges();
       });
+  }
+
+  abrirModal(index: number) {
+    this.indexFormularioSeleccionado = index;
+    const formGroup = this.formularios[this.indexFormularioSeleccionado];
+    this.arrayDatosJson = formGroup?.get('datos_json') as FormArray || null;
   }
 
  }

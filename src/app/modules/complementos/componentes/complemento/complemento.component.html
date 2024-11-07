@@ -14,42 +14,29 @@
           <button *ngIf="!complemento.instalado" class="btn btn-success" (click)="instalar(complemento)">
             Instalar
           </button>
-          <button *ngIf="complemento.instalado" class="btn btn-dark" data-modal-toggle="#configurarComplemento">
+          <button class="btn btn-primary" (click)="abrirModal(i)" data-modal-toggle="#my_modal">
             Configurar
-            <i class="ki-filled ki-setting-2 text-lg"></i>
           </button>
         </div>
       </div>
     </div>
   </div>
-  
-  <!-- <ng-template #contentTemplate let-data>
-    <div>
-      <form [formGroup]="formularios[data.indexFormulario]">
+  <app-modal-default titulo="Configurar complemento" size="small" [id]="'my_modal'">
+    <div modal-body>
+      <form *ngIf="formularios[indexFormularioSeleccionado]" [formGroup]="formularios[indexFormularioSeleccionado]">
         <div formArrayName="datos_json">
-          <div class="flex flex-col mb-3"
-            *ngFor="let control of formularios[data.indexFormulario].get('datos_json').controls; let j = index"
-            [formGroupName]="j">
-            <label class="font-semibold">{{ control.get('nombre').value }}:</label>
-            <input formControlName="valor" class="border rounded px-2 py-1 mt-1 focus:ring focus:ring-blue-500"
-                   [ngClass]="{
-                     'border-green-500': control.get('valor').dirty && control.get('valor').valid,
-                     'border-red-500': control.get('valor').dirty && control.get('valor').invalid
-                   }" />
-  
-            <p *ngIf="control.get('valor').invalid && control.get('valor').touched && control.get('valor').errors?.required"
-               class="text-red-500 text-sm mt-1">
-              El campo es requerido!
-            </p>
+          <div *ngFor="let control of arrayDatosJson?.controls; let j = index" [formGroup]="control">
+            <label>{{ control.get('nombre')?.value }}:</label>
+            <input formControlName="valor" class="border rounded px-2 py-1 mt-1" />
+            <p *ngIf="control.get('valor')?.invalid && control.get('valor')?.touched">El campo es requerido!</p>
           </div>
         </div>
+        <div class="d-flex justify-content-end">
+          <button nbButton size="small" status="success" (click)="guardarInformacion(indexFormularioSeleccionado)">
+            Guardar
+          </button>          
+        </div>
       </form>
-      <div class="flex justify-end mt-4">
-        <button class="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
-                (click)="guardarInformacion(data.indexFormulario)">
-          Guardar
-        </button>
-      </div>
     </div>
-  </ng-template> -->
+  </app-modal-default>
   
