@@ -11,9 +11,11 @@
             <th class="w-[60px]"></th>
             <th class="w-[60px]">
               <input
+                #checkboxGlobal
                 class="checkbox checkbox-sm"
                 data-datatable-check="true"
                 type="checkbox"
+                (change)="manejarCheckGlobal($event)"
               />
             </th>
           </tr>
@@ -52,6 +54,8 @@
                 class="checkbox checkbox-sm"
                 data-datatable-check="true"
                 type="checkbox"
+                (change)="manejarCheckItem($event, item.id)"
+                [checked]="estoyEnListaEliminar(item.id)"
               />
             </td>
           </tr>

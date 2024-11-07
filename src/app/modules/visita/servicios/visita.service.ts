@@ -1,9 +1,9 @@
-import { Injectable } from "@angular/core";
-import { HttpService } from "../../../common/services/http.service";
-import { Visita } from "../../../interfaces/visita/visita.interface";
+import { Injectable } from '@angular/core';
+import { HttpService } from '../../../common/services/http.service';
+import { Visita } from '../../../interfaces/visita/visita.interface';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class VisitaService {
   constructor(private http: HttpService) {}
@@ -29,36 +29,40 @@ export class VisitaService {
   }
 
   decodificar() {
-    return this.http.post<any[]>(`ruteo/visita/decodificar/`, "");
+    return this.http.post<any[]>(`ruteo/visita/decodificar/`, '');
   }
 
   ordenar() {
-    return this.http.post<any[]>(`ruteo/visita/ordenar/`, "");
+    return this.http.post<any[]>(`ruteo/visita/ordenar/`, '');
   }
 
   rutear() {
-    return this.http.post<any[]>(`ruteo/visita/rutear/`, "");
+    return this.http.post<any[]>(`ruteo/visita/rutear/`, '');
   }
 
-  eliminarGuia(id: number) {
+  eliminarVisita(id: number) {
     return this.http.delete(`ruteo/visita/${id}/`, {});
   }
 
+  eliminarMultiples(data: number[]) {
+    return this.http.post(`ruteo/visita/eliminar/`, { documentos: data });
+  }
+
   eliminarTodosLasGuias() {
-    return this.http.post("ruteo/visita/eliminar-todos/", {});
+    return this.http.post('ruteo/visita/eliminar-todos/', {});
   }
 
   importarComplementos(parametros: {
     numeroRegistros: number;
     desde: number;
     hasta: number;
-    pendienteDespacho: boolean
+    pendienteDespacho: boolean;
   }) {
     return this.http.post(`ruteo/visita/importar-complemento/`, {
       limite: parametros.numeroRegistros,
       guia_desde: parametros.desde,
       guia_hasta: parametros.hasta,
-      pendiente_despacho: parametros.pendienteDespacho
+      pendiente_despacho: parametros.pendienteDespacho,
     });
   }
 }

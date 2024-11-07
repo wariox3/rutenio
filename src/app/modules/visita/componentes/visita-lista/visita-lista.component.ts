@@ -15,7 +15,7 @@ import { MapDirectionsService } from '@angular/google-maps';
 import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita-importar-por-excel.component';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 
 @Component({
@@ -36,6 +36,7 @@ import { KTModal } from '../../../../../metronic/core';
 export default class VisitaListaComponent extends General implements OnInit {
   private _visitaService = inject(VisitaService);
   private _directionsService = inject(MapDirectionsService);
+  private _listaItemsEliminar: number[] = [];
 
   public cantidadRegistros: number = 0;
   public arrGuia: any[];
@@ -64,7 +65,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    // this.isCheckedSeleccionarTodos = false;
+    // this.isCheckedSeleccionarTodos = false; 
     // this.registrosAEliminar = [];
     this._visitaService.lista(filtros).subscribe((respuesta) => {
       this.arrGuia = respuesta.map((guia) => ({
@@ -189,5 +190,27 @@ export default class VisitaListaComponent extends General implements OnInit {
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();
+  }
+
+  actualizarItemsSeleccionados(itemsSeleccionados: number[]) {
+    this._listaItemsEliminar = itemsSeleccionados;
+  }
+
+  eliminarItemsSeleccionados() {
+    const eliminarRegistros = this._listaItemsEliminar.map((id) => {
+      return this._visitaService.eliminarVisita(id);
+    });
+
+    forkJoin(eliminarRegistros)
+      .pipe(
+        finalize(() => {
+          this._listaItemsEliminar = [];
+          this.consultaLista(this.arrParametrosConsulta);
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe((respuesta: any) => {
+        this.alerta.mensajaExitoso('Registros eliminado');
+      });
   }
 }

@@ -78,7 +78,7 @@
           </button>
           <div class="menu-dropdown w-48 py-2">
             <div class="menu-item" data-menu-dismiss="true">
-              <button class="menu-link">
+              <button class="menu-link" (click)="eliminarItemsSeleccionados()">
                 <!-- <span class="menu-icon">
            <i class="ki-outline ki-badge">
            </i>
@@ -104,6 +104,7 @@
       campoMapeo="Visita"
       [mapeo]="mapeoDocumento"
       [datos]="arrGuia"
+      (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
     ></app-tabla-comun>
   </div>
 </div>
