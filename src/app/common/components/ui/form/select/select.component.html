@@ -1,0 +1,8 @@
+<select class="select mt-1" name="select" [formControl]="control">
+  <option value="0">Seleccionar</option>
+  @for (opcion of opciones; track $index) {
+  <option [value]="opcion.valor">
+    {{ opcion.nombre }}
+  </option>
+  }
+</select>

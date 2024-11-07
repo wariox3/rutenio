@@ -1,0 +1,7 @@
+<ng-container *ngIf="!(cargando$ | async)">
+  <app-contacto-formulario
+    [contacto]="contacto"
+    formularioTipo="editar"
+    (emitirFormulario)="enviarFormulario($event)"
+  ></app-contacto-formulario>
+</ng-container>

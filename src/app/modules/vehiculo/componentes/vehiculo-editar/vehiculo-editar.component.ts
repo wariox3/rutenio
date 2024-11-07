@@ -53,7 +53,7 @@ export default class VehiculoEditarComponent extends General implements OnInit {
           'Se ha actualizado el vehículo exitosamente.'
         );
         this.router.navigate([
-          '/administracion/vehiculo/detalle',
+          '/admin/vehiculo/detalle',
           respuesta.id,
         ]);
       });

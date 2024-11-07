@@ -13,3 +13,20 @@
 @import "./metronic/vendors/keenicons/filled/style.css";
 @import "./metronic/vendors/keenicons/outline/style.css";
 @import "./metronic/vendors/keenicons/solid/style.css";
+
+.select2Custom {
+    border: 1px solid var(--bs-gray-300);
+    border-radius: 0.475rem;
+    padding: 0.3rem !important;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .ng-select.select2Custom .ng-select-container {
+    border: 0px;
+    border-radius: 0.475rem;
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+  }

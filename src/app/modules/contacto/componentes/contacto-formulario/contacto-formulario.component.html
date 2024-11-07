@@ -1,0 +1,211 @@
+<div class="flex gap-2 mb-4">
+  <button class="btn btn-secondary" routerLink="/admin/contacto/lista">
+    Atrás
+  </button>
+  <app-button
+    texto="Guardar"
+    (click)="enviar()"
+    [estaDeshabilitado]="!formularioContacto.valid"
+  ></app-button>
+</div>
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Nuevo contacto</h3>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="formularioContacto">
+      <!-- <pre>{{ formularioContacto.value | json }}</pre> -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="">
+          <app-label [required]="true">Persona tipo</app-label>
+          <select
+            class="select mt-1"
+            name="select"
+            [formControl]="formularioContacto.controls.tipo_persona"
+          >
+            <option value="0">Seleccionar</option>
+            @for (tipoPersona of arrTipoPersona; track $index) {
+            <option [value]="tipoPersona.tipo_persona_id">
+              {{ tipoPersona.tipo_persona_nombre }}
+            </option>
+            }
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="grid grid-cols-1 md:grid-cols-[1fr,.5fr] gap-2">
+          <section>
+            <app-label [required]="true">Número de identificación</app-label>
+            <app-input
+              [control]="formularioContacto.controls.numero_identificacion"
+              [maxLenght]="20"
+            ></app-input>
+          </section>
+          <section>
+            <app-label [required]="true">Digito verificación</app-label>
+            <app-input
+              [control]="formularioContacto.controls.digito_verificacion"
+              [maxLenght]="1"
+            ></app-input>
+          </section>
+        </div>
+        <div class="">
+          <app-label [required]="true">Tipo identificación</app-label>
+          <select
+            class="select mt-1"
+            name="select"
+            [formControl]="formularioContacto.controls.identificacion"
+          >
+            <option value="0">Seleccionar</option>
+            @for (identificacion of arrIdentificacion; track $index) {
+            <option [value]="identificacion.identificacion_id">
+              {{ identificacion.identificacion_nombre }}
+            </option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <app-label>Primer nombre</app-label>
+          <app-input
+            [control]="formularioContacto.controls.nombre1"
+            [maxLenght]="50"
+          ></app-input>
+        </div>
+        <div>
+          <app-label>Segundo nombre</app-label>
+          <app-input
+            [control]="formularioContacto.controls.nombre2"
+            [maxLenght]="50"
+          ></app-input>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <app-label>Primer apellido</app-label>
+          <app-input
+            [control]="formularioContacto.controls.apellido1"
+            [maxLenght]="50"
+          ></app-input>
+        </div>
+        <div>
+          <app-label>Segundo apellido</app-label>
+          <app-input
+            [control]="formularioContacto.controls.apellido2"
+            [maxLenght]="50"
+          ></app-input>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <app-label [required]="true">Teléfono</app-label>
+          <app-input
+            [control]="formularioContacto.controls.telefono"
+            [maxLenght]="50"
+            [minLength]="3"
+          ></app-input>
+        </div>
+        <div>
+          <app-label [required]="true">Celular</app-label>
+          <app-input
+            [control]="formularioContacto.controls.celular"
+            [maxLenght]="50"
+            [minLength]="3"
+          ></app-input>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <app-label [required]="true">Ciudad</app-label>
+          <!-- <app-input [control]="formularioContacto.controls.ciudad"></app-input> -->
+          <ng-select
+            formControlName="ciudad"
+            notFoundText="Sin elementos"
+            (change)="seleccionarCiudad($event)"
+            placeholder="Selecciona un elemento"
+            class="select2Custom"
+          >
+          </ng-select>
+        </div>
+        <div>
+          <app-label [required]="true">Dirección</app-label>
+          <app-input
+            [control]="formularioContacto.controls.direccion"
+          ></app-input>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="form-label"> Barrio </label>
+          <app-input [control]="formularioContacto.controls.barrio"></app-input>
+        </div>
+        <div>
+          <app-label [required]="true">Correo</app-label>
+          <app-input-email
+            [control]="formularioContacto.controls.correo"
+          ></app-input-email>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="">
+          <app-label [required]="true">Régimen</app-label>
+          <select
+            class="select mt-1"
+            name="select"
+            [formControl]="formularioContacto.controls.regimen"
+          >
+            <option value="0">Seleccionar</option>
+            @for (regimen of arrRegimen; track $index) {
+            <option [value]="regimen.regimen_id">
+              {{ regimen.regimen_nombre }}
+            </option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="form-label"> Código CIUU </label>
+          <app-input
+            [control]="formularioContacto.controls.codigo_ciuu"
+          ></app-input>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card min-w-full mt-5">
+  <div class="card-header">
+    <h3 class="card-title">Información comercial</h3>
+  </div>
+  <div class="card-body">
+    <form action="">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="">
+          <app-label [required]="true">Plazo pago</app-label>
+          <select
+            class="select mt-1"
+            name="select"
+            [formControl]="formularioContacto.controls.plazo_pago"
+          >
+            <option value="0">Seleccionar</option>
+            @for (plazoPago of arrPlazoPagos; track $index) {
+            <option [value]="plazoPago.plazo_pago_id">
+              {{ plazoPago.plazo_pago_nombre }}
+            </option>
+            }
+          </select>
+        </div>
+        <div></div>
+      </div>
+    </form>
+  </div>
+</div>
