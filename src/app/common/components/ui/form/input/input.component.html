@@ -11,20 +11,22 @@
   }"
 />
 
-<ng-container *ngIf="control.invalid && control.touched">
-  <span *ngIf="control.hasError('required')" class="text-danger text-xs">
+<ng-container class="flex flex-col" *ngIf="control.invalid && control.touched">
+  <span *ngIf="control.hasError('required')" class="text-danger text-xs block">
     El campo es requerido.
   </span>
-  <span *ngIf="control.hasError('minlength')" class="text-danger text-xs">
+  <span *ngIf="control.hasError('minlength')" class="text-danger text-xs block">
     El campo debe tener un mínimo de caracteres de {{ minLength }}.
   </span>
-  <span *ngIf="control.hasError('maxlength')" class="text-danger text-xs">
+  <span *ngIf="control.hasError('maxlength')" class="text-danger text-xs block">
     El campo debe tener un máximo de caracteres de {{ maxLenght }}.
   </span>
-  <span *ngIf="control.hasError('pattern')" class="text-danger text-xs">
+  <span *ngIf="control.hasError('pattern')" class="text-danger text-xs block">
     Formato inválido.
   </span>
-  <ng-container *ngIf="errorTemplate">
-    <ng-container *ngTemplateOutlet="errorTemplate; context: { $implicit: control }"></ng-container>
-  </ng-container>
+</ng-container>
+<ng-container *ngIf="errorTemplate">
+  <ng-container
+    *ngTemplateOutlet="errorTemplate; context: { $implicit: control }"
+  ></ng-container>
 </ng-container>

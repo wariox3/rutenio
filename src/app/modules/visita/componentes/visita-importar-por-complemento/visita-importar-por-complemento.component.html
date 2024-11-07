@@ -12,10 +12,10 @@
       ></app-input>
       <ng-template #erroresCustomHasta let-control>
         <span
-          *ngIf="formularioComplementos.errors?.['rangoInvalido']"
+          *ngIf="formularioComplementos.hasError('rangoInvalido')"
           class="text-danger text-xs"
         >
-          Rango inválido.
+          El campo "Hasta" debe ser mayor o igual que "Desde".
         </span>
       </ng-template>
     </div>
