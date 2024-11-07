@@ -128,6 +128,9 @@
   titulo="Importar por excel"
 >
   <section modal-body>
-    <app-visita-importar-por-excel></app-visita-importar-por-excel>
+    <app-visita-importar-por-excel
+      (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
+      (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
+    ></app-visita-importar-por-excel>
   </section>
 </app-modal-default>

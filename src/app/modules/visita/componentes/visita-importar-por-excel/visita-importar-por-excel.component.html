@@ -10,7 +10,9 @@
       texto="Importar"
       color="primary"
       type="button"
+      (click)="uploadFile()"
       [estaDeshabilitado]="!selectedFile"
+      [estaCargando]="estaImportando$ | async"
       textoCargando="Importando..."
     ></app-button>
   </div>

@@ -1,8 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+} from '@angular/core';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { VisitaService } from '../../servicios/visita.service';
-import { catchError } from 'rxjs';
+import { BehaviorSubject, catchError, finalize } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 
 @Component({
@@ -14,12 +20,23 @@ import { General } from '../../../../common/clases/general';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaImportarPorExcelComponent extends General {
+  @Output() emitirCerrarModal: EventEmitter<boolean>;
+  @Output() emitirConsultarLista: EventEmitter<void>;
+
   private _visitaService = inject(VisitaService);
 
   public erroresImportar: any[] = [];
   public selectedFile: File | null = null;
   public base64File: string | null = null;
   public fileName: string = '';
+  public estaImportando$: BehaviorSubject<boolean>;
+
+  constructor() {
+    super();
+    this.estaImportando$ = new BehaviorSubject(false);
+    this.emitirCerrarModal = new EventEmitter();
+    this.emitirConsultarLista = new EventEmitter();
+  }
 
   onFileChange(event: any) {
     const file = event.target.files[0];
@@ -44,6 +61,8 @@ export default class VisitaImportarPorExcelComponent extends General {
 
   uploadFile() {
     if (this.base64File) {
+      this.estaImportando$.next(true);
+
       this._visitaService
         .importarVisitas({ archivo_base64: this.base64File })
         .pipe(
@@ -53,6 +72,11 @@ export default class VisitaImportarPorExcelComponent extends General {
             }
 
             return err;
+          }),
+          finalize(() => {
+            this.estaImportando$.next(false);
+            this.emitirConsultarLista.emit();
+            this.emitirCerrarModal.emit();
           })
         )
         .subscribe((response) => {
