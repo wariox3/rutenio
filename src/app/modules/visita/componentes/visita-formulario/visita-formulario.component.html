@@ -1,0 +1,45 @@
+<form [formGroup]="formularioVisita" (submit)="enviar()">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+      <div class="mb-5">
+        <div>
+          <label class="form-label flex items-center gap-1 text-gray-900">
+            Placa
+            <span class="text-danger"> * </span>
+          </label>
+          <app-input
+            [control]="formularioVehiculo.controls.placa"
+            [maxLenght]="6"
+          ></app-input>
+        </div>
+      </div>
+      <div class="mb-5">
+        <div>
+          <label class="form-label flex items-center gap-1 text-gray-900">
+            Capacidad
+            <span class="text-danger"> * </span>
+          </label>
+          <app-input
+            [control]="formularioVehiculo.controls.capacidad"
+          ></app-input>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+      <div class="mb-5">
+        <app-switch
+          titulo="Activo"
+          [control]="formularioVehiculo.controls.estado_activo"
+        ></app-switch>
+      </div>
+    </div>
+    <div class="flex justify-between">
+      <button class="btn btn-secondary" routerLink="/admin/vehiculo/lista">
+        Atrás
+      </button>
+      <app-button
+        texto="Guardar"
+        [estaDeshabilitado]="!formularioVehiculo.valid"
+      ></app-button>
+    </div>
+  </form>
+  
