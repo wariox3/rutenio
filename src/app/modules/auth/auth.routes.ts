@@ -2,6 +2,11 @@ import { Routes } from '@angular/router';
 
 export default [
   {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
     path: 'login',
     loadComponent: () => import('./components/login/login.component'),
   },
@@ -11,6 +16,7 @@ export default [
   },
   {
     path: 'reset-password',
-    loadComponent: () => import('./components/recover-password/recover-password.component'),
+    loadComponent: () =>
+      import('./components/recover-password/recover-password.component'),
   },
 ] as Routes;

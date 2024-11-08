@@ -1,42 +1,97 @@
-<div class="bg-white rounded-lg shadow p-4">
-    <div class="flex justify-between items-center mb-4">
-      <span class="text-lg font-semibold">Complementos</span>
-    </div>
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Complementos</h3>
+  </div>
+  <div class="card-body">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div *ngFor="let complemento of arrComplementos; let i = index" class="bg-gray-100 rounded-lg p-4 shadow-md">
+      <div
+        *ngFor="let complemento of arrComplementos; let i = index"
+        class="bg-gray-100 rounded-lg p-4 shadow-md"
+      >
         <div class="flex items-center mb-2">
-          <span *ngIf="complemento.instalado" class="text-green-500 mr-2"><i class="ki-filled ki-check-circle text-lg"></i></span>
-          <span *ngIf="!complemento.instalado" class="text-red-500 mr-2"><i class="ki-filled ki-cross-circle text-lg"></i></span>
+          <span *ngIf="complemento.instalado" class="text-green-500 mr-2"
+            ><i class="ki-filled ki-check-circle text-lg"></i
+          ></span>
+          <span *ngIf="!complemento.instalado" class="text-red-500 mr-2"
+            ><i class="ki-filled ki-cross-circle text-lg"></i
+          ></span>
           <span class="font-medium">{{ complemento.nombre }}</span>
         </div>
-  
+
         <div class="flex justify-end mt-4">
-          <button *ngIf="!complemento.instalado" class="btn btn-success" (click)="instalar(complemento)">
+          <button
+            *ngIf="!complemento.instalado"
+            class="btn btn-success"
+            (click)="instalar(complemento)"
+          >
             Instalar
           </button>
-          <button class="btn btn-primary" (click)="abrirModal(i)" data-modal-toggle="#my_modal">
+          <button
+            class="btn btn-primary"
+            (click)="abrirModal(i)"
+            data-modal-toggle="#complementos-modal"
+          >
             Configurar
           </button>
         </div>
       </div>
     </div>
   </div>
-  <app-modal-default titulo="Configurar complemento" size="small" [id]="'my_modal'">
-    <div modal-body>
-      <form *ngIf="formularios[indexFormularioSeleccionado]" [formGroup]="formularios[indexFormularioSeleccionado]">
+</div>
+<app-modal-default
+  titulo="Configurar complemento"
+  size="small"
+  [id]="'complementos-modal'"
+>
+  <div modal-body>
+    <div class="grid grid-cols-1 gap-4 mb-5">
+      <form
+        *ngIf="formularios[indexFormularioSeleccionado]"
+        [formGroup]="formularios[indexFormularioSeleccionado]"
+      >
         <div formArrayName="datos_json">
-          <div *ngFor="let control of arrayDatosJson?.controls; let j = index" [formGroup]="control">
-            <label>{{ control.get('nombre')?.value }}:</label>
-            <input formControlName="valor" class="border rounded px-2 py-1 mt-1" />
-            <p *ngIf="control.get('valor')?.invalid && control.get('valor')?.touched">El campo es requerido!</p>
+          <div
+            class="mb-2"
+            *ngFor="let control of arrayDatosJson?.controls; let j = index"
+            [formGroup]="control"
+          >
+            <app-label>{{ control.get("nombre")?.value }}:</app-label>
+            <input
+              type="text"
+              class="input"
+              formControlName="valor"
+              [ngClass]="{
+                'border-danger':
+                  control.get('valor').touched && control.get('valor').invalid,
+                'border-success':
+                  control.get('valor').touched && control.get('valor').valid
+              }"
+            />
+
+            <span
+              *ngIf="
+                control.get('valor')?.invalid && control.get('valor')?.touched
+              "
+              class="text-danger text-xs"
+            >
+              El campo es requerido.
+            </span>
           </div>
         </div>
-        <div class="d-flex justify-content-end">
-          <button nbButton size="small" status="success" (click)="guardarInformacion(indexFormularioSeleccionado)">
-            Guardar
-          </button>          
+        <div class="w-full flex justify-end mt-2">
+          <app-button
+            [type]="'submit'"
+            [texto]="'Guardar'"
+            [textoCargando]="'Guardando...'"
+            [estaCargando]="guardando$ | async"
+            [clases]="'btn btn-primary text-center justify-center'"
+            [estaDeshabilitado]="
+              !formularios[indexFormularioSeleccionado].valid
+            "
+            (click)="guardarInformacion(indexFormularioSeleccionado)"
+          ></app-button>
         </div>
       </form>
     </div>
-  </app-modal-default>
-  
+  </div>
+</app-modal-default>

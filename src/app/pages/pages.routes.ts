@@ -1,8 +1,11 @@
 import { Routes } from '@angular/router';
+import { authGuard } from '../common/guards/auth.guard';
+import { contenedorGuard } from '../common/guards/contenedor.guard';
 
 export default [
   {
     path: 'contenedor',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./contenedor-layout/contenedor-layout.component'),
     children: [
@@ -14,6 +17,7 @@ export default [
   },
   {
     path: 'admin',
+    canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),
     children: [
       {
@@ -54,9 +58,7 @@ export default [
       {
         path: 'complemento',
         loadChildren: () =>
-          import(
-            '../modules/complementos/complemento.routes'
-          ),
+          import('../modules/complementos/complemento.routes'),
       },
     ],
   },
