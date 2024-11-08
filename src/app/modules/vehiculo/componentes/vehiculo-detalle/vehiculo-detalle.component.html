@@ -1,34 +1,43 @@
 <div class="flex items-center mb-4">
-    <div class="btn-group gap-1">
-      <button
-        class="btn btn-dark btn-xs flex items-center"
-        [routerLink]="['/admin/vehiculo/lista']"
-      >
-        <i class="ki-filled ki-arrow-left mr-1"></i>
-        Atrás
-      </button>
+  <div class="btn-group gap-1">
+    <button
+      class="btn btn-secondary flex items-center"
+      [routerLink]="['/admin/vehiculo/lista']"
+    >
+      <i class="ki-filled ki-arrow-left mr-1"></i>
+      Atrás
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-table">
+    <div class="card-header">
+      <h3 class="card-title">Detalle vehículo - {{ vehiculo.placa }}</h3>
+    </div>
+    <div class="card-body">
+      <div class="overflow-x-auto">
+        <table class="table-auto border border-gray-300 text-sm w-full">
+          <tbody>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Placa
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ vehiculo.placa }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Capacidad
+              </td>
+              <td class="px-4 py-3">{{ vehiculo.capacidad }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-  
-  <div class="card">
-    <div class="card-table">
-      <div class="card-header">
-        <h3 class="card-title">Detalle vehículo - {{ vehiculo.placa }}</h3>
-      </div>
-      <div class="card-body">
-        <div class="overflow-x-auto">
-          <table class="table-auto border border-gray-300 text-sm w-full">
-            <tbody>
-              <tr class="border-b border-gray-300">
-                <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Placa</td>
-                <td class="px-4 py-3 border-r border-gray-300">{{ vehiculo.placa }}</td>
-                <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Capacidad</td>
-                <td class="px-4 py-3">{{ vehiculo.capacidad }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  
+</div>
