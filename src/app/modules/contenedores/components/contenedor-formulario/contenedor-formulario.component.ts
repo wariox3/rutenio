@@ -22,7 +22,7 @@ import { ContenedorService } from '../../services/contenedor.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
 
-@Component({
+@Component({  
   selector: 'app-contenedor-formulario',
   standalone: true,
   imports: [

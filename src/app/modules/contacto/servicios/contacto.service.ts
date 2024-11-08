@@ -140,9 +140,9 @@ export class ContactoService {
         Validators.maxLength(255),
       ]),
       regimen: new FormControl(null, Validators.compose([Validators.required])),
-      codigo_ciuu: new FormControl(''),
+      codigo_ciuu: new FormControl(null),
       ciudad_nombre: new FormControl(''),
-      ciudad: new FormControl(1, Validators.compose([Validators.required])),
+      ciudad: new FormControl(null, Validators.compose([Validators.required])),
       direccion: new FormControl(
         null,
         Validators.compose([Validators.required, Validators.maxLength(50)])

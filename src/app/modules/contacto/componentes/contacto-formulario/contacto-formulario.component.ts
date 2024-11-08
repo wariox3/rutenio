@@ -9,7 +9,14 @@ import {
   Output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { asyncScheduler, tap, throttleTime, zip } from 'rxjs';
+import {
+  asyncScheduler,
+  debounceTime,
+  distinctUntilChanged,
+  tap,
+  throttleTime,
+  zip,
+} from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
@@ -91,6 +98,8 @@ export default class ContactoFormularioComponent
         plazo_pago: this.contacto.plazo_pago_id,
       });
     }
+
+    this.consultarCiudad(this.formularioContacto.get('ciudad_nombre').value);
   }
 
   private _consultarInformacion() {
@@ -116,13 +125,24 @@ export default class ContactoFormularioComponent
     });
   }
 
-  consultarCiudad(event: any) {
+  buscarCiudadPorNombre(event?: any) {
+    const excludedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+    if (excludedKeys.includes(event?.key)) {
+      return;
+    }
+
+    const ciudadNombre = event?.target.value || '';
+    this.consultarCiudad(ciudadNombre);
+  }
+
+  consultarCiudad(nombre?: string) {
     let arrFiltros = {
       filtros: [
         {
           operador: '__icontains',
           propiedad: 'nombre__icontains',
-          valor1: `${event?.target.value}`,
+          valor1: nombre,
           valor2: '',
         },
       ],
@@ -137,7 +157,6 @@ export default class ContactoFormularioComponent
     this._contactoService
       .listaCiudades(arrFiltros)
       .pipe(
-        throttleTime(300, asyncScheduler, { leading: true, trailing: true }),
         tap((respuesta) => {
           this.arrCiudades = respuesta.registros;
           this.changeDetectorRef.detectChanges();
@@ -146,7 +165,12 @@ export default class ContactoFormularioComponent
       .subscribe();
   }
 
-  seleccionarCiudad(ciudad: any) {}
+  seleccionarCiudad(ciudad: any) {
+    if (!ciudad) {
+      this.consultarCiudad('');
+      return;
+    }
+  }
 
   enviar() {
     if (this.formularioContacto.valid) {

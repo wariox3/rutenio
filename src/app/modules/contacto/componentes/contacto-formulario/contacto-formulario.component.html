@@ -124,15 +124,33 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div>
           <app-label [required]="true">Ciudad</app-label>
-          <!-- <app-input [control]="formularioContacto.controls.ciudad"></app-input> -->
           <ng-select
+            [items]="arrCiudades"
             formControlName="ciudad"
+            bindLabel="nombre"
+            bindValue="id"
             notFoundText="Sin elementos"
-            (change)="seleccionarCiudad($event)"
             placeholder="Selecciona un elemento"
+            loadingText="Buscando..."
             class="select2Custom"
+            (change)="seleccionarCiudad($event)"
+            (keyup)="buscarCiudadPorNombre($event)"
           >
           </ng-select>
+          <ng-container
+            class="flex flex-col"
+            *ngIf="
+              formularioContacto.controls.ciudad.invalid &&
+              formularioContacto.controls.ciudad.touched
+            "
+          >
+            <span
+              *ngIf="formularioContacto.controls.ciudad.hasError('required')"
+              class="text-danger text-xs block"
+            >
+              El campo es requerido.
+            </span>
+          </ng-container>
         </div>
         <div>
           <app-label [required]="true">Dirección</app-label>
@@ -144,7 +162,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div>
-          <label class="form-label"> Barrio </label>
+          <app-label> Barrio </app-label>
           <app-input [control]="formularioContacto.controls.barrio"></app-input>
         </div>
         <div>
@@ -172,7 +190,7 @@
           </select>
         </div>
         <div>
-          <label class="form-label"> Código CIUU </label>
+          <app-label> Código CIUU </app-label>
           <app-input
             [control]="formularioContacto.controls.codigo_ciuu"
           ></app-input>
