@@ -105,7 +105,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.visitaService.rutear().subscribe(() => {
       this.consultarLista();
       this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
-      this.router.navigate(['/trafico']);
+      this.router.navigate(['admin/trafico/lista']);
     });
   }
 
