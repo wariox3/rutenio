@@ -12,7 +12,7 @@
       <div class="card-header">
         <div class="flex gap-2">
           <app-button
-            routerLink="/admin/vehiculo/nuevo"
+            data-modal-toggle="#importar-kml-modal"
             type="button"
             texto="Importar"
           ></app-button>
@@ -82,3 +82,13 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  titulo="Importar KML"
+  size="small"
+  [id]="'importar-kml-modal'"
+>
+  <div modal-body>
+    <app-franja-importar-por-kml (emitirCerrarModal)="cerrarModal()"></app-franja-importar-por-kml>
+  </div>
+</app-modal-default>

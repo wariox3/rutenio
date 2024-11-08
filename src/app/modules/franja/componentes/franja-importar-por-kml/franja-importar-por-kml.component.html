@@ -1,0 +1,19 @@
+<form action="" class="mb-4">
+  <input class="file-input my-2" type="file" (change)="onFileChange($event)" accept=".kml" />
+</form>
+<div class="d-flex justify-content-end">
+  <div class="flex justify-end gap-4 w-full" modal-footer>
+    <button type="button" class="btn btn-light" data-modal-dismiss="true">
+      Cancelar
+    </button>
+    <app-button
+      texto="Importar"
+      color="primary"
+      type="button"
+      (click)="subirArchivo()"
+      [estaDeshabilitado]="!selectedFile"
+      [estaCargando]="estaImportando$ | async"
+      textoCargando="Importando..."
+    ></app-button>
+  </div>
+</div>

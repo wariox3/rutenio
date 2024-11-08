@@ -17,11 +17,20 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import FranjaImportarPorKmlComponent from '../franja-importar-por-kml/franja-importar-por-kml.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-franja-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, GoogleMapsModule],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    GoogleMapsModule,
+    FranjaImportarPorKmlComponent,
+    ModalDefaultComponent,
+  ],
   templateUrl: './franja-lista.component.html',
   styleUrl: './franja-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -130,5 +139,14 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   openInfoWindow(marker: MapMarker) {
     this.infoWindow.open(marker);
+  }
+
+  cerrarModal() {
+    this.consultarLista();
+    this.consultarFranjas();
+    const modalEl: HTMLElement = document.querySelector('#importar-kml-modal  ');
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.hide();
   }
 }
