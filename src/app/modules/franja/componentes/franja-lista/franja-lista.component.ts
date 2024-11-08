@@ -19,7 +19,7 @@ import {
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import FranjaImportarPorKmlComponent from '../franja-importar-por-kml/franja-importar-por-kml.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { KTModal } from '../../../../../metronic/core';
+import { KTModal } from '../../../../../metronic/core'; 
 
 @Component({
   selector: 'app-franja-lista',

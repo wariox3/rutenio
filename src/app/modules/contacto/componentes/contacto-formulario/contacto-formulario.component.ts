@@ -97,9 +97,11 @@ export default class ContactoFormularioComponent
         codigo_ciuu: this.contacto.codigo_ciuu,
         plazo_pago: this.contacto.plazo_pago_id,
       });
+
     }
 
     this.consultarCiudad(this.formularioContacto.get('ciudad_nombre').value);
+
   }
 
   private _consultarInformacion() {
