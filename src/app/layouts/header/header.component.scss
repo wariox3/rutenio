@@ -1,0 +1,6 @@
+.container-fixed {
+    width: 100%;         /* Ocupa todo el ancho */
+    max-width: none;     /* Desactiva un tamaño máximo si existe */
+    padding: 0 70px;     /* Añade espacio en los lados si es necesario */
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+  }

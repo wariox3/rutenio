@@ -1,3 +1,10 @@
 :host {
   display: block;
 }
+
+.container-fixed {
+  width: 95%;             /* Ocupa casi todo el ancho */
+  max-width: none;        /* Desactiva un tamaño máximo si existe */
+  padding: 0 20px;        /* Añade espacio en los lados si es necesario */
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+}
