@@ -2,12 +2,10 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   EventEmitter,
   inject,
   Input,
   Output,
-  ViewChild,
 } from '@angular/core';
 import {
   FormControl,
@@ -15,18 +13,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BehaviorSubject, catchError, finalize, of, Subject } from 'rxjs';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { Contenedor } from '../../../../interfaces/contenedor/contenedor.interface';
-import { ContenedorService } from '../../services/contenedor.service';
+import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { Contenedor } from '../../../../interfaces/contenedor/contenedor.interface';
+import { ContenedorService } from '../../services/contenedor.service';
 
 @Component({
   selector: 'app-contenedor-eliminar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, ButtonComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputComponent,
+    ButtonComponent,
+    ModalDefaultComponent,
+  ],
   templateUrl: './contenedor-eliminar.component.html',
   styleUrl: './contenedor-eliminar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,11 +47,22 @@ export class ContenedorEliminarComponent extends General {
     nombre: new FormControl('', Validators.compose([Validators.required])),
   });
 
-  cerrar() {
+  cerrarModal() {
     const modalEl: HTMLElement = document.querySelector('#eliminarContenedor');
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();
+  }
+
+  cancelarModal() {
+    this._reiniciarFormulario();
+  }
+
+  private _reiniciarFormulario() {
+    this.formularioEliminar.reset();
+    this.formularioEliminar.markAsUntouched();
+    this.formularioEliminar.markAsPristine();
+    this.changeDetectorRef.detectChanges();
   }
 
   eliminarContenedor() {
@@ -66,7 +82,7 @@ export class ContenedorEliminarComponent extends General {
           }),
           finalize(() => {
             this.estaEliminandoContenedor$.next(false);
-            this.cerrar();
+            this.cerrarModal();
           })
         )
         .subscribe((response) => {
