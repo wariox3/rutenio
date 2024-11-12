@@ -18,6 +18,7 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
 import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -64,6 +65,15 @@ export default class VehiculoFormularioComponent
         estado_asignado: this.informacionVehiculo.estado_asignado,
       });
     }
+
+    this.formularioVehiculo
+      .get('placa')
+      ?.valueChanges.pipe(map((value: string) => value.toUpperCase()))
+      .subscribe((value: string) => {
+        this.formularioVehiculo
+          .get('placa')
+          ?.setValue(value, { emitEvent: false });
+      });
   }
 
   enviar() {
