@@ -8,7 +8,14 @@ import {
   Output,
 } from '@angular/core';
 import { saveAs } from 'file-saver';
-import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  mergeMap,
+  of,
+  toArray,
+} from 'rxjs';
 import * as XLSX from 'xlsx';
 import { General } from '../../clases/general';
 import { GeneralService } from '../../services/general.service';
@@ -81,6 +88,27 @@ export class ImportarComponent extends General {
     };
   }
 
+  private _adaptarErroresImportar(errores: any[]) {
+    of(...errores)
+      .pipe(
+        mergeMap((errorItem) =>
+          of(
+            ...Object.entries(errorItem.errores).map(
+              ([campo, mensajes]: any) => ({
+                fila: errorItem.fila,
+                campo: campo,
+                error: mensajes.join(', '),
+              })
+            )
+          )
+        ),
+        toArray()
+      )
+      .subscribe((result) => {
+        this.erroresImportar = result;
+      });
+  }
+
   uploadFile() {
     if (this.base64File) {
       this.estaImportando$.next(true);
@@ -93,15 +121,15 @@ export class ImportarComponent extends General {
           }),
           catchError((err) => {
             if (err.errores_validador) {
-              this.erroresImportar = err.errores_validador;
+              this._adaptarErroresImportar(err.errores_validador);
             }
 
             return of(null);
           })
         )
         .subscribe((response) => {
-          if (response.mensaje) {
-            this.alerta.mensajaExitoso(response.mensaje);
+          if (response?.mensaje) {
+            this.alerta.mensajaExitoso(response?.mensaje);
             this.emitirConsultarLista.emit();
             this.emitirCerrarModal.emit();
           }

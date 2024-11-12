@@ -92,7 +92,7 @@
       texto="Ejemplo"
       color="primary"
       type="button"
-      (click)="descargarEjemploImportar ()"
+      (click)="descargarEjemploImportar()"
     ></app-button>
   </div>
   <div class="flex justify-end gap-4 w-full">
@@ -112,7 +112,7 @@
 </div>
 
 @if (erroresImportar.length) {
-<div class="mt-5">
+<div class="mt-5 scrollable-y-auto max-h-56">
   <table class="table align-middle text-gray-700 font-medium text-sm">
     <thead>
       <tr>
@@ -129,14 +129,14 @@
       </tr>
     </tbody>
   </table>
-  <div class="d-flex justify-content-end mt-3">
-    <app-button
-      type="button"
-      color="primary"
-      (click)="descargarExcelErroresImportar()"
-      texto="Descargar errores"
-    >
-    </app-button>
-  </div>
+</div>
+<div class="d-flex justify-content-end mt-5">
+  <button
+    (click)="descargarExcelErroresImportar()"
+    class="btn btn-outline btn-primary"
+  >
+    <i class="ki-filled ki-file-down"></i>
+    Descargar errores
+  </button>
 </div>
 }
