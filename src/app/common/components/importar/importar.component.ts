@@ -90,8 +90,6 @@ export class ImportarComponent extends General {
         .pipe(
           finalize(() => {
             this.estaImportando$.next(false);
-            this.emitirConsultarLista.emit();
-            this.emitirCerrarModal.emit();
           }),
           catchError((err) => {
             if (err.errores_validador) {
@@ -104,6 +102,8 @@ export class ImportarComponent extends General {
         .subscribe((response) => {
           if (response.mensaje) {
             this.alerta.mensajaExitoso(response.mensaje);
+            this.emitirConsultarLista.emit();
+            this.emitirCerrarModal.emit();
           }
         });
     } else {
