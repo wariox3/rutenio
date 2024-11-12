@@ -17,6 +17,7 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita-importar-por-excel.component';
 import { finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
+import { ImportarComponent } from "../../../../common/components/importar/importar.component";
 
 @Component({
   selector: 'app-visita-lista',
@@ -28,7 +29,8 @@ import { KTModal } from '../../../../../metronic/core';
     VisitaImportarPorComplementoComponent,
     VisitaImportarPorExcelComponent,
     ModalDefaultComponent,
-  ],
+    ImportarComponent
+],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

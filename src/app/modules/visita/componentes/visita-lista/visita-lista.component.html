@@ -123,14 +123,20 @@
 </app-modal-default>
 
 <app-modal-default
-  size="small"
+  size="medium"
   [id]="'importar-por-excel-modal'"
   titulo="Importar por excel"
 >
   <section modal-body>
-    <app-visita-importar-por-excel
+    <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
-    ></app-visita-importar-por-excel>
+      archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      url="ruteo/visita/importar-excel/"
+      [archivoEjemplo]="{
+        nombre: 'estructuraVisita',
+        ruta: 'assets/ejemplos/modelo/estructuraVisita.xlsx'
+      }"
+    ></app-importar>
   </section>
 </app-modal-default>

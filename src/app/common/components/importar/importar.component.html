@@ -1,0 +1,142 @@
+@if (fileName) {
+<div class="card card-body my-4">
+  <div class="flex justify-between">
+    <div class="flex">
+      <svg
+        width="48"
+        height="48"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M6.63513 1H13.9933L20.2258 7.50232V20.1349C20.2258 21.7163 18.9421 23 17.3607 23H6.63513C5.05374 23 3.77002 21.7163 3.77002 20.1349V3.86511C3.77002 2.28372 5.05374 1 6.63513 1Z"
+          fill="#00733B"
+        />
+        <path
+          opacity="0.302"
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M13.9839 1V7.4465H20.2257L13.9839 1Z"
+          fill="white"
+        />
+        <path
+          fill-rule="evenodd"
+          clip-rule="evenodd"
+          d="M8.61646 17.1395H11.5374V18.2465H8.61646V17.1395ZM12.449 11.4837H15.3793V12.5814H12.449V11.4837ZM8.61646 11.4837H11.5374V12.5814H8.61646V11.4837ZM12.449 13.3442H15.3793V14.4512H12.449V13.3442ZM8.61646 13.3442H11.5374V14.4512H8.61646V13.3442ZM12.449 15.2791H15.3793V16.3861H12.449V15.2791ZM8.61646 15.2791H11.5374V16.3861H8.61646V15.2791ZM12.449 17.1395H15.3793V18.2465H12.449V17.1395Z"
+          fill="white"
+        />
+      </svg>
+
+      <div class="flex flex-col">
+        <p class="ml-2">{{ fileName }}</p>
+        <p class="ml-2 text-slate-500 text-sm">{{ fileSize }}</p>
+      </div>
+    </div>
+    <div>
+      <button (click)="removerArchivoSeleccionado()">
+        <i class="ki-outline ki-cross"></i>
+      </button>
+    </div>
+  </div>
+</div>
+} @else {
+<form action="">
+  <div class="flex items-center justify-center w-full my-4">
+    <label
+      for="dropzone-file"
+      class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+    >
+      <div class="flex flex-col items-center justify-center pt-5 pb-6">
+        <svg
+          class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 20 16"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+          />
+        </svg>
+        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+          <span class="font-semibold text-blue-400 underline"
+            >Click para cargar</span
+          >
+          o arrastra y suelta
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+          tipo de archivo admitido
+        </p>
+      </div>
+      <input
+        id="dropzone-file"
+        type="file"
+        [accept]="archivosAdmitidos"
+        class="hidden"
+        (change)="onFileChange($event)"
+      />
+    </label>
+  </div>
+</form>
+}
+<div class="flex justify-between">
+  <div>
+    <app-button
+      texto="Ejemplo"
+      color="primary"
+      type="button"
+      (click)="descargarEjemploImportar ()"
+    ></app-button>
+  </div>
+  <div class="flex justify-end gap-4 w-full">
+    <button type="button" class="btn btn-light" data-modal-dismiss="true">
+      Cancelar
+    </button>
+    <app-button
+      texto="Importar"
+      color="primary"
+      type="button"
+      (click)="uploadFile()"
+      [estaDeshabilitado]="!selectedFile"
+      [estaCargando]="estaImportando$ | async"
+      textoCargando="Importando..."
+    ></app-button>
+  </div>
+</div>
+
+@if (erroresImportar.length) {
+<div class="mt-5">
+  <table class="table align-middle text-gray-700 font-medium text-sm">
+    <thead>
+      <tr>
+        <th>Fila</th>
+        <th>Campo</th>
+        <th>Error</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let error of erroresImportar">
+        <td>{{ error.fila }}</td>
+        <td>{{ error.campo }}</td>
+        <td>{{ error.error }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="d-flex justify-content-end mt-3">
+    <app-button
+      type="button"
+      color="primary"
+      (click)="descargarExcelErroresImportar()"
+      texto="Descargar errores"
+    >
+    </app-button>
+  </div>
+</div>
+}

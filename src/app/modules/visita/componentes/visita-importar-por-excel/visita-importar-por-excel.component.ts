@@ -10,11 +10,12 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
 import { VisitaService } from '../../servicios/visita.service';
 import { BehaviorSubject, catchError, finalize } from 'rxjs';
 import { General } from '../../../../common/clases/general';
+import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 
 @Component({
   selector: 'app-visita-importar-por-excel',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, ImportarComponent],
   templateUrl: './visita-importar-por-excel.component.html',
   styleUrl: './visita-importar-por-excel.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
