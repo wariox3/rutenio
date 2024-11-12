@@ -1,102 +1,139 @@
-  <!-- <div class="card-header flex justify-between items-center">
+<!-- <div class="card-header flex justify-between items-center">
     <h3 class="card-title">Rutear</h3>
     <app-button type="button" texto="Rutear" (click)="rutear()"></app-button>
   </div> -->
+<div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5">
   <div class="card">
-    <div class="card-header">
-      <h3 class="card-title">Rutear</h3>
+    <div class="card-body">
       <app-button type="button" texto="Rutear" (click)="rutear()"></app-button>
     </div>
   </div>
-
-  <div class="mt-5">
-    <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
-      <div class="flex flex-col space-y-5 h-full">
-        <div class="card flex-1">
-          <div class="card-header">
-            <h3 class="card-title">Flota</h3>
-          </div>
-          <div class="card-table scrollable-y-auto h-full">
-            <table
-              class="table align-middle text-gray-700 font-medium text-sm w-full"
-            >
-              <thead>
-                <tr>
-                  <th>Placa</th>
-                  <th>Capacidad</th>
-                  <th>Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (vehiculo of arrVehiculos; track $index) {
-                <tr>
-                  <td>{{ vehiculo.placa }}</td>
-                  <td>{{ vehiculo.capacidad }}</td>
-                  <td>
-                    @if (vehiculo.estado_activo) {
-                    <span class="badge badge-sm badge-outline badge-success">
-                      Activo
-                    </span>
-                    } @else {
-                    <span class="badge badge-sm badge-outline badge-danger">
-                      Inactivo
-                    </span>
-                    }
-                  </td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+  <div class="card bg-red-50">
+    <div class="card-body flex justify-between">
+      <section class="flex gap-14">
+        <div>
+          <p class="text-xs text-slate-600">Capacidad flota</p>
+          <span class="font-semibold">
+            <i class="ki-filled ki-focus"></i>
+            2500</span
+          >
         </div>
-        <div class="card flex-1">
-          <div class="card-header flex justify-between items-center">
-            <h3 class="card-title">Visita</h3>
-            <button class="btn btn-sm btn-primary" (click)="ordenar()">
-              Ordenar
-            </button>
-          </div>
-          <div class="card-table scrollable-y-auto h-full">
-            <table
-              class="table align-middle text-gray-700 font-medium text-sm w-full"
-            >
-              <thead>
-                <tr>
-                  <th>Guía</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (visita of arrVisitas; track $index) {
-                <tr>
-                  <td>{{ visita.guia }}</td>
-                </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+        <div>
+          <p class="text-xs text-slate-600">Peso</p>
+          <span class="font-semibold">
+            <i class="ki-filled ki-package"></i>
+            10Kg</span
+          >
+        </div>
+        <div>
+          <p class="text-xs text-slate-600">Cantidad</p>
+          <span class="font-semibold">
+            <i class="ki-filled ki-delivery"></i>
+            3</span
+          >
+        </div>
+      </section>
+      <section class="flex gap-14">
+        <div class="text-center">
+          <p class="text-xs text-slate-600 font-bold">Errores</p>
+          <span class="badge badge-sm badge-danger font-bold"> 6 </span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="mt-5">
+  <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
+    <div class="flex flex-col space-y-5 h-full">
+      <div class="card flex-1 max-h-72">
+        <div class="card-header">
+          <h3 class="card-title">Flota</h3>
+        </div>
+        <div class="card-table scrollable-y-auto h-full">
+          <table
+            class="table align-middle text-gray-700 font-medium text-sm w-full"
+          >
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Capacidad</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vehiculo of arrVehiculos; track $index) {
+              <tr>
+                <td>{{ vehiculo.placa }}</td>
+                <td>{{ vehiculo.capacidad }}</td>
+                <td>
+                  @if (vehiculo.estado_activo) {
+                  <span class="badge badge-sm badge-outline badge-success">
+                    Activo
+                  </span>
+                  } @else {
+                  <span class="badge badge-sm badge-outline badge-danger">
+                    Inactivo
+                  </span>
+                  }
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="card h-full">
-        <div class="card-header">
-          <h3 class="card-title">Mapa</h3>
+      <div class="card flex-1 max-h-72">
+        <div class="card-header flex justify-between items-center">
+          <h3 class="card-title">Visita</h3>
         </div>
-        <div class="card-body h-full">
-          <google-map
-            height="100%"
-            width="100%"
-            [center]="center"
-            [zoom]="zoom"
+        <div class="card-table scrollable-y-auto h-full">
+          <table
+            class="table align-middle text-gray-700 font-medium text-sm w-full"
           >
-            <map-marker
-              *ngFor="let markerPosition of markerPositions"
-              [position]="markerPosition"
-              #marker="mapMarker"
-              (mapClick)="openInfoWindow(marker)"
-            >
-            </map-marker>
-            <map-info-window>Info Window</map-info-window>
-          </google-map>
+            <thead>
+              <tr>
+                <th>Guía</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (visita of arrVisitas; track $index) {
+              <tr>
+                <td>{{ visita.guia }}</td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer flex justify-center">
+          <div class="pagination">
+            <button class="btn" disabled="">
+              <i class="ki-outline ki-black-left"> </i>
+            </button>
+            <button class="btn active">1</button>
+            <button class="btn">
+              <i class="ki-outline ki-black-right"> </i>
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    <div class="card h-full">
+      <div class="card-header">
+        <h3 class="card-title">Mapa</h3>
+      </div>
+      <div class="card-body h-full">
+        <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
+          <map-marker
+            *ngFor="let markerPosition of markerPositions"
+            [position]="markerPosition"
+            #marker="mapMarker"
+            (mapClick)="openInfoWindow(marker)"
+          >
+          </map-marker>
+          <map-info-window>Info Window</map-info-window>
+        </google-map>
+      </div>
+    </div>
   </div>
+</div>

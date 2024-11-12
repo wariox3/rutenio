@@ -1,6 +1,6 @@
-<ng-container>
+<div class="h-100">
 	<app-sidebar></app-sidebar>
-	<div class="wrapper flex grow flex-col">
+	<div class="wrapper flex grow flex-col h-100">
 		<app-header></app-header>
 		<main class="grow content pt-5" id="content" role="content">
 			<!-- begin: container -->
@@ -8,7 +8,7 @@
 			</div>
 			<!-- end: container -->
 			<!-- begin: container -->
-			<div class="container-fixed">
+			<div class="container-fixed h-100">
 				<router-outlet></router-outlet>
 			</div>
 			<!-- end: container -->
@@ -16,4 +16,4 @@
 		<app-footer></app-footer>
 	</div>
 	<app-search-modal></app-search-modal>
-</ng-container>
+</div>
