@@ -46,6 +46,7 @@ export default class ComplementoComponent extends General implements OnInit {
   formularios: FormGroup[] = [];
   formControls: any[] = [];
   arrComplementos: RespuestaComplemento[];
+  public toggleModal$ = new BehaviorSubject(false);
 
   private complementoService = inject(ComplementoService);
 
@@ -121,7 +122,7 @@ export default class ComplementoComponent extends General implements OnInit {
             'Se actualizó correctamente el complemento.',
             'Guardado con éxito.'
           );
-          this.cerrarModal();
+          this.dismissModal();
           this.changeDetectorRef.detectChanges();
         });
     }
@@ -138,15 +139,20 @@ export default class ComplementoComponent extends General implements OnInit {
   }
 
   abrirModal(index: number) {
+    this.toggleModal$.next(true);
     this.indexFormularioSeleccionado = index;
     const formGroup = this.formularios[this.indexFormularioSeleccionado];
     this.arrayDatosJson = (formGroup?.get('datos_json') as FormArray) || null;
   }
 
   cerrarModal() {
+    this.toggleModal$.next(false);
+  }
+
+  dismissModal() {
     const modalEl: HTMLElement = document.querySelector('#complementos-modal');
     const modal = KTModal.getInstance(modalEl);
 
-    modal.hide();
+    modal.toggle();
   }
 }

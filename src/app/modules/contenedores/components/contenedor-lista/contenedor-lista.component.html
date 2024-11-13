@@ -86,7 +86,8 @@
                       <div class="menu-item">
                         <button
                           (click)="
-                            seleccionarContenedorParaEliminar(contenedor)
+                            seleccionarContenedorParaEliminar(contenedor);
+                            abrirModal()
                           "
                           class="menu-link"
                           data-modal-toggle="#eliminarContenedor"
@@ -112,7 +113,16 @@
 
 <!-- Eliminar contenedor -->
 
+<app-modal-default
+  titulo="Eliminar contenedor"
+  size="small"
+  [id]="'eliminarContenedor'"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <div *ngIf="toggleModal$ | async" modal-body>
     <app-contenedor-eliminar
       [contenedor]="contenedor"
       (emitirEliminarContenedor)="eliminarContenedor()"
     ></app-contenedor-eliminar>
+  </div>
+</app-modal-default>

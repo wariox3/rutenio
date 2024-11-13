@@ -31,6 +31,7 @@
               <button
                 class="menu-link"
                 data-modal-toggle="#importar-por-excel-modal"
+                (click)="abrirModal()"
               >
                 <!-- <span class="menu-icon">
            <i class="ki-outline ki-badge">
@@ -43,6 +44,7 @@
               <button
                 class="menu-link"
                 data-modal-toggle="#importar-por-complemento-modal"
+                (click)="abrirModal()"
               >
                 <!-- <span class="menu-icon">
            <i class="ki-outline ki-profile-circle">
@@ -113,8 +115,10 @@
   size="small"
   [id]="'importar-por-complemento-modal'"
   titulo="Importar por complemento"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorComplementoModal
 >
-  <section modal-body>
+  <section *ngIf="toggleModal$ | async" modal-body>
     <app-visita-importar-por-complemento
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-complemento-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
@@ -126,8 +130,10 @@
   size="medium"
   [id]="'importar-por-excel-modal'"
   titulo="Importar por excel"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
 >
-  <section modal-body>
+  <section *ngIf="toggleModal$ | async" modal-body>
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"

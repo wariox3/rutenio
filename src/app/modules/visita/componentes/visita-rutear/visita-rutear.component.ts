@@ -6,30 +6,46 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
-import { Visita } from '../../../../interfaces/visita/visita.interface';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { forkJoin, tap } from 'rxjs';
-import { VehiculoService } from '../../../vehiculo/servicios/vehiculo.service';
-import { VisitaService } from '../../servicios/visita.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import {
   GoogleMapsModule,
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { BehaviorSubject, finalize, forkJoin, tap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { FlotaService } from '../../../flota/servicios/flota.service';
+import { VisitaService } from '../../servicios/visita.service';
+import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 
 @Component({
   selector: 'app-visita-rutear',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, GoogleMapsModule],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    GoogleMapsModule,
+    ProgresoCircularComponent,
+    ModalDefaultComponent,
+    LabelComponent,
+    NgSelectModule,
+    AgregarFlotaComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+
+  public toggleModal$ = new BehaviorSubject(false);
 
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
@@ -50,7 +66,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     desplazar: 0,
     ordenamientos: [],
     limite_conteo: 10000,
-    modelo: 'RutVehiculo',
+    modelo: 'RutFlota',
   };
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
@@ -65,32 +81,42 @@ export default class VisitaRutearComponent extends General implements OnInit {
     modelo: 'RutVisita',
   };
 
-  arrVehiculos: ListaVehiculo[] = [];
+  arrFlota: ListaFlota[] = [];
   arrVisitas: Visita[];
-
-  private vehiculoService = inject(VehiculoService);
+  public flotasSeleccionadas: number[] = [];
+  public cargandoConsultas$: BehaviorSubject<boolean>;
+  private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
+
+  constructor(){
+    super()
+    this.cargandoConsultas$ = new BehaviorSubject(false);
+  }
 
   ngOnInit(): void {
     this.consultarLista();
-    this.changeDetectorRef.detectChanges();
   }
 
   consultarLista() {
+    this.cargandoConsultas$.next(true);
     forkJoin({
-      vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
+      flota: this._flotaService.lista(this.arrParametrosConsulta),
       visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
     })
       .pipe(
-        tap(({ vehiculos, visitas }) => {
+        tap(({ flota, visitas }) => {
           visitas.forEach((punto) => {
             this.addMarker({ lat: punto.latitud, lng: punto.longitud });
             this.changeDetectorRef.detectChanges();
           });
-          this.arrVehiculos = vehiculos.registros;
+          this.flotasSeleccionadas = flota.registros.map(
+            (registro) => registro.vehiculo_id
+          );
+          this.arrFlota = flota.registros;
           this.arrVisitas = visitas;
           this.changeDetectorRef.detectChanges();
-        })
+        }),
+        finalize(() => this.cargandoConsultas$.next(false))
       )
       .subscribe();
   }
@@ -115,5 +141,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   openInfoWindow(marker: MapMarker) {
     this.infoWindow.open(marker);
+  }
+
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
   }
 }

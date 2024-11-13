@@ -8,37 +8,58 @@
       <app-button type="button" texto="Rutear" (click)="rutear()"></app-button>
     </div>
   </div>
-  <div class="card bg-red-50">
-    <div class="card-body flex justify-between">
-      <section class="flex gap-14">
-        <div>
-          <p class="text-xs text-slate-600">Capacidad flota</p>
-          <span class="font-semibold">
-            <i class="ki-filled ki-focus"></i>
-            2500</span
-          >
+  <div class="card">
+    <div class="card-body">
+      <div class="flex justify-between items-center">
+        <section class="flex gap-14">
+          <div>
+            <p class="text-xs text-slate-600">Vehiculos</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-delivery"></i>
+              3</span
+            >
+          </div>
+          <div>
+            <p class="text-xs text-slate-600">Capacidad</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-focus"></i>
+              2500</span
+            >
+          </div>
+          <div>
+            <p class="text-xs text-slate-600">Visitas</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-geolocation"></i>
+              76</span
+            >
+          </div>
+          <div>
+            <p class="text-xs text-slate-600">Peso</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-package"></i>
+              10Kg</span
+            >
+          </div>
+          <!-- <div>
+            <p class="text-xs text-slate-600">% Capacidad</p>
+            <span class="font-semibold"> 75%</span>
+          </div> -->
+          <div>
+            <app-progreso-circular [progress]="75"></app-progreso-circular>
+          </div>
+        </section>
+        <section class="flex gap-14">
+          <div class="text-center">
+            <p class="text-xs text-slate-600 font-bold">Errores</p>
+            <span class="badge badge-sm badge-danger font-bold"> 6 </span>
+          </div>
+        </section>
+      </div>
+      <!-- <div class="mt-3">
+        <div class="progress progress-danger">
+          <div class="progress-bar" style="width: 80%"></div>
         </div>
-        <div>
-          <p class="text-xs text-slate-600">Peso</p>
-          <span class="font-semibold">
-            <i class="ki-filled ki-package"></i>
-            10Kg</span
-          >
-        </div>
-        <div>
-          <p class="text-xs text-slate-600">Cantidad</p>
-          <span class="font-semibold">
-            <i class="ki-filled ki-delivery"></i>
-            3</span
-          >
-        </div>
-      </section>
-      <section class="flex gap-14">
-        <div class="text-center">
-          <p class="text-xs text-slate-600 font-bold">Errores</p>
-          <span class="badge badge-sm badge-danger font-bold"> 6 </span>
-        </div>
-      </section>
+      </div> -->
     </div>
   </div>
 </div>
@@ -49,6 +70,14 @@
       <div class="card flex-1 max-h-72">
         <div class="card-header">
           <h3 class="card-title">Flota</h3>
+          <button
+            class="btn btn-outline btn-primary"
+            data-modal-toggle="#modal"
+            (click)="abrirModal()"
+          >
+            <!-- <i class="ki-filled ki-plus-squared text-xl"></i> -->
+            Agregar
+          </button>
         </div>
         <div class="card-table scrollable-y-auto h-full">
           <table
@@ -58,25 +87,13 @@
               <tr>
                 <th>Placa</th>
                 <th>Capacidad</th>
-                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
-              @for (vehiculo of arrVehiculos; track $index) {
+              @for (vehiculo of arrFlota; track $index) {
               <tr>
-                <td>{{ vehiculo.placa }}</td>
-                <td>{{ vehiculo.capacidad }}</td>
-                <td>
-                  @if (vehiculo.estado_activo) {
-                  <span class="badge badge-sm badge-outline badge-success">
-                    Activo
-                  </span>
-                  } @else {
-                  <span class="badge badge-sm badge-outline badge-danger">
-                    Inactivo
-                  </span>
-                  }
-                </td>
+                <td>{{ vehiculo.vehiculo_placa }}</td>
+                <td>{{ vehiculo.vehiculo_capacidad }}</td>
               </tr>
               }
             </tbody>
@@ -137,3 +154,16 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  titulo="Agregar flota"
+  size="small"
+  [id]="'modal'"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <section *ngIf="!(cargandoConsultas$ | async)" modal-body>
+    <app-agregar-flota
+      [itemsSeleccionados]="flotasSeleccionadas"
+    ></app-agregar-flota>
+  </section>
+</app-modal-default>

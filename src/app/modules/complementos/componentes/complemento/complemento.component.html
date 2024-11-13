@@ -38,12 +38,14 @@
     </div>
   </div>
 </div>
+
 <app-modal-default
   titulo="Configurar complemento"
   size="small"
   [id]="'complementos-modal'"
+  (emitirModalCerrado)="cerrarModal()"
 >
-  <div modal-body>
+  <div *ngIf="toggleModal$ | async" modal-body>
     <div class="grid grid-cols-1 gap-4 mb-5">
       <form
         *ngIf="formularios[indexFormularioSeleccionado]"

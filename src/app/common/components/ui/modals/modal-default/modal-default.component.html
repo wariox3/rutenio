@@ -1,5 +1,5 @@
-<div class="modal" data-modal="true" [id]="id">
-    <div class="modal-content max-w-[400px] top-[20%]"
+<div class="modal" data-modal="true"   [id]="id">
+    <div class="modal-content max-w-[400px] top-[20%]" *ngIf="abierto | async"
         [ngClass]="{ 'max-w-[400px]': size === 'small', 'lg:max-w-[800px]': size === 'medium', 'lg:max-w-[1100px]': size === 'large' }">
         <div class="modal-header">
             <h3 class="modal-title">

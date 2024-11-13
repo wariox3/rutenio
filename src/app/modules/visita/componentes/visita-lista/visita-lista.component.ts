@@ -15,9 +15,9 @@ import { MapDirectionsService } from '@angular/google-maps';
 import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita-importar-por-excel.component';
-import { finalize, forkJoin } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
-import { ImportarComponent } from "../../../../common/components/importar/importar.component";
+import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 
 @Component({
   selector: 'app-visita-lista',
@@ -29,8 +29,8 @@ import { ImportarComponent } from "../../../../common/components/importar/import
     VisitaImportarPorComplementoComponent,
     VisitaImportarPorExcelComponent,
     ModalDefaultComponent,
-    ImportarComponent
-],
+    ImportarComponent,
+  ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +40,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _directionsService = inject(MapDirectionsService);
   private _listaItemsEliminar: number[] = [];
 
+  public toggleModal$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
   public arrGuia: any[];
   public arrGuiasOrdenadas: any[];
@@ -67,7 +68,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    // this.isCheckedSeleccionarTodos = false; 
+    // this.isCheckedSeleccionarTodos = false;
     // this.registrosAEliminar = [];
     this._visitaService.lista(filtros).subscribe((respuesta) => {
       this.arrGuia = respuesta.map((guia) => ({
@@ -190,8 +191,17 @@ export default class VisitaListaComponent extends General implements OnInit {
   cerrarModalPorId(id: string) {
     const modalEl: HTMLElement = document.querySelector(id);
     const modal = KTModal.getInstance(modalEl);
+    this.toggleModal$.next(false);
 
     modal.hide();
+  }
+
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
   }
 
   actualizarItemsSeleccionados(itemsSeleccionados: number[]) {

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { catchError, of, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, of, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -41,6 +41,8 @@ export default class ContenedorListaComponent extends General implements OnInit 
   arrContenedores: any[] = [];
   contenedor: Contenedor;
   dominioApp = environment.dominioApp;
+  public toggleModal$ = new BehaviorSubject(false);
+
 
   ngOnInit() {
     this.consultarLista();
@@ -120,6 +122,14 @@ export default class ContenedorListaComponent extends General implements OnInit 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
   }
 
   seleccionarContenedorParaEliminar(contenedor: Contenedor) {
