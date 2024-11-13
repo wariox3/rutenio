@@ -43,6 +43,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   public markerPositions: google.maps.LatLngLiteral[] = [];
   public estaCreando: boolean = false;
   public zoom = 12;
+  franjaSeleccionada: any;
   public center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
     lng: -75.58609508555918,
@@ -135,6 +136,50 @@ export default class FranjaListaComponent extends General implements OnInit {
           this.changeDetectorRef.detectChanges();
         });
     }
+  }
+
+  seleccionarFranja(item: any) {
+    this.franjaSeleccionada = item;
+    const coordenadasArray = this.formularioFranja.get(
+      "coordenadas"
+    ) as FormArray;
+    coordenadasArray.clear();
+
+    this.formularioFranja.patchValue({
+      codigo: item.codigo,
+      id: item.id,
+      color: item.color,
+      nombre: item.nombre,
+    });
+
+    item.coordenadas.forEach((coordenada: any) => {
+      coordenadasArray.push(new FormControl(coordenada));
+    });
+
+    this.changeDetectorRef.detectChanges();
+
+    // this.windowRef = this.windowService.open(this.editarFranja, {
+    //   title: "Editar franja",
+    //   context: {
+    //     franja: "item",
+    //   },
+    // });
+  }
+
+  toggleEstaCreando() {
+    this.estaCreando = !this.estaCreando;
+  }
+
+  eliminarFranja(item: any) {
+    this._franjaService.eliminarFranja(item.id).subscribe(() => {
+      this.alerta.mensajaExitoso(
+        "Se ha eliminado la franja exitosamente.",
+        "Guardado con éxito."
+      );
+      // this.windowRef.close();
+      this.consultarLista();
+      this.consultarFranjas();
+    });
   }
 
   openInfoWindow(marker: MapMarker) {
