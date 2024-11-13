@@ -51,35 +51,36 @@
       <div class="card-header">
         <div class="card-title">Mapa</div>
       </div>
-    </div>
-    <div class="card-body h-full">
-      <google-map
-        id="map"
-        height="100%"
-        width="100%"
-        [center]="center"
-        [zoom]="zoom"
-        (mapClick)="clickMap($event)"
-      >
-        <map-polygon
-          *ngFor="let franja of franjas$ | async"
-          [paths]="franja.coordenadas"
-        />
-        <map-polygon
-          *ngIf="estaCreando"
-          [paths]="nuevaVertice"
-          [options]="polylineOptions"
-        ></map-polygon>
-        <map-marker
-          *ngFor="let markerPosition of markerPositions"
-          [position]="markerPosition"
-          #marker="mapMarker"
-          (mapClick)="openInfoWindow(marker)"
+      <div class="card-body h-full">
+        <google-map
+          id="map"
+          height="100%"
+          width="100%"
+          [center]="center"
+          [zoom]="zoom"
+          (mapClick)="clickMap($event)"
         >
-        </map-marker>
-        <map-info-window>Info Window</map-info-window>
-      </google-map>
+          <map-polygon
+            *ngFor="let franja of franjas$ | async"
+            [paths]="franja.coordenadas"
+          />
+          <map-polygon
+            *ngIf="estaCreando"
+            [paths]="nuevaVertice"
+            [options]="polylineOptions"
+          ></map-polygon>
+          <map-marker
+            *ngFor="let markerPosition of markerPositions"
+            [position]="markerPosition"
+            #marker="mapMarker"
+            (mapClick)="openInfoWindow(marker)"
+          >
+          </map-marker>
+          <map-info-window>Info Window</map-info-window>
+        </google-map>
+      </div>
     </div>
+
   </div>
 </div>
 
