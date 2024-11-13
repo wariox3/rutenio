@@ -9,6 +9,7 @@
   <app-button
     texto="Guardar"
     [estaDeshabilitado]="!formularioVehiculo.valid"
+    (click)="enviar()"
   ></app-button>
 </div>
 
@@ -18,7 +19,7 @@
   </div>
 
   <div class="card-body">
-    <form [formGroup]="formularioVehiculo" (submit)="enviar()">
+    <form [formGroup]="formularioVehiculo">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div class="mb-5">
           <div>
