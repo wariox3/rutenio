@@ -1,4 +1,4 @@
-<form [formGroup]="formularioFlota">
+<!-- <form [formGroup]="formularioFlota">
   <pre>{{ formularioFlota.value | json }}</pre>
   <div class="grid grid-cols-1 gap-4 mb-5">
     <app-label [required]="true">Vehiculos</app-label>
@@ -37,4 +37,125 @@
       (click)="enviar()"
     ></app-button>
   </div>
-</form>
+</form> -->
+
+<div class="grid">
+  <div class="min-w-full">
+    <div class="py-4 flex-wrap flex items-center justify-between">
+      <div class="flex gap-6">
+        <div class="relative">
+          <i
+            class="ki-outline ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3"
+          >
+          </i>
+          <input
+            [formControl]="textoBusqueda"
+            class="input input-sm pl-8"
+            placeholder="Buscar vehiculo"
+            type="text"
+          />
+        </div>
+      </div>
+      <div>
+        <app-button
+          texto="Guardar"
+          clases="btn-sm"
+          [estaDeshabilitado]="vehiculosIds.length <= 0"
+          (click)="enviar()"
+        ></app-button>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div>
+      <div class="scrollable-x-auto scrollable-y-auto max-h-72">
+        <table
+          class="table table-auto table-border"
+          data-datatable-table="true"
+          id="grid_table"
+        >
+          <thead>
+            <tr>
+              <th class="w-[60px]">
+                <!-- <input
+                    class="checkbox checkbox-sm"
+                    data-datatable-check="true"
+                    type="checkbox"
+                  /> -->
+              </th>
+              <th class="min-w-[175px]">
+                <span class="sort asc">
+                  <span class="sort-label"> Placa </span>
+                </span>
+              </th>
+              <th class="min-w-[150px]">
+                <span class="sort">
+                  <span class="sort-label"> Capacidad </span>
+                </span>
+              </th>
+              <th class="min-w-[125px]">
+                <span class="sort">
+                  <span class="sort-label"> Estado </span>
+                </span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (vehiculo of vehiculosDisponibles$ | async; track $index){
+            <tr>
+              <td>
+                <input
+                  class="checkbox checkbox-sm"
+                  data-datatable-row-check="true"
+                  type="checkbox"
+                  (change)="manejarCheckItem($event, vehiculo.id)"
+                  [checked]="estoyEnListaEliminar(vehiculo.id)"
+                />
+              </td>
+              <td>
+                <div class="flex items-center gap-2.5">
+                  <div class="flex flex-col gap-0.5">
+                    <a
+                      class="leading-none font-semibold text-sm text-gray-900 hover:text-primary"
+                      href="#"
+                    >
+                      {{ vehiculo.placa }}
+                    </a>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="flex items-center gap-1.5">
+                  <span class="leading-none text-gray-700">
+                    {{ vehiculo.capacidad }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <span class="badge badge-sm badge-outline badge-success">
+                  Disponible
+                </span>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer justify-center">
+        <div class="pagination">
+          <button class="btn" disabled="">
+            <i class="ki-outline ki-black-left"> </i>
+          </button>
+          <button class="btn">1</button>
+          <button class="btn">2</button>
+          <button class="btn active">3</button>
+          <button class="btn">4</button>
+          <button class="btn">5</button>
+          <button class="btn">
+            <i class="ki-outline ki-black-right"> </i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

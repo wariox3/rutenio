@@ -45,7 +45,10 @@
             <span class="font-semibold"> 75%</span>
           </div> -->
           <div>
-            <app-progreso-circular [progress]="75"></app-progreso-circular>
+            <app-progreso-circular
+              data-tooltip="#tooltip_left"
+              [progress]="75"
+            ></app-progreso-circular>
           </div>
         </section>
         <section class="flex gap-14">
@@ -72,7 +75,7 @@
           <h3 class="card-title">Flota</h3>
           <button
             class="btn btn-outline btn-primary"
-            data-modal-toggle="#modal"
+            data-modal-toggle="#agregar-flota"
             (click)="abrirModal()"
           >
             <!-- <i class="ki-filled ki-plus-squared text-xl"></i> -->
@@ -87,6 +90,7 @@
               <tr>
                 <th>Placa</th>
                 <th>Capacidad</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -94,6 +98,11 @@
               <tr>
                 <td>{{ vehiculo.vehiculo_placa }}</td>
                 <td>{{ vehiculo.vehiculo_capacidad }}</td>
+                <td>
+                  <button>
+                    <i class="ki-filled ki-trash text-lg"></i>
+                  </button>
+                </td>
               </tr>
               }
             </tbody>
@@ -157,13 +166,24 @@
 
 <app-modal-default
   titulo="Agregar flota"
-  size="small"
-  [id]="'modal'"
+  size="medium"
+  [id]="'agregar-flota'"
   (emitirModalCerrado)="cerrarModal()"
 >
-  <section *ngIf="!(cargandoConsultas$ | async)" modal-body>
+  <section
+    *ngIf="!(cargandoConsultas$ | async) && (toggleModal$ | async)"
+    modal-body
+  >
     <app-agregar-flota
+      (emitirConsultarLista)="consultarLista()"
       [itemsSeleccionados]="flotasSeleccionadas"
     ></app-agregar-flota>
   </section>
 </app-modal-default>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_left"
+>
+  Porcentaje de capacidad
+</div>
