@@ -70,9 +70,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
-    filtros: [
-      { propiedad: 'estado_despacho', valor1: false },
-    ],
+    filtros: [{ propiedad: 'estado_despacho', valor1: false }],
     limite: 50,
     desplazar: 0,
     ordenamientos: [],
@@ -114,6 +112,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .subscribe((respuesta) => {
         respuesta.forEach((punto) => {
           this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+          this._verificarErrores(punto);
           this.changeDetectorRef.detectChanges();
         });
 
@@ -141,7 +140,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
-  private _contadorDeErrores() {}
+  private _verificarErrores(visita: Visita) {
+    if (!visita.estado_decodificado) {
+      this.cantidadErrores += 1;
+    }
+  }
 
   private _calcularPorcentajeCapacidad() {
     if (this.pesoTotal <= 0 || this.capacidadTotal <= 0) {
@@ -159,7 +162,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.errorCapacidad = false;
     }
   }
-  
+
   private _calcularCapacidadTotal(flotas: ListaFlota[]) {
     this.capacidadTotal = flotas.reduce(
       (acc, curVal) => acc + curVal.vehiculo_capacidad,

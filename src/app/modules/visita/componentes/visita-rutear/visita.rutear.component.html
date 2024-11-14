@@ -1,7 +1,3 @@
-<!-- <div class="card-header flex justify-between items-center">
-    <h3 class="card-title">Rutear</h3>
-    <app-button type="button" texto="Rutear" (click)="rutear()"></app-button>
-  </div> -->
 <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5">
   <div class="card">
     <div class="card-body">
@@ -9,11 +5,16 @@
         type="button"
         texto="Rutear"
         (emitirBotonClicked)="rutear()"
-        [estaDeshabilitado]="errorCapacidad || arrFlota.length <= 0"
+        [estaDeshabilitado]="
+          errorCapacidad || arrFlota.length <= 0 || cantidadErrores > 0
+        "
       ></app-button>
     </div>
   </div>
-  <div class="card" [ngClass]="{ 'bg-red-50': errorCapacidad }">
+  <div
+    class="card"
+    [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 }"
+  >
     <div class="card-body">
       <div class="flex justify-between items-center">
         <section class="flex gap-14">
@@ -57,7 +58,9 @@
         <section class="flex gap-14">
           <div class="text-center">
             <p class="text-xs text-slate-600 font-bold">Errores</p>
-            <span class="badge badge-sm badge-danger font-bold"> {{ cantidadErrores }} </span>
+            <span class="badge badge-sm badge-danger font-bold">
+              {{ cantidadErrores }}
+            </span>
           </div>
         </section>
       </div>
