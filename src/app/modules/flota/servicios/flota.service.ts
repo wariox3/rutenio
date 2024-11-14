@@ -24,4 +24,8 @@ export class FlotaService {
       vehiculo: flotaId,
     });
   }
+
+  eliminarFlota(flotaId: number) {
+    return this.http.delete(`ruteo/flota/${flotaId}`, {});
+  }
 }

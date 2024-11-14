@@ -99,7 +99,7 @@
                 <td>{{ vehiculo.vehiculo_placa }}</td>
                 <td>{{ vehiculo.vehiculo_capacidad }}</td>
                 <td>
-                  <button>
+                  <button (click)="eliminarFlota(vehiculo.id)">
                     <i class="ki-filled ki-trash text-lg"></i>
                   </button>
                 </td>

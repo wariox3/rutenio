@@ -88,8 +88,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
 
-  constructor(){
-    super()
+  constructor() {
+    super();
     this.cargandoConsultas$ = new BehaviorSubject(false);
   }
 
@@ -121,6 +121,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .subscribe();
   }
 
+  consultarFlotas() {
+    this.cargandoConsultas$.next(true);
+    this._flotaService
+      .lista(this.arrParametrosConsulta)
+      .pipe(finalize(() => this.cargandoConsultas$.next(false)))
+      .subscribe((response) => {
+        this.flotasSeleccionadas = response.registros.map(
+          (registro) => registro.vehiculo_id
+        );
+        this.arrFlota = response.registros;
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
   ordenar() {
     this.visitaService.ordenar().subscribe((respuesta: any) => {
       this.alerta.mensajaExitoso('Se ha ordenado correctamente');
@@ -149,5 +163,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   cerrarModal() {
     this.toggleModal$.next(false);
+  }
+
+  eliminarFlota(id: number) {
+    this._flotaService.eliminarFlota(id).subscribe((response) => {
+      this.consultarFlotas();
+      this.alerta.mensajaExitoso('Flota eliminada');
+    });
   }
 }
