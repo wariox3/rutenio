@@ -71,8 +71,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
     filtros: [
-      { propiedad: 'estado_despacho', valor1: false },
-      { propiedad: 'estado_decodificado', valor1: true },
+      // { propiedad: 'estado_despacho', valor1: false },
+      // { propiedad: 'estado_decodificado', valor1: true },
     ],
     limite: 50,
     desplazar: 0,
@@ -84,6 +84,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
   arrFlota: ListaFlota[] = [];
   arrVisitas: Visita[];
   public flotasSeleccionadas: number[] = [];
+  public capacidadTotal: number = 0;
+  public pesoTotal: number = 0;
+  public porcentajeCapacidad: number = 0;
+
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
@@ -98,27 +102,24 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   consultarLista() {
-    this.cargandoConsultas$.next(true);
-    forkJoin({
-      flota: this._flotaService.lista(this.arrParametrosConsulta),
-      visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
-    })
-      .pipe(
-        tap(({ flota, visitas }) => {
-          visitas.forEach((punto) => {
-            this.addMarker({ lat: punto.latitud, lng: punto.longitud });
-            this.changeDetectorRef.detectChanges();
-          });
-          this.flotasSeleccionadas = flota.registros.map(
-            (registro) => registro.vehiculo_id
-          );
-          this.arrFlota = flota.registros;
-          this.arrVisitas = visitas;
+    this.consultarFlotas();
+    this.consultarVisitas();
+  }
+
+  consultarVisitas() {
+    this.visitaService
+      .lista(this.arrParametrosConsultaVisita)
+      .subscribe((respuesta) => {
+        respuesta.forEach((punto) => {
+          this.addMarker({ lat: punto.latitud, lng: punto.longitud });
           this.changeDetectorRef.detectChanges();
-        }),
-        finalize(() => this.cargandoConsultas$.next(false))
-      )
-      .subscribe();
+        });
+
+        this._calcularPesoTotal(respuesta);
+        this._calcularPorcentajeCapacidad();
+        this.arrVisitas = respuesta;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   consultarFlotas() {
@@ -130,9 +131,37 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.flotasSeleccionadas = response.registros.map(
           (registro) => registro.vehiculo_id
         );
+
+        this._calcularCapacidadTotal(response.registros);
+        this._calcularPorcentajeCapacidad();
         this.arrFlota = response.registros;
         this.changeDetectorRef.detectChanges();
       });
+  }
+
+  private _calcularPorcentajeCapacidad() {
+    if (this.pesoTotal <= 0 || this.capacidadTotal <= 0) {
+      this.porcentajeCapacidad = 0;
+    } else {
+      let total = (this.pesoTotal / this.capacidadTotal) * 100;
+      this.porcentajeCapacidad = this._redondear(total, 0);
+    }
+  }
+
+  private _calcularCapacidadTotal(flotas: ListaFlota[]) {
+    this.capacidadTotal = flotas.reduce(
+      (acc, curVal) => acc + curVal.vehiculo_capacidad,
+      0
+    );
+  }
+
+  private _redondear(valor: number, decimales: number): number {
+    const factor = Math.pow(10, decimales);
+    return Math.round(valor * factor) / factor;
+  }
+
+  private _calcularPesoTotal(visitas: Visita[]) {
+    this.pesoTotal = visitas.reduce((acc, curVal) => acc + curVal.peso, 0);
   }
 
   ordenar() {

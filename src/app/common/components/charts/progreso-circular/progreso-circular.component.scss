@@ -1,10 +1,30 @@
-.flex {
-  width: 64px;
-  height: 64px;
-}
-.stroke-gray-300 {
-  stroke: #e2e8f0; /* Tailwind gray-300 */
-}
-.stroke-blue-500 {
-  stroke: #3b82f6; /* Tailwind blue-500 */
+.progress-circle {
+  position: relative;
+  width: 39px;
+  height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .circle {
+    transform: rotate(-90deg); // Gira el círculo para que empiece desde arriba
+  }
+
+  .background,
+  .foreground {
+    fill: none;
+    stroke-width: 4;
+    cx: 24;
+    cy: 24;
+    r: 22;
+  }
+
+  .background {
+    stroke: #e6e6e6; // Color de fondo de la barra
+  }
+
+  .foreground {
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.3s ease;
+  }
 }

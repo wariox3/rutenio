@@ -35,13 +35,6 @@
         >
           <thead>
             <tr>
-              <th class="w-[60px]">
-                <!-- <input
-                    class="checkbox checkbox-sm"
-                    data-datatable-check="true"
-                    type="checkbox"
-                  /> -->
-              </th>
               <th class="min-w-[175px]">
                 <span class="sort asc">
                   <span class="sort-label"> Placa </span>
@@ -57,26 +50,23 @@
                   <span class="sort-label"> Estado </span>
                 </span>
               </th>
+              <th class="w-[60px]">
+                <input
+                  class="checkbox checkbox-sm"
+                  data-datatable-check="true"
+                  type="checkbox"
+                  (change)="manejarCheckGlobal($event)"
+                />
+              </th>
             </tr>
           </thead>
           <tbody>
             @for (vehiculo of vehiculosDisponibles$ | async; track $index){
             <tr>
               <td>
-                <input
-                  class="checkbox checkbox-sm"
-                  data-datatable-row-check="true"
-                  type="checkbox"
-                  (change)="manejarCheckItem($event, vehiculo.id)"
-                  [checked]="estoyEnListaEliminar(vehiculo.id)"
-                />
-              </td>
-              <td>
                 <div class="flex items-center gap-2.5">
                   <div class="flex flex-col gap-0.5">
-                    <p
-                      class="leading-none font-semibold text-sm text-gray-900"
-                    >
+                    <p class="leading-none font-semibold text-sm text-gray-900">
                       {{ vehiculo.placa }}
                     </p>
                   </div>
@@ -94,12 +84,21 @@
                   Disponible
                 </span>
               </td>
+              <td>
+                <input
+                  class="checkbox checkbox-sm"
+                  data-datatable-row-check="true"
+                  type="checkbox"
+                  (change)="manejarCheckItem($event, vehiculo.id)"
+                  [checked]="estoyEnListaEliminar(vehiculo.id)"
+                />
+              </td>
             </tr>
             }
           </tbody>
         </table>
       </div>
-      <div class="card-footer justify-center">
+      <!-- <div class="card-footer justify-center">
         <div class="pagination">
           <button class="btn" disabled="">
             <i class="ki-outline ki-black-left"> </i>
@@ -113,7 +112,7 @@
             <i class="ki-outline ki-black-right"> </i>
           </button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

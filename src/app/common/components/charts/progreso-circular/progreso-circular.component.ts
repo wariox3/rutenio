@@ -10,11 +10,15 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgresoCircularComponent {
-  @Input() progress: number = 0;
-  radius: number = 12; // Cambia aquí el radio para que coincida con el tamaño reducido
-  circumference: number = 2 * Math.PI * this.radius;
+  @Input() progress: number = 0; // Valor entre 0 y 100
 
-  ngOnInit() {
-    this.progress = Math.min(100, Math.max(0, this.progress));
+  strokeDashoffset: number = 0;
+
+  // Circunferencia del círculo con r = 16 (perímetro = 2 * π * r)
+  readonly circumference = 2 * Math.PI * 22;
+
+  ngOnChanges(): void {
+    // Calcula el offset según el progreso
+    this.strokeDashoffset = this.circumference * (1 - this.progress / 100);
   }
 }

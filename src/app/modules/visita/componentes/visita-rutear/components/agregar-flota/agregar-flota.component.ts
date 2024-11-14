@@ -117,10 +117,16 @@ export class AgregarFlotaComponent extends General implements OnInit {
       });
   }
 
-  private _excluirVehiculosSeleccionados() {}
-
   estoyEnListaEliminar(id: number): boolean {
     return this._vehiculosIds.indexOf(id) !== -1;
+  }
+
+  manejarCheckGlobal(event: any) {
+    if (event.target.checked) {
+      this._agregarTodosLosItemsAListaEliminar();
+    } else {
+      this._removerTodosLosItemsAListaEliminar();
+    }
   }
 
   manejarCheckItem(event: any, id: number) {
@@ -129,6 +135,8 @@ export class AgregarFlotaComponent extends General implements OnInit {
     } else {
       this._removerItemDeListaEliminar(id);
     }
+
+    console.log(this._vehiculosIds);
   }
 
   private _agregarItemAListaEliminar(id: number) {
@@ -138,6 +146,25 @@ export class AgregarFlotaComponent extends General implements OnInit {
   private _removerItemDeListaEliminar(id: number) {
     const itemsFiltrados = this._vehiculosIds.filter((item) => item !== id);
     this._vehiculosIds = itemsFiltrados;
+  }
+
+  private _removerTodosLosItemsAListaEliminar() {
+    this._vehiculosIds = [];
+  }
+
+  private _agregarTodosLosItemsAListaEliminar() {
+    this.vehiculosDisponibles$.subscribe((response) => {
+      response.forEach((item) => {
+        const indexItem = this._vehiculosIds.indexOf(item.id);
+
+        if (indexItem === -1) {
+          this._vehiculosIds.push(item.id);
+        }
+      });
+
+      console.log(this._vehiculosIds);
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
   private _consultarVehiculos() {
