@@ -27,7 +27,7 @@ export default class VehiculoNuevoComponent extends General {
       .guardarVehiculo(formulario)
       .subscribe((respuesta: any) => {
         this.alerta.mensajaExitoso('Se ha creado el vehículo exitosamente.');
-        this.router.navigate([`/admin/vehiculo/detalle/${respuesta.id}`]);
+        this.router.navigate([`/admin/vehiculo/lista`]);
       });
   }
 }
