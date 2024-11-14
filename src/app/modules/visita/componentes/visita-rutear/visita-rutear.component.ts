@@ -71,8 +71,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
     filtros: [
-      // { propiedad: 'estado_despacho', valor1: false },
-      // { propiedad: 'estado_decodificado', valor1: true },
+      { propiedad: 'estado_despacho', valor1: false },
     ],
     limite: 50,
     desplazar: 0,
