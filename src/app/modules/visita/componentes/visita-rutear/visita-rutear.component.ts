@@ -87,6 +87,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public capacidadTotal: number = 0;
   public pesoTotal: number = 0;
   public porcentajeCapacidad: number = 0;
+  public barraCapacidad: number = 0;
+  public errorCapacidad: boolean = false;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -145,6 +147,14 @@ export default class VisitaRutearComponent extends General implements OnInit {
     } else {
       let total = (this.pesoTotal / this.capacidadTotal) * 100;
       this.porcentajeCapacidad = this._redondear(total, 0);
+    }
+
+    if (this.porcentajeCapacidad > 100) {
+      this.barraCapacidad = 100;
+      this.errorCapacidad = true;
+    } else {
+      this.barraCapacidad = this.porcentajeCapacidad;
+      this.errorCapacidad = false;
     }
   }
 

@@ -11,6 +11,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 })
 export class ProgresoCircularComponent {
   @Input() progress: number = 0; // Valor entre 0 y 100
+  @Input() barraProgreso: number = 0; // Valor entre 0 y 100
+  @Input() error: boolean = true;
 
   strokeDashoffset: number = 0;
 
@@ -19,6 +21,6 @@ export class ProgresoCircularComponent {
 
   ngOnChanges(): void {
     // Calcula el offset según el progreso
-    this.strokeDashoffset = this.circumference * (1 - this.progress / 100);
+    this.strokeDashoffset = this.circumference * (1 - this.barraProgreso / 100);
   }
 }

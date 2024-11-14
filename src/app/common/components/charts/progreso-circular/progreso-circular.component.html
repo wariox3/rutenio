@@ -3,6 +3,7 @@
     <circle class="background" cx="24" cy="24" r="22" />
     <circle
       class="foreground stroke-green-500"
+      [ngClass]="{ 'stroke-red-500': error }"
       cx="24"
       cy="24"
       r="22"
@@ -10,5 +11,5 @@
       [attr.stroke-dashoffset]="strokeDashoffset"
     />
   </svg>
-  <div class="text-green-500 absolute text-xs font-bold">{{ progress }}%</div>
+  <div [ngClass]="{ 'text-red-500': error }" class="text-green-500 absolute text-xs font-bold">{{ progress }}%</div>
 </div>
