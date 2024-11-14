@@ -1,9 +1,17 @@
-<button (click)="presionarBoton()" [className]="clases"
-    [ngClass]="{'btn-primary': color === 'primary', 'btn-danger': color === 'danger'}" class="btn" [type]="type"
-    [disabled]="estaCargando || estaDeshabilitado">
-    @if (!estaCargando) {
-    {{ texto }}
-    } @else {
-    {{ textoCargando}}
-    }
+<button
+  (click)="presionarBoton()"
+  [className]="clases"
+  [ngClass]="{
+    'btn-primary': color === 'primary',
+    'btn-danger': color === 'danger'
+  }"
+  class="btn"
+  [type]="type"
+  [disabled]="estaCargando || estaDeshabilitado"
+>
+  @if (!estaCargando) {
+  {{ texto }}
+  } @else {
+  {{ textoCargando }}
+  }
 </button>

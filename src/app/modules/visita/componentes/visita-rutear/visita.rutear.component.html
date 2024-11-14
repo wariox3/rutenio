@@ -8,7 +8,7 @@
       <app-button
         type="button"
         texto="Rutear"
-        (click)="rutear()"
+        (emitirBotonClicked)="rutear()"
         [estaDeshabilitado]="errorCapacidad || arrFlota.length <= 0"
       ></app-button>
     </div>
