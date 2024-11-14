@@ -11,91 +11,115 @@
     </div>
   </div>
 
-  <div class="max-h-[44rem] scrollable">
-    <div class="btn-group flex justify-end items-center mr-4">
-      <div class="menu menu-default" data-menu="true">
-        <div
-          class="menu-item"
-          data-menu-item-placement="bottom-start"
-          data-menu-item-toggle="dropdown"
-          data-menu-item-trigger="click"
-        >
-          <button class="menu-toggle btn btn-light">
-            <span class="menu-title"> Importar </span>
-            <span class="menu-arrow">
-              <i class="ki-outline ki-down"> </i>
-            </span>
-          </button>
-          <div class="menu-dropdown w-48 py-2">
-            <div class="menu-item" data-menu-dismiss="true">
-              <button
-                class="menu-link"
-                data-modal-toggle="#importar-por-excel-modal"
-                (click)="abrirModal()"
-              >
-                <!-- <span class="menu-icon">
-           <i class="ki-outline ki-badge">
-           </i>
-          </span> -->
-                <span class="menu-title"> Por excel </span>
-              </button>
-            </div>
-            <div class="menu-item" data-menu-dismiss="true">
-              <button
-                class="menu-link"
-                data-modal-toggle="#importar-por-complemento-modal"
-                (click)="abrirModal()"
-              >
-                <!-- <span class="menu-icon">
-           <i class="ki-outline ki-profile-circle">
-           </i>
-          </span> -->
-                <span class="menu-title"> Por complemento </span>
-              </button>
+  <div>
+    <div class="flex justify-end mr-8">
+      <div class="inline-flex rounded-md shadow-s my-5">
+        <div class="menu menu-default p-0" data-menu="true">
+          <div
+            class="menu-item"
+            data-menu-item-placement="bottom-start"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button
+              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-l border-y border-gray-200 rounded-s-lg"
+            >
+              <span class=""> Importar </span>
+              <span class="menu-arrow">
+                <i class="ki-outline ki-down"> </i>
+              </span>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button
+                  class="menu-link"
+                  data-modal-toggle="#importar-por-excel-modal"
+                  (click)="abrirModal()"
+                >
+                  <span class="menu-title"> Por excel </span>
+                </button>
+              </div>
+              <div class="menu-item" data-menu-dismiss="true">
+                <button
+                  class="menu-link"
+                  data-modal-toggle="#importar-por-complemento-modal"
+                  (click)="abrirModal()"
+                >
+                  <span class="menu-title"> Por complemento </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <button class="btn btn-light btn-success" (click)="decodificar()">
-        Decodificar
-      </button>
-
-      <button class="btn btn-light btn-success" (click)="ordenar()">
-        Ordenar
-      </button>
-
-      <div class="menu menu-default" data-menu="true">
-        <div
-          class="menu-item"
-          data-menu-item-placement="bottom-start"
-          data-menu-item-toggle="dropdown"
-          data-menu-item-trigger="click"
-        >
-          <button class="menu-toggle btn btn-light">
-            <span class=""> Acciones </span>
-            <span class="menu-arrow">
-              <i class="ki-outline ki-down"> </i>
-            </span>
-          </button>
-          <div class="menu-dropdown w-48 py-2">
-            <div class="menu-item" data-menu-dismiss="true">
-              <button class="menu-link" (click)="eliminarItemsSeleccionados()">
-                <!-- <span class="menu-icon">
-           <i class="ki-outline ki-badge">
-           </i>
-          </span> -->
-                <span class="menu-title"> Eliminar </span>
-              </button>
+        <div class="menu menu-default p-0" data-menu="true">
+          <div
+            class="menu-item"
+            data-menu-item-placement="bottom-start"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button
+              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-l border-y border-gray-200"
+            >
+              <span class=""> Exportar </span>
+              <span class="menu-arrow">
+                <i class="ki-outline ki-down"> </i>
+              </span>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="exportarExcel()">
+                  <span class="menu-title"> Excel </span>
+                </button>
+              </div>
             </div>
-            <div class="menu-item" data-menu-dismiss="true">
-              <button class="menu-link" (click)="confirmarEliminarTodos()">
-                <!-- <span class="menu-icon">
-           <i class="ki-outline ki-profile-circle">
-           </i>
-          </span> -->
-                <span class="menu-title"> Eliminar todas </span>
-              </button>
+          </div>
+        </div>
+
+        <button
+          class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-l border-gray-200"
+          (click)="decodificar()"
+        >
+          Decodificar
+        </button>
+
+        <button
+          class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-l border-gray-200"
+          (click)="ordenar()"
+        >
+          Ordenar
+        </button>
+
+        <div class="menu menu-default p-0" data-menu="true">
+          <div
+            class="menu-item"
+            data-menu-item-placement="bottom-start"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button
+              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
+            >
+              <span class=""> Acciones </span>
+              <span class="menu-arrow">
+                <i class="ki-outline ki-down"> </i>
+              </span>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button
+                  class="menu-link"
+                  (click)="eliminarItemsSeleccionados()"
+                >
+                  <span class="menu-title"> Eliminar </span>
+                </button>
+              </div>
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="confirmarEliminarTodos()">
+                  <span class="menu-title"> Eliminar todas </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

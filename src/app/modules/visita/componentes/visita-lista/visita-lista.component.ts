@@ -18,6 +18,7 @@ import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita
 import { BehaviorSubject, finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-visita-lista',
@@ -39,6 +40,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _visitaService = inject(VisitaService);
   private _directionsService = inject(MapDirectionsService);
   private _listaItemsEliminar: number[] = [];
+  private _generalService = inject(GeneralService);
 
   public toggleModal$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
@@ -224,5 +226,15 @@ export default class VisitaListaComponent extends General implements OnInit {
       .subscribe((respuesta: any) => {
         this.alerta.mensajaExitoso('Registros eliminado');
       });
+  }
+
+  exportarExcel() {
+    this._generalService.descargarArchivo(`general/funcionalidad/lista/`, {
+      ...this.arrParametrosConsulta,
+      excel: true,
+      ...{
+        limite: 5000,
+      },
+    });
   }
 }

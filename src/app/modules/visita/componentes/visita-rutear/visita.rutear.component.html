@@ -45,12 +45,6 @@
               {{ pesoTotal }}</span
             >
           </div>
-          <!-- <div>
-            <p class="text-xs text-slate-600">% Capacidad</p>
-            <span class="font-semibold">
-              {{ (pesoTotal / capacidadTotal) * 100 }}</span
-            >
-          </div> -->
           <div>
             <app-progreso-circular
               data-tooltip="#tooltip_left"
@@ -61,10 +55,10 @@
           </div>
         </section>
         <section class="flex gap-14">
-          <!-- <div class="text-center">
+          <div class="text-center">
             <p class="text-xs text-slate-600 font-bold">Errores</p>
-            <span class="badge badge-sm badge-danger font-bold"> 6 </span>
-          </div> -->
+            <span class="badge badge-sm badge-danger font-bold"> {{ cantidadErrores }} </span>
+          </div>
         </section>
       </div>
     </div>

@@ -141,6 +141,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
+  private _contadorDeErrores() {}
+
   private _calcularPorcentajeCapacidad() {
     if (this.pesoTotal <= 0 || this.capacidadTotal <= 0) {
       this.porcentajeCapacidad = 0;
