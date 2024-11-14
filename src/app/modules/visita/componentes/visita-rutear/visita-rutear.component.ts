@@ -89,6 +89,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public porcentajeCapacidad: number = 0;
   public barraCapacidad: number = 0;
   public errorCapacidad: boolean = false;
+  public cantidadErrores: number = 0;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -157,7 +158,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.errorCapacidad = false;
     }
   }
-
+  
   private _calcularCapacidadTotal(flotas: ListaFlota[]) {
     this.capacidadTotal = flotas.reduce(
       (acc, curVal) => acc + curVal.vehiculo_capacidad,

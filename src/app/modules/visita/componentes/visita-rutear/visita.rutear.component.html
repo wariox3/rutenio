@@ -5,10 +5,15 @@
 <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5">
   <div class="card">
     <div class="card-body">
-      <app-button type="button" texto="Rutear" (click)="rutear()"></app-button>
+      <app-button
+        type="button"
+        texto="Rutear"
+        (click)="rutear()"
+        [estaDeshabilitado]="errorCapacidad || arrFlota.length <= 0"
+      ></app-button>
     </div>
   </div>
-  <div class="card">
+  <div class="card" [ngClass]="{ 'bg-red-50': errorCapacidad }">
     <div class="card-body">
       <div class="flex justify-between items-center">
         <section class="flex gap-14">
