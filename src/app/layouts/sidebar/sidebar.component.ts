@@ -75,19 +75,19 @@ export class SidebarComponent {
         },
       ],
     },
-    {
-      nombre: 'Utilidad',
-      link: '',
-      iconoClase: 'ki-filled ki-folder',
-      activo: false,
-      tipoAcordion: true,
-      children: [
-        {
-          nombre: 'Importar visitas',
-          link: '/admin/visita/lista',
-        },
-      ],
-    },
+    // {
+    //   nombre: 'Utilidad',
+    //   link: '',
+    //   iconoClase: 'ki-filled ki-folder',
+    //   activo: false,
+    //   tipoAcordion: true,
+    //   children: [
+    //     {
+    //       nombre: 'Importar visitas',
+    //       link: '/admin/visita/lista',
+    //     },
+    //   ],
+    // },
     {
       nombre: 'Complementos',
       link: '/admin/complemento/lista',
