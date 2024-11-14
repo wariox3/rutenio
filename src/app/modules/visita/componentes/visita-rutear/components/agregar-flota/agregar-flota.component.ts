@@ -21,6 +21,8 @@ import { General } from '../../../../../../common/clases/general';
 import {
   debounceTime,
   distinctUntilChanged,
+  finalize,
+  forkJoin,
   map,
   Observable,
   of,
@@ -153,14 +155,20 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   enviar() {
-    if (this._vehiculosIds.length) {
-      this._vehiculosIds.forEach((id) => {
-        this._flotaService.agregarFlota(id).subscribe();
-      });
+    const agregarFlotas = this.vehiculosIds.map((id) => {
+      return this._flotaService.agregarFlota(id);
+    });
 
-      this._dismissModal();
-      this.emitirConsultarLista.emit();
-    }
+    forkJoin(agregarFlotas)
+      .pipe(
+        finalize(() => {
+          this.emitirConsultarLista.emit();
+          this._dismissModal();
+        })
+      )
+      .subscribe(() => {
+        this.alerta.mensajaExitoso('Flotas agregadas');
+      });
   }
 
   private _dismissModal() {

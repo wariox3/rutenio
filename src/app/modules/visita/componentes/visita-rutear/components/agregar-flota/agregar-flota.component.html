@@ -1,44 +1,3 @@
-<!-- <form [formGroup]="formularioFlota">
-  <pre>{{ formularioFlota.value | json }}</pre>
-  <div class="grid grid-cols-1 gap-4 mb-5">
-    <app-label [required]="true">Vehiculos</app-label>
-    <ng-select
-      [items]="vehiculosDisponibles$ | async"
-      formControlName="flota"
-      [multiple]="true"
-      bindLabel="placa"
-      bindValue="id"
-      notFoundText="Sin elementos"
-      placeholder="Selecciona elementos"
-      loadingText="Buscando..."
-      class="select2Custom"
-      [closeOnSelect]="false" 
-    >
-    </ng-select>
-    <ng-container
-      class="flex flex-col"
-      *ngIf="
-        formularioFlota.controls['flota'].invalid &&
-        formularioFlota.controls['flota'].touched
-      "
-    >
-      <span
-        *ngIf="formularioFlota.controls['flota'].hasError('required')"
-        class="text-danger text-xs block"
-      >
-        El campo es requerido.
-      </span>
-    </ng-container>
-  </div>
-  <div>
-    <app-button
-      texto="Guardar"
-      [estaDeshabilitado]="!formularioFlota.valid"
-      (click)="enviar()"
-    ></app-button>
-  </div>
-</form> -->
-
 <div class="grid">
   <div class="min-w-full">
     <div class="py-4 flex-wrap flex items-center justify-between">
@@ -115,12 +74,11 @@
               <td>
                 <div class="flex items-center gap-2.5">
                   <div class="flex flex-col gap-0.5">
-                    <a
-                      class="leading-none font-semibold text-sm text-gray-900 hover:text-primary"
-                      href="#"
+                    <p
+                      class="leading-none font-semibold text-sm text-gray-900"
                     >
                       {{ vehiculo.placa }}
-                    </a>
+                    </p>
                   </div>
                 </div>
               </td>
