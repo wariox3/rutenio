@@ -56,12 +56,14 @@
           </div>
         </section>
         <section class="flex gap-14">
+          @if (cantidadErrores > 0) {
           <div class="text-center">
             <p class="text-xs text-slate-600 font-bold">Errores</p>
             <span class="badge badge-sm badge-danger font-bold">
               {{ cantidadErrores }}
             </span>
           </div>
+          }
         </section>
       </div>
     </div>
@@ -125,7 +127,7 @@
             </thead>
             <tbody>
               @for (visita of arrVisitas; track $index) {
-              <tr>
+              <tr [ngClass]="{ 'bg-red-50': !visita.estado_decodificado }">
                 <td>{{ visita.guia }}</td>
                 <td>{{ visita.peso }}</td>
               </tr>
@@ -134,15 +136,9 @@
           </table>
         </div>
         <div class="card-footer flex justify-center">
-          <div class="pagination">
-            <button class="btn" disabled="">
-              <i class="ki-outline ki-black-left"> </i>
-            </button>
-            <button class="btn active">1</button>
-            <button class="btn">
-              <i class="ki-outline ki-black-right"> </i>
-            </button>
-          </div>
+          <app-paginacion-default
+            (paginar)="paginar($event)"
+          ></app-paginacion-default>
         </div>
       </div>
     </div>
@@ -177,7 +173,7 @@
     modal-body
   >
     <app-agregar-flota
-      (emitirConsultarLista)="consultarFlotas()"
+      (emitirConsultarLista)="consultarFlotas(arrParametrosConsulta)"
       [itemsSeleccionados]="flotasSeleccionadas"
     ></app-agregar-flota>
   </section>

@@ -1,0 +1,15 @@
+<div class="pagination">
+  <button
+    (click)="disminuirDesplazamiento()"
+    class="btn"
+    [disabled]="desplazamiento <= 0"
+  >
+    <i class="ki-outline ki-black-left"> </i>
+  </button>
+
+  <button class="btn active">1</button>
+
+  <button (click)="aumentarDesplazamiento()" class="btn">
+    <i class="ki-outline ki-black-right"> </i>
+  </button>
+</div>

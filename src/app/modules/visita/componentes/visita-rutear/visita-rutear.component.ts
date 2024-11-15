@@ -12,12 +12,13 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize, forkJoin, tap } from 'rxjs';
+import { BehaviorSubject, finalize } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
@@ -37,6 +38,7 @@ import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.
     LabelComponent,
     NgSelectModule,
     AgregarFlotaComponent,
+    PaginacionDefaultComponent,
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
@@ -102,31 +104,29 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   consultarLista() {
-    this.consultarFlotas();
-    this.consultarVisitas();
+    this.consultarFlotas(this.arrParametrosConsulta);
+    this.consultarVisitas(this.arrParametrosConsultaVisita);
   }
 
-  consultarVisitas() {
-    this.visitaService
-      .lista(this.arrParametrosConsultaVisita)
-      .subscribe((respuesta) => {
-        respuesta.forEach((punto) => {
-          this.addMarker({ lat: punto.latitud, lng: punto.longitud });
-          this._verificarErrores(punto);
-          this.changeDetectorRef.detectChanges();
-        });
-
-        this._calcularPesoTotal(respuesta);
-        this._calcularPorcentajeCapacidad();
-        this.arrVisitas = respuesta;
+  consultarVisitas(parametros: ParametrosConsulta) {
+    this.visitaService.lista(parametros).subscribe((respuesta) => {
+      respuesta.forEach((punto) => {
+        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+        this._verificarErrores(punto);
         this.changeDetectorRef.detectChanges();
       });
+
+      this._calcularPesoTotal(respuesta);
+      this._calcularPorcentajeCapacidad();
+      this.arrVisitas = respuesta;
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
-  consultarFlotas() {
+  consultarFlotas(parametros: ParametrosConsulta) {
     this.cargandoConsultas$.next(true);
     this._flotaService
-      .lista(this.arrParametrosConsulta)
+      .lista(parametros)
       .pipe(finalize(() => this.cargandoConsultas$.next(false)))
       .subscribe((response) => {
         this.flotasSeleccionadas = response.registros.map(
@@ -138,6 +138,16 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.arrFlota = response.registros;
         this.changeDetectorRef.detectChanges();
       });
+  }
+
+  paginar(evento: { limite: number; desplazar: number }) {
+    const parametrosConsulta: ParametrosConsulta = {
+      ...this.arrParametrosConsultaVisita,
+      limite: evento.limite,
+      desplazar: evento.desplazar,
+    };
+
+    this.consultarVisitas(parametrosConsulta);
   }
 
   private _verificarErrores(visita: Visita) {
@@ -211,7 +221,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   eliminarFlota(id: number) {
     this._flotaService.eliminarFlota(id).subscribe((response) => {
-      this.consultarFlotas();
+      this.consultarFlotas(this.arrParametrosConsulta);
       this.alerta.mensajaExitoso('Flota eliminada');
     });
   }

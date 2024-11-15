@@ -12,6 +12,10 @@ export class VisitaService {
     return this.http.post<Visita[]>(`ruteo/visita/lista/`, data);
   }
 
+  generalLista(data: any) {
+    return this.http.post<Visita[]>(`general/funcionalidad/lista/`, data);
+  }
+
   listarVisitas(data: any) {
     return this.http.post<any[]>(`ruteo/visita/lista/`, data);
   }
