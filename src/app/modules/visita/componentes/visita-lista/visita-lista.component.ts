@@ -19,6 +19,8 @@ import { BehaviorSubject, finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 import { GeneralService } from '../../../../common/services/general.service';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-visita-lista',
@@ -31,6 +33,8 @@ import { GeneralService } from '../../../../common/services/general.service';
     VisitaImportarPorExcelComponent,
     ModalDefaultComponent,
     ImportarComponent,
+    LabelComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
@@ -60,6 +64,11 @@ export default class VisitaListaComponent extends General implements OnInit {
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
+  public formularioFiltros = new FormGroup({
+    id: new FormControl(''),
+    guia: new FormControl(''),
+    estado_decodificado: new FormControl('todos'),
+  });
 
   constructor() {
     super();
@@ -235,6 +244,53 @@ export default class VisitaListaComponent extends General implements OnInit {
       ...{
         limite: 5000,
       },
+    });
+  }
+
+  aplicarFiltros() {
+    const id = this.formularioFiltros.get('id').value;
+    const guia = this.formularioFiltros.get('guia').value;
+    const estadoDecodificado = this.formularioFiltros.get(
+      'estado_decodificado'
+    ).value;
+
+    let parametrosConsulta: ParametrosConsulta = {
+      ...this.arrParametrosConsulta,
+      filtros: [
+        ...this.arrParametrosConsulta.filtros,
+        {
+          operador: '__icontains',
+          propiedad: 'id__icontains',
+          valor1: this.formularioFiltros.get('id').value,
+        },
+        {
+          operador: '__icontains',
+          propiedad: 'guia__icontains',
+          valor1: this.formularioFiltros.get('guia').value,
+        },
+      ],
+    };
+
+    if (estadoDecodificado !== "todos") {
+      parametrosConsulta.filtros = [
+        ...parametrosConsulta.filtros,
+        {
+          operador: '',
+          propiedad: 'estado_decodificado',
+          valor1: estadoDecodificado === 'si',
+        },
+      ];
+    }
+
+    this.consultaLista(parametrosConsulta);
+  }
+
+  limpiarFiltros() {
+    this.consultaLista(this.arrParametrosConsulta);
+    this.formularioFiltros.patchValue({
+      id: '',
+      guia: '',
+      estado_decodificado: 'todos',
     });
   }
 }
