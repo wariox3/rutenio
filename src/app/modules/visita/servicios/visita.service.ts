@@ -57,7 +57,7 @@ export class VisitaService {
   }
 
   eliminarVisitasConErrores() {
-    return this.http.post(`ruteo/visita/eliminar/`, {
+    return this.http.post(`ruteo/visita/eliminar-todos/`, {
       estado_decodificado: false,
     });
   }
