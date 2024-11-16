@@ -25,6 +25,8 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
+import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -39,6 +41,7 @@ import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.
     NgSelectModule,
     AgregarFlotaComponent,
     PaginacionDefaultComponent,
+    ImportarComponent,
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
@@ -103,7 +106,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
   ngOnInit(): void {
     this.consultarLista();
     this._consultarResumen();
-    this._consultarErrores(); // TODO: deberia llamar esto cada vez que se consulten las visitas?
   }
 
   consultarLista() {
@@ -128,12 +130,16 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.lista(parametros).subscribe((respuesta) => {
+      this.limpiarMarkers();
+
       respuesta.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
         this.changeDetectorRef.detectChanges();
       });
 
       this._calcularPorcentajeCapacidad();
+      this._consultarErrores();
+      this._consultarResumen();
       this.arrVisitas = respuesta;
       this.changeDetectorRef.detectChanges();
     });
@@ -213,6 +219,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.markerPositions.push(position);
   }
 
+  limpiarMarkers() {
+    this.markerPositions = [];
+  }
+
   openInfoWindow(marker: MapMarker) {
     this.infoWindow.open(marker);
   }
@@ -230,5 +240,79 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.consultarFlotas(this.arrParametrosConsulta);
       this.alerta.mensajaExitoso('Flota eliminada');
     });
+  }
+
+  confirmarEliminarTodos() {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this._eliminarTodosLosRegistros();
+        }
+      });
+  }
+
+  confirmarEliminarErrores() {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta acción elimina las visitas con errores',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this._eliminarVisitasConErrores();
+        }
+      });
+  }
+
+  private _eliminarVisitasConErrores() {
+    if (this.arrVisitas.length > 0) {
+      this.visitaService.eliminarVisitasConErrores().subscribe((response) => {
+        this.alerta.mensajaExitoso(
+          'Se han eliminado los regsitros correctamente.'
+        );
+        this.consultarVisitas(this.arrParametrosConsultaVisita);
+      });
+    } else {
+      this.alerta.mensajeError('No hay visitas para eliminar', 'Error');
+    }
+  }
+
+  private _eliminarTodosLosRegistros() {
+    if (this.arrVisitas.length > 0) {
+      this.visitaService
+        .eliminarTodosLasGuias()
+        .pipe(finalize(() => {}))
+        .subscribe(() => {
+          this.alerta.mensajaExitoso(
+            'Se han eliminado los regsitros correctamente.'
+          );
+          this.consultarVisitas(this.arrParametrosConsultaVisita);
+        });
+    } else {
+      this.alerta.mensajeError('No hay visitas para eliminar', 'Error');
+    }
+  }
+
+  cerrarModalPorId(id: string) {
+    const modalEl: HTMLElement = document.querySelector(id);
+    const modal = KTModal.getInstance(modalEl);
+    this.toggleModal$.next(false);
+
+    modal.toggle();
+  }
+
+  habilitadoParaRutear() {
+    return (
+      this.errorCapacidad ||
+      this.arrFlota?.length <= 0 ||
+      this.cantidadErrores > 0 ||
+      this.arrVisitas?.length <= 0
+    );
   }
 }

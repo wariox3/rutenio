@@ -56,6 +56,12 @@ export class VisitaService {
     return this.http.post(`ruteo/visita/eliminar/`, { documentos: data });
   }
 
+  eliminarVisitasConErrores() {
+    return this.http.post(`ruteo/visita/eliminar/`, {
+      estado_decodificado: false,
+    });
+  }
+
   eliminarTodosLasGuias() {
     return this.http.post('ruteo/visita/eliminar-todos/', {});
   }
