@@ -21,6 +21,7 @@ import { ImportarComponent } from '../../../../common/components/importar/import
 import { GeneralService } from '../../../../common/services/general.service';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { PaginacionAvanzadaComponent } from "../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component";
 
 @Component({
   selector: 'app-visita-lista',
@@ -35,7 +36,8 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
     ImportarComponent,
     LabelComponent,
     ReactiveFormsModule,
-  ],
+    PaginacionAvanzadaComponent
+],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,13 +83,13 @@ export default class VisitaListaComponent extends General implements OnInit {
   consultaLista(filtros: any) {
     // this.isCheckedSeleccionarTodos = false;
     // this.registrosAEliminar = [];
-    this._visitaService.lista(filtros).subscribe((respuesta) => {
-      this.arrGuia = respuesta.map((guia) => ({
+    this._visitaService.generalLista(filtros).subscribe((respuesta) => {
+      this.arrGuia = respuesta.registros?.map((guia) => ({
         ...guia,
         selected: false,
       }));
-      this.cantidadRegistros = respuesta?.length;
-      respuesta.forEach((punto) => {
+      this.cantidadRegistros = respuesta?.registros?.length;
+      respuesta?.registros?.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
       });
       this.changeDetectorRef.detectChanges();

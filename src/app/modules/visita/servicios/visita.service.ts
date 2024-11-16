@@ -13,10 +13,6 @@ import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface
 export class VisitaService {
   constructor(private http: HttpService) {}
 
-  lista(data: any) {
-    return this.http.post<Visita[]>(`ruteo/visita/lista/`, data);
-  }
-
   generalLista(data: any) {
     return this.http.post<RespuestaGeneralLista<Visita>>(`general/funcionalidad/lista/`, data);
   }

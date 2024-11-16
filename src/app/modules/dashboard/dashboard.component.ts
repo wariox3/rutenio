@@ -53,18 +53,18 @@ export default class DashboardComponent extends General {
     super();
   }
 
-  ngOnInit(): void {
-    forkJoin({
-      vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
-      visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
-    })
-      .pipe(
-        tap(({ vehiculos, visitas }) => {
-          this.arrVehiculos = vehiculos.registros;
-          this.arrVisitas = visitas;
-          this.changeDetectorRef.detectChanges();
-        })
-      )
-      .subscribe();
-  }
+  // ngOnInit(): void {
+  //   forkJoin({
+  //     vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
+  //     visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
+  //   })
+  //     .pipe(
+  //       tap(({ vehiculos, visitas }) => {
+  //         this.arrVehiculos = vehiculos.registros;
+  //         this.arrVisitas = visitas;
+  //         this.changeDetectorRef.detectChanges();
+  //       })
+  //     )
+  //     .subscribe();
+  // }
 }
