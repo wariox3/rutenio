@@ -1,0 +1,26 @@
+<div class="d-flex align-items-center paginacion">
+  <button
+    [disabled]="desplazamientoActual + 1 <= 1"
+    (click)="disminuirDesplazamiento()"
+    class="mr-2"
+    size="small"
+  >
+    <!-- <nb-icon icon="arrow-back-outline"></nb-icon> -->
+  </button>
+  <input
+    fieldSize="small"
+    #input
+    style="max-width: 6rem"
+    class="mr-2"
+    nbInput
+    appFormatoPaginacion
+    [value]="valoresInput$ | async"
+    (keyup.enter)="calcularValorMostrar($event)"
+    type="text"
+  />
+  <span class="mr-1">de</span>
+  <span> {{ cantidadRegistros }} </span>
+  <button nbButton (click)="aumentarDesplazamiento()" class="ml-2" size="small">
+    <!-- <nb-icon icon="arrow-forward-outline"></nb-icon> -->
+  </button>
+</div>
