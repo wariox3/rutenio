@@ -5,6 +5,7 @@ import {
   VisitaError,
   VisitaResumen,
 } from '../../../interfaces/visita/rutear.interface';
+import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +18,7 @@ export class VisitaService {
   }
 
   generalLista(data: any) {
-    return this.http.post<Visita[]>(`general/funcionalidad/lista/`, data);
+    return this.http.post<RespuestaGeneralLista<Visita>>(`general/funcionalidad/lista/`, data);
   }
 
   listarVisitas(data: any) {
@@ -57,7 +58,7 @@ export class VisitaService {
   }
 
   eliminarVisitasConErrores() {
-    return this.http.post(`ruteo/visita/eliminar-todos/`, {
+    return this.http.post(`ruteo/visita/eliminar/`, {
       estado_decodificado: false,
     });
   }

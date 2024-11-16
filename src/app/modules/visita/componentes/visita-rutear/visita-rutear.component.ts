@@ -128,19 +128,27 @@ export default class VisitaRutearComponent extends General implements OnInit {
     });
   }
 
-  consultarVisitas(parametros: ParametrosConsulta) {
-    this.visitaService.lista(parametros).subscribe((respuesta) => {
-      this.limpiarMarkers();
+  private _limpiarBarraCapacidad() {
+    this.barraCapacidad = 0;
+    this.errorCapacidad = false;
+    this.porcentajeCapacidad = 0;
+    this.changeDetectorRef.detectChanges();
+  }
 
-      respuesta.forEach((punto) => {
+  consultarVisitas(parametros: ParametrosConsulta) {
+    this.visitaService.generalLista(parametros).subscribe((respuesta) => {
+      this.limpiarMarkers();
+      this._limpiarBarraCapacidad();
+
+      respuesta.registros.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
         this.changeDetectorRef.detectChanges();
       });
 
-      this._calcularPorcentajeCapacidad();
       this._consultarErrores();
       this._consultarResumen();
-      this.arrVisitas = respuesta;
+      this._calcularPorcentajeCapacidad();
+      this.arrVisitas = respuesta.registros;
       this.changeDetectorRef.detectChanges();
     });
   }
