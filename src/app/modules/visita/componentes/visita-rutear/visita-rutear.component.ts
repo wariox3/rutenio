@@ -89,6 +89,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public barraCapacidad: number = 0;
   public errorCapacidad: boolean = false;
   public cantidadErrores: number = 0;
+  public visitasTotales: number = 0;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -101,11 +102,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this.consultarLista();
+    this._consultarResumen();
   }
 
   consultarLista() {
     this.consultarFlotas(this.arrParametrosConsulta);
     this.consultarVisitas(this.arrParametrosConsultaVisita);
+  }
+
+  private _consultarResumen() {
+    this.visitaService.visitaResumen().subscribe((response) => {
+      this.visitasTotales = response?.resumen?.cantidad;
+      this.pesoTotal = response?.resumen?.peso;
+      this.changeDetectorRef.detectChanges();
+    });
   }
 
   consultarVisitas(parametros: ParametrosConsulta) {
@@ -116,7 +126,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.changeDetectorRef.detectChanges();
       });
 
-      this._calcularPesoTotal(respuesta);
       this._calcularPorcentajeCapacidad();
       this.arrVisitas = respuesta;
       this.changeDetectorRef.detectChanges();
@@ -183,10 +192,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _redondear(valor: number, decimales: number): number {
     const factor = Math.pow(10, decimales);
     return Math.round(valor * factor) / factor;
-  }
-
-  private _calcularPesoTotal(visitas: Visita[]) {
-    this.pesoTotal = visitas.reduce((acc, curVal) => acc + curVal.peso, 0);
   }
 
   ordenar() {
