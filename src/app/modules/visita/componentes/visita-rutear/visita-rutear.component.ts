@@ -103,6 +103,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   ngOnInit(): void {
     this.consultarLista();
     this._consultarResumen();
+    this._consultarErrores(); // TODO: deberia llamar esto cada vez que se consulten las visitas?
   }
 
   consultarLista() {
@@ -118,11 +119,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
     });
   }
 
+  private _consultarErrores() {
+    this.visitaService.visitaErrores().subscribe((response) => {
+      this.cantidadErrores = response?.error?.cantidad;
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
   consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.lista(parametros).subscribe((respuesta) => {
       respuesta.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
-        this._verificarErrores(punto);
         this.changeDetectorRef.detectChanges();
       });
 
@@ -157,12 +164,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     };
 
     this.consultarVisitas(parametrosConsulta);
-  }
-
-  private _verificarErrores(visita: Visita) {
-    if (!visita.estado_decodificado) {
-      this.cantidadErrores += 1;
-    }
   }
 
   private _calcularPorcentajeCapacidad() {

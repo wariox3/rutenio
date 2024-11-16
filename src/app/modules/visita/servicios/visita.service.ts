@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { Visita } from '../../../interfaces/visita/visita.interface';
-import { VisitaResumen } from '../../../interfaces/visita/rutear.interface';
+import {
+  VisitaError,
+  VisitaResumen,
+} from '../../../interfaces/visita/rutear.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -59,6 +62,10 @@ export class VisitaService {
 
   visitaResumen() {
     return this.http.post<VisitaResumen>('ruteo/visita/resumen/', {});
+  }
+
+  visitaErrores() {
+    return this.http.post<VisitaError>('ruteo/visita/error/', {});
   }
 
   importarComplementos(parametros: {

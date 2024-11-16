@@ -4,3 +4,9 @@ export interface VisitaResumen {
     peso: number;
   };
 }
+
+export interface VisitaError {
+  error: {
+    cantidad: number;
+  };
+}
