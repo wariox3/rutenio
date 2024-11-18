@@ -81,8 +81,6 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    // this.isCheckedSeleccionarTodos = false;
-    // this.registrosAEliminar = [];
     this._visitaService.generalLista(filtros).subscribe((respuesta) => {
       this.arrGuia = respuesta.registros?.map((guia) => ({
         ...guia,
@@ -101,6 +99,15 @@ export default class VisitaListaComponent extends General implements OnInit {
       this.calculateRoute();
       this.changeDetectorRef.detectChanges();
     }
+  }
+
+  recibirPaginacion(event: { desplazamiento: number; limite: number }) {
+    this.arrParametrosConsulta = {
+      ...this.arrParametrosConsulta,
+      desplazar: event.desplazamiento,
+      limite: event.limite,
+    };
+    this.consultaLista(this.arrParametrosConsulta);
   }
 
   addMarker(position: google.maps.LatLngLiteral) {

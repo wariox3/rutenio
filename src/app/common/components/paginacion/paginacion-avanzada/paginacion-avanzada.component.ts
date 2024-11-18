@@ -9,11 +9,12 @@ import {
   ViewChild,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { FormatoPaginacionDirective } from '../../../directivas/formato-paginacion.directive';
 
 @Component({
   selector: 'app-paginacion-avanzada',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormatoPaginacionDirective],
   templateUrl: './paginacion-avanzada.component.html',
   styleUrl: './paginacion-avanzada.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

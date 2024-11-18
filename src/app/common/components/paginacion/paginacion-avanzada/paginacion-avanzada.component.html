@@ -1,26 +1,21 @@
-<div class="d-flex align-items-center paginacion">
+<div class="flex items-center paginacion  ">
   <button
     [disabled]="desplazamientoActual + 1 <= 1"
     (click)="disminuirDesplazamiento()"
-    class="mr-2"
-    size="small"
+    class="mr-2 text-sm btn btn-secondary"
   >
-    <!-- <nb-icon icon="arrow-back-outline"></nb-icon> -->
+    <i class="ki-filled ki-arrow-left"></i>
   </button>
   <input
-    fieldSize="small"
+    class="mr-2 input max-w-20"
     #input
-    style="max-width: 6rem"
-    class="mr-2"
-    nbInput
     appFormatoPaginacion
     [value]="valoresInput$ | async"
     (keyup.enter)="calcularValorMostrar($event)"
     type="text"
   />
-  <span class="mr-1">de</span>
-  <span> {{ cantidadRegistros }} </span>
-  <button nbButton (click)="aumentarDesplazamiento()" class="ml-2" size="small">
-    <!-- <nb-icon icon="arrow-forward-outline"></nb-icon> -->
+  <span class="mr-1 text-sm">de {{ cantidadRegistros }}</span>
+  <button (click)="aumentarDesplazamiento()" class="ml-2 btn btn-secondary">
+    <i class="ki-filled ki-arrow-right text-sm"></i>
   </button>
 </div>

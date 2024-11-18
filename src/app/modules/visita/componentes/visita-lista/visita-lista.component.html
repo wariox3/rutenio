@@ -55,8 +55,11 @@
   </div>
 
   <div>
-    <div class="flex justify-end items-center mx-8">
-      <app-paginacion-avanzada></app-paginacion-avanzada>
+    <div class="flex justify-between items-center mx-8">
+      <app-paginacion-avanzada
+        [cantidadRegistros]="cantidadRegistros"
+        (emitirPaginacion)="recibirPaginacion($event)"
+      ></app-paginacion-avanzada>
 
       <div class="inline-flex rounded-md shadow-s my-5">
         <div class="menu menu-default p-0" data-menu="true">
