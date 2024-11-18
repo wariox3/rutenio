@@ -1,5 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input
+} from '@angular/core';
 
 @Component({
   selector: 'app-progreso-circular',
@@ -20,7 +24,6 @@ export class ProgresoCircularComponent {
   readonly circumference = 2 * Math.PI * 22;
 
   ngOnChanges(): void {
-    // Calcula el offset según el progreso
     this.strokeDashoffset = this.circumference * (1 - this.barraProgreso / 100);
   }
 }

@@ -258,7 +258,7 @@
   <section *ngIf="toggleModal$ | async" modal-body>
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
-      (emitirConsultarLista)="consultarVisitas(arrParametrosConsultaVisita)"
+      (emitirConsultarLista)="consultarVisitas()"
       archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
       url="ruteo/visita/importar-excel/"
       [archivoEjemplo]="{

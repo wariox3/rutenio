@@ -12,9 +12,11 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize } from 'rxjs';
+import { BehaviorSubject, finalize, of, switchMap } from 'rxjs';
+import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
+import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
@@ -25,8 +27,6 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
-import { ImportarComponent } from '../../../../common/components/importar/importar.component';
-import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -104,21 +104,45 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    this.consultarLista();
-    this._consultarResumen();
+    this._initView();
+  }
+
+  private _initView() {
+    this._consultarResumen()
+      .pipe(
+        switchMap(() => {
+          this.consultarLista();
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   consultarLista() {
     this.consultarFlotas(this.arrParametrosConsulta);
-    this.consultarVisitas(this.arrParametrosConsultaVisita);
+    this._consultarVisitas(this.arrParametrosConsultaVisita);
+  }
+
+  consultarVisitas() {
+    this._consultarResumen()
+      .pipe(
+        switchMap(() => {
+          this._consultarVisitas(this.arrParametrosConsultaVisita);
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   private _consultarResumen() {
-    this.visitaService.visitaResumen().subscribe((response) => {
-      this.visitasTotales = response?.resumen?.cantidad;
-      this.pesoTotal = response?.resumen?.peso;
-      this.changeDetectorRef.detectChanges();
-    });
+    return this.visitaService.visitaResumen().pipe(
+      switchMap((response) => {
+        this.visitasTotales = response?.resumen?.cantidad;
+        this.pesoTotal = response?.resumen?.peso;
+        this.changeDetectorRef.detectChanges();
+        return of(null);
+      })
+    );
   }
 
   private _consultarErrores() {
@@ -135,7 +159,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  consultarVisitas(parametros: ParametrosConsulta) {
+  private _consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.generalLista(parametros).subscribe((respuesta) => {
       this.limpiarMarkers();
       this._limpiarBarraCapacidad();
@@ -146,7 +170,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
 
       this._consultarErrores();
-      this._consultarResumen();
       this._calcularPorcentajeCapacidad();
       this.arrVisitas = respuesta.registros;
       this.changeDetectorRef.detectChanges();
@@ -177,16 +200,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
       desplazar: evento.desplazar,
     };
 
-    this.consultarVisitas(parametrosConsulta);
+    this._consultarVisitas(parametrosConsulta);
   }
 
   private _calcularPorcentajeCapacidad() {
-    if (this.pesoTotal <= 0 || this.capacidadTotal <= 0) {
-      this.porcentajeCapacidad = 0;
-    } else {
-      let total = (this.pesoTotal / this.capacidadTotal) * 100;
-      this.porcentajeCapacidad = this._redondear(total, 0);
-    }
+    let total = (this.pesoTotal / this.capacidadTotal) * 100;
+    this.porcentajeCapacidad = this._redondear(total, 0);
 
     if (this.porcentajeCapacidad > 100) {
       this.barraCapacidad = 100;
@@ -284,7 +303,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.alerta.mensajaExitoso(
           'Se han eliminado los regsitros correctamente.'
         );
-        this.consultarVisitas(this.arrParametrosConsultaVisita);
+        this.consultarVisitas();
       });
     } else {
       this.alerta.mensajeError('No hay visitas para eliminar', 'Error');
@@ -300,7 +319,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
           this.alerta.mensajaExitoso(
             'Se han eliminado los regsitros correctamente.'
           );
-          this.consultarVisitas(this.arrParametrosConsultaVisita);
+          this.consultarVisitas();
         });
     } else {
       this.alerta.mensajeError('No hay visitas para eliminar', 'Error');
