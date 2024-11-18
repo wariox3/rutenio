@@ -204,7 +204,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _calcularPorcentajeCapacidad() {
-    let total = (this.pesoTotal / this.capacidadTotal) * 100;
+    let total = 0;
+    if (this.capacidadTotal > 0) {
+      total = (this.pesoTotal / this.capacidadTotal) * 100;
+    }
+    
     this.porcentajeCapacidad = this._redondear(total, 0);
 
     if (this.porcentajeCapacidad > 100) {
