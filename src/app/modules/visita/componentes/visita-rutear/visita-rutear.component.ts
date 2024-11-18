@@ -93,6 +93,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public errorCapacidad: boolean = false;
   public cantidadErrores: number = 0;
   public visitasTotales: number = 0;
+  public totalPaginasVisitas: number = 0;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -159,10 +160,21 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  private calcularCantidadRegistros(
+    cantidadRegistros: number,
+    desplazamiento: number
+  ) {
+    return Math.ceil(cantidadRegistros / desplazamiento);
+  }
+
   private _consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.generalLista(parametros).subscribe((respuesta) => {
       this.limpiarMarkers();
       this._limpiarBarraCapacidad();
+      this.totalPaginasVisitas = this.calcularCantidadRegistros(
+        respuesta.cantidad_registros,
+        this.arrParametrosConsultaVisita.limite
+      );
 
       respuesta.registros.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
@@ -208,7 +220,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     if (this.capacidadTotal > 0) {
       total = (this.pesoTotal / this.capacidadTotal) * 100;
     }
-    
+
     this.porcentajeCapacidad = this._redondear(total, 0);
 
     if (this.porcentajeCapacidad > 100) {

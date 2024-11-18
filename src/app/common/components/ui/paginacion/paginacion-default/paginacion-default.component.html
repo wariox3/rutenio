@@ -7,9 +7,13 @@
     <i class="ki-outline ki-black-left"> </i>
   </button>
 
-  <button class="btn active">1</button>
+  <button class="btn active">{{ paginaActual }}</button>
 
-  <button (click)="aumentarDesplazamiento()" class="btn">
+  <button
+    (click)="aumentarDesplazamiento()"
+    class="btn"
+    [disabled]="paginaActual >= totalPaginas"
+  >
     <i class="ki-outline ki-black-right"> </i>
   </button>
 </div>

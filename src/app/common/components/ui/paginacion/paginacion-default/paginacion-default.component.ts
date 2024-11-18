@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
 } from '@angular/core';
 
@@ -16,7 +17,9 @@ import {
 })
 export class PaginacionDefaultComponent {
   @Output() paginar: EventEmitter<{ limite: number; desplazar: number }>;
-  public limite: number = 50;
+  @Input() totalPaginas: number = 1;
+  @Input() limite: number = 50;
+  public paginaActual: number = 1;
   public desplazamiento: number = 0;
 
   constructor() {
@@ -24,14 +27,14 @@ export class PaginacionDefaultComponent {
   }
 
   aumentarDesplazamiento() {
-    console.log(this.desplazamiento, this.limite);
     this.desplazamiento += this.limite;
+    this.paginaActual++;
     this.paginar.emit({ limite: this.limite, desplazar: this.desplazamiento });
   }
 
   disminuirDesplazamiento() {
     this.desplazamiento -= this.limite;
-    console.log(this.desplazamiento, this.limite);
+    this.paginaActual--;
     this.paginar.emit({ limite: this.limite, desplazar: this.desplazamiento });
   }
 }
