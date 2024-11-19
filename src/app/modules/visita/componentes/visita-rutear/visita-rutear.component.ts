@@ -78,7 +78,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [{ propiedad: 'estado_despacho', valor1: false }],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ["orden"],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
@@ -245,7 +245,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ordenar() {
-    this.visitaService.ordenar().subscribe((respuesta: any) => {
+    this.visitaService.ordenar().subscribe(() => {
+      this.consultarLista();
       this.alerta.mensajaExitoso('Se ha ordenado correctamente');
     });
   }
@@ -358,4 +359,5 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.arrVisitas?.length <= 0
     );
   }
+  
 }

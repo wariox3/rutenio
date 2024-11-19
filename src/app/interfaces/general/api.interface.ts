@@ -7,7 +7,7 @@ export interface RespuestaGeneralLista<T> {
       filtros: FiltrosAplicados[],
       limite: number;
       desplazar: number;
-      ordenamientos: object[],
+      ordenamientos: any,
       limite_conteo: number;
       modelo: string;
   }

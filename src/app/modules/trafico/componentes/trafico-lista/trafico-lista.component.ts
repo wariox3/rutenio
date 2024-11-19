@@ -80,7 +80,7 @@ export default class TraficoListaComponent extends General implements OnInit {
       modelo: 'RutVisita',
     };
     this.visitaService
-      .listarVisitas(parametrosConsultaVisitas)
+      .generalLista(parametrosConsultaVisitas)
       .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta;
         this.changeDetectorRef.detectChanges();
