@@ -101,21 +101,34 @@
             </div>
           </div>
         </div>
-        <div class="card-table scrollable-y-auto h-[16rem]">
-          <table class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table">
-            <thead>
-              <tr>
-                <th>Guía</th>
-                <th>Peso</th>
-              </tr>
-            </thead>
+        <div class="card-table h-[16rem] overflow-y-auto">
+          <table class="table w-full border-collapse">
             <tbody>
-              @for (visita of arrVisitas; track $index) {
-              <tr [ngClass]="{ 'bg-red-50': !visita.estado_decodificado }">
-                <td>{{ visita.guia }}</td>
-                <td>{{ visita.peso }}</td>
+              <tr 
+                *ngFor="let visita of arrVisitas; track $index" 
+                class="p-2 border-b last:border-none" 
+                [ngClass]="{ 'bg-red-50': !visita.estado_decodificado, 'bg-white': visita.estado_decodificado }">
+                <td class="p-3">
+                  <div class="flex flex-col space-y-1">
+                    <div class="flex justify-between items-center">
+                      <span class="font-semibold text-gray-800 text-sm">{{ visita.destinatario }}</span>
+                      <span class="text-gray-600 text-xs font-medium">Guía: {{ visita.guia }}</span>
+                    </div>
+                    <div class="text-gray-700 text-xs truncate">
+                      <i class="ki-filled ki-geolocation-home"></i>
+                      {{ visita.destinatario_direccion }}
+                    </div>
+                    <div class="flex justify-between text-gray-500 text-xs mt-1">
+                      <div class="flex items-center space-x-1">
+                        <i class="ki-filled ki-parcel"></i>
+                        <span>Peso: {{ visita.peso }}</span>
+                        <i class="ki-filled ki-arrow-up-down"></i>
+                        <span>Orden: {{ visita.orden }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
               </tr>
-              }
             </tbody>
           </table>
         </div>
