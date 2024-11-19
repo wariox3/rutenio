@@ -82,7 +82,7 @@ export default class TraficoListaComponent extends General implements OnInit {
     this.visitaService
       .generalLista(parametrosConsultaVisitas)
       .subscribe((respuesta) => {
-        this.arrVisitasPorDespacho = respuesta;
+        this.arrVisitasPorDespacho = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
   }
