@@ -361,10 +361,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
     );
   }
 
-  evento(visita){
-    this.selectedVisita = visita;
-    console.log('Visita seleccionada:', visita);
-  
+  evento(visita: any) {
+    this.selectedVisita = visita; 
   }
   
 }

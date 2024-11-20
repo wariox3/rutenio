@@ -131,33 +131,31 @@
         <div class="card-table h-[16rem] overflow-y-auto scrollable">
           <table class="table w-full border-collapse">
             <tbody>
-              @for (visita of arrVisitas; track $index) {
               <tr
-                class="p-2 border-b last:border-none cursor-pointer"
+                *ngFor="let visita of arrVisitas; let i = index"
+                class="cursor-pointer"
                 [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
                   'bg-white': visita.estado_decodificado,
-                  'bg-blue-100 border-l-4 border-blue-500': selectedVisita === visita
+                  'bg-indigo-100 border-l-4 border-blue-500': selectedVisita === visita
                 }"
                 (click)="evento(visita)"
               >
-                <td class="p-3">
+                <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
                     <div class="flex justify-between items-center">
-                      <span class="font-semibold text-gray-800 text-sm">{{
-                        visita.destinatario
-                      }}</span>
-                      <span class="text-gray-600 text-xs font-medium"
-                        >Número: {{ visita.numero }}</span
-                      >
+                      <span class="font-semibold text-gray-800 text-sm">
+                        {{ visita.destinatario }}
+                      </span>
+                      <span class="text-gray-600 text-xs font-medium">
+                        Número: {{ visita.numero }}
+                      </span>
                     </div>
                     <div class="text-gray-700 text-xs max-w-[24rem]">
                       <i class="ki-filled ki-geolocation-home"></i>
                       {{ visita.destinatario_direccion }}
                     </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
+                    <div class="flex justify-between text-gray-500 text-xs mt-1">
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
@@ -166,11 +164,19 @@
                         <i class="ki-filled ki-time"></i>
                         <span>Servicio: {{ visita.tiempo_servicio }} min</span>
                       </div>
+                      <button
+                      class="text-gray-500 hover:text-blue-500 transition-all"
+                      data-modal-toggle="#editar-visita"
+                      (click)="abrirModal()"
+                    >
+                      <span class="menu-icon">
+                        <i class="ki-filled ki-notepad-edit text-xl"></i>
+                      </span>
+                    </button>
                     </div>
                   </div>
                 </td>
               </tr>
-              }
             </tbody>
           </table>
         </div>
@@ -303,5 +309,26 @@
         ruta: 'assets/ejemplos/modelo/estructuraVisita.xlsx'
       }"
     ></app-importar>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'editar-visita'"
+  titulo="Editar visita"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <!-- <app-importar
+      (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
+      (emitirConsultarLista)="consultarVisitas()"
+      archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      url="ruteo/visita/importar-excel/"
+      [archivoEjemplo]="{
+        nombre: 'estructuraVisita',
+        ruta: 'assets/ejemplos/modelo/estructuraVisita.xlsx'
+      }"
+    ></app-importar> -->
   </section>
 </app-modal-default>
