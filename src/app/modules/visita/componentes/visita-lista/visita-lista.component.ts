@@ -21,7 +21,9 @@ import { ImportarComponent } from '../../../../common/components/importar/import
 import { GeneralService } from '../../../../common/services/general.service';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PaginacionAvanzadaComponent } from "../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component";
+import { PaginacionAvanzadaComponent } from '../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component';
+import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 
 @Component({
   selector: 'app-visita-lista',
@@ -36,8 +38,9 @@ import { PaginacionAvanzadaComponent } from "../../../../common/components/pagin
     ImportarComponent,
     LabelComponent,
     ReactiveFormsModule,
-    PaginacionAvanzadaComponent
-],
+    PaginacionAvanzadaComponent,
+    FiltroBaseComponent,
+  ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,8 +50,10 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _directionsService = inject(MapDirectionsService);
   private _listaItemsEliminar: number[] = [];
   private _generalService = inject(GeneralService);
+  private _filtroBaseService = inject(FiltroBaseService);
 
   public toggleModal$ = new BehaviorSubject(false);
+  public nombreFiltro = '';
   public cantidadRegistros: number = 0;
   public arrGuia: any[];
   public arrGuiasOrdenadas: any[];
@@ -77,7 +82,17 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
+    this._construirFiltros();
     this.consultaLista(this.arrParametrosConsulta);
+  }
+
+  private _construirFiltros() {
+    this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
+    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
+    if (filtroGuardado !== null) {
+      const filtros = JSON.parse(filtroGuardado);
+      this.arrParametrosConsulta.filtros = [...filtros];
+    }
   }
 
   consultaLista(filtros: any) {
@@ -280,7 +295,7 @@ export default class VisitaListaComponent extends General implements OnInit {
       ],
     };
 
-    if (estadoDecodificado !== "todos") {
+    if (estadoDecodificado !== 'todos') {
       parametrosConsulta.filtros = [
         ...parametrosConsulta.filtros,
         {
@@ -301,5 +316,15 @@ export default class VisitaListaComponent extends General implements OnInit {
       guia: '',
       estado_decodificado: 'todos',
     });
+  }
+
+  filtrosPersonalizados(filtros: any) {
+    if (filtros.length >= 1) {
+      this.arrParametrosConsulta.filtros = filtros;
+    } else {
+      this.arrParametrosConsulta.filtros = [];
+    }
+
+    this.consultaLista(this.arrParametrosConsulta);
   }
 }

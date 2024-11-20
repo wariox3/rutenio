@@ -1,8 +1,8 @@
 <div class="card-table border-t">
   <div data-datatable="true" data-datatable-page-size="5">
-    <div class="fixed-header-table scrollable tabla-responsiva">
+    <div class="fixed-header-table scrollable">
       <table class="table table-border text-sm" data-datatable-table="true">
-        <thead>
+        <thead class="sticky-header">
           <tr>
             <th *ngFor="let item of encabezados">
               {{ item.encabezado }}

@@ -1,0 +1,246 @@
+<form [formGroup]="formularioItem">
+  <div formArrayName="filtros">
+    <div class="mb-3" *ngFor="let filtro of filtros.controls; let i = index">
+      <div
+        class="grid grid-cols-[1fr,1fr,1fr,.5fr] items-center gap-2"
+        [formGroupName]="i"
+      >
+        <div class="w-full mb-2">
+          <select
+            class="select"
+            name="select"
+            formControlName="propiedad"
+            (change)="seleccionarPropiedad($event, i)"
+          >
+            <option value="">Seleccionar</option>
+            @for (propiedad of propiedades; track $index) {
+            <option
+              [value]="obtenerValorFiltro(propiedad)"
+              [attr.data-tipo]="propiedad.campoTipo"
+            >
+              {{ propiedad.nombre | titlecase }} 
+            </option>
+            }
+          </select>
+        </div>
+        <div class="w-full mb-2">
+          <select
+            class="select"
+            name="select"
+            formControlName="operador"
+            (selectedChange)="seleccionarPropiedad($event, i)"
+          >
+            <option value="">Seleccionar</option>
+            @for (criterioBusqueda of criteriosBusqueda[i]; track $index) {
+            <option [value]="criterioBusqueda.valor">
+              {{ criterioBusqueda.texto }}
+            </option>
+            }
+          </select>
+        </div>
+        <div class="w-full mb-2">
+          <!-- <nb-form-field>
+              <ng-container *ngIf="filtro.get('tipo')?.value === 'DateField'">
+                <input fieldSize="small" nbInput [nbDatepicker]="dateTimePicker" formControlName="valor1" fullWidth
+                  placeholder="yy/mm/dd" />
+                <nb-datepicker #dateTimePicker format="yy/MM/dd"></nb-datepicker>
+              </ng-container>
+  
+              <input fieldSize="small" *ngIf="filtro.get('tipo')?.value !== 'DateField'" [placeholder]="
+              filtro.get('busquedaAvanzada')?.value !== 'true'
+                ? 'Código'
+                : 'Buscar...'
+            " formControlName="valor1" nbInput fullWidth #inputValor1 [id]="'inputValor1' + i" [type]="
+              filtro.get('tipo')?.value === 'IntegerField'
+                ? 'number'
+                : filtro.get('tipo')?.value === 'DateField'
+                ? 'date'
+                : 'text'" [appSoloNumeros]="
+                filtro.get('busquedaAvanzada')?.value === 'true'
+              ">
+              <button nbPopover="Busqueda avanzada" nbPopoverTrigger="hover" size="small" class="boton-busqueda" *ngIf="filtro.get('busquedaAvanzada')?.value === 'true'"
+                type="button" status="primary" nbSuffix nbButton (click)="abrirModalFiltrosAvanzados(i)">
+                <nb-icon icon="search-outline"></nb-icon>
+                
+              </button>
+            </nb-form-field> -->
+          <ng-container *ngIf="filtro.get('tipo')?.value === 'DateField'">
+            <input
+              class="input"
+              formControlName="valor1"
+              placeholder="yy/mm/dd"
+              type="date"
+            />
+          </ng-container>
+          <input
+            class="input"
+            *ngIf="filtro.get('tipo')?.value !== 'DateField'"
+            [placeholder]="
+              filtro.get('busquedaAvanzada')?.value !== 'true'
+                ? 'Código'
+                : 'Buscar...'
+            "
+            formControlName="valor1"
+            #inputValor1
+            [id]="'inputValor1' + i"
+            [type]="
+              filtro.get('tipo')?.value === 'IntegerField'
+                ? 'number'
+                : filtro.get('tipo')?.value === 'DateField'
+                ? 'date'
+                : 'text'
+            "
+            [appSoloNumeros]="filtro.get('busquedaAvanzada')?.value === 'true'"
+          />
+        </div>
+        <div class="w-full mb-2 flex gap-4 justify-center">
+          <button (click)="agregarNuevoFiltro()">
+            <i class="ki-filled ki-plus text-xl"></i>
+          </button>
+          <button *ngIf="filtros.length > 1" (click)="eliminarFiltroLista(i)">
+            <i class="ki-filled ki-trash text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end gap-2">
+    <button
+      class="mr-1 btn btn-secondary"
+      (click)="limpiarFormulario()"
+      *ngIf="filtros.length >= 1"
+    >
+      Limpiar
+    </button>
+    <button class="btn btn-outline btn-primary" (click)="aplicarFiltro()">
+      Filtrar
+    </button>
+  </div>
+</form>
+
+<ng-template #modalFiltrosAvanzado let-data>
+  <div class="filter-wrapper" style="overflow-x: hidden">
+    <form [formGroup]="formularioFiltrosModal" style="width: 48rem">
+      <div formArrayName="filtros">
+        <ng-container
+          *ngFor="let filtro of filtrosModal.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <div class="row align-items-center">
+            <div class="col-12 col-md-3 mb-2">
+              <!-- <nb-select size="small" fullWidth placeholder="Seleccionar" formControlName="propiedad"
+                  (selectedChange)="seleccionarPropiedadModal($event, i)">
+                  <nb-option value="">Seleccionar</nb-option>
+                  <nb-option *ngFor="let propiedad of arrPropiedadBusquedaAvanzada" [value]="
+                  propiedad.esFk
+                    ? propiedad.modeloFk.toLocaleLowerCase().substring(3) +
+                      '_id'
+                    : propiedad.nombre.toLocaleLowerCase()
+                " [attr.data-tipo]="propiedad.campoTipo">{{ propiedad.nombre }}</nb-option>
+                </nb-select> -->
+            </div>
+            <div class="col-12 col-md-3 mb-2">
+              <!-- <nb-select size="small" formControlName="operador" fullWidth placeholder="Seleccionar" [selected]="">
+                  {{ criterioBusqueda }}
+                  <nb-option value="">Seleccionar</nb-option>
+                  <nb-option *ngFor="let criterioBusqueda of criteriosBusquedaModal[i]" [value]="criterioBusqueda.valor">
+                    {{ criterioBusqueda.texto }}
+                  </nb-option>
+                </nb-select> -->
+            </div>
+            <div class="col-12 col-md-4 mb-2">
+              <input
+                fieldSize="small"
+                formControlName="valor1"
+                nbInput
+                fullWidth
+                [id]="'inputValor1Modal' + i"
+                [type]="
+                  filtro.get('tipo')?.value === 'IntegerField'
+                    ? 'number'
+                    : filtro.get('tipo')?.value === 'DateField'
+                    ? 'date'
+                    : 'text'
+                "
+              />
+            </div>
+            <div class="col-12 col-md-2 mb-2">
+              <!-- <button class="border-0 bg-transparent button-remover" *ngIf="filtros.length >= 1"
+                  (click)="agregarNuevoFiltroModal()"><nb-icon icon="plus-outline"></nb-icon></button>
+                <button class="border-0 bg-transparent button-remover" *ngIf="filtrosModal.length > 1"
+                  (click)="eliminarFiltroModal(i)"><nb-icon icon="trash-outline"></nb-icon></button> -->
+
+              <button clas (click)="agregarNuevoFiltroModal()">
+                <i class="ki-filled ki-plus"></i>
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+  <div class="d-flex justify-content-end gap-2 mt-3">
+    <button
+      class="mr-1"
+      nbButton
+      size="small"
+      type="button"
+      (click)="limpiarFormularioModal(data.tituloModal)"
+      *ngIf="filtros.length >= 1"
+    >
+      Limpiar
+    </button>
+    <button
+      nbButton
+      type="submit"
+      status="primary"
+      size="small"
+      (click)="aplicarFiltroModal(data.tituloModal)"
+    >
+      Filtrar
+    </button>
+  </div>
+  <div class="table-wrapper table-responsive mt-4">
+    <table class="table table-hover table-bordered border mt-0">
+      <thead>
+        <tr
+          class="text-center"
+          *ngIf="
+            arrRegistroBusquedaAvanzada &&
+            arrRegistroBusquedaAvanzada.length > 0
+          "
+        >
+          <th
+            class="bg-gray-100"
+            *ngFor="let key of arrRegistroBusquedaAvanzada[0] | keys"
+          >
+            {{ key | titlecase }}
+          </th>
+          <th class="bg-gray-100">Seleccionar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of arrRegistroBusquedaAvanzada">
+          <ng-container *ngFor="let key of item | keys; let last = last">
+            <td>
+              {{ item[key] }}
+            </td>
+            <ng-container *ngIf="last">
+              <td class="text-center">
+                <button
+                  class="btn"
+                  (click)="cerrarModal(item)"
+                  placement="top"
+                  ngbTooltip="Seleccionar registro"
+                  container="body"
+                >
+                  <!-- <nb-icon icon="checkmark-outline"></nb-icon> -->
+                </button>
+              </td>
+            </ng-container>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</ng-template>
