@@ -102,6 +102,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private visitaService = inject(VisitaService);
   selectedVisita: any = null;
   visitarEditar:any;
+  datos: any[];
 
   constructor() {
     super();
@@ -271,7 +272,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.markerPositions = [];
   }
 
-  openInfoWindow(marker: MapMarker) {
+  openInfoWindow(marker: MapMarker) {  
     this.infoWindow.open(marker);
   }
 
@@ -365,7 +366,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   evento(visita: any) {
-    this.selectedVisita = visita; 
+    this.selectedVisita = visita;
+    this.zoom = 16;
+    this.center = { lat: visita.latitud, lng: visita.longitud };
+
+
   }
 
   editarModal(visita) {
