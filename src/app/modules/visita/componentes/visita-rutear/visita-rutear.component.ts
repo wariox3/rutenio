@@ -27,6 +27,7 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
+import { VisitaEditarRutearComponent } from "../visita-editar-rutear/visita-editar-rutear.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -42,7 +43,8 @@ import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.
     AgregarFlotaComponent,
     PaginacionDefaultComponent,
     ImportarComponent,
-  ],
+    VisitaEditarRutearComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,6 +101,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
   selectedVisita: any = null;
+  visitarEditar:any;
 
   constructor() {
     super();
@@ -363,6 +366,16 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   evento(visita: any) {
     this.selectedVisita = visita; 
+  }
+
+  editarModal(visita) {
+    this.toggleModal$.next(true);
+    this.visitarEditar = visita
+  }
+
+  visitaActualizada(id: string){
+    this.cerrarModalPorId(id)
+    this.consultarVisitas()
   }
   
 }

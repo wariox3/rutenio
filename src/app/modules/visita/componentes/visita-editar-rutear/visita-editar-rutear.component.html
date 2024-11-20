@@ -1,0 +1,108 @@
+<form [formGroup]="formularioVisitaRutear" (submit)="enviar()">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Documento
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.documento"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Destinatario
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.destinatario"
+        ></app-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Dirección
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.destinatario_direccion"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Teléfono
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.destinatario_telefono"
+        ></app-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Peso
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.peso"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Volumen
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.volumen"
+        ></app-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Latitud
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.latitud"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Longitud
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.longitud"
+        ></app-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <app-button
+      texto="Guardar"
+      [estaDeshabilitado]="!formularioVisitaRutear.valid"
+    ></app-button>
+  </div>
+</form>

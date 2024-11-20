@@ -33,6 +33,10 @@ export class VisitaService {
     return this.http.post<any[]>(`ruteo/visita/importar-excel/`, data);
   }
 
+  actualizarDatosVisita(id: number, data: any) {
+    return this.http.put<any>(`ruteo/visita/${id}/`, data);
+  }
+
   decodificar() {
     return this.http.post<any[]>(`ruteo/visita/decodificar/`, '');
   }
