@@ -48,8 +48,6 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
       destinatario_telefono: this.visita.destinatario_telefono,
       peso: this.visita.peso,
       volumen: this.visita.volumen,
-      latitud: this.visita.latitud,
-      longitud: this.visita.longitud,
     });
   }
 

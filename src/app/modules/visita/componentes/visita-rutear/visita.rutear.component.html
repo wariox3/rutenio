@@ -107,7 +107,8 @@
               <tr *ngFor="let visita of arrVisitas; let i = index" class="cursor-pointer" [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
                   'bg-white': visita.estado_decodificado,
-                  'bg-indigo-100 border-l-4 border-blue-500': selectedVisita === visita
+                  'bg-indigo-100 border-l-4 border-blue-500':
+                    selectedVisita === visita
                 }" (click)="evento(visita)">
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
@@ -243,7 +244,6 @@
   #importarPorExcelModal>
   <section *ngIf="toggleModal$ | async" modal-body>
     <app-visita-editar-rutear [visita]="visitarEditar" (emitirCerrarModal)="visitaActualizada('#editar-visita')">
-
     </app-visita-editar-rutear>
   </section>
 </app-modal-default>
