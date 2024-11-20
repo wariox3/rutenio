@@ -98,6 +98,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
+  selectedVisita: any = null;
 
   constructor() {
     super();
@@ -358,6 +359,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.cantidadErrores > 0 ||
       this.arrVisitas?.length <= 0
     );
+  }
+
+  evento(visita){
+    this.selectedVisita = visita;
+    console.log('Visita seleccionada:', visita);
+  
   }
   
 }

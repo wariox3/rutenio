@@ -18,4 +18,6 @@ export interface Visita {
   franja_id: number;
   franja_codigo: any;
   franja_nombre: string;
+  numero: number;
+  tiempo_servicio: number;
 }

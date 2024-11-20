@@ -133,11 +133,13 @@
             <tbody>
               @for (visita of arrVisitas; track $index) {
               <tr
-                class="p-2 border-b last:border-none"
+                class="p-2 border-b last:border-none cursor-pointer"
                 [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
-                  'bg-white': visita.estado_decodificado
+                  'bg-white': visita.estado_decodificado,
+                  'bg-blue-100 border-l-4 border-blue-500': selectedVisita === visita
                 }"
+                (click)="evento(visita)"
               >
                 <td class="p-3">
                   <div class="flex flex-col space-y-1">
@@ -146,7 +148,7 @@
                         visita.destinatario
                       }}</span>
                       <span class="text-gray-600 text-xs font-medium"
-                        >Guía: {{ visita.guia }}</span
+                        >Número: {{ visita.numero }}</span
                       >
                     </div>
                     <div class="text-gray-700 text-xs max-w-[24rem]">
@@ -158,9 +160,11 @@
                     >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
-                        <span>Peso: {{ visita.peso }}</span>
+                        <span>Peso: {{ visita.peso }} kg</span>
                         <i class="ki-filled ki-arrow-up-down"></i>
                         <span>Orden: {{ visita.orden }}</span>
+                        <i class="ki-filled ki-time"></i>
+                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
                       </div>
                     </div>
                   </div>
@@ -170,6 +174,7 @@
             </tbody>
           </table>
         </div>
+        
         <div class="card-footer flex justify-center">
           <app-paginacion-default
             [limite]="50"
