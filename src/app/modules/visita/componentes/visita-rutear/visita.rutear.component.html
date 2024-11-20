@@ -207,7 +207,7 @@
           <map-marker *ngFor="let markerPosition of markerPositions" [position]="markerPosition" #marker="mapMarker"
             (mapClick)="openInfoWindow(marker)">
           </map-marker>
-          <map-info-window>Aca va la info de la visita</map-info-window>
+          <map-info-window>{{ datos }}</map-info-window>
         </google-map>
       </div>
     </div>

@@ -4,7 +4,9 @@ import {
   Component,
   inject,
   OnInit,
+  QueryList,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import {
   GoogleMapsModule,
@@ -51,6 +53,7 @@ import { VisitaEditarRutearComponent } from "../visita-editar-rutear/visita-edit
 })
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+  @ViewChildren(MapMarker) mapMarkers!: QueryList<MapMarker>;
 
   public toggleModal$ = new BehaviorSubject(false);
 
@@ -66,6 +69,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     strokeWeight: 3,
   };
   directionsResults: google.maps.DirectionsResult | undefined;
+  markerMap: Map<number, MapMarker> = new Map();
 
   arrParametrosConsulta: ParametrosConsulta = {
     filtros: [],
@@ -181,9 +185,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.arrParametrosConsultaVisita.limite
       );
 
-      respuesta.registros.forEach((punto) => {
-        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
-        this.changeDetectorRef.detectChanges();
+      respuesta.registros.forEach((punto, index) => {
+        const position = { lat: punto.latitud, lng: punto.longitud };
+        this.addMarker(position, punto.id); // Agrega el ID de la visita
       });
 
       this._consultarErrores();
@@ -264,8 +268,19 @@ export default class VisitaRutearComponent extends General implements OnInit {
     });
   }
 
-  addMarker(position: google.maps.LatLngLiteral) {
+  addMarker(position: google.maps.LatLngLiteral, visitaId: number) {
     this.markerPositions.push(position);
+  }
+
+  ngAfterViewInit() {
+    this.mapMarkers.changes.subscribe(() => {
+      this.mapMarkers.forEach((marker, index) => {
+        const visita = this.arrVisitas[index];
+        if (visita) {
+          this.markerMap.set(visita.id, marker);
+        }
+      });
+    });
   }
 
   limpiarMarkers() {
@@ -367,10 +382,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   evento(visita: any) {
     this.selectedVisita = visita;
-    this.zoom = 16;
     this.center = { lat: visita.latitud, lng: visita.longitud };
-
-
+    this.zoom = 16;
+    const marker = this.markerMap.get(visita.id);
+    if (marker) {
+      this.datos = visita.destinatario_direccion
+      this.infoWindow.open(marker);
+    }
   }
 
   editarModal(visita) {
