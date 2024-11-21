@@ -30,6 +30,8 @@ import { FlotaService } from '../../../flota/servicios/flota.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
+import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -45,6 +47,7 @@ import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-edit
     PaginacionDefaultComponent,
     ImportarComponent,
     VisitaEditarRutearComponent,
+    FiltroBaseComponent,
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
@@ -100,6 +103,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cantidadAlertas: number = 0;
   public visitasTotales: number = 0;
   public totalRegistrosVisitas: number = 0;
+  public mapeo = visitaRutearMapeo;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -168,7 +172,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.visitaService.generalLista(parametros).subscribe((respuesta) => {
       this.limpiarMarkers();
       this._limpiarBarraCapacidad();
-      this.totalRegistrosVisitas = respuesta.cantidad_registros
+      this.totalRegistrosVisitas = respuesta.cantidad_registros;
 
       respuesta.registros.forEach((punto) => {
         const position = { lat: punto.latitud, lng: punto.longitud };
@@ -391,5 +395,16 @@ export default class VisitaRutearComponent extends General implements OnInit {
   visitaActualizada(id: string) {
     this.cerrarModalPorId(id);
     this.consultarVisitas();
+  }
+
+  filtrosPersonalizados(filtros: any, modalId: string) {
+    if (filtros.length >= 1) {
+      this.arrParametrosConsultaVisita.filtros = filtros;
+    } else {
+      this.arrParametrosConsultaVisita.filtros = [];
+    }
+
+    this._consultarVisitas(this.arrParametrosConsultaVisita);
+    this.cerrarModalPorId(modalId)
   }
 }

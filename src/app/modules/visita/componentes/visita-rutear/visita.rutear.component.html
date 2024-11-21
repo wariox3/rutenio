@@ -104,6 +104,20 @@
                     </span>
                     <span class="menu-title"> Ordenar </span>
                   </button>
+
+                  <!-- <i class="ki-filled ki-filter-search"></i> -->
+                </div>
+                <div class="menu-item">
+                  <button
+                    class="menu-link"
+                    data-modal-toggle="#filtros-visita"
+                    (click)="abrirModal()"
+                  >
+                    <span class="menu-icon">
+                      <i class="ki-filled ki-filter-search"></i>
+                    </span>
+                    <span class="menu-title"> Filtros </span>
+                  </button>
                 </div>
                 <div class="menu-item">
                   <button
@@ -365,5 +379,20 @@
       (emitirCerrarModal)="visitaActualizada('#editar-visita')"
     >
     </app-visita-editar-rutear>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'filtros-visita'"
+  titulo="Filtrar visita"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-filtro-base
+      [mapeoCampos]="mapeo"
+      (emitirFiltros)="filtrosPersonalizados($event, '#filtros-visita')"
+      [persistirFiltros]="false"
+    ></app-filtro-base>
   </section>
 </app-modal-default>
