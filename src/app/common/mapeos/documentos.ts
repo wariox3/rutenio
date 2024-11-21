@@ -13,8 +13,8 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
-        encabezado: 'Guia',
-        campoNombre: 'guia',
+        encabezado: 'Número',
+        campoNombre: 'numero',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
