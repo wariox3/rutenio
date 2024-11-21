@@ -1,19 +1,33 @@
-<div class="pagination">
-  <button
-    (click)="disminuirDesplazamiento()"
-    class="btn"
-    [disabled]="desplazamiento <= 0"
-  >
-    <i class="ki-outline ki-black-left"> </i>
-  </button>
-
-  <button class="btn active">{{ paginaActual }}</button>
-
-  <button
-    (click)="aumentarDesplazamiento()"
-    class="btn"
-    [disabled]="paginaActual >= totalPaginas"
-  >
-    <i class="ki-outline ki-black-right"> </i>
-  </button>
+<div class="flex items-center">
+  <div class="pagination">
+    <!-- Botón anterior -->
+    <button
+      (click)="disminuirDesplazamiento()"
+      class="btn"
+      [disabled]="!puedeRetroceder"
+    >
+      <i class="ki-outline ki-black-left"></i>
+    </button>
+  
+    <!-- Botones de páginas dinámicas -->
+    <button
+      *ngFor="let pagina of paginasVisibles"
+      class="btn"
+      [class.active]="pagina === paginaActual"
+      (click)="irAPagina(pagina)"
+    >
+      {{ pagina }}
+    </button>
+  
+    <!-- Botón siguiente -->
+    <button
+      (click)="aumentarDesplazamiento()"
+      class="btn"
+      [disabled]="!puedeAvanzar"
+    >
+      <i class="ki-outline ki-black-right"></i>
+    </button>
+  </div>
+  <div class="text-slate-500 text-sm ml-2">Total: {{ totalRegistros }}</div>
+  
 </div>

@@ -99,7 +99,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cantidadErrores: number = 0;
   public cantidadAlertas: number = 0;
   public visitasTotales: number = 0;
-  public totalPaginasVisitas: number = 0;
+  public totalRegistrosVisitas: number = 0;
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -164,21 +164,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private calcularCantidadRegistros(
-    cantidadRegistros: number,
-    desplazamiento: number
-  ) {
-    return Math.ceil(cantidadRegistros / desplazamiento);
-  }
-
   private _consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.generalLista(parametros).subscribe((respuesta) => {
       this.limpiarMarkers();
       this._limpiarBarraCapacidad();
-      this.totalPaginasVisitas = this.calcularCantidadRegistros(
-        respuesta.cantidad_registros,
-        this.arrParametrosConsultaVisita.limite
-      );
+      this.totalRegistrosVisitas = respuesta.cantidad_registros
 
       respuesta.registros.forEach((punto) => {
         const position = { lat: punto.latitud, lng: punto.longitud };

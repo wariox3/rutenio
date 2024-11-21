@@ -93,7 +93,12 @@
             <div class="dropdown-content w-full max-w-56 py-2">
               <div class="menu menu-default flex flex-col w-full">
                 <div class="menu-item">
-                  <button class="menu-link" (click)="ordenar()">
+                  <button
+                    class="menu-link"
+                    [ngClass]="{ 'cursor-not-allowed': cantidadErrores > 0 }"
+                    (click)="ordenar()"
+                    [disabled]="cantidadErrores > 0"
+                  >
                     <span class="menu-icon">
                       <i class="ki-filled ki-arrow-up-down"></i>
                     </span>
@@ -194,8 +199,9 @@
 
         <div class="card-footer flex justify-center">
           <app-paginacion-default
-            [limite]="50"
-            [totalPaginas]="totalPaginasVisitas"
+            [limite]="arrParametrosConsultaVisita.limite"
+            [totalRegistros]="totalRegistrosVisitas"
+            [maxPaginasVisibles]="5"
             (paginar)="paginar($event)"
           ></app-paginacion-default>
         </div>
