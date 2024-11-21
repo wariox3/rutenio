@@ -35,8 +35,6 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
     destinatario_correo: new FormControl(''),
     peso: new FormControl(''),
     volumen: new FormControl(''),
-    latitud: new FormControl(''),
-    longitud: new FormControl(''),
   });
 
   ngOnInit(): void {
