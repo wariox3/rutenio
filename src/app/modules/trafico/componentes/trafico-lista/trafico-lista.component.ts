@@ -10,11 +10,12 @@ import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { PaginacionDefaultComponent } from "../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component";
 
 @Component({
   selector: 'app-trafico-lista',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule, ButtonComponent],
+  imports: [CommonModule, GoogleMapsModule, ButtonComponent, PaginacionDefaultComponent],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,9 +67,9 @@ export default class TraficoListaComponent extends General implements OnInit {
 
   seleccionarDespacho(despacho: any) {
     this.despachoSeleccionado = despacho;
-    this.mostrarMapaFlag = false; // Cerrar el mapa
+    this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
-    this.directionsResults = undefined; // Limpiar los resultados de las direcciones
+    this.directionsResults = undefined; 
     this.changeDetectorRef.detectChanges();
 
     const parametrosConsultaVisitas = {
