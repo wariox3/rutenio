@@ -23,7 +23,6 @@ import {
 } from '../../../constantes/criterios-filtros';
 import { HttpService } from '../../../services/http.service';
 import { mapeoAvanzado } from '../../../constantes/mapeo-avanzado';
-import { guiaMapeo } from '../../../../modules/visita/mapeos/guia-mapeo';
 import { KeysPipe } from '../../../pipes/keys.pipe';
 import { SoloNumerosDirective } from '../../../directivas/solo-numeros.directive';
 import { FiltroBaseService } from './services/filtro-base.service';
@@ -48,7 +47,6 @@ interface FiltroPropiedades {
 })
 export class FiltroBaseComponent extends General {
   private _filtroBaseService = inject(FiltroBaseService);
-
   formularioItem: FormGroup;
   listaFiltros: any[] = [];
   arrPropiedadBusquedaAvanzada: FiltroPropiedades[] = [];
@@ -71,7 +69,7 @@ export class FiltroBaseComponent extends General {
   @ViewChild('modalFiltrosAvanzado') modalFiltrosAvanzado: TemplateRef<any>;
   @Input() persistirFiltros: boolean = true;
   @Output() emitirFiltros: EventEmitter<any> = new EventEmitter();
-  // private windowRef: NbWindowRef;
+  @Input({ required: true }) mapeoCampos: any = [];
   nombreFiltro = ``;
 
   constructor(
@@ -283,7 +281,7 @@ export class FiltroBaseComponent extends General {
   }
 
   construirPropiedades() {
-    this.propiedades = guiaMapeo.datos.filter(
+    this.propiedades = this.mapeoCampos?.datos.filter(
       (dato) => dato.visibleFiltro === true
     );
   }

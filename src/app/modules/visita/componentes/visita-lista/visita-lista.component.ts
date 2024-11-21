@@ -24,6 +24,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PaginacionAvanzadaComponent } from '../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component';
 import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { guiaMapeo } from '../../mapeos/guia-mapeo';
 
 @Component({
   selector: 'app-visita-lista',
@@ -52,6 +53,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _generalService = inject(GeneralService);
   private _filtroBaseService = inject(FiltroBaseService);
 
+  public guiaMapeo = guiaMapeo
   public toggleModal$ = new BehaviorSubject(false);
   public nombreFiltro = '';
   public cantidadRegistros: number = 0;
