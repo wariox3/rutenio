@@ -1,11 +1,18 @@
 <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5">
   <div class="card">
     <div class="card-body">
-      <app-button type="button" texto="Rutear" (emitirBotonClicked)="rutear()"
-        [estaDeshabilitado]="habilitadoParaRutear()"></app-button>
+      <app-button
+        type="button"
+        texto="Rutear"
+        (emitirBotonClicked)="rutear()"
+        [estaDeshabilitado]="habilitadoParaRutear()"
+      ></app-button>
     </div>
   </div>
-  <div class="card" [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 }">
+  <div
+    class="card"
+    [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 }"
+  >
     <div class="card-body">
       <div class="flex justify-between items-center">
         <section class="flex gap-14">
@@ -13,29 +20,37 @@
             <p class="text-xs text-slate-600">Vehiculos</p>
             <span class="font-semibold">
               <i class="ki-filled ki-delivery"></i>
-              {{ arrFlota?.length || 0 }}</span>
+              {{ arrFlota?.length || 0 }}</span
+            >
           </div>
           <div>
             <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
               <i class="ki-filled ki-package"></i>
-              {{ capacidadTotal }}</span>
+              {{ capacidadTotal }}</span
+            >
           </div>
           <div>
             <p class="text-xs text-slate-600">Visitas</p>
             <span class="font-semibold">
               <i class="ki-filled ki-geolocation"></i>
-              {{ visitasTotales || 0 }}</span>
+              {{ visitasTotales || 0 }}</span
+            >
           </div>
           <div>
             <p class="text-xs text-slate-600">Peso</p>
             <span class="font-semibold">
               <i class="ki-filled ki-package"></i>
-              {{ pesoTotal }}</span>
+              {{ pesoTotal }}</span
+            >
           </div>
           <div>
-            <app-progreso-circular data-tooltip="#tooltip_left" [progress]="porcentajeCapacidad"
-              [error]="errorCapacidad" [barraProgreso]="barraCapacidad"></app-progreso-circular>
+            <app-progreso-circular
+              data-tooltip="#tooltip_left"
+              [progress]="porcentajeCapacidad"
+              [error]="errorCapacidad"
+              [barraProgreso]="barraCapacidad"
+            ></app-progreso-circular>
           </div>
         </section>
         <section class="flex gap-14">
@@ -59,7 +74,12 @@
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visita</h3>
-          <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
+          <div
+            class="dropdown"
+            data-dropdown="true"
+            data-dropdown-trigger="click"
+            data-dropdown-dismiss="true"
+          >
             <button class="dropdown-toggle btn btn-light">
               <i class="ki-filled ki-dots-vertical"></i>
             </button>
@@ -74,7 +94,11 @@
                   </button>
                 </div>
                 <div class="menu-item">
-                  <button class="menu-link" data-modal-toggle="#importar-por-excel-modal" (click)="abrirModal()">
+                  <button
+                    class="menu-link"
+                    data-modal-toggle="#importar-por-excel-modal"
+                    (click)="abrirModal()"
+                  >
                     <span class="menu-icon">
                       <i class="ki-filled ki-file-up"></i>
                     </span>
@@ -90,7 +114,10 @@
                   </button>
                 </div>
                 <div class="menu-item">
-                  <button class="menu-link" (click)="confirmarEliminarErrores()">
+                  <button
+                    class="menu-link"
+                    (click)="confirmarEliminarErrores()"
+                  >
                     <span class="menu-icon">
                       <i class="ki-filled ki-delete-files"></i>
                     </span>
@@ -104,12 +131,18 @@
         <div class="card-table h-[16rem] overflow-y-auto scrollable">
           <table class="table w-full border-collapse">
             <tbody>
-              <tr *ngFor="let visita of arrVisitas; let i = index" class="cursor-pointer" [ngClass]="{
+              <tr
+                *ngFor="let visita of arrVisitas; let i = index"
+                class="cursor-pointer"
+                [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
                   'bg-yellow-50': visita.estado_decodificado_alerta,
                   'bg-blue-50 border-l-4 border-blue-500':
                     selectedVisita === visita
-                }" (click)="evento(visita)">
+                }"
+                (click)="evento(visita)"
+                [id]="'fila-' + visita.id"
+              >
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
                     <div class="flex justify-between items-center">
@@ -124,7 +157,9 @@
                       <i class="ki-filled ki-geolocation-home"></i>
                       {{ visita.destinatario_direccion }}
                     </div>
-                    <div class="flex justify-between text-gray-500 text-xs mt-1">
+                    <div
+                      class="flex justify-between text-gray-500 text-xs mt-1"
+                    >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
@@ -133,8 +168,11 @@
                         <i class="ki-filled ki-time"></i>
                         <span>Servicio: {{ visita.tiempo_servicio }} min</span>
                       </div>
-                      <button class="text-gray-500 hover:text-blue-500 transition-all"
-                        data-modal-toggle="#editar-visita" (click)="editarModal(visita)">
+                      <button
+                        class="text-gray-500 hover:text-blue-500 transition-all"
+                        data-modal-toggle="#editar-visita"
+                        (click)="editarModal(visita)"
+                      >
                         <span class="menu-icon">
                           <i class="ki-filled ki-notepad-edit text-xl"></i>
                         </span>
@@ -148,21 +186,33 @@
         </div>
 
         <div class="card-footer flex justify-center">
-          <app-paginacion-default [limite]="50" [totalPaginas]="totalPaginasVisitas"
-            (paginar)="paginar($event)"></app-paginacion-default>
+          <app-paginacion-default
+            [limite]="50"
+            [totalPaginas]="totalPaginasVisitas"
+            (paginar)="paginar($event)"
+          ></app-paginacion-default>
         </div>
       </div>
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header">
           <h3 class="card-title">Flota</h3>
-          <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
+          <div
+            class="dropdown"
+            data-dropdown="true"
+            data-dropdown-trigger="click"
+            data-dropdown-dismiss="true"
+          >
             <button class="dropdown-toggle btn btn-light">
               <i class="ki-filled ki-dots-vertical"></i>
             </button>
             <div class="dropdown-content w-full max-w-56 py-2">
               <div class="menu menu-default flex flex-col w-full">
                 <div class="menu-item">
-                  <button class="menu-link" data-modal-toggle="#agregar-flota" (click)="abrirModal()">
+                  <button
+                    class="menu-link"
+                    data-modal-toggle="#agregar-flota"
+                    (click)="abrirModal()"
+                  >
                     <span class="menu-icon">
                       <i class="ki-filled ki-plus-squared"></i>
                     </span>
@@ -174,7 +224,9 @@
           </div>
         </div>
         <div class="card-table scrollable-y-auto h-[16rem]">
-          <table class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table">
+          <table
+            class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table"
+          >
             <thead>
               <tr>
                 <th>Placa</th>
@@ -205,45 +257,100 @@
       </div>
       <div class="card-body h-full">
         <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
-          <map-marker *ngFor="let markerPosition of markerPositions" [position]="markerPosition" #marker="mapMarker"
-            (mapClick)="openInfoWindow(marker)">
+          @for (markerPosition of markerPositions; track $index) {
+          <map-marker
+            [position]="markerPosition"
+            #marker="mapMarker"
+            (mapClick)="openInfoWindow(marker, $index)"
+          >
           </map-marker>
-          <map-info-window>{{ datos }}</map-info-window>
+          }
+          <map-info-window>
+            <section>
+              <p class="font-bold">{{ selectedVisita?.destinatario }}</p>
+              <div>
+                <i class="ki-filled ki-geolocation"></i>
+                <span class="ml-1">{{
+                  selectedVisita?.destinatario_direccion
+                }}</span>
+              </div>
+              <div class="mt-2 flex gap-2 items-center">
+                <div>
+                  <i class="ki-filled ki-package"></i>
+                  <span class="ml-1">{{ selectedVisita?.peso }}</span>
+                </div>
+                <div>
+                  <i class="ki-filled ki-time"></i>
+                  <span class="ml-1">{{
+                    selectedVisita?.tiempo_servicio
+                  }}</span>
+                </div>
+              </div>
+            </section>
+          </map-info-window>
         </google-map>
       </div>
     </div>
   </div>
 </div>
 
-<app-modal-default titulo="Agregar flota" size="medium" [id]="'agregar-flota'" (emitirModalCerrado)="cerrarModal()">
-  <section *ngIf="!(cargandoConsultas$ | async) && (toggleModal$ | async)" modal-body>
-    <app-agregar-flota (emitirConsultarLista)="consultarFlotas(arrParametrosConsulta)"
-      [itemsSeleccionados]="flotasSeleccionadas"></app-agregar-flota>
+<app-modal-default
+  titulo="Agregar flota"
+  size="medium"
+  [id]="'agregar-flota'"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <section
+    *ngIf="!(cargandoConsultas$ | async) && (toggleModal$ | async)"
+    modal-body
+  >
+    <app-agregar-flota
+      (emitirConsultarLista)="consultarFlotas(arrParametrosConsulta)"
+      [itemsSeleccionados]="flotasSeleccionadas"
+    ></app-agregar-flota>
   </section>
 </app-modal-default>
 
-<div class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
-  id="tooltip_left">
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_left"
+>
   Porcentaje de capacidad
 </div>
 
-<app-modal-default size="medium" [id]="'importar-por-excel-modal'" titulo="Importar por excel"
-  (emitirModalCerrado)="cerrarModal()" #importarPorExcelModal>
+<app-modal-default
+  size="medium"
+  [id]="'importar-por-excel-modal'"
+  titulo="Importar por excel"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
   <section *ngIf="toggleModal$ | async" modal-body>
-    <app-importar (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
+    <app-importar
+      (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultarVisitas()"
       archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-      url="ruteo/visita/importar-excel/" [archivoEjemplo]="{
+      url="ruteo/visita/importar-excel/"
+      [archivoEjemplo]="{
         nombre: 'estructuraVisita',
         ruta: 'assets/ejemplos/modelo/estructuraVisita.xlsx'
-      }"></app-importar>
+      }"
+    ></app-importar>
   </section>
 </app-modal-default>
 
-<app-modal-default size="medium" [id]="'editar-visita'" titulo="Editar visita" (emitirModalCerrado)="cerrarModal()"
-  #importarPorExcelModal>
+<app-modal-default
+  size="medium"
+  [id]="'editar-visita'"
+  titulo="Editar visita"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
   <section *ngIf="toggleModal$ | async" modal-body>
-    <app-visita-editar-rutear [visita]="visitarEditar" (emitirCerrarModal)="visitaActualizada('#editar-visita')">
+    <app-visita-editar-rutear
+      [visita]="visitarEditar"
+      (emitirCerrarModal)="visitaActualizada('#editar-visita')"
+    >
     </app-visita-editar-rutear>
   </section>
 </app-modal-default>

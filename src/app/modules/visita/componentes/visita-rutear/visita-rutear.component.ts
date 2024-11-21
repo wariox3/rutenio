@@ -29,7 +29,7 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
-import { VisitaEditarRutearComponent } from "../visita-editar-rutear/visita-editar-rutear.component";
+import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -40,13 +40,12 @@ import { VisitaEditarRutearComponent } from "../visita-editar-rutear/visita-edit
     GoogleMapsModule,
     ProgresoCircularComponent,
     ModalDefaultComponent,
-    LabelComponent,
     NgSelectModule,
     AgregarFlotaComponent,
     PaginacionDefaultComponent,
     ImportarComponent,
-    VisitaEditarRutearComponent
-],
+    VisitaEditarRutearComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -84,7 +83,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [{ propiedad: 'estado_despacho', valor1: false }],
     limite: 50,
     desplazar: 0,
-    ordenamientos: ["orden"],
+    ordenamientos: ['orden'],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
@@ -105,7 +104,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
   selectedVisita: any = null;
-  visitarEditar:any;
+  visitarEditar: any;
   datos: any[];
 
   constructor() {
@@ -185,7 +184,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.arrParametrosConsultaVisita.limite
       );
 
-      respuesta.registros.forEach((punto, index) => {
+      respuesta.registros.forEach((punto) => {
         const position = { lat: punto.latitud, lng: punto.longitud };
         this.addMarker(position, punto.id); // Agrega el ID de la visita
       });
@@ -287,8 +286,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.markerPositions = [];
   }
 
-  openInfoWindow(marker: MapMarker) {  
+  openInfoWindow(marker: MapMarker, index: number) {
+    this.selectedVisita = this.arrVisitas[index];
+    this.scrollToRow(this.selectedVisita.id);
     this.infoWindow.open(marker);
+  }
+
+  scrollToRow(index: number): void {
+    const row = document.getElementById(`fila-${index}`);
+    if (row) {
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   abrirModal() {
@@ -386,19 +394,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.zoom = 16;
     const marker = this.markerMap.get(visita.id);
     if (marker) {
-      this.datos = visita.destinatario_direccion
       this.infoWindow.open(marker);
     }
   }
 
   editarModal(visita) {
     this.toggleModal$.next(true);
-    this.visitarEditar = visita
+    this.visitarEditar = visita;
   }
 
-  visitaActualizada(id: string){
-    this.cerrarModalPorId(id)
-    this.consultarVisitas()
+  visitaActualizada(id: string) {
+    this.cerrarModalPorId(id);
+    this.consultarVisitas();
   }
-  
 }
