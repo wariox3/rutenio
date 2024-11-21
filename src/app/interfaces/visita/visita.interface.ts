@@ -20,4 +20,5 @@ export interface Visita {
   franja_nombre: string;
   numero: number;
   tiempo_servicio: number;
+  estado_decodificado_alerta: boolean;
 }
