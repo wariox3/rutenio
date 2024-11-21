@@ -106,8 +106,7 @@
             <tbody>
               <tr *ngFor="let visita of arrVisitas; let i = index" class="cursor-pointer" [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
-                  'bg-white': visita.estado_decodificado,
-                  'bg-blue-100 border-l-4 border-blue-500':
+                  'bg-blue-50 border-l-4 border-blue-500':
                     selectedVisita === visita
                 }" (click)="evento(visita)">
                 <td class="p-3 w-full">
