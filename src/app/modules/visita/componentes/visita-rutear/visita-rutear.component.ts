@@ -97,6 +97,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public barraCapacidad: number = 0;
   public errorCapacidad: boolean = false;
   public cantidadErrores: number = 0;
+  public cantidadAlertas: number = 0;
   public visitasTotales: number = 0;
   public totalPaginasVisitas: number = 0;
 
@@ -147,18 +148,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
     return this.visitaService.visitaResumen().pipe(
       switchMap((response) => {
         this.visitasTotales = response?.resumen?.cantidad;
+        this.cantidadErrores = response?.errores?.cantidad;
+        this.cantidadAlertas = response?.alertas?.cantidad;
         this.pesoTotal = response?.resumen?.peso;
         this.changeDetectorRef.detectChanges();
         return of(null);
       })
     );
-  }
-
-  private _consultarErrores() {
-    this.visitaService.visitaErrores().subscribe((response) => {
-      this.cantidadErrores = response?.error?.cantidad;
-      this.changeDetectorRef.detectChanges();
-    });
   }
 
   private _limpiarBarraCapacidad() {
@@ -189,7 +185,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this.addMarker(position, punto.id); // Agrega el ID de la visita
       });
 
-      this._consultarErrores();
+      // this._consultarErrores();
       this._calcularPorcentajeCapacidad();
       this.arrVisitas = respuesta.registros;
       this.changeDetectorRef.detectChanges();
@@ -391,7 +387,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
   evento(visita: any) {
     this.selectedVisita = visita;
     this.center = { lat: visita.latitud, lng: visita.longitud };
-    this.zoom = 16;
     const marker = this.markerMap.get(visita.id);
     if (marker) {
       this.infoWindow.open(marker);

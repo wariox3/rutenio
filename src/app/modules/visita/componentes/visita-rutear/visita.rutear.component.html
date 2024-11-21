@@ -53,8 +53,15 @@
             ></app-progreso-circular>
           </div>
         </section>
-        <section class="flex gap-14">
-          @if (cantidadErrores > 0) {
+        <section class="flex gap-6">
+          @if (cantidadAlertas > 0) {
+          <div class="text-center">
+            <p class="text-xs text-slate-600 font-bold">Alertas</p>
+            <span class="badge badge-sm badge-warning font-bold">
+              {{ cantidadAlertas }}
+            </span>
+          </div>
+          } @if (cantidadErrores > 0) {
           <div class="text-center">
             <p class="text-xs text-slate-600 font-bold">Errores</p>
             <span class="badge badge-sm badge-danger font-bold">

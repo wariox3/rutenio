@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { Visita } from '../../../interfaces/visita/visita.interface';
-import {
-  VisitaError,
-  VisitaResumen,
-} from '../../../interfaces/visita/rutear.interface';
+import { VisitaResumen } from '../../../interfaces/visita/rutear.interface';
 import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
 
 @Injectable({
@@ -14,7 +11,10 @@ export class VisitaService {
   constructor(private http: HttpService) {}
 
   generalLista(data: any) {
-    return this.http.post<RespuestaGeneralLista<Visita>>(`general/funcionalidad/lista/`, data);
+    return this.http.post<RespuestaGeneralLista<Visita>>(
+      `general/funcionalidad/lista/`,
+      data
+    );
   }
 
   listarVisitas(data: any) {
@@ -69,10 +69,6 @@ export class VisitaService {
 
   visitaResumen() {
     return this.http.post<VisitaResumen>('ruteo/visita/resumen/', {});
-  }
-
-  visitaErrores() {
-    return this.http.post<VisitaError>('ruteo/visita/error/', {});
   }
 
   importarComplementos(parametros: {

@@ -3,10 +3,10 @@ export interface VisitaResumen {
     cantidad: number;
     peso: number;
   };
-}
-
-export interface VisitaError {
-  error: {
+  errores: {
+    cantidad: number;
+  };
+  alertas: {
     cantidad: number;
   };
 }
