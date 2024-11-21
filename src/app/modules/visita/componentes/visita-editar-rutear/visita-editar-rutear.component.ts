@@ -39,13 +39,13 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this.formularioVisitaRutear.patchValue({
-      documento: this.visita.documento,
-      destinatario: this.visita.destinatario,
-      destinatario_direccion: this.visita.destinatario_direccion,
-      destinatario_correo: this.visita.destinatario_correo,
-      destinatario_telefono: this.visita.destinatario_telefono,
-      peso: this.visita.peso,
-      volumen: this.visita.volumen,
+      documento: this.visita?.documento,
+      destinatario: this.visita?.destinatario,
+      destinatario_direccion: this.visita?.destinatario_direccion,
+      destinatario_correo: this.visita?.destinatario_correo,
+      destinatario_telefono: this.visita?.destinatario_telefono,
+      peso: this.visita?.peso,
+      volumen: this.visita?.volumen,
     });
   }
 
