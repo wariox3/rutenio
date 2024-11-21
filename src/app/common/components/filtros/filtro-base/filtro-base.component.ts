@@ -29,6 +29,7 @@ import { FiltroBaseService } from './services/filtro-base.service';
 
 interface FiltroPropiedades {
   nombre: string;
+  campoNombre?: string;
   campoTipo: string;
   visibleTabla: boolean;
   visibleFiltro: boolean;

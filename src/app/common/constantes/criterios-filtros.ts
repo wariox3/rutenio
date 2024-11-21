@@ -92,7 +92,7 @@ export const  criteriosFiltros: BaseCriteriosFiltro = {
   Booleano: [
     {
       valor: true,
-      texto: "Es",
+      texto: "Si",
     },
     {
       valor: false,

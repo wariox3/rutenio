@@ -1,6 +1,7 @@
 type Mapeo = {
     [key: string]: {
       nombre: string;
+      campoNombre?: string;
       visibleTabla: boolean;
       visibleFiltro: boolean;
       ordenable: boolean;

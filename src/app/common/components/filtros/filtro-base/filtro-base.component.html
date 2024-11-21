@@ -18,7 +18,7 @@
               [value]="obtenerValorFiltro(propiedad)"
               [attr.data-tipo]="propiedad.campoTipo"
             >
-              {{ propiedad.nombre | titlecase }} 
+              {{ propiedad.campoNombre || propiedad.nombre | titlecase }}
             </option>
             }
           </select>
@@ -64,6 +64,7 @@
                 
               </button>
             </nb-form-field> -->
+          @if (filtro.get('tipo')?.value !== 'Booleano') {
           <ng-container *ngIf="filtro.get('tipo')?.value === 'DateField'">
             <input
               class="input"
@@ -92,6 +93,7 @@
             "
             [appSoloNumeros]="filtro.get('busquedaAvanzada')?.value === 'true'"
           />
+          }
         </div>
         <div class="w-full mb-2 flex gap-4 justify-center">
           <button (click)="agregarNuevoFiltro()">
