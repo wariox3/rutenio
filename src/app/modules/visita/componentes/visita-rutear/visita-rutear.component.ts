@@ -399,12 +399,33 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   filtrosPersonalizados(filtros: any, modalId: string) {
     if (filtros.length >= 1) {
-      this.arrParametrosConsultaVisita.filtros = filtros;
+      this.arrParametrosConsultaVisita.filtros = [
+        { propiedad: 'estado_despacho', valor1: false },
+        ...filtros,
+      ];
     } else {
-      this.arrParametrosConsultaVisita.filtros = [];
+      this.arrParametrosConsultaVisita.filtros = [
+        { propiedad: 'estado_despacho', valor1: false },
+      ];
     }
 
     this._consultarVisitas(this.arrParametrosConsultaVisita);
-    this.cerrarModalPorId(modalId)
+    this.cerrarModalPorId(modalId);
   }
+
+  // filtrosPersonalizados(filtros: any, modalId: string) {
+  //   let parametrosConsulta: ParametrosConsulta = {
+  //     ...this.arrParametrosConsultaVisita,
+  //   };
+
+  //   if (filtros.length >= 1) {
+  //     parametrosConsulta = {
+  //       ...parametrosConsulta,
+  //       filtros: [...this.arrParametrosConsultaVisita.filtros, ...filtros],
+  //     };
+  //   }
+
+  //   this._consultarVisitas(parametrosConsulta);
+  //   this.cerrarModalPorId(modalId);
+  // }
 }
