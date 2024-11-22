@@ -81,7 +81,11 @@
         <div class="card-header flex justify-between items-center">
           <section class="flex gap-2 items-center">
             <h3 class="card-title">Visita</h3>
-            <span class="text-sm text-slate-500" *ngIf="valoresFiltrados.length > 0">[ {{ valoresFiltrados }} ]</span>
+            <span
+              class="text-sm text-slate-500"
+              *ngIf="valoresFiltrados.length > 0"
+              >[ {{ valoresFiltrados }} ]</span
+            >
           </section>
           <div
             class="dropdown"
@@ -196,15 +200,26 @@
                         <i class="ki-filled ki-time"></i>
                         <span>Servicio: {{ visita.tiempo_servicio }} min</span>
                       </div>
-                      <button
-                        class="text-gray-500 hover:text-blue-500 transition-all"
-                        data-modal-toggle="#editar-visita"
-                        (click)="editarModal(visita)"
-                      >
-                        <span class="menu-icon">
-                          <i class="ki-filled ki-notepad-edit text-xl"></i>
-                        </span>
-                      </button>
+
+                      <section class="flex gap-2">
+                        <button
+                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          data-modal-toggle="#editar-visita"
+                          (click)="editarModal(visita)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-notepad-edit text-xl"></i>
+                          </span>
+                        </button>
+
+                        <button
+                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          data-modal-toggle="#detalle-visita"
+                          (click)="abrirModal()"
+                        >
+                          <i class="ki-filled ki-eye text-xl"></i>
+                        </button>
+                      </section>
                     </div>
                   </div>
                 </td>
@@ -396,5 +411,16 @@
       (emitirFiltros)="filtrosPersonalizados($event, '#filtros-visita')"
       [persistirFiltros]="false"
     ></app-filtro-base>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'detalle-visita'"
+  titulo="Visita detalle"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-visita-rutear-detalle [visita]="selectedVisita"></app-visita-rutear-detalle>
   </section>
 </app-modal-default>

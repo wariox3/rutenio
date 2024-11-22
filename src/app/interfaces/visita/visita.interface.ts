@@ -21,4 +21,5 @@ export interface Visita {
   numero: number;
   tiempo_servicio: number;
   estado_decodificado_alerta: boolean;
+  estado_despacho: boolean;
 }

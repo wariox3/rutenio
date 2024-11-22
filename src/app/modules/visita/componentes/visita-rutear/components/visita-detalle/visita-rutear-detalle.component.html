@@ -1,0 +1,138 @@
+<!-- <div>
+  <section class="flex justify-between mb-2">
+    <div class="flex items-center space-x-2">
+      <i class="ki-filled ki-dropbox text-lg"></i>
+      <p class="font-semibold mr-1">ID de Envío:</p>
+      <span class="text-slate-500">{{ visita.id }}</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <i class="ki-filled ki-dropbox text-lg"></i>
+      <p class="font-semibold mr-1">Número de Guía:</p>
+      <span class="text-slate-500">
+        {{ visita.numero }}
+      </span>
+    </div>
+  </section>
+
+  <section class="flex justify-between">
+    <div class="flex items-center space-x-2">
+      <i class="ki-filled ki-calendar text-lg"></i>
+      <p class="font-semibold mr-1">Fecha:</p>
+      <span class="text-slate-500">
+        {{ visita.fecha | date : "yyyy-MM-dd" }}
+      </span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <i class="ki-filled ki-geolocation text-lg"></i>
+      <p class="font-semibold mr-1">Destinatario:</p>
+      <span class="text-slate-500">
+        {{ visita.destinatario }}
+      </span>
+    </div>
+  </section>
+</div> -->
+<table class="table-auto border border-gray-300 text-sm w-full my-3">
+  <tbody>
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        ID de Envío
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.id }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Número
+      </td>
+      <td class="px-4 py-3">{{ visita.numero }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Fecha
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.fecha | date : "yyyy-MM-dd" }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Destinatario
+      </td>
+      <td class="px-4 py-3">{{ visita.destinatario }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Dirección
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.destinatario_direccion }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Teléfono
+      </td>
+      <td class="px-4 py-3">{{ visita.destinatario_telefono }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Peso
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.peso }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Volumen
+      </td>
+      <td class="px-4 py-3">{{ visita.volumen }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Tiempo de Servicio
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.tiempo_servicio }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Estado Decodificado
+      </td>
+      <td class="px-4 py-3">{{ visita.estado_decodificado ? "Sí" : "No" }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Despachado
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.estado_despacho ? "Sí" : "No" }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Orden
+      </td>
+      <td class="px-4 py-3">{{ visita.orden }}</td>
+    </tr>
+  </tbody>
+</table>
