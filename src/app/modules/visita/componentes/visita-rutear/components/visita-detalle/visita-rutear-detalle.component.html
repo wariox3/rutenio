@@ -1,36 +1,3 @@
-<!-- <div>
-  <section class="flex justify-between mb-2">
-    <div class="flex items-center space-x-2">
-      <i class="ki-filled ki-dropbox text-lg"></i>
-      <p class="font-semibold mr-1">ID de Envío:</p>
-      <span class="text-slate-500">{{ visita.id }}</span>
-    </div>
-    <div class="flex items-center space-x-2">
-      <i class="ki-filled ki-dropbox text-lg"></i>
-      <p class="font-semibold mr-1">Número de Guía:</p>
-      <span class="text-slate-500">
-        {{ visita.numero }}
-      </span>
-    </div>
-  </section>
-
-  <section class="flex justify-between">
-    <div class="flex items-center space-x-2">
-      <i class="ki-filled ki-calendar text-lg"></i>
-      <p class="font-semibold mr-1">Fecha:</p>
-      <span class="text-slate-500">
-        {{ visita.fecha | date : "yyyy-MM-dd" }}
-      </span>
-    </div>
-    <div class="flex items-center space-x-2">
-      <i class="ki-filled ki-geolocation text-lg"></i>
-      <p class="font-semibold mr-1">Destinatario:</p>
-      <span class="text-slate-500">
-        {{ visita.destinatario }}
-      </span>
-    </div>
-  </section>
-</div> -->
 <table class="table-auto border border-gray-300 text-sm w-full my-3">
   <tbody>
     <tr class="border-b border-gray-300">
@@ -133,6 +100,23 @@
         Orden
       </td>
       <td class="px-4 py-3">{{ visita.orden }}</td>
+    </tr>
+
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Latitud
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.latitud }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Longitud
+      </td>
+      <td class="px-4 py-3">{{ visita.longitud }}</td>
     </tr>
   </tbody>
 </table>
