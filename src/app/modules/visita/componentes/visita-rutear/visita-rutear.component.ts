@@ -86,7 +86,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [{ propiedad: 'estado_despacho', valor1: false }],
     limite: 50,
     desplazar: 0,
-    ordenamientos: ['orden'],
+    ordenamientos: ['-estado_decodificado', '-estado_decodificado_alerta', 'orden'],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
