@@ -4,12 +4,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   Output,
 } from '@angular/core';
 import { KTModal } from '../../../../../../metronic/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { General } from '../../../../clases/general';
+import { ModalDefaultService } from './modal-default.service';
 
 @Component({
   selector: 'app-modal-default',
@@ -25,16 +27,19 @@ export class ModalDefaultComponent extends General implements AfterViewInit {
   @Input() displayFooter: boolean = false;
   @Input() size: 'small' | 'medium' | 'large' = 'medium';
   @Output() emitirModalCerrado: EventEmitter<void>;
-  
+
   public abierto = new BehaviorSubject(false);
+  public estaModalBloqueado$: Observable<boolean>;
 
   private modal: KTModal;
   private eventHideId: string;
   private eventShowId: string;
+  private _modalDefaultService = inject(ModalDefaultService);
 
   constructor() {
-    super()
+    super();
     this.emitirModalCerrado = new EventEmitter();
+    this.estaModalBloqueado$ = this._modalDefaultService.estado;
   }
 
   ngOnDestroy(): void {
@@ -55,7 +60,6 @@ export class ModalDefaultComponent extends General implements AfterViewInit {
 
     this.eventShowId = this.modal?.on('show', (detail) => {
       this.abierto.next(true);
-      
     });
   }
 
@@ -66,7 +70,6 @@ export class ModalDefaultComponent extends General implements AfterViewInit {
     this.eventHideId = this.modal?.on('hide', (detail) => {
       this.emitirModalCerrado.emit();
       this.abierto.next(false);
-
     });
   }
 }

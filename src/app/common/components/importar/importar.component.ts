@@ -20,6 +20,7 @@ import * as XLSX from 'xlsx';
 import { General } from '../../clases/general';
 import { GeneralService } from '../../services/general.service';
 import { ButtonComponent } from '../ui/button/button.component';
+import { ModalDefaultService } from '../ui/modals/modal-default/modal-default.service';
 
 @Component({
   selector: 'app-importar',
@@ -37,6 +38,7 @@ export class ImportarComponent extends General {
   @Input() archivoEjemplo: { nombre: string; ruta: string };
 
   private _generalService = inject(GeneralService);
+  private _modalDefaultService = inject(ModalDefaultService);
 
   public erroresImportar: any[] = [];
   public selectedFile: File | null = null;
@@ -112,12 +114,14 @@ export class ImportarComponent extends General {
   uploadFile() {
     if (this.base64File) {
       this.estaImportando$.next(true);
+      this._modalDefaultService.actualizarEstadoModal(true);
 
       this._generalService
         .importar(this.url, { archivo_base64: this.base64File })
         .pipe(
           finalize(() => {
             this.estaImportando$.next(false);
+            this._modalDefaultService.actualizarEstadoModal(false);
           }),
           catchError((err) => {
             if (err.errores_validador) {
