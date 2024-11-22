@@ -26,6 +26,22 @@ export const guiaMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
+    {
+      nombre: 'estado_decodificado',
+      campoNombre: 'Decodificado',
+      campoTipo: 'Booleano',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: false,
+    },
+    {
+      nombre: 'estado_decodificado_alerta',
+      campoNombre: 'Alerta',
+      campoTipo: 'Booleano',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: false,
+    },
     // {
     //   nombre: "ciudad",
     //   campoTipo: "Fk",
