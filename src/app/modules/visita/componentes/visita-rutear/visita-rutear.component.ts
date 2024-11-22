@@ -86,7 +86,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [{ propiedad: 'estado_despacho', valor1: false }],
     limite: 50,
     desplazar: 0,
-    ordenamientos: ['-estado_decodificado', '-estado_decodificado_alerta', 'orden'],
+    ordenamientos: [
+      '-estado_decodificado',
+      '-estado_decodificado_alerta',
+      'orden',
+    ],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
@@ -104,6 +108,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public visitasTotales: number = 0;
   public totalRegistrosVisitas: number = 0;
   public mapeo = visitaRutearMapeo;
+  public valoresFiltrados: string = '';
 
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
@@ -397,7 +402,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.consultarVisitas();
   }
 
-  filtrosPersonalizados(filtros: any, modalId: string) {
+  private _actualizarFiltrosParaMostrar(filtros: any[]) {
+    this.valoresFiltrados = ""
+    filtros.forEach((filtro, index) => {
+      this.valoresFiltrados += filtro.valor1
+      if(index + 1 < filtros.length) {
+        this.valoresFiltrados += ', ';
+      }
+    });
+  }
+
+  filtrosPersonalizados(filtros: any[], modalId: string) {
     if (filtros.length >= 1) {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
@@ -408,6 +423,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
         { propiedad: 'estado_despacho', valor1: false },
       ];
     }
+
+    this._actualizarFiltrosParaMostrar(filtros);
 
     this._consultarVisitas(this.arrParametrosConsultaVisita);
     this.cerrarModalPorId(modalId);

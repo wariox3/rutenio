@@ -79,8 +79,10 @@
     <div class="flex flex-col space-y-5 h-full">
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
-          <h3 class="card-title">Visita</h3>
-          <!-- <span class="text-sm text-slate-500">[Numero: 29392384]</span> -->
+          <section class="flex gap-2 items-center">
+            <h3 class="card-title">Visita</h3>
+            <span class="text-sm text-slate-500" *ngIf="valoresFiltrados.length > 0">[ {{ valoresFiltrados }} ]</span>
+          </section>
           <div
             class="dropdown"
             data-dropdown="true"
