@@ -6,31 +6,43 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div
         *ngFor="let complemento of arrComplementos; let i = index"
-        class="bg-gray-100 rounded-lg p-4 shadow-md"
+        class="card"
       >
-        <div class="flex items-center mb-2">
-          <span *ngIf="complemento.instalado" class="text-green-500 mr-2"
-            ><i class="ki-filled ki-check-circle text-lg"></i
-          ></span>
-          <span *ngIf="!complemento.instalado" class="text-red-500 mr-2"
-            ><i class="ki-filled ki-cross-circle text-lg"></i
-          ></span>
-          <span class="font-medium">{{ complemento.nombre }}</span>
+        <div class="card-body">
+          <div class="flex items-center">
+            <span *ngIf="complemento.instalado" class="text-green-500 mr-2"
+              ><i class="ki-filled ki-check-circle text-lg"></i
+            ></span>
+            <span *ngIf="!complemento.instalado" class="text-red-500 mr-2"
+              ><i class="ki-filled ki-cross-circle text-lg"></i
+            ></span>
+            <span class="font-medium">{{ complemento.nombre }}</span>
+          </div>
         </div>
-
-        <div class="flex justify-end mt-4">
+        <div class="card-footer flex justify-end gap-2 mt-8">
           <button
             *ngIf="!complemento.instalado"
             class="btn btn-success"
             (click)="instalar(complemento)"
           >
+            <i class="ki-filled ki-check"></i>
             Instalar
           </button>
           <button
-            class="btn btn-primary"
+            *ngIf="complemento.instalado"
+            class="btn btn-danger"
+            (click)="confirmacionDesinstalar(complemento)"
+          >
+            <i class="ki-filled ki-cross"></i>
+            Desinstalar
+          </button>
+          <button
+            *ngIf="complemento.instalado"
+            class="btn btn-secondary"
             (click)="abrirModal(i)"
             data-modal-toggle="#complementos-modal"
           >
+            <i class="ki-filled ki-setting-2"></i>
             Configurar
           </button>
         </div>

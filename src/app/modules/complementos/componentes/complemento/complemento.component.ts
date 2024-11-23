@@ -19,7 +19,6 @@ import { RespuestaComplemento } from '../../../../interfaces/complemento/complem
 import { ComplementoService } from '../../servicios/complemento.service';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { KTModal } from '../../../../../metronic/core';
 import { BehaviorSubject, finalize } from 'rxjs';
@@ -31,7 +30,6 @@ import { BehaviorSubject, finalize } from 'rxjs';
     ReactiveFormsModule,
     ModalDefaultComponent,
     LabelComponent,
-    InputComponent,
     ButtonComponent,
   ],
   templateUrl: './complemento.component.html',
@@ -42,6 +40,7 @@ export default class ComplementoComponent extends General implements OnInit {
   @ViewChild('contentTemplate') contentTemplate: TemplateRef<any>;
 
   public guardando$: BehaviorSubject<boolean>;
+  public cargandoLista$: BehaviorSubject<boolean>;
   formularioDinamico: FormGroup;
   formularios: FormGroup[] = [];
   formControls: any[] = [];
@@ -54,20 +53,34 @@ export default class ComplementoComponent extends General implements OnInit {
 
   arrayDatosJson: FormArray<FormGroup> | null = null;
 
+  constructor() {
+    super();
+    this.guardando$ = new BehaviorSubject(false);
+    this.cargandoLista$ = new BehaviorSubject(false);
+  }
+
   ngOnInit(): void {
     this.consultarLista();
-    this.guardando$ = new BehaviorSubject(false);
   }
 
   consultarLista() {
-    this.complementoService.listarComplementos().subscribe((respuesta) => {
-      this.arrComplementos = respuesta;
-      this.crearFormulario();
-      this.changeDetectorRef.detectChanges();
-    });
+    this.cargandoLista$.next(true);
+    this.complementoService
+      .listarComplementos()
+      .pipe(
+        finalize(() => {
+          this.cargandoLista$.next(false);
+        })
+      )
+      .subscribe((respuesta) => {
+        this.arrComplementos = respuesta;
+        this.crearFormulario();
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   crearFormulario() {
+    this.formularios = [];
     this.arrComplementos.forEach((complemento) => {
       const formGroup = new FormGroup({
         id: new FormControl(complemento.id),
@@ -129,12 +142,32 @@ export default class ComplementoComponent extends General implements OnInit {
   }
 
   instalar(complemento: any) {
-    const complementoModificado = { ...complemento, instalado: true };
+    this.complementoService.instalarComplemento(complemento).subscribe(() => {
+      this.consultarLista();
+      this.changeDetectorRef.detectChanges();
+    });
+  }
+
+  private _desinstalar(complemento: any) {
     this.complementoService
-      .instalarComplemento(complementoModificado.id, complementoModificado)
-      .subscribe((respuesta) => {
+      .desinstalarComplemento(complemento)
+      .subscribe(() => {
         this.consultarLista();
         this.changeDetectorRef.detectChanges();
+      });
+  }
+
+  confirmacionDesinstalar(complemento: any) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta acción desinstala el complemento',
+        textoBotonCofirmacion: 'Si, desinstalar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this._desinstalar(complemento);
+        }
       });
   }
 

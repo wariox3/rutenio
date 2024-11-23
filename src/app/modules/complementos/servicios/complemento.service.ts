@@ -1,8 +1,8 @@
-import { Injectable } from "@angular/core";
-import { HttpService } from "../../../common/services/http.service";
+import { Injectable } from '@angular/core';
+import { HttpService } from '../../../common/services/http.service';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ComplementoService {
   constructor(private http: HttpService) {}
@@ -11,8 +11,14 @@ export class ComplementoService {
     return this.http.get<any>(`general/complemento/`);
   }
 
-  instalarComplemento(id: any, data: any) {
-    return this.http.put<any>(`general/complemento/${id}/`, data);
+  instalarComplemento(complemento: any) {
+    const complementoActualizado = { ...complemento, instalado: true };
+    return this.actualizarComplemento(complemento.id, complementoActualizado);
+  }
+
+  desinstalarComplemento(complemento: any) {
+    const complementoActualizado = { ...complemento, instalado: false };
+    return this.actualizarComplemento(complemento.id, complementoActualizado);
   }
 
   actualizarComplemento(id: any, data: any) {
