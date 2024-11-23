@@ -89,7 +89,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     limite: 50,
     desplazar: 0,
     ordenamientos: [
-      '-estado_decodificado',
+      'estado_decodificado',
       '-estado_decodificado_alerta',
       'orden',
     ],
@@ -290,9 +290,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   scrollToRow(index: number): void {
-    const row = document.getElementById(`fila-${index}`);
-    if (row) {
-      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (window.innerWidth >= 1280) {
+      const row = document.getElementById(`fila-${index}`);
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }
 
