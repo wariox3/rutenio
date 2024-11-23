@@ -1,7 +1,6 @@
 <div
   class="modal"
   data-modal="true"
-  [attr.data-modal-backdrop-static]="estaModalBloqueado$ | async "
   [id]="id"
 >
   <div
@@ -34,7 +33,6 @@
 
 @if (estaModalBloqueado$ | async) {
   <div class="backdrop flex flex-col ">
-    <!-- <div class="spinner"></div> -->
     <i class="ki-filled ki-delivery-time text-white text-3xl"></i>
     <p class="text-white">Procesando...</p>
   </div>
