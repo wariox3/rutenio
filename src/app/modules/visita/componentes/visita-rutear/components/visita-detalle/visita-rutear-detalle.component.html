@@ -5,7 +5,7 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        ID de Envío
+        ID
       </td>
       <td class="px-4 py-3 border-r border-gray-300">
         {{ visita.id }}
@@ -81,23 +81,6 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Decodificado
-      </td>
-      <td class="px-4 py-3">{{ visita.estado_decodificado ? "Sí" : "No" }}</td>
-    </tr>
-
-    <tr class="border-b border-gray-300">
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Despachado
-      </td>
-      <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.estado_despacho ? "Sí" : "No" }}
-      </td>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
         Orden
       </td>
       <td class="px-4 py-3">{{ visita.orden }}</td>
@@ -119,15 +102,36 @@
       </td>
       <td class="px-4 py-3">{{ visita.longitud }}</td>
     </tr>
+
     <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Decodificado
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.estado_decodificado ? "Sí" : "No" }}
+      </td>
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
         Alerta
       </td>
-      <td class="px-4 py-3 border-r border-gray-300">
+      <td class="px-4 py-3">
         {{ visita.estado_decodificado_alerta ? "Sí" : "No" }}
       </td>
+    </tr>
+
+    <tr>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Despachado
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.estado_despacho ? "Sí" : "No" }}
+      </td>
+
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       ></td>
