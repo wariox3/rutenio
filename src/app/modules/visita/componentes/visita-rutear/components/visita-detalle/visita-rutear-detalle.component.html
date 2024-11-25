@@ -81,7 +81,7 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Estado Decodificado
+        Decodificado
       </td>
       <td class="px-4 py-3">{{ visita.estado_decodificado ? "Sí" : "No" }}</td>
     </tr>
@@ -118,6 +118,20 @@
         Longitud
       </td>
       <td class="px-4 py-3">{{ visita.longitud }}</td>
+    </tr>
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Alerta
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.estado_decodificado_alerta ? "Sí" : "No" }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      ></td>
+      <td class="px-4 py-3"></td>
     </tr>
   </tbody>
 </table>
