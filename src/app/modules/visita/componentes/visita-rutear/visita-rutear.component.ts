@@ -34,6 +34,7 @@ import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-edit
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaRutearService } from '../../servicios/visita-rutear.service';
+import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -51,6 +52,7 @@ import { VisitaRutearService } from '../../servicios/visita-rutear.service';
     VisitaEditarRutearComponent,
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
+    FullLoaderDefaultComponent,
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
@@ -112,8 +114,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public totalRegistrosVisitas: number = 0;
   public mapeo = visitaRutearMapeo;
   public valoresFiltrados: string = '';
-
+  public mostarVistaCargando$: BehaviorSubject<boolean>;
   public cargandoConsultas$: BehaviorSubject<boolean>;
+
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
   private _visitaRutearService = inject(VisitaRutearService);
@@ -124,6 +127,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   constructor() {
     super();
     this.cargandoConsultas$ = new BehaviorSubject(false);
+    this.mostarVistaCargando$ = new BehaviorSubject(false);
   }
 
   ngOnInit(): void {
@@ -437,10 +441,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ubicarFranja() {
-    this._visitaRutearService.ubicarFranja().subscribe((response) => {
-      this.alerta.mensajaExitoso(response.mensaje);
-      this.consultarVisitas();
-    });
+    this.mostarVistaCargando$.next(true);
+    this._visitaRutearService
+      .ubicarFranja()
+      .pipe(
+        finalize(() => {
+          this.mostarVistaCargando$.next(false);
+        })
+      )
+      .subscribe((response) => {
+        this.alerta.mensajaExitoso(response.mensaje);
+        this.consultarVisitas();
+      });
   }
 
   // filtrosPersonalizados(filtros: any, modalId: string) {
