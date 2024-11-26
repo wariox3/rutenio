@@ -50,25 +50,10 @@ export class VisitaImportarPorComplementoComponent extends General {
     {
       numeroRegistros: new FormControl(
         100,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(/^[0-9]+$/),
-        ])
+        Validators.compose([Validators.required])
       ),
-      desde: new FormControl(
-        null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(/^[0-9]+$/),
-        ])
-      ),
-      hasta: new FormControl(
-        null,
-        Validators.compose([
-          Validators.required,
-          Validators.pattern(/^[0-9]+$/),
-        ])
-      ),
+      desde: new FormControl(''),
+      hasta: new FormControl(''),
       pendienteDespacho: new FormControl(true),
     },
     { validators: this.validarRango() }
@@ -98,17 +83,13 @@ export class VisitaImportarPorComplementoComponent extends General {
   importarComplemento() {
     this.estaImportandoComplementos$.next(true);
 
-    const desde = this.transformarAPositivoMayorCero(
-      this.formularioComplementos.get('desde')?.value
-    );
-    const hasta = this.transformarAPositivoMayorCero(
-      this.formularioComplementos.get('hasta')?.value
-    );
+    const desde = this.formularioComplementos.get('desde')?.value;
+    const hasta = this.formularioComplementos.get('hasta')?.value;
     const pendienteDespacho =
       this.formularioComplementos.get('pendienteDespacho')?.value;
-    const numeroRegistros = this.transformarAPositivoMayorCero(
-      this.formularioComplementos.get('numeroRegistros')?.value
-    );
+    const numeroRegistros =
+      this.formularioComplementos.get('numeroRegistros')?.value;
+
     this._visitaService
       .importarComplementos({
         numeroRegistros,
@@ -136,10 +117,10 @@ export class VisitaImportarPorComplementoComponent extends General {
 
   reiniciarFormulario() {
     this.formularioComplementos.reset({
-      numeroRegistros: 1,
-      desde: 1,
-      hasta: 1,
-      pendienteDespacho: false,
+      numeroRegistros: 100,
+      desde: '',
+      hasta: '',
+      pendienteDespacho: true,
     });
   }
 

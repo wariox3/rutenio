@@ -1,14 +1,14 @@
 <form [formGroup]="formularioComplementos">
   <div class="grid grid-cols-1 gap-4 mb-5">
     <div>
-      <app-label [required]="true">Desde</app-label>
+      <app-label>Desde</app-label>
       <app-input
         [soloNumeros]="true"
         [control]="formularioComplementos.controls.desde"
       ></app-input>
     </div>
     <div>
-      <app-label [required]="true">Hasta</app-label>
+      <app-label>Hasta</app-label>
       <app-input
         [soloNumeros]="true"
         [control]="formularioComplementos.controls.hasta"
@@ -30,7 +30,7 @@
         [control]="formularioComplementos.controls.numeroRegistros"
       ></app-input>
     </div>
-    <div>
+    <div class="flex">
       <app-switch
         [control]="formularioComplementos.controls.pendienteDespacho"
         titulo="Pendiente despacho"

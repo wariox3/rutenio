@@ -73,8 +73,8 @@ export class VisitaService {
 
   importarComplementos(parametros: {
     numeroRegistros: number;
-    desde: number;
-    hasta: number;
+    desde: number | string;
+    hasta: number | string;
     pendienteDespacho: boolean;
   }) {
     return this.http.post(`ruteo/visita/importar-complemento/`, {
