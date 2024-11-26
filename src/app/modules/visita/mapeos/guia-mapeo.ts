@@ -12,6 +12,14 @@ export const guiaMapeo: any = {
       ordenable: true,
     },
     {
+      nombre: 'destinatario',
+      campoNombre: 'Destinatario',
+      campoTipo: 'CharField',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: true,
+    },
+    {
       nombre: 'fecha',
       campoTipo: 'DateField',
       visibleTabla: true,
@@ -42,6 +50,7 @@ export const guiaMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
+
     // {
     //   nombre: "ciudad",
     //   campoTipo: "Fk",
