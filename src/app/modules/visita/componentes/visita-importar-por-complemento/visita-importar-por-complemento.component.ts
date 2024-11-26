@@ -22,6 +22,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { BehaviorSubject, finalize } from 'rxjs';
 import { VisitaService } from '../../servicios/visita.service';
+import { SoloNumerosDirective } from '../../../../common/directivas/solo-numeros.directive';
 
 @Component({
   selector: 'app-visita-importar-por-complemento',
@@ -48,27 +49,27 @@ export class VisitaImportarPorComplementoComponent extends General {
   public formularioComplementos = new FormGroup(
     {
       numeroRegistros: new FormControl(
-        1,
+        100,
         Validators.compose([
           Validators.required,
           Validators.pattern(/^[0-9]+$/),
         ])
       ),
       desde: new FormControl(
-        1,
+        null,
         Validators.compose([
           Validators.required,
           Validators.pattern(/^[0-9]+$/),
         ])
       ),
       hasta: new FormControl(
-        1,
+        null,
         Validators.compose([
           Validators.required,
           Validators.pattern(/^[0-9]+$/),
         ])
       ),
-      pendienteDespacho: new FormControl(false),
+      pendienteDespacho: new FormControl(true),
     },
     { validators: this.validarRango() }
   );

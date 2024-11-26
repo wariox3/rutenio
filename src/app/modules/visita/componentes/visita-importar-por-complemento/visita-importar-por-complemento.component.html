@@ -2,11 +2,15 @@
   <div class="grid grid-cols-1 gap-4 mb-5">
     <div>
       <app-label [required]="true">Desde</app-label>
-      <app-input [control]="formularioComplementos.controls.desde"></app-input>
+      <app-input
+        [soloNumeros]="true"
+        [control]="formularioComplementos.controls.desde"
+      ></app-input>
     </div>
     <div>
       <app-label [required]="true">Hasta</app-label>
       <app-input
+        [soloNumeros]="true"
         [control]="formularioComplementos.controls.hasta"
         [errorTemplate]="erroresCustomHasta"
       ></app-input>
@@ -44,7 +48,7 @@
         [estaDeshabilitado]="!formularioComplementos.valid"
         textoCargando="Importando..."
         [estaCargando]="estaImportandoComplementos$ | async"
-        (click)="importarComplemento()"
+        (emitirBotonClicked)="importarComplemento()"
       ></app-button>
     </div>
   </div>
