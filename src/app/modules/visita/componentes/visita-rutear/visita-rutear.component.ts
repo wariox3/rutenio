@@ -29,10 +29,11 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
 import { VisitaService } from '../../servicios/visita.service';
-import VisitaDetalleComponent from "../visita-detalle/visita-detalle.component";
+import VisitaDetalleComponent from '../visita-detalle/visita-detalle.component';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
-import { VisitaRutearDetalleComponent } from "./components/visita-detalle/visita-rutear-detalle.component";
+import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
+import { VisitaRutearService } from '../../servicios/visita-rutear.service';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -49,8 +50,8 @@ import { VisitaRutearDetalleComponent } from "./components/visita-detalle/visita
     ImportarComponent,
     VisitaEditarRutearComponent,
     FiltroBaseComponent,
-    VisitaRutearDetalleComponent
-],
+    VisitaRutearDetalleComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -115,6 +116,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cargandoConsultas$: BehaviorSubject<boolean>;
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
+  private _visitaRutearService = inject(VisitaRutearService);
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];
@@ -407,10 +409,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _actualizarFiltrosParaMostrar(filtros: any[]) {
-    this.valoresFiltrados = ""
+    this.valoresFiltrados = '';
     filtros.forEach((filtro, index) => {
-      this.valoresFiltrados += filtro.valor1
-      if(index + 1 < filtros.length) {
+      this.valoresFiltrados += filtro.valor1;
+      if (index + 1 < filtros.length) {
         this.valoresFiltrados += ', ';
       }
     });
@@ -432,6 +434,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     this._consultarVisitas(this.arrParametrosConsultaVisita);
     this.cerrarModalPorId(modalId);
+  }
+
+  ubicarFranja() {
+    this._visitaRutearService.ubicarFranja().subscribe((response) => {
+      this.alerta.mensajaExitoso(response.mensaje);
+      this.consultarVisitas();
+    });
   }
 
   // filtrosPersonalizados(filtros: any, modalId: string) {
