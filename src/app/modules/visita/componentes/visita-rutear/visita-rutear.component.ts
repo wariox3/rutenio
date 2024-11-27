@@ -256,10 +256,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ordenar() {
-    this.visitaService.ordenar().subscribe(() => {
-      this.consultarLista();
-      this.alerta.mensajaExitoso('Se ha ordenado correctamente');
-    });
+    this.mostarVistaCargando$.next(true);
+    this.visitaService
+      .ordenar()
+      .pipe(
+        finalize(() => {
+          this.mostarVistaCargando$.next(false);
+        })
+      )
+      .subscribe(() => {
+        this.consultarLista();
+        this.alerta.mensajaExitoso('Se ha ordenado correctamente');
+      });
   }
 
   rutear() {
