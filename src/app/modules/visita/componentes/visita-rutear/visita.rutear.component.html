@@ -162,7 +162,7 @@
                 <div class="menu-item">
                   <button class="menu-link" (click)="confirmarEliminarTodos()">
                     <span class="menu-icon">
-                      <i class="ki-filled ki-trash"></i>
+                      <i class="ki-filled ki-trash trash-icon"></i>
                     </span>
                     <span class="menu-title"> Eliminar todas </span>
                   </button>
@@ -330,6 +330,9 @@
                 <span class="ml-1">{{
                   selectedVisita?.destinatario_direccion
                 }}</span>
+              </div>
+              <div>
+                <span> # {{ selectedVisita?.numero }} </span>
               </div>
               <div class="mt-2 flex gap-2 items-center">
                 <div>
