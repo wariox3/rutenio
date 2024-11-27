@@ -435,9 +435,12 @@
 >
   <section *ngIf="toggleModal$ | async" modal-body>
     <app-visita-rutear-detalle
+      (emitirRecargarLista)="visitaActualizada('#detalle-visita')"
       [visita]="selectedVisita"
     ></app-visita-rutear-detalle>
   </section>
 </app-modal-default>
 
-<app-full-loader-default [mostrarCargando]="mostarVistaCargando$ | async"></app-full-loader-default>
+<app-full-loader-default
+  [mostrarCargando]="mostarVistaCargando$ | async"
+></app-full-loader-default>

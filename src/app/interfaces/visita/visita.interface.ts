@@ -23,4 +23,5 @@ export interface Visita {
   estado_decodificado_alerta: boolean;
   estado_despacho: boolean;
   destinatario_direccion_formato: string;
+  resultados: any[];
 }

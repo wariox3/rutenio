@@ -1,10 +1,9 @@
-<form [formGroup]="formularioVisitaRutear" (submit)="enviar()">
+<form [formGroup]="formularioVisitaRutear">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
     <div class="mb-5">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
           Documento
-          <span class="text-danger"> * </span>
         </label>
         <app-input
           [control]="formularioVisitaRutear.controls.documento"
@@ -40,7 +39,6 @@
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
           Teléfono
-          <span class="text-danger"> * </span>
         </label>
         <app-input
           [control]="formularioVisitaRutear.controls.destinatario_telefono"
@@ -50,25 +48,35 @@
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-    <div class="mb-5">
+    <div class="mb-5 flex gap-2">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
           Peso
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.peso"
         ></app-input>
       </div>
-    </div>
-    <div class="mb-5">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
           Volumen
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.volumen"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Número
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.numero"
         ></app-input>
       </div>
     </div>
@@ -76,6 +84,8 @@
 
   <div class="flex justify-end">
     <app-button
+      type="button"
+      (emitirBotonClicked)="enviar()"
       texto="Guardar"
       [estaDeshabilitado]="!formularioVisitaRutear.valid"
     ></app-button>

@@ -309,7 +309,7 @@ export class FiltroBaseComponent extends General {
   }
 
   private crearControlFiltros(propiedades: any | null, index: number) {
-    let valor1 = '';
+    let valor1 = '';  
     let valor2 = '';
     let propiedad = '';
     let operador = '';

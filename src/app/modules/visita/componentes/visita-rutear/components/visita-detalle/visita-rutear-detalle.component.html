@@ -1,4 +1,17 @@
 @if (visita) {
+<section>
+  <div class="flex gap-2 justify-end">
+    <span *ngIf="visita.estado_despacho" class="badge badge-success"
+      >Despachado</span
+    >
+    <span *ngIf="visita.estado_decodificado_alerta" class="badge badge-warning"
+      >Alerta</span
+    >
+    <span *ngIf="visita.estado_decodificado" class="badge badge-success"
+      >Decodificado</span
+    >
+  </div>
+</section>
 <table class="table-auto border border-gray-300 text-sm w-full my-3">
   <tbody>
     <tr class="border-b border-gray-300">
@@ -22,17 +35,19 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Fecha
+        Destinatario
       </td>
       <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.fecha | date : "yyyy-MM-dd" }}
+        {{ visita.destinatario }}
       </td>
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Destinatario
+        Fecha
       </td>
-      <td class="px-4 py-3">{{ visita.destinatario }}</td>
+      <td class="px-4 py-3">
+        {{ visita.fecha | date : "yyyy-MM-dd" }}
+      </td>
     </tr>
 
     <tr class="border-b border-gray-300">
@@ -63,18 +78,22 @@
       </td>
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      ></td>
-      <td class="px-4 py-3"></td>
+      >
+        Peso
+      </td>
+      <td class="px-4 py-3">
+        {{ visita.peso }}
+      </td>
     </tr>
 
     <tr class="border-b border-gray-300">
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Peso
+        Ubicación
       </td>
       <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.peso }}
+        {{ visita.latitud }} , {{ visita.longitud }}
       </td>
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
@@ -88,87 +107,54 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
+        Franja
+      </td>
+      <td class="px-4 py-3 border-r border-gray-300">
+        {{ visita.franja_codigo }} - {{ visita.franja_nombre }}
+      </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
         Tiempo de Servicio
       </td>
-      <td class="px-4 py-3 border-r border-gray-300">
+      <td class="px-4 py-3">
         {{ visita.tiempo_servicio }}
       </td>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Orden
-      </td>
-      <td class="px-4 py-3">{{ visita.orden }}</td>
-    </tr>
-
-    <tr class="border-b border-gray-300">
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Latitud
-      </td>
-      <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.latitud }}
-      </td>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Longitud
-      </td>
-      <td class="px-4 py-3">{{ visita.longitud }}</td>
-    </tr>
-
-    <tr class="border-b border-gray-300">
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Franja Nombre
-      </td>
-      <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.franja_nombre }}
-      </td>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Franja Código
-      </td>
-      <td class="px-4 py-3">{{ visita.franja_codigo }}</td>
-    </tr>
-
-    <tr class="border-b border-gray-300">
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Decodificado
-      </td>
-      <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.estado_decodificado ? "Sí" : "No" }}
-      </td>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Alerta
-      </td>
-      <td class="px-4 py-3">
-        {{ visita.estado_decodificado_alerta ? "Sí" : "No" }}
-      </td>
-    </tr>
-
-    <tr>
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Despachado
-      </td>
-      <td class="px-4 py-3 border-r border-gray-300">
-        {{ visita.estado_despacho ? "Sí" : "No" }}
-      </td>
-
-      <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      ></td>
-      <td class="px-4 py-3"></td>
     </tr>
   </tbody>
 </table>
+
+<div class="card min-w-full">
+  <div class="card-table">
+    <table class="table align-middle text-gray-700 font-medium text-sm">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Dirección alternativa</th>
+          <th>Latitud</th>
+          <th>Longitud</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of visita.resultados; track $index) {
+        <tr>
+          <td>{{ $index + 1 }}</td>
+          <td>{{ item.formatted_address }}</td>
+          <td>{{ item.geometry.location.lat }}</td>
+          <td>{{ item.geometry.location.lng }}</td>
+          <td>
+            <button
+              class="btn btn-primary btn-sm"
+              (click)="seleccionarDireccionAlternativa(item)"
+            >
+              Seleccionar
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
 }
