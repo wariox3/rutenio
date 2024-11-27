@@ -14,7 +14,7 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize, of, switchMap } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, of, switchMap } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
@@ -29,12 +29,14 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
 import { VisitaService } from '../../servicios/visita.service';
-import VisitaDetalleComponent from '../visita-detalle/visita-detalle.component';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaRutearService } from '../../servicios/visita-rutear.service';
 import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
+import { FranjaService } from '../../../franja/servicios/franja.service';
+import { Franja } from '../../../../interfaces/franja/franja.interface';
+import { SwitchComponent } from "../../../../common/components/ui/form/switch/switch.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -53,7 +55,8 @@ import { FullLoaderDefaultComponent } from '../../../../common/components/spinne
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
-  ],
+    SwitchComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,8 +64,6 @@ import { FullLoaderDefaultComponent } from '../../../../common/components/spinne
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   @ViewChildren(MapMarker) mapMarkers!: QueryList<MapMarker>;
-
-  public toggleModal$ = new BehaviorSubject(false);
 
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
@@ -116,10 +117,14 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public valoresFiltrados: string = '';
   public mostarVistaCargando$: BehaviorSubject<boolean>;
   public cargandoConsultas$: BehaviorSubject<boolean>;
+  public franjas$: Observable<Franja[]>;
+  public mostrarFranjas$: BehaviorSubject<boolean>;
+  public toggleModal$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
   private visitaService = inject(VisitaService);
   private _visitaRutearService = inject(VisitaRutearService);
+  private _franjaService = inject(FranjaService);
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];
@@ -128,6 +133,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     super();
     this.cargandoConsultas$ = new BehaviorSubject(false);
     this.mostarVistaCargando$ = new BehaviorSubject(false);
+    this.mostrarFranjas$ = new BehaviorSubject(false);
   }
 
   ngOnInit(): void {
@@ -143,6 +149,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
         })
       )
       .subscribe();
+
+    this.consultarFranjas();
   }
 
   consultarLista() {
@@ -197,6 +205,15 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.arrVisitas = respuesta.registros;
       this.changeDetectorRef.detectChanges();
     });
+  }
+
+  consultarFranjas() {
+    this.franjas$ = this._franjaService.consultarFranjas();
+  }
+
+  toggleMostrarFranjas() {
+    const currentValue = this.mostrarFranjas$.getValue();
+    this.mostrarFranjas$.next(!currentValue);
   }
 
   consultarFlotas(parametros: ParametrosConsulta) {

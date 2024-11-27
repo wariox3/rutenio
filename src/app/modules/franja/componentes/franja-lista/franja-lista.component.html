@@ -71,7 +71,7 @@
               strokeWeight: 3,
             }"
           />
-          <!-- <map-polygon
+          <map-polygon
             *ngIf="estaCreando"
             [paths]="nuevaVertice"
             [options]="polylineOptions"
@@ -82,7 +82,7 @@
             #marker="mapMarker"
             (mapClick)="openInfoWindow(marker)"
           >
-          </map-marker> -->
+          </map-marker>
           <map-info-window>Info Window</map-info-window>
         </google-map>
       </div>

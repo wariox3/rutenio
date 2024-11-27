@@ -311,10 +311,36 @@
     <div class="card h-[45rem]">
       <div class="card-header">
         <h3 class="card-title my-[8px]">Mapa</h3>
+        <div>
+          <button
+            class="btn btn-info btn-outline"
+            (click)="toggleMostrarFranjas()"
+          >
+            @if (mostrarFranjas$ | async) {
+              <i class="ki-filled ki-eye-slash"></i>
+              Ocultar franjas
+            } @else {
+              <i class="ki-filled ki-eye"></i>
+              Ver franjas
+            }
+          </button>
+        </div>
       </div>
       <div class="card-body h-full">
         <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
-          @for (markerPosition of markerPositions; track $index) {
+          @for (franja of franjas$ | async; track $index) {
+          <map-polygon
+            *ngIf="mostrarFranjas$ | async"
+            [paths]="franja.coordenadas"
+            [options]="{
+                  strokeColor: '#' + franja.color,
+                  fillColor: '#' + franja.color,
+                  strokeOpacity: 1.0,
+                  strokeWeight: 3,
+                }"
+          />
+
+          } @for (markerPosition of markerPositions; track $index) {
           <map-marker
             [position]="markerPosition"
             #marker="mapMarker"
