@@ -29,7 +29,14 @@
         <div class="card mb-2">
           <div class="card-body flex items-center justify-between">
             <div>
-              <p>{{ franja.nombre }}</p>
+              <div class="flex gap-2 items-start">
+                <p>
+                  {{ franja.nombre }}
+                </p>
+                <div>
+                  <span class="badge badge-xs"> ID: {{ franja.id }} </span>
+                </div>
+              </div>
               @if(franja.codigo) {
               <p class="text-xs text-slate-500">{{ franja.codigo }}</p>
               }
