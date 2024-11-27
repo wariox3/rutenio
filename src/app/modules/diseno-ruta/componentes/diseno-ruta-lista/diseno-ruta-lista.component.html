@@ -1,0 +1,87 @@
+<div class="mt-2">
+  <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
+    <div class="flex flex-col space-y-5 h-full">
+      <div class="card flex-1 min-h-[16rem]">
+        <div class="card-header">
+          <h3 class="card-title">Despachos</h3>
+        </div>
+        <div class="card-table h-[16rem] overflow-y-auto scrollable">
+          <table class="table w-full border-collapse">
+            <tbody>
+              <tr *ngFor="let despacho of arrDespachos" (click)="seleccionarDespacho(despacho)" [class.selected]="
+                  despachoSeleccionado &&
+                  despachoSeleccionado.id === despacho.id
+                " class="p-3 border rounded-md cursor-pointer hover:bg-gray-100">
+                <td class="p-3 w-full flex items-center justify-between">
+                  <section>
+                    <div class="flex flex-col space-y-1">
+                      <span class="font-semibold text-gray-800 text-sm">
+                        {{ despacho.id }}
+                      </span>
+                      <span class="text-gray-600 text-xs font-medium">
+                        Placa: {{ despacho.vehiculo_placa }}
+                      </span>
+                    </div>
+                    <div class="flex justify-between text-gray-500 text-xs mt-1">
+                      <div class="flex items-center space-x-1">
+                        <i class="ki-filled ki-parcel"></i>
+                        <span>Peso: {{ despacho.peso }} kg</span>
+                        <i class="ki-filled ki-package"></i>
+                        <span>Volumen: {{ despacho.volumen }}</span>
+                      </div>
+                    </div>
+                  </section>
+                  <section>
+                    <button (click)="eliminarDespacho(despacho)">
+                      <i class="ki-filled ki-trash text-xl"></i>
+                    </button>
+                  </section>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer flex justify-center">
+          <!-- <app-paginacion-default
+            [limite]="50"
+            [totalPaginas]="totalPaginasVisitas"
+            (paginar)="paginar($event)"
+          ></app-paginacion-default> -->
+        </div>
+      </div>
+      <div class="card flex-1 min-h-[16rem]">
+        <div class="card-header flex justify-between items-center">
+          <h3 class="card-title">Visitas por despacho</h3>
+        </div>
+        <div class="card-table scrollable-y-auto h-[16rem]">
+          <table class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Destinatario</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (visita of arrVisitasPorDespacho; track $index) {
+                <tr>
+                  <td>{{ visita.id }}</td>
+                  <td>{{ visita.destinatario }}</td>
+                  <td>{{ visita.ciudad_nombre }}</td>
+                  <td>{{ visita.destinatario_direccion }}</td>
+                </tr>
+                }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card h-[45rem]">
+      <div class="card-header">
+        <h3 class="card-title my-1.5">Mapa</h3>
+      </div>
+      <div class="card-body h-full"></div>
+    </div>
+  </div>
+</div>

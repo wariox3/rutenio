@@ -41,6 +41,10 @@ export default [
         loadChildren: () => import('../modules/trafico/trafico.routes'),
       },
       {
+        path: 'diseno-ruta',
+        loadChildren: () => import('../modules/diseno-ruta/diseno-ruta.routes'),
+      },
+      {
         path: 'vehiculo',
         loadChildren: () => import('../modules/vehiculo/vehiculo.routes'),
       },

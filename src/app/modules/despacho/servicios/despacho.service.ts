@@ -19,6 +19,10 @@ export class DespachoService {
     return this._httpService.getDetalle<any>(`ruteo/despacho/${id}/`);
   }
 
+  eliminarDespacho(id: number) {
+    return this._httpService.delete(`ruteo/despacho/${id}/`, {});
+  }
+
   importarVisitas(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/importar/`, data);
   }

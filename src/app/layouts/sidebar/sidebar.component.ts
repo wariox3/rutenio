@@ -38,6 +38,12 @@ export class SidebarComponent {
       activo: false,
     },
     {
+      nombre: 'Diseño ruta',
+      link: '/admin/diseno-ruta',
+      iconoClase: 'ki-filled ki-design-1',
+      activo: false,
+    },
+    {
       nombre: 'Movimiento',
       link: '',
       iconoClase: 'ki-filled ki-book',
