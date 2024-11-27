@@ -64,8 +64,14 @@
           <map-polygon
             *ngFor="let franja of franjas$ | async"
             [paths]="franja.coordenadas"
+            [options]="{
+              strokeColor: '#' + franja.color,
+              fillColor: '#' + franja.color,
+              strokeOpacity: 1.0,
+              strokeWeight: 3,
+            }"
           />
-          <map-polygon
+          <!-- <map-polygon
             *ngIf="estaCreando"
             [paths]="nuevaVertice"
             [options]="polylineOptions"
@@ -76,12 +82,11 @@
             #marker="mapMarker"
             (mapClick)="openInfoWindow(marker)"
           >
-          </map-marker>
+          </map-marker> -->
           <map-info-window>Info Window</map-info-window>
         </google-map>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -91,6 +96,8 @@
   [id]="'importar-kml-modal'"
 >
   <div modal-body>
-    <app-franja-importar-por-kml (emitirCerrarModal)="cerrarModal()"></app-franja-importar-por-kml>
+    <app-franja-importar-por-kml
+      (emitirCerrarModal)="cerrarModal()"
+    ></app-franja-importar-por-kml>
   </div>
 </app-modal-default>

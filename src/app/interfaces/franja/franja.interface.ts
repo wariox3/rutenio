@@ -7,5 +7,6 @@ export interface Franja {
   id: number;
   codigo: string;
   nombre: string;
+  color: string;
   coordenadas: Coordenada[];
 }
