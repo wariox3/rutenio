@@ -111,6 +111,20 @@ export class ImportarComponent extends General {
       });
   }
 
+  // TODO: probar esta solucion para testear rendimineto
+  // private _adaptarErroresImportar(errores: any[]) {
+  //   this.erroresImportar = errores.reduce((acc, errorItem) => {
+  //     const erroresAdaptados = Object.entries(errorItem.errores).map(
+  //       ([campo, mensajes]: any) => ({
+  //         fila: errorItem.fila,
+  //         campo: campo,
+  //         error: mensajes.join(', '),
+  //       })
+  //     );
+  //     return acc.concat(erroresAdaptados);
+  //   }, []);
+  // }
+
   uploadFile() {
     if (this.base64File) {
       this.estaImportando$.next(true);
