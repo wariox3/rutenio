@@ -32,15 +32,15 @@ export class SidebarComponent {
       activo: false,
     },
     {
-      nombre: 'Tráfico',
-      link: '/admin/trafico',
-      iconoClase: 'ki-filled ki-delivery',
-      activo: false,
-    },
-    {
       nombre: 'Diseño ruta',
       link: '/admin/diseno-ruta',
       iconoClase: 'ki-filled ki-design-1',
+      activo: false,
+    },
+    {
+      nombre: 'Tráfico',
+      link: '/admin/trafico',
+      iconoClase: 'ki-filled ki-delivery',
       activo: false,
     },
     {
