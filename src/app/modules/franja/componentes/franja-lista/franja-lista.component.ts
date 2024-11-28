@@ -114,7 +114,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   private _toggleEditarFranja() {
-    const valor = this.mostrarEditarFranjaModal$.getValue();
+    const valor = this.mostrarEditarFranjaModal$.value;
     this.mostrarEditarFranjaModal$.next(!valor);
   }
 
@@ -196,6 +196,14 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   openInfoWindow(marker: MapMarker) {
     this.infoWindow.open(marker);
+  }
+
+  cerrarModal() {
+    this.mostrarEditarFranjaModal$.next(false);
+  }
+
+  abrirModal() {
+    this.mostrarEditarFranjaModal$.next(true);
   }
 
   cerrarModalPorId(modalId: string) {

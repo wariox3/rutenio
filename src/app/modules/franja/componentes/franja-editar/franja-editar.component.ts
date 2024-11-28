@@ -6,6 +6,7 @@ import {
   inject,
   Input,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormArray,
@@ -20,6 +21,7 @@ import { LabelComponent } from '../../../../common/components/ui/form/label/labe
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { FranjaService } from '../../servicios/franja.service';
+import { BehaviorSubject, finalize } from 'rxjs';
 
 @Component({
   selector: 'app-franja-editar',
@@ -39,6 +41,7 @@ export default class FranjaEditarComponent extends General {
   @Input({ required: true }) franja: Franja;
   @Output() emitirCerrarModal: EventEmitter<void>;
 
+  public actualizandoFranja$: BehaviorSubject<boolean>;
   private _franjaService = inject(FranjaService);
   public formularioFranja = new FormGroup({
     codigo: new FormControl('', Validators.compose([Validators.required])),
@@ -50,6 +53,7 @@ export default class FranjaEditarComponent extends General {
   constructor() {
     super();
     this.emitirCerrarModal = new EventEmitter();
+    this.actualizandoFranja$ = new BehaviorSubject(false);
   }
 
   ngOnInit(): void {
@@ -65,7 +69,7 @@ export default class FranjaEditarComponent extends General {
 
     this.formularioFranja.patchValue({
       codigo: this.franja?.codigo,
-      color: this.franja?.color,
+      color: '#' + this.franja?.color,
       nombre: this.franja?.nombre,
     });
 
@@ -75,11 +79,28 @@ export default class FranjaEditarComponent extends General {
   }
 
   actualizarFranja() {
+    this.actualizandoFranja$.next(true);
+    const color = this.formularioFranja.get('color').value;
+    this.formularioFranja.patchValue({
+      color: color.slice(1),
+    });
     this._franjaService
       .actualizarFranja(this.franja.id, this.formularioFranja.value)
+      .pipe(
+        finalize(() => {
+          this.actualizandoFranja$.next(false);
+        })
+      )
       .subscribe(() => {
         this.alerta.mensajaExitoso('Se ha actualizado la franja exitosamente.');
         this.emitirCerrarModal.emit();
       });
+  }
+
+  onColorChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.formularioFranja.patchValue({
+      color: input.value,
+    });
   }
 }

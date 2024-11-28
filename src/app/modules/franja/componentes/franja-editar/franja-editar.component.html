@@ -11,8 +11,15 @@
     <section>
       <app-label>Color</app-label>
       <div class="flex items-center gap-2">
-        <input type="color" id="colorPicker" formControlName="color" />
-        <app-input class="w-full" [control]="formularioFranja.controls.color"></app-input>
+        <input
+          formControlName="color"
+          (change)="onColorChange($event)"
+          type="color"
+        />
+        <app-input
+          class="w-full"
+          [control]="formularioFranja.controls.color"
+        ></app-input>
       </div>
     </section>
   </div>
@@ -27,6 +34,7 @@
         type="button"
         [estaDeshabilitado]="!formularioFranja.valid"
         textoCargando="Guardando..."
+        [estaCargando]="actualizandoFranja$ | async"
         (emitirBotonClicked)="actualizarFranja()"
       ></app-button>
     </div>
