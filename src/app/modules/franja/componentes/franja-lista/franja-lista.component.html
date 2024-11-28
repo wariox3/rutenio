@@ -1,101 +1,108 @@
-<div class="card min-w-full">
-  <div class="card-header">
-    <h3 class="card-title">Franjas</h3>
-    <app-button
-      routerLink="/admin/vehiculo/nuevo"
-      type="button"
-      texto="Nuevo"
-    ></app-button>
-  </div>
-  <div class="grid md:grid-cols-[.5fr,1fr]">
-    <div class="card m-4">
-      <div class="card-header">
-        <div class="flex gap-2">
-          <app-button
-            data-modal-toggle="#importar-kml-modal"
-            type="button"
-            texto="Importar"
-          ></app-button>
-          <app-button
-            routerLink="/admin/vehiculo/nuevo"
-            type="button"
-            texto="Nuevo"
-            (click)="toggleEstaCreando()"
-          ></app-button>
-        </div>
-      </div>
-      <div class="card-body scrollable max-h-[37rem]">
-        @for (franja of franjas$ | async; track $index) {
-        <div class="card mb-2">
-          <div class="card-body flex items-center justify-between">
-            <div>
-              <div class="flex items-center gap-1 mb-1">
-                <span class="badge badge-xs"> Id: {{ franja.id }} </span>
-                @if(franja.codigo) {
-                <span class="badge badge-xs">
-                  Código: {{ franja.codigo }}
-                </span>
-                }
-              </div>
-              <div class="flex gap-2 items-start">
-                <p>
-                  {{ franja.nombre }}
-                </p>
-                <div></div>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <button (click)="seleccionarFranja(franja)">
-                <i class="ki-filled ki-pencil text-xl"></i>
-              </button>
-              <button (click)="eliminarFranja(franja)">
-                <i class="ki-filled ki-trash text-xl"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        }
-      </div>
+<div class="grid md:grid-cols-[.5fr,1fr]">
+  <div class="card m-4">
+    <div class="card-header">
+      <section>
+        <h3 class="card-title">Franja</h3>
+      </section>
+      <section class="flex gap-2">
+        <app-button
+          data-modal-toggle="#importar-kml-modal"
+          type="button"
+          texto="Importar"
+        ></app-button>
+        <app-button
+          routerLink="/admin/vehiculo/nuevo"
+          type="button"
+          texto="Nuevo"
+          (click)="toggleEstaCreando()"
+        ></app-button>
+      </section>
     </div>
+    <div class="card-table overflow-y-auto scrollable max-h-[37rem]">
+      <table class="table w-full border-collapse">
+        <tbody>
+          @for (franja of franjas$ | async; track $index) {
+          <tr class="p-3 border rounded-md cursor-pointer hover:bg-gray-100">
+            <td class="p-3 w-full flex items-center justify-between">
+              <section class="w-full">
+                <div class="flex items-center justify-between space-y-1">
+                  <span class="font-semibold text-gray-800 text-sm">
+                    {{ franja.nombre }}
+                  </span>
+                  <span
+                    class="badge badge-xs text-white"
+                    [ngStyle]="{ 'background-color': '#' + franja.color }"
+                  >
+                    #{{ franja.color }}
+                  </span>
+                </div>
+                <div class="flex justify-between text-gray-500 text-xs mt-1">
+                  <div class="flex items-center space-x-1">
+                    <i class="ki-filled ki-focus"></i>
+                    <span>Id: {{ franja.id }}</span>
+                    <i class="ki-filled ki-pointers"></i>
+                    <span>Código: {{ franja.codigo }}</span>
+                  </div>
+                  <section class="flex gap-2">
+                    <button
+                      (click)="
+                        toggleModal('editar-franja'); seleccionarFranja(franja)
+                      "
+                      data-modal-toggle="#editar-franja"
+                    >
+                      <i class="ki-filled ki-notepad-edit text-xl"></i>
+                    </button>
+                    <button (click)="eliminarFranja(franja)">
+                      <i class="ki-filled ki-trash text-xl"></i>
+                    </button>
+                  </section>
+                </div>
+              </section>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-    <div class="card m-4 h-full">
-      <div class="card-header">
-        <div class="card-title">Mapa</div>
-      </div>
-      <div class="card-body h-full">
-        <google-map
-          id="map"
-          height="100%"
-          width="100%"
-          [center]="center"
-          [zoom]="zoom"
-          (mapClick)="clickMap($event)"
-        >
-          <map-polygon
-            *ngFor="let franja of franjas$ | async"
-            [paths]="franja.coordenadas"
-            [options]="{
+  <div class="card m-4 h-[45rem]">
+    <div class="card-header">
+      <div class="card-title my-[9px]">Mapa</div>
+    </div>
+    <div class="card-body h-full">
+      <google-map
+        id="map"
+        height="100%"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        (mapClick)="clickMap($event)"
+      >
+        <map-polygon
+          *ngFor="let franja of franjas$ | async"
+          [paths]="franja.coordenadas"
+          [options]="{
               strokeColor: '#' + franja.color,
               fillColor: '#' + franja.color,
               strokeOpacity: 1.0,
               strokeWeight: 3,
             }"
-          />
-          <map-polygon
-            *ngIf="estaCreando"
-            [paths]="nuevaVertice"
-            [options]="polylineOptions"
-          ></map-polygon>
-          <map-marker
-            *ngFor="let markerPosition of markerPositions"
-            [position]="markerPosition"
-            #marker="mapMarker"
-            (mapClick)="openInfoWindow(marker)"
-          >
-          </map-marker>
-          <map-info-window>Info Window</map-info-window>
-        </google-map>
-      </div>
+        />
+        <map-polygon
+          *ngIf="estaCreando"
+          [paths]="nuevaVertice"
+          [options]="polylineOptions"
+        ></map-polygon>
+        <map-marker
+          *ngFor="let markerPosition of markerPositions"
+          [position]="markerPosition"
+          #marker="mapMarker"
+          (mapClick)="openInfoWindow(marker)"
+        >
+        </map-marker>
+        <map-info-window>Info Window</map-info-window>
+      </google-map>
     </div>
   </div>
 </div>
@@ -107,7 +114,23 @@
 >
   <div modal-body>
     <app-franja-importar-por-kml
-      (emitirCerrarModal)="cerrarModal()"
+      (emitirCerrarModal)="cerrarModalPorId('#importar-kml-modal')"
     ></app-franja-importar-por-kml>
+  </div>
+</app-modal-default>
+
+<app-modal-default
+  (emitirModalCerrado)="toggleModal('editar-franja')"
+  titulo="Editar franja"
+  size="small"
+  [id]="'editar-franja'"
+>
+  <div *ngIf="mostrarEditarFranjaModal$ | async" modal-body>
+    <app-franja-editar
+      (emitirCerrarModal)="
+        cerrarModalPorId('#editar-franja'); consultarFranjas()
+      "
+      [franja]="franjaSeleccionada"
+    ></app-franja-editar>
   </div>
 </app-modal-default>

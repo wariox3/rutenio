@@ -20,6 +20,7 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import FranjaImportarPorKmlComponent from '../franja-importar-por-kml/franja-importar-por-kml.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { KTModal } from '../../../../../metronic/core';
+import FranjaEditarComponent from '../franja-editar/franja-editar.component';
 
 @Component({
   selector: 'app-franja-lista',
@@ -30,6 +31,7 @@ import { KTModal } from '../../../../../metronic/core';
     GoogleMapsModule,
     FranjaImportarPorKmlComponent,
     ModalDefaultComponent,
+    FranjaEditarComponent,
   ],
   templateUrl: './franja-lista.component.html',
   styleUrl: './franja-lista.component.css',
@@ -54,6 +56,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   };
 
   public franjasTotales: number;
+  public mostrarEditarFranjaModal$: BehaviorSubject<boolean>;
   public franjaSeleccionada: any;
   public estaCreando: boolean = false;
   public cantidadRegistros: number = 0;
@@ -73,6 +76,7 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   constructor() {
     super();
+    this.mostrarEditarFranjaModal$ = new BehaviorSubject(false);
     this.formularioFranja = new FormGroup({
       id: new FormControl('', Validators.compose([Validators.required])),
       codigo: new FormControl('', Validators.compose([Validators.required])),
@@ -98,6 +102,20 @@ export default class FranjaListaComponent extends General implements OnInit {
       .subscribe((registros) => {
         this.franjasSubject.next(registros);
       });
+  }
+
+  toggleModal(action: 'editar-franja') {
+    switch (action) {
+      case 'editar-franja':
+        this._toggleEditarFranja();
+        break;
+      default:
+    }
+  }
+
+  private _toggleEditarFranja() {
+    const valor = this.mostrarEditarFranjaModal$.getValue();
+    this.mostrarEditarFranjaModal$.next(!valor);
   }
 
   clickMap(evento: any) {
@@ -135,6 +153,7 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   seleccionarFranja(item: any) {
     this.franjaSeleccionada = item;
+
     const coordenadasArray = this.formularioFranja.get(
       'coordenadas'
     ) as FormArray;
@@ -179,11 +198,9 @@ export default class FranjaListaComponent extends General implements OnInit {
     this.infoWindow.open(marker);
   }
 
-  cerrarModal() {
+  cerrarModalPorId(modalId: string) {
     this.consultarFranjas();
-    const modalEl: HTMLElement = document.querySelector(
-      '#importar-kml-modal  '
-    );
+    const modalEl: HTMLElement = document.querySelector(modalId);
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();

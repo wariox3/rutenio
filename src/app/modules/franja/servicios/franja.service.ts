@@ -44,9 +44,7 @@ export class FranjaService {
     return this._httpService.post<any[]>(`ruteo/franja/`, data);
   }
 
-  actualizarDatosVehiculo(id: number, data: any) {
-    return this._httpService.put<any>(`ruteo/franja/${id}/`, data);
-  }
+
 
   actualizarFranja(id: number, data: any) {
     return this._httpService.put<any>(`ruteo/franja/${id}/`, data);
