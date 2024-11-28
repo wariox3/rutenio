@@ -9,7 +9,7 @@ import {
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { General } from '../../../../common/clases/general';
 import { FranjaService } from '../../servicios/franja.service';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import {
   GoogleMapsModule,
@@ -19,7 +19,7 @@ import {
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import FranjaImportarPorKmlComponent from '../franja-importar-por-kml/franja-importar-por-kml.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { KTModal } from '../../../../../metronic/core'; 
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-franja-lista',
@@ -37,13 +37,10 @@ import { KTModal } from '../../../../../metronic/core';
 })
 export default class FranjaListaComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
-
-  private _franjaService = inject(FranjaService);
-
+  // google variables
   public markerPositions: google.maps.LatLngLiteral[] = [];
-  public estaCreando: boolean = false;
+  public nuevaVertice: google.maps.LatLngLiteral[] = [];
   public zoom = 12;
-  franjaSeleccionada: any;
   public center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
     lng: -75.58609508555918,
@@ -55,10 +52,10 @@ export default class FranjaListaComponent extends General implements OnInit {
     editable: true,
     draggable: true,
   };
-  public nuevaVertice: google.maps.LatLngLiteral[] = [];
+
   public franjasTotales: number;
-  public franjas$: Observable<Franja[]>;
-  public arrItems: any[];
+  public franjaSeleccionada: any;
+  public estaCreando: boolean = false;
   public cantidadRegistros: number = 0;
   public formularioFranja: FormGroup;
   public arrParametrosConsulta: any = {
@@ -69,6 +66,10 @@ export default class FranjaListaComponent extends General implements OnInit {
     limite_conteo: 10000,
     modelo: 'RutFranja',
   };
+
+  private _franjaService = inject(FranjaService);
+  private franjasSubject = new BehaviorSubject<Franja[]>([]);
+  franjas$ = this.franjasSubject.asObservable();
 
   constructor() {
     super();
@@ -82,25 +83,20 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    this.consultarLista();
     this.consultarFranjas();
   }
 
   consultarFranjas() {
-    this.franjas$ = this._franjaService.consultarFranjas().pipe(
-      tap((respuesta) => {
-        this.franjasTotales = respuesta.length;
-      })
-    );
-  }
-
-  consultarLista() {
     this._franjaService
       .lista(this.arrParametrosConsulta)
-      .subscribe((respuesta) => {
-        this.cantidadRegistros = respuesta.cantidad_registros;
-        this.arrItems = respuesta.registros;
-        this.changeDetectorRef.detectChanges();
+      .pipe(
+        tap((respuesta) => {
+          this.cantidadRegistros = respuesta.cantidad_registros;
+        }),
+        map((respuesta) => respuesta.registros)
+      )
+      .subscribe((registros) => {
+        this.franjasSubject.next(registros);
       });
   }
 
@@ -128,7 +124,6 @@ export default class FranjaListaComponent extends General implements OnInit {
         .guardarFranja(this.formularioFranja.value)
         .subscribe((respuesta: any) => {
           this.alerta.mensajaExitoso('Se ha creado franja exitosamente.');
-          this.consultarLista();
           this.consultarFranjas();
           this.estaCreando = false;
           this.nuevaVertice = [];
@@ -141,7 +136,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   seleccionarFranja(item: any) {
     this.franjaSeleccionada = item;
     const coordenadasArray = this.formularioFranja.get(
-      "coordenadas"
+      'coordenadas'
     ) as FormArray;
     coordenadasArray.clear();
 
@@ -173,11 +168,9 @@ export default class FranjaListaComponent extends General implements OnInit {
   eliminarFranja(item: any) {
     this._franjaService.eliminarFranja(item.id).subscribe(() => {
       this.alerta.mensajaExitoso(
-        "Se ha eliminado la franja exitosamente.",
-        "Guardado con éxito."
+        'Se ha eliminado la franja exitosamente.',
+        'Guardado con éxito.'
       );
-      // this.windowRef.close();
-      this.consultarLista();
       this.consultarFranjas();
     });
   }
@@ -187,9 +180,10 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   cerrarModal() {
-    this.consultarLista();
     this.consultarFranjas();
-    const modalEl: HTMLElement = document.querySelector('#importar-kml-modal  ');
+    const modalEl: HTMLElement = document.querySelector(
+      '#importar-kml-modal  '
+    );
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();
