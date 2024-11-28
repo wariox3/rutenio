@@ -93,8 +93,11 @@ export default class DisenoRutaListaComponent
     this.marcarPosicionesVisitasOrdenadas.push(position);
   }
 
-  eliminarDespacho(despacho: any) {
-    console.log(despacho);
+  eliminarDespacho(despachoId: number) {
+    this.despachoService.eliminarDespacho(despachoId).subscribe((respuesta) => {
+      this.alerta.mensajaExitoso('Despacho eliminado con exito');
+      this.consultarLista();
+    });
   }
 
   mostrarMapa(despachoSeleccionado: number) {

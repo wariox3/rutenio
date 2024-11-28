@@ -55,7 +55,6 @@ import { SwitchComponent } from "../../../../common/components/ui/form/switch/sw
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
-    SwitchComponent
 ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
@@ -291,7 +290,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.visitaService.rutear().subscribe(() => {
       this.consultarLista();
       this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
-      this.router.navigate(['admin/trafico/lista']);
+      this.router.navigate(['admin/diseno-ruta/lista']);
     });
   }
 

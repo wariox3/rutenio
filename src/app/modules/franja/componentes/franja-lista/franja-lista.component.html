@@ -29,17 +29,20 @@
         <div class="card mb-2">
           <div class="card-body flex items-center justify-between">
             <div>
+              <div class="flex items-center gap-1 mb-1">
+                <span class="badge badge-xs"> Id: {{ franja.id }} </span>
+                @if(franja.codigo) {
+                <span class="badge badge-xs">
+                  Código: {{ franja.codigo }}
+                </span>
+                }
+              </div>
               <div class="flex gap-2 items-start">
                 <p>
                   {{ franja.nombre }}
                 </p>
-                <div>
-                  <span class="badge badge-xs"> ID: {{ franja.id }} </span>
-                </div>
+                <div></div>
               </div>
-              @if(franja.codigo) {
-              <p class="text-xs text-slate-500">{{ franja.codigo }}</p>
-              }
             </div>
             <div class="flex gap-2">
               <button (click)="seleccionarFranja(franja)">
