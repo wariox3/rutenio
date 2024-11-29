@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { ParametrosActualizarDireccion, ParametrosDireccionAlternativa } from '../../../interfaces/visita/rutear.interface';
+import { ParametrosConsulta } from '../../../interfaces/general/api.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -10,10 +11,10 @@ export class VisitaRutearService {
 
   constructor() {}
 
-  ubicarFranja() {
+  ubicarFranja(parametros?: ParametrosConsulta) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/ubicar/`,
-      {}
+      parametros
     );
   }
 

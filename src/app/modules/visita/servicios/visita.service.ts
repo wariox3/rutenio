@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { Visita } from '../../../interfaces/visita/visita.interface';
 import { VisitaResumen } from '../../../interfaces/visita/rutear.interface';
-import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
+import {
+  ParametrosConsulta,
+  RespuestaGeneralLista,
+} from '../../../interfaces/general/api.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -41,8 +44,8 @@ export class VisitaService {
     return this.http.post<any[]>(`ruteo/visita/decodificar/`, '');
   }
 
-  ordenar() {
-    return this.http.post<any[]>(`ruteo/visita/ordenar/`, '');
+  ordenar(parametros?: ParametrosConsulta) {
+    return this.http.post<any[]>(`ruteo/visita/ordenar/`, parametros);
   }
 
   rutear() {
@@ -67,8 +70,8 @@ export class VisitaService {
     return this.http.post('ruteo/visita/eliminar-todos/', {});
   }
 
-  visitaResumen() {
-    return this.http.post<VisitaResumen>('ruteo/visita/resumen/', {});
+  visitaResumen(parametros?: ParametrosConsulta) {
+    return this.http.post<VisitaResumen>('ruteo/visita/resumen/', parametros);
   }
 
   importarComplementos(parametros: {

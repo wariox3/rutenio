@@ -36,7 +36,7 @@ import { VisitaRutearService } from '../../servicios/visita-rutear.service';
 import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
 import { FranjaService } from '../../../franja/servicios/franja.service';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
-import { SwitchComponent } from "../../../../common/components/ui/form/switch/switch.component";
+import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -55,7 +55,7 @@ import { SwitchComponent } from "../../../../common/components/ui/form/switch/sw
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
-],
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -169,16 +169,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _consultarResumen() {
-    return this.visitaService.visitaResumen().pipe(
-      switchMap((response) => {
-        this.visitasTotales = response?.resumen?.cantidad;
-        this.cantidadErrores = response?.errores?.cantidad;
-        this.cantidadAlertas = response?.alertas?.cantidad;
-        this.pesoTotal = response?.resumen?.peso;
-        this.changeDetectorRef.detectChanges();
-        return of(null);
-      })
-    );
+    return this.visitaService
+      .visitaResumen(this.arrParametrosConsultaVisita)
+      .pipe(
+        switchMap((response) => {
+          this.visitasTotales = response?.resumen?.cantidad;
+          this.cantidadErrores = response?.errores?.cantidad;
+          this.cantidadAlertas = response?.alertas?.cantidad;
+          this.pesoTotal = response?.resumen?.peso;
+          this.changeDetectorRef.detectChanges();
+          return of(null);
+        })
+      );
   }
 
   private _limpiarBarraCapacidad() {
@@ -274,7 +276,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   ordenar() {
     this.mostarVistaCargando$.next(true);
     this.visitaService
-      .ordenar()
+      .ordenar(this.arrParametrosConsultaVisita)
       .pipe(
         finalize(() => {
           this.mostarVistaCargando$.next(false);
@@ -461,13 +463,14 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._actualizarFiltrosParaMostrar(filtros);
 
     this._consultarVisitas(this.arrParametrosConsultaVisita);
+    this._consultarResumen().subscribe()
     this.cerrarModalPorId(modalId);
   }
 
   ubicarFranja() {
     this.mostarVistaCargando$.next(true);
     this._visitaRutearService
-      .ubicarFranja()
+      .ubicarFranja(this.arrParametrosConsultaVisita)
       .pipe(
         finalize(() => {
           this.mostarVistaCargando$.next(false);
