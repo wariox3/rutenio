@@ -11,11 +11,11 @@
               @for (despacho of arrDespachos; track $index) {
               <tr
                 (click)="seleccionarDespacho(despacho)"
-                [class.selected]="
-                  despachoSeleccionado &&
-                  despachoSeleccionado.id === despacho.id
-                "
-                class="p-3 border rounded-md cursor-pointer hover:bg-gray-100"
+                class="cursor-pointer"
+                [ngClass]="{
+                  'bg-blue-50 border-l-4 border-blue-500':
+                    despachoSeleccionado === despacho
+                }"
               >
                 <td class="p-3 w-full flex items-center justify-between">
                   <section>
@@ -37,11 +37,14 @@
                         <span>Volumen: {{ despacho.volumen }}</span>
                         <i class="ki-filled ki-geolocation"></i>
                         <span>Visitas: {{ despacho.visitas }} </span>
+                        <i class="ki-filled ki-calendar-2"></i>
+                        <span
+                          >Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}
+                        </span>
                       </div>
                     </div>
                   </section>
                   <section class="flex flex-col items-end gap-3">
-                    <p class="text-xs text-slate-400">{{ despacho.fecha | date: "yyyy-MM-dd"}}</p>
                     <div>
                       <button (click)="eliminarDespacho(despacho.id)">
                         <i class="ki-filled ki-trash text-xl"></i>

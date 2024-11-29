@@ -27,7 +27,8 @@ export default class DisenoRutaListaComponent
   private visitaService = inject(VisitaService);
   private directionsService: MapDirectionsService;
 
-  despachoSeleccionado: any = null;
+  public despachoSeleccionado: Despacho;
+
   mostrarMapaFlag: boolean = false;
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
