@@ -288,6 +288,7 @@
               <tr>
                 <th>Placa</th>
                 <th>Capacidad</th>
+                <th>Franja</th>
                 <th></th>
               </tr>
             </thead>
@@ -296,6 +297,7 @@
               <tr>
                 <td>{{ vehiculo.vehiculo_placa }}</td>
                 <td>{{ vehiculo.vehiculo_capacidad }}</td>
+                <td>{{ vehiculo.vehiculo_franja_nombre }}</td>
                 <td>
                   <button (click)="eliminarFlota(vehiculo.id)">
                     <i class="ki-filled ki-trash text-lg"></i>
