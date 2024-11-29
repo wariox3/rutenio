@@ -40,10 +40,13 @@
                       </div>
                     </div>
                   </section>
-                  <section>
-                    <button (click)="eliminarDespacho(despacho.id)">
-                      <i class="ki-filled ki-trash text-xl"></i>
-                    </button>
+                  <section class="flex flex-col items-end gap-3">
+                    <p class="text-xs text-slate-400">{{ despacho.fecha | date: "yyyy-MM-dd"}}</p>
+                    <div>
+                      <button (click)="eliminarDespacho(despacho.id)">
+                        <i class="ki-filled ki-trash text-xl"></i>
+                      </button>
+                    </div>
                   </section>
                 </td>
               </tr>
