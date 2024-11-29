@@ -37,6 +37,7 @@ import { FullLoaderDefaultComponent } from '../../../../common/components/spinne
 import { FranjaService } from '../../../franja/servicios/franja.service';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -121,6 +122,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModal$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
+  private _filtroBaseService = inject(FiltroBaseService);
   private visitaService = inject(VisitaService);
   private _visitaRutearService = inject(VisitaRutearService);
   private _franjaService = inject(FranjaService);
@@ -136,7 +138,30 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
+    this._aplicarFiltrosPermanentes();
     this._initView();
+  }
+
+  private _aplicarFiltrosPermanentes() {
+    const filtroKey = this._filtroBaseService.construirFiltroKey();
+    let filtrosPermanentesKey = localStorage.getItem(filtroKey);
+    let parametrosConsulta = [];
+
+    if (filtrosPermanentesKey === null) {
+      return null;
+    }
+
+    parametrosConsulta = JSON.parse(filtrosPermanentesKey);
+
+    this.arrParametrosConsultaVisita = {
+      ...this.arrParametrosConsultaVisita,
+      filtros: [
+        ...this.arrParametrosConsultaVisita.filtros,
+        ...parametrosConsulta,
+      ],
+    };
+
+    this._actualizarFiltrosParaMostrar(parametrosConsulta);
   }
 
   private _initView() {
@@ -463,7 +488,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._actualizarFiltrosParaMostrar(filtros);
 
     this._consultarVisitas(this.arrParametrosConsultaVisita);
-    this._consultarResumen().subscribe()
+    this._consultarResumen().subscribe();
     this.cerrarModalPorId(modalId);
   }
 
