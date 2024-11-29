@@ -17,12 +17,14 @@ import { General } from '../../../../common/clases/general';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VehiculoDetalleComponent extends General implements OnInit { 
-
-  protected vehiculoService = inject(VehiculoService)
+  private vehiculoService = inject(VehiculoService)
 
   vehiculo: any = {
     placa: '',
-    capacidad: 0
+    capacidad: 0,
+    franja_id: null,
+    franja_codigo: '',
+    franja_nombre: ''
   }
 
 ngOnInit(): void {

@@ -5,6 +5,7 @@ import { General } from '../clases/general';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Subdomino } from '../clases/subdominio';
 import { AlertaService } from './alerta.service';
+import { RespuestaAutocompletar } from '../../interfaces/general/autocompletar.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,29 @@ export class GeneralService extends Subdomino {
 
   constructor(private http: HttpService, private _httpClient: HttpClient) {
     super();
+  }
+
+  listaAutocompletar<T>(modelo: string) {
+    return this.http.post<RespuestaAutocompletar<T>>(
+      'general/funcionalidad/lista/',
+      {
+        filtros: [
+          {
+            id: '1692284537644-1688',
+            operador: '__icontains',
+            propiedad: 'nombre__icontains',
+            valor1: ``,
+            valor2: '',
+          },
+        ],
+        limite: 1000,
+        desplazar: 0,
+        ordenamientos: [],
+        limite_conteo: 10000,
+        modelo,
+        serializador: 'ListaAutocompletar',
+      }
+    );
   }
 
   importar(url: string, data: any) {

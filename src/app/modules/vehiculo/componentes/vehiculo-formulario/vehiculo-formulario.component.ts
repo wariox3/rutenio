@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
@@ -19,6 +20,10 @@ import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { map } from 'rxjs';
+import { GeneralService } from '../../../../common/services/general.service';
+import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -30,6 +35,8 @@ import { map } from 'rxjs';
     RouterLink,
     InputComponent,
     SwitchComponent,
+    LabelComponent,
+    NgSelectModule,
   ],
   templateUrl: './vehiculo-formulario.component.html',
   styleUrl: './vehiculo-formulario.component.css',
@@ -43,7 +50,13 @@ export default class VehiculoFormularioComponent
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
 
+  private readonly _generalService = inject(GeneralService);
+
+  public franjaOpciones: AutocompletarFranja[];
   public formularioVehiculo = new FormGroup({
+    franja: new FormControl(null),
+    franja_codigo: new FormControl(''),
+    franja_nombre: new FormControl(''),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -58,14 +71,26 @@ export default class VehiculoFormularioComponent
 
   ngOnInit(): void {
     if (this.formularioTipo === 'editar') {
-      this.formularioVehiculo.patchValue({
-        placa: this.informacionVehiculo.placa,
-        capacidad: this.informacionVehiculo.capacidad,
-        estado_activo: this.informacionVehiculo.estado_activo,
-        estado_asignado: this.informacionVehiculo.estado_asignado,
-      });
+      this._poblarFormulario();
     }
 
+    this._consultarEntidadesSelectores();
+    this._transformarPlacaMayusculas();
+  }
+
+  private _poblarFormulario() {
+    this.formularioVehiculo.patchValue({
+      franja: this.informacionVehiculo.franja_id,
+      franja_codigo: this.informacionVehiculo.franja_codigo,
+      franja_nombre: this.informacionVehiculo.franja_nombre,
+      placa: this.informacionVehiculo.placa,
+      capacidad: this.informacionVehiculo.capacidad,
+      estado_activo: this.informacionVehiculo.estado_activo,
+      estado_asignado: this.informacionVehiculo.estado_asignado,
+    });
+  }
+
+  private _transformarPlacaMayusculas() {
     this.formularioVehiculo
       .get('placa')
       ?.valueChanges.pipe(map((value: string) => value.toUpperCase()))
@@ -73,6 +98,19 @@ export default class VehiculoFormularioComponent
         this.formularioVehiculo
           .get('placa')
           ?.setValue(value, { emitEvent: false });
+      });
+  }
+
+  private _consultarEntidadesSelectores() {
+    this._consultarOpcionesFranjas();
+  }
+
+  private _consultarOpcionesFranjas() {
+    this._generalService
+      .listaAutocompletar<AutocompletarFranja>('RutFranja')
+      .subscribe((response) => {
+        this.franjaOpciones = response.registros;
+        this.changeDetectorRef.detectChanges();
       });
   }
 

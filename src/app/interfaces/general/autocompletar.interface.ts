@@ -28,4 +28,10 @@ export interface RespuestaAutocompletar<T> {
     plazo_pago_nombre: string;
     plazo_dias: number;
   }
+
+  export interface AutocompletarFranja {
+    id: number;
+    nombre: string;
+    codigo: number;
+  }
   
