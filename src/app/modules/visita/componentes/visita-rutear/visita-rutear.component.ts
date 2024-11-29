@@ -314,7 +314,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   rutear() {
-    this.visitaService.rutear().subscribe(() => {
+    this.visitaService.rutear(this.arrParametrosConsultaVisita).subscribe(() => {
       this.consultarLista();
       this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
       this.router.navigate(['admin/diseno-ruta/lista']);

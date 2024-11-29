@@ -48,8 +48,8 @@ export class VisitaService {
     return this.http.post<any[]>(`ruteo/visita/ordenar/`, parametros);
   }
 
-  rutear() {
-    return this.http.post<any[]>(`ruteo/visita/rutear/`, '');
+  rutear(parametros?: ParametrosConsulta) {
+    return this.http.post<any[]>(`ruteo/visita/rutear/`, parametros);
   }
 
   eliminarVisita(id: number) {
