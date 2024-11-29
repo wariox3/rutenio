@@ -8,9 +8,9 @@ import {
 import { General } from '../../../../common/clases/general';
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { DespachoService } from '../../servicios/despacho.service';
-import { Observable } from 'rxjs';
-import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
-import { TablaComunComponent } from "../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component";
+import { Observable, of, switchMap } from 'rxjs';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 
 @Component({
   selector: 'app-despacho-lista',
@@ -38,6 +38,12 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   consultaLista() {
-    this.despachos$ = this._despachoService.lista(this.arrParametrosConsulta);
+    this.despachos$ = this._despachoService
+      .lista(this.arrParametrosConsulta)
+      .pipe(
+        switchMap((response) => {
+          return of(response.registros);
+        })
+      );
   }
 }

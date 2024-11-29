@@ -9,6 +9,7 @@ import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
 import { General } from '../../../../common/clases/general';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -42,7 +43,7 @@ export default class DisenoRutaListaComponent
   directionsResults: google.maps.DirectionsResult | undefined;
 
   arrParametrosConsulta: any = {
-    filtros: [],
+    filtros: [{ propiedad: 'estado_aprobado', valor1: false }],
     limite: 50,
     desplazar: 0,
     ordenamientos: [],
@@ -50,7 +51,7 @@ export default class DisenoRutaListaComponent
     modelo: 'RutDespacho',
   };
 
-  arrDespachos: any = [];
+  arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: any = [];
 
   ngOnInit(): void {
@@ -69,7 +70,7 @@ export default class DisenoRutaListaComponent
     this.despachoService
       .lista(this.arrParametrosConsulta)
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta;
+        this.arrDespachos = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
   }

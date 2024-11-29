@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
+import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
+import { Despacho } from '../../../interfaces/despacho/despacho.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +10,10 @@ export class DespachoService {
   private _httpService = inject(HttpService);
 
   lista(parametros: any) {
-    return this._httpService.get<any>(`ruteo/despacho/`);
+    return this._httpService.post<RespuestaGeneralLista<any>>(
+      `general/funcionalidad/lista/`,
+      parametros
+    );
   }
 
   guardarGuias(data: any) {
