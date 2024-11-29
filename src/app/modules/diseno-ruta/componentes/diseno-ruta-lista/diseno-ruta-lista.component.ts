@@ -57,6 +57,14 @@ export default class DisenoRutaListaComponent
     this.consultarLista();
   }
 
+  private _limpiarVisitasPorDespacho() {
+    this.mostrarMapaFlag = false;
+    this.marcarPosicionesVisitasOrdenadas = [];
+    this.directionsResults = undefined;
+    this.arrVisitasPorDespacho = [];
+    this.changeDetectorRef.detectChanges();
+  }
+
   consultarLista() {
     this.despachoService
       .lista(this.arrParametrosConsulta)
@@ -96,6 +104,7 @@ export default class DisenoRutaListaComponent
   eliminarDespacho(despachoId: number) {
     this.despachoService.eliminarDespacho(despachoId).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho eliminado con exito');
+      this._limpiarVisitasPorDespacho();
       this.consultarLista();
     });
   }
