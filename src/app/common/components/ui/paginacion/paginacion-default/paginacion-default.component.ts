@@ -29,7 +29,7 @@ export class PaginacionDefaultComponent implements OnChanges {
 
   constructor() {}
 
-  ngOnChanges(): void {
+  ngOnChanges(): void {    
     this.totalPaginas = this.calcularCantidadPaginas(
       this.totalRegistros,
       this.limite

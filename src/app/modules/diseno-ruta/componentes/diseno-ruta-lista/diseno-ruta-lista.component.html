@@ -46,7 +46,13 @@
                   </section>
                   <section class="flex flex-col items-end gap-3">
                     <div>
-                      <button class="btn" (click)="eliminarDespacho(despacho.id);  $event.stopPropagation()">
+                      <button
+                        class="btn"
+                        (click)="
+                          eliminarDespacho(despacho.id);
+                          $event.stopPropagation()
+                        "
+                      >
                         <i class="ki-filled ki-trash text-xl"></i>
                       </button>
                     </div>
@@ -56,13 +62,6 @@
               }
             </tbody>
           </table>
-        </div>
-        <div class="card-footer flex justify-center">
-          <!-- <app-paginacion-default
-            [limite]="50"
-            [totalPaginas]="totalPaginasVisitas"
-            (paginar)="paginar($event)"
-          ></app-paginacion-default> -->
         </div>
       </div>
       <div class="card flex-1 min-h-[16rem]">
@@ -118,6 +117,14 @@
               }
             </tbody>
           </table>
+        </div>
+        <div class="card-footer flex justify-center">
+          <app-paginacion-default
+            [limite]="parametrosConsultaVisitas.limite"
+            [totalRegistros]="totalRegistrosVisitas"
+            [maxPaginasVisibles]="5"
+            (paginar)="paginar($event)"
+          ></app-paginacion-default>
         </div>
       </div>
     </div>

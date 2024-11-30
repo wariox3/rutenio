@@ -17,11 +17,13 @@ import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule],
+  imports: [CommonModule, GoogleMapsModule, PaginacionDefaultComponent],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,8 +54,16 @@ export default class DisenoRutaListaComponent
     strokeWeight: 3,
   };
   directionsResults: google.maps.DirectionsResult | undefined;
-
-  arrParametrosConsulta: any = {
+  public totalRegistrosVisitas: number = 0;
+  public parametrosConsultaVisitas: ParametrosConsulta = {
+    filtros: [],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: ['orden'],
+    limite_conteo: 10000,
+    modelo: 'RutVisita',
+  };
+  arrParametrosConsulta: ParametrosConsulta = {
     filtros: [{ propiedad: 'estado_aprobado', valor1: false }],
     limite: 50,
     desplazar: 0,
@@ -74,6 +84,7 @@ export default class DisenoRutaListaComponent
     this.directionsResults = undefined;
     this.marcarPosicionesVisitasOrdenadas = [];
     this.arrVisitasPorDespacho = [];
+    this.totalRegistrosVisitas = 0;
     this.changeDetectorRef.detectChanges();
   }
 
@@ -95,6 +106,16 @@ export default class DisenoRutaListaComponent
       });
   }
 
+  paginar(evento: { limite: number; desplazar: number }) {
+    const parametrosConsulta: ParametrosConsulta = {
+      ...this.parametrosConsultaVisitas,
+      limite: evento.limite,
+      desplazar: evento.desplazar,
+    };
+
+    this._consultarVisitas(parametrosConsulta);
+  }
+
   seleccionarDespacho(despacho: any) {
     this.despachoSeleccionado = despacho;
     this.mostrarMapaFlag = false;
@@ -102,25 +123,25 @@ export default class DisenoRutaListaComponent
     this.directionsResults = undefined;
     this.changeDetectorRef.detectChanges();
 
-    const parametrosConsultaVisitas = {
-      filtros: [{ propiedad: 'despacho_id', valor1: despacho.id }],
-      limite: 50,
-      desplazar: 0,
-      ordenamientos: ['orden'],
-      limite_conteo: 10000,
-      modelo: 'RutVisita',
-    };
+    this.parametrosConsultaVisitas.filtros = [
+      {
+        propiedad: 'despacho_id',
+        valor1: despacho.id,
+      },
+    ];
+
+    this._consultarVisitas(this.parametrosConsultaVisitas);
+  }
+
+  private _consultarVisitas(parametrosConsulta: ParametrosConsulta) {
     this.visitaService
-      .generalLista(parametrosConsultaVisitas)
+      .generalLista(parametrosConsulta)
       .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta.registros;
+        this.totalRegistrosVisitas = respuesta.cantidad_registros;
         this.changeDetectorRef.detectChanges();
         this.mostrarMapa();
       });
-  }
-
-  prueba(evento) {
-    console.log(evento);
   }
 
   addMarker(position: google.maps.LatLngLiteral) {
