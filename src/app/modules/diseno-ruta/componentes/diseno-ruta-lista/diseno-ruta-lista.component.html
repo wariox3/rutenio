@@ -23,9 +23,19 @@
                       <span class="font-semibold text-gray-800 text-sm">
                         {{ despacho.id }}
                       </span>
-                      <span class="text-gray-600 text-xs font-medium">
-                        Placa: {{ despacho.vehiculo_placa }}
-                      </span>
+                      <div class="flex gap-1">
+                        <span class="text-gray-600 text-xs font-medium">
+                          Placa: {{ despacho.vehiculo_placa }}
+                        </span>
+
+                        <div class="text-xs font-medium text-gray-600">
+                          <i class="ki-filled ki-calendar-2 mr-1"></i>
+                          <span
+                            >Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}
+                          </span>
+                        </div>
+                      </div>
+
                     </div>
                     <div
                       class="flex justify-between text-gray-500 text-xs mt-1"
@@ -37,10 +47,7 @@
                         <span>Volumen: {{ despacho.volumen }}</span>
                         <i class="ki-filled ki-geolocation"></i>
                         <span>Visitas: {{ despacho.visitas }} </span>
-                        <i class="ki-filled ki-calendar-2"></i>
-                        <span
-                          >Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}
-                        </span>
+                        
                       </div>
                     </div>
                   </section>
