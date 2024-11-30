@@ -4,12 +4,19 @@ import {
   Component,
   inject,
   OnInit,
+  ViewChild,
 } from '@angular/core';
-import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
+import {
+  GoogleMapsModule,
+  MapDirectionsService,
+  MapInfoWindow,
+  MapMarker,
+} from '@angular/google-maps';
 import { General } from '../../../../common/clases/general';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -23,11 +30,14 @@ export default class DisenoRutaListaComponent
   extends General
   implements OnInit
 {
+  @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+
   private despachoService = inject(DespachoService);
   private visitaService = inject(VisitaService);
-  private directionsService: MapDirectionsService;
+  private directionsService = inject(MapDirectionsService);
 
   public despachoSeleccionado: Despacho;
+  public visitaSeleccionada: Visita;
 
   mostrarMapaFlag: boolean = false;
   center: google.maps.LatLngLiteral = {
@@ -53,7 +63,7 @@ export default class DisenoRutaListaComponent
   };
 
   arrDespachos: Despacho[] = [];
-  arrVisitasPorDespacho: any = [];
+  arrVisitasPorDespacho: Visita[] = [];
 
   ngOnInit(): void {
     this.consultarLista();
@@ -61,10 +71,19 @@ export default class DisenoRutaListaComponent
 
   private _limpiarVisitasPorDespacho() {
     this.mostrarMapaFlag = false;
-    this.marcarPosicionesVisitasOrdenadas = [];
     this.directionsResults = undefined;
+    this.marcarPosicionesVisitasOrdenadas = [];
     this.arrVisitasPorDespacho = [];
     this.changeDetectorRef.detectChanges();
+  }
+
+  private _scrollToRow(index: number): void {
+    if (window.innerWidth >= 1280) {
+      const row = document.getElementById(`fila-${index}`);
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
   }
 
   consultarLista() {
@@ -87,7 +106,7 @@ export default class DisenoRutaListaComponent
       filtros: [{ propiedad: 'despacho_id', valor1: despacho.id }],
       limite: 50,
       desplazar: 0,
-      ordenamientos: [],
+      ordenamientos: ['orden'],
       limite_conteo: 10000,
       modelo: 'RutVisita',
     };
@@ -96,7 +115,12 @@ export default class DisenoRutaListaComponent
       .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta.registros;
         this.changeDetectorRef.detectChanges();
+        this.mostrarMapa();
       });
+  }
+
+  prueba(evento) {
+    console.log(evento);
   }
 
   addMarker(position: google.maps.LatLngLiteral) {
@@ -106,13 +130,28 @@ export default class DisenoRutaListaComponent
   eliminarDespacho(despachoId: number) {
     this.despachoService.eliminarDespacho(despachoId).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho eliminado con exito');
-      this._limpiarVisitasPorDespacho();
       this.consultarLista();
+      this._limpiarVisitasPorDespacho();
     });
   }
 
-  mostrarMapa(despachoSeleccionado: number) {
-    if (despachoSeleccionado) {
+  openInfoWindow(marker: MapMarker, index: number) {
+    this.visitaSeleccionada = this.arrVisitasPorDespacho[index];
+    this._scrollToRow(this.visitaSeleccionada.id);
+    this.infoWindow.open(marker);
+  }
+
+  evento(visita: any) {
+    this.visitaSeleccionada = visita;
+    this.center = { lat: visita.latitud, lng: visita.longitud };
+    // const marker = this.markerMap.get(visita.id);
+    // if (marker) {
+    //   this.infoWindow.open(marker);
+    // }
+  }
+
+  mostrarMapa() {
+    if (this.despachoSeleccionado) {
       this.marcarPosicionesVisitasOrdenadas = [
         { lat: 6.200713725811437, lng: -75.58609508555918 },
       ];

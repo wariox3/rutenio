@@ -46,7 +46,7 @@
                   </section>
                   <section class="flex flex-col items-end gap-3">
                     <div>
-                      <button (click)="eliminarDespacho(despacho.id)">
+                      <button class="btn" (click)="eliminarDespacho(despacho.id);  $event.stopPropagation()">
                         <i class="ki-filled ki-trash text-xl"></i>
                       </button>
                     </div>
@@ -69,25 +69,51 @@
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visitas por despacho</h3>
         </div>
-        <div class="card-table scrollable-y-auto h-[16rem]">
-          <table
-            class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table"
-          >
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Destinatario</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-              </tr>
-            </thead>
+        <div class="card-table h-[16rem] overflow-y-auto scrollable">
+          <table class="table w-full border-collapse">
             <tbody>
               @for (visita of arrVisitasPorDespacho; track $index) {
-              <tr>
-                <td>{{ visita.id }}</td>
-                <td>{{ visita.destinatario }}</td>
-                <td>{{ visita.ciudad_nombre }}</td>
-                <td>{{ visita.destinatario_direccion }}</td>
+              <tr
+                class="cursor-pointer"
+                [ngClass]="{
+                  'bg-blue-50 border-l-4 border-blue-500':
+                    visitaSeleccionada === visita
+                }"
+                (click)="evento(visita)"
+                [id]="'fila-' + visita.id"
+              >
+                <td class="p-3 w-full">
+                  <div class="flex flex-col space-y-1">
+                    <div class="flex justify-between items-center">
+                      <span class="font-semibold text-gray-800 text-sm">
+                        {{ visita.destinatario }}
+                      </span>
+                      <span class="text-gray-600 text-xs font-medium">
+                        Número: {{ visita.numero }}
+                      </span>
+                    </div>
+                    <div class="text-gray-700 text-xs max-w-[24rem]">
+                      <i class="ki-filled ki-geolocation-home"></i>
+                      {{ visita.destinatario_direccion }}
+                    </div>
+                    <div
+                      class="flex justify-between text-gray-500 text-xs mt-1"
+                    >
+                      <div class="flex items-center space-x-1">
+                        <i class="ki-filled ki-parcel"></i>
+                        <span>Peso: {{ visita.peso }} kg</span>
+                        <i class="ki-filled ki-arrow-up-down"></i>
+                        <span>Orden: {{ visita.orden }}</span>
+                        <i class="ki-filled ki-time"></i>
+                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
+                        <i class="ki-filled ki-geolocation mr-1"></i>
+                        <span>Franja: {{ visita.franja_codigo }}</span>
+                      </div>
+
+                      <section class="flex gap-2"></section>
+                    </div>
+                  </div>
+                </td>
               </tr>
               }
             </tbody>
@@ -99,7 +125,24 @@
       <div class="card-header">
         <h3 class="card-title my-1.5">Mapa</h3>
       </div>
-      <div class="card-body h-full"></div>
+      <div class="card-body h-full">
+        <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
+          <!-- @for (markerPosition of marcarPosicionesVisitasOrdenadas; track
+          $index) {
+          <map-marker
+            [position]="markerPosition"
+            #marker="mapMarker"
+            (mapClick)="openInfoWindow(marker, $index)"
+          >
+          </map-marker>
+          } -->
+          <map-info-window>Info Window</map-info-window>
+          <map-directions-renderer
+            *ngIf="directionsResults"
+            [directions]="directionsResults"
+          ></map-directions-renderer>
+        </google-map>
+      </div>
     </div>
   </div>
 </div>
