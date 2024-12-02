@@ -112,14 +112,18 @@
                 </div>
 
                 <div class="menu-item">
-                  <button class="menu-link" (click)="ubicarFranja()">
+                  <button
+                    class="menu-link"
+                    data-modal-toggle="#importar-por-excel-modal"
+                    (click)="abrirModal()"
+                  >
                     <span class="menu-icon">
-                      <i class="ki-filled ki-geolocation"></i>
+                      <i class="ki-filled ki-file-up"></i>
                     </span>
-                    <span class="menu-title"> Ubicar franja </span>
+                    <span class="menu-title"> Importar excel </span>
                   </button>
                 </div>
-
+                
                 <div class="menu-item">
                   <button
                     class="menu-link"
@@ -135,17 +139,17 @@
                 </div>
 
                 <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    data-modal-toggle="#importar-por-excel-modal"
-                    (click)="abrirModal()"
-                  >
+                  <button class="menu-link" (click)="ubicarFranja()">
                     <span class="menu-icon">
-                      <i class="ki-filled ki-file-up"></i>
+                      <i class="ki-filled ki-geolocation"></i>
                     </span>
-                    <span class="menu-title"> Importar excel </span>
+                    <span class="menu-title"> Ubicar franja </span>
                   </button>
                 </div>
+
+               
+
+                
 
                 <div class="menu-item">
                   <button
