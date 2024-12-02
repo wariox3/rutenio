@@ -9,28 +9,26 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { General } from '../../../clases/general';
 import {
-  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  Validators,
+  Validators
 } from '@angular/forms';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { General } from '../../../clases/general';
 import {
   CriteriosFiltro,
   criteriosFiltros,
 } from '../../../constantes/criterios-filtros';
-import { HttpService } from '../../../services/http.service';
 import { mapeoAvanzado } from '../../../constantes/mapeo-avanzado';
-import { KeysPipe } from '../../../pipes/keys.pipe';
 import { SoloNumerosDirective } from '../../../directivas/solo-numeros.directive';
-import { FiltroBaseService } from './services/filtro-base.service';
-import { BuscadorComponent } from '../buscador/buscador.component';
-import { NgSelectModule } from '@ng-select/ng-select';
+import { KeysPipe } from '../../../pipes/keys.pipe';
 import { GeneralService } from '../../../services/general.service';
+import { HttpService } from '../../../services/http.service';
+import { FiltroBaseService } from './services/filtro-base.service';
 
 interface FiltroPropiedades {
   nombre: string;
@@ -51,7 +49,6 @@ interface FiltroPropiedades {
     ReactiveFormsModule,
     KeysPipe,
     SoloNumerosDirective,
-    BuscadorComponent,
     NgSelectModule,
   ],
   templateUrl: './filtro-base.component.html',
@@ -59,7 +56,7 @@ interface FiltroPropiedades {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiltroBaseComponent extends General {
-  @Input() modeloConsulta: string = 'RutFranja';
+  @Input() modeloConsulta: string = '';
   private _filtroBaseService = inject(FiltroBaseService);
   private readonly _generalService = inject(GeneralService);
   public listaOpciones: any[];
@@ -612,7 +609,6 @@ export class FiltroBaseComponent extends General {
 
     this._generalService.autocompletar(arrFiltros).subscribe({
       next: (response) => {
-        console.log(response.registros);
         this.listaOpciones = response.registros;
         this.changeDetectorRef.detectChanges();
       },

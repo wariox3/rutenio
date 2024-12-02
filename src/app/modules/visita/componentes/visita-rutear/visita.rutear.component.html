@@ -123,7 +123,7 @@
                     <span class="menu-title"> Importar excel </span>
                   </button>
                 </div>
-                
+
                 <div class="menu-item">
                   <button
                     class="menu-link"
@@ -146,10 +146,6 @@
                     <span class="menu-title"> Ubicar franja </span>
                   </button>
                 </div>
-
-               
-
-                
 
                 <div class="menu-item">
                   <button
@@ -318,17 +314,12 @@
       <div class="card-header">
         <h3 class="card-title my-[8px]">Mapa</h3>
         <div>
-          <button
-            class="btn btn-primary"
-            (click)="toggleMostrarFranjas()"
-          >
+          <button class="btn btn-primary" (click)="toggleMostrarFranjas()">
             @if (mostrarFranjas$ | async) {
-              <i class="ki-filled ki-eye-slash"></i>
-              Ocultar franjas
-            } @else {
-              <i class="ki-filled ki-eye"></i>
-              Ver franjas
-            }
+            <i class="ki-filled ki-eye-slash"></i>
+            Ocultar franjas } @else {
+            <i class="ki-filled ki-eye"></i>
+            Ver franjas }
           </button>
         </div>
       </div>
@@ -455,6 +446,7 @@
 >
   <section modal-body>
     <app-filtro-base
+      [modeloConsulta]="'RutFranja'"
       [mapeoCampos]="mapeo"
       (emitirFiltros)="filtrosPersonalizados($event, '#filtros-visita')"
       [persistirFiltros]="true"
