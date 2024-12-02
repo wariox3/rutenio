@@ -161,7 +161,9 @@ export class FiltroBaseComponent extends General {
 
   ngOnInit(): void {
     this.initForm();
-    this.consultarEntidad();
+    if(this.modeloConsulta) {
+      this.consultarEntidad();
+    }
     this.construirPropiedades();
     this.activatedRoute.queryParams.subscribe((parametro) => {
       this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
