@@ -39,31 +39,6 @@
           </select>
         </div>
         <div class="w-full mb-2">
-          <!-- <nb-form-field>
-              <ng-container *ngIf="filtro.get('tipo')?.value === 'DateField'">
-                <input fieldSize="small" nbInput [nbDatepicker]="dateTimePicker" formControlName="valor1" fullWidth
-                  placeholder="yy/mm/dd" />
-                <nb-datepicker #dateTimePicker format="yy/MM/dd"></nb-datepicker>
-              </ng-container>
-  
-              <input fieldSize="small" *ngIf="filtro.get('tipo')?.value !== 'DateField'" [placeholder]="
-              filtro.get('busquedaAvanzada')?.value !== 'true'
-                ? 'Código'
-                : 'Buscar...'
-            " formControlName="valor1" nbInput fullWidth #inputValor1 [id]="'inputValor1' + i" [type]="
-              filtro.get('tipo')?.value === 'IntegerField'
-                ? 'number'
-                : filtro.get('tipo')?.value === 'DateField'
-                ? 'date'
-                : 'text'" [appSoloNumeros]="
-                filtro.get('busquedaAvanzada')?.value === 'true'
-              ">
-              <button nbPopover="Busqueda avanzada" nbPopoverTrigger="hover" size="small" class="boton-busqueda" *ngIf="filtro.get('busquedaAvanzada')?.value === 'true'"
-                type="button" status="primary" nbSuffix nbButton (click)="abrirModalFiltrosAvanzados(i)">
-                <nb-icon icon="search-outline"></nb-icon>
-                
-              </button>
-            </nb-form-field> -->
           @if (filtro.get('tipo')?.value !== 'Booleano') {
           <ng-container *ngIf="filtro.get('tipo')?.value === 'DateField'">
             <input
@@ -73,6 +48,22 @@
               type="date"
             />
           </ng-container>
+          @if (filtro.get('busquedaAvanzada')?.value === 'true') {
+          <ng-select
+            [items]="listaOpciones"
+            bindLabel="nombre"
+            bindValue="id"
+            formControlName="valor1"
+            notFoundText="Sin elementos"
+            placeholder="Buscar..."
+            loadingText="Buscando..."
+            class="select2Custom"
+            (change)="seleccionarEntidad($event)"
+            (keyup)="buscarEntidadNombre($event)"
+          >
+          </ng-select>
+
+          } @else {
           <input
             class="input"
             *ngIf="filtro.get('tipo')?.value !== 'DateField'"
@@ -93,7 +84,7 @@
             "
             [appSoloNumeros]="filtro.get('busquedaAvanzada')?.value === 'true'"
           />
-          }
+          } }
         </div>
         <div class="w-full mb-2 flex gap-4 justify-center">
           <button (click)="agregarNuevoFiltro()">

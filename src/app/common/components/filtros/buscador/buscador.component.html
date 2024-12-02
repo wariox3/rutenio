@@ -1,0 +1,13 @@
+<ng-select
+  [items]="listaOpciones"
+  bindLabel="nombre"
+  bindValue="id"
+  formControlName="valor1"
+  notFoundText="Sin elementos"
+  placeholder="Buscar..."
+  loadingText="Buscando..."
+  class="select2Custom"
+  (change)="seleccionarEntidad($event)"
+  (keyup)="buscarCiudadPorNombre($event)"
+>
+</ng-select>

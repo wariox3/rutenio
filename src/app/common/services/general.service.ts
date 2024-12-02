@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Subdomino } from '../clases/subdominio';
 import { AlertaService } from './alerta.service';
 import { RespuestaAutocompletar } from '../../interfaces/general/autocompletar.interface';
+import { ParametrosConsulta } from '../../interfaces/general/api.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,13 @@ export class GeneralService extends Subdomino {
         modelo,
         serializador: 'ListaAutocompletar',
       }
+    );
+  }
+
+  autocompletar<T>(filtros: ParametrosConsulta) {
+    return this.http.post<RespuestaAutocompletar<T>>(
+      'general/funcionalidad/lista/',
+      filtros
     );
   }
 

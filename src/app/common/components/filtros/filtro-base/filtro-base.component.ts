@@ -11,8 +11,10 @@ import {
 } from '@angular/core';
 import { General } from '../../../clases/general';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
@@ -26,6 +28,9 @@ import { mapeoAvanzado } from '../../../constantes/mapeo-avanzado';
 import { KeysPipe } from '../../../pipes/keys.pipe';
 import { SoloNumerosDirective } from '../../../directivas/solo-numeros.directive';
 import { FiltroBaseService } from './services/filtro-base.service';
+import { BuscadorComponent } from '../buscador/buscador.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { GeneralService } from '../../../services/general.service';
 
 interface FiltroPropiedades {
   nombre: string;
@@ -41,13 +46,24 @@ interface FiltroPropiedades {
 @Component({
   selector: 'app-filtro-base',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, KeysPipe, SoloNumerosDirective],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    KeysPipe,
+    SoloNumerosDirective,
+    BuscadorComponent,
+    NgSelectModule,
+  ],
   templateUrl: './filtro-base.component.html',
   styleUrl: './filtro-base.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiltroBaseComponent extends General {
+  @Input() modeloConsulta: string = 'RutFranja';
   private _filtroBaseService = inject(FiltroBaseService);
+  private readonly _generalService = inject(GeneralService);
+  public listaOpciones: any[];
+
   formularioItem: FormGroup;
   listaFiltros: any[] = [];
   arrPropiedadBusquedaAvanzada: FiltroPropiedades[] = [];
@@ -148,6 +164,7 @@ export class FiltroBaseComponent extends General {
 
   ngOnInit(): void {
     this.initForm();
+    this.consultarEntidad();
     this.construirPropiedades();
     this.activatedRoute.queryParams.subscribe((parametro) => {
       this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
@@ -225,7 +242,7 @@ export class FiltroBaseComponent extends General {
       let inputValor1Modal: HTMLInputElement | null = document.querySelector(
         '#inputValor1' + index
       );
-      inputValor1Modal!.focus();
+      inputValor1Modal?.focus();
 
       this.changeDetectorRef.detectChanges();
     }
@@ -309,7 +326,7 @@ export class FiltroBaseComponent extends General {
   }
 
   private crearControlFiltros(propiedades: any | null, index: number) {
-    let valor1 = '';  
+    let valor1 = '';
     let valor2 = '';
     let propiedad = '';
     let operador = '';
@@ -329,6 +346,11 @@ export class FiltroBaseComponent extends General {
       const resultadoCriterioFiltro = criteriosFiltros[propiedades.tipo];
       this.criteriosBusqueda[index] = resultadoCriterioFiltro;
     }
+
+    if (modeloBusquedaAvanzada) {
+      this.consultarEntidad(null, valor1);
+    }
+
     return this.formBuilder.group({
       propiedad: [campo],
       operador: [operador],
@@ -344,13 +366,13 @@ export class FiltroBaseComponent extends General {
   agregarNuevoFiltro() {
     this.filtros.push(
       this.formBuilder.group({
-        propiedad: [''],
-        operador: [''],
-        valor1: ['', [Validators.required]],
-        valor2: [''],
-        tipo: [''],
+        propiedad: new FormControl(''),
+        operador: new FormControl(''),
+        valor1: new FormControl('', Validators.required),
+        valor2: new FormControl(''),
+        tipo: new FormControl(''),
         busquedaAvanzada: ['false'],
-        modeloBusquedaAvanzada: [''],
+        modeloBusquedaAvanzada: new FormControl(''),
       })
     );
   }
@@ -467,6 +489,7 @@ export class FiltroBaseComponent extends General {
   limpiarFormulario() {
     localStorage.removeItem(this.nombreFiltro);
     this.formularioItem.reset();
+    this.consultarEntidad();
     this.filtros.clear();
     this.agregarNuevoFiltro();
     this.emitirFiltros.emit([]);
@@ -549,5 +572,61 @@ export class FiltroBaseComponent extends General {
       }
     }
     return valorFiltro.toLocaleLowerCase();
+  }
+
+  seleccionarEntidad(entidad: any) {
+    if (!entidad) {
+      this.consultarEntidad('');
+      return;
+    }
+  }
+
+  consultarEntidad(nombre?: string | null, id?: string | null) {
+    let arrFiltros = {
+      filtros: [],
+      limite: 10,
+      desplazar: 0,
+      ordenamientos: [],
+      limite_conteo: 10000,
+      modelo: this.modeloConsulta,
+      serializador: 'ListaAutocompletar',
+    };
+
+    if (nombre) {
+      arrFiltros.filtros.push({
+        operador: '__icontains',
+        propiedad: 'nombre__icontains',
+        valor1: nombre,
+        valor2: '',
+      });
+    }
+
+    if (id) {
+      arrFiltros.filtros.push({
+        operador: '__icontains',
+        propiedad: 'id__icontains',
+        valor1: id,
+        valor2: '',
+      });
+    }
+
+    this._generalService.autocompletar(arrFiltros).subscribe({
+      next: (response) => {
+        console.log(response.registros);
+        this.listaOpciones = response.registros;
+        this.changeDetectorRef.detectChanges();
+      },
+    });
+  }
+
+  buscarEntidadNombre(event?: any) {
+    const excludedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+    if (excludedKeys.includes(event?.key)) {
+      return;
+    }
+
+    const ciudadNombre = event?.target.value || '';
+    this.consultarEntidad(ciudadNombre);
   }
 }
