@@ -35,7 +35,6 @@
                           </span>
                         </div>
                       </div>
-
                     </div>
                     <div
                       class="flex justify-between text-gray-500 text-xs mt-1"
@@ -47,7 +46,6 @@
                         <span>Volumen: {{ despacho.volumen }}</span>
                         <i class="ki-filled ki-geolocation"></i>
                         <span>Visitas: {{ despacho.visitas }} </span>
-                        
                       </div>
                     </div>
                   </section>
@@ -141,19 +139,44 @@
       </div>
       <div class="card-body h-full">
         <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
-          <!-- @for (markerPosition of marcarPosicionesVisitasOrdenadas; track
-          $index) {
+          @for (markerPosition of customMarkers; track $index) {
           <map-marker
-            [position]="markerPosition"
+            [position]="markerPosition.position"
             #marker="mapMarker"
-            (mapClick)="openInfoWindow(marker, $index)"
-          >
-          </map-marker>
-          } -->
-          <map-info-window>Info Window</map-info-window>
+            [label]="markerPosition.label"
+            (mapClick)="openInfoWindow(marker, $index - 1)"
+          ></map-marker>
+          }
+          <map-info-window>
+            <section>
+              <p class="font-bold">{{ visitaSeleccionada?.destinatario }}</p>
+              <div>
+                <i class="ki-filled ki-geolocation"></i>
+                <span class="ml-1">{{
+                  visitaSeleccionada?.destinatario_direccion
+                }}</span>
+              </div>
+              <div>
+                <span> # {{ visitaSeleccionada?.numero }} </span>
+              </div>
+              <div class="mt-2 flex gap-2 items-center">
+                <div>
+                  <i class="ki-filled ki-package"></i>
+                  <span class="ml-1">{{ visitaSeleccionada?.peso }}</span>
+                </div>
+                <div>
+                  <i class="ki-filled ki-time"></i>
+                  <span class="ml-1">{{
+                    visitaSeleccionada?.tiempo_servicio
+                  }}</span>
+                </div>
+              </div>
+            </section>
+          </map-info-window>
           <map-directions-renderer
             *ngIf="directionsResults"
             [directions]="directionsResults"
+            [options]="directionsRendererOptions"
           ></map-directions-renderer>
         </google-map>
       </div>

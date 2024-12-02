@@ -41,6 +41,11 @@ export default class DisenoRutaListaComponent
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
 
+  customMarkers: {
+    position: google.maps.LatLngLiteral;
+    label: google.maps.MarkerLabel;
+  }[] = [];
+  directionsRendererOptions = { suppressMarkers: true };
   mostrarMapaFlag: boolean = false;
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
@@ -84,6 +89,7 @@ export default class DisenoRutaListaComponent
     this.directionsResults = undefined;
     this.marcarPosicionesVisitasOrdenadas = [];
     this.arrVisitasPorDespacho = [];
+    this.customMarkers = [];
     this.totalRegistrosVisitas = 0;
     this.changeDetectorRef.detectChanges();
   }
@@ -173,6 +179,7 @@ export default class DisenoRutaListaComponent
 
   mostrarMapa() {
     if (this.despachoSeleccionado) {
+      this.customMarkers = [];
       this.marcarPosicionesVisitasOrdenadas = [
         { lat: 6.200713725811437, lng: -75.58609508555918 },
       ];
@@ -180,7 +187,7 @@ export default class DisenoRutaListaComponent
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
       });
 
-      if (this.marcarPosicionesVisitasOrdenadas.length < 1) {
+      if (this.marcarPosicionesVisitasOrdenadas.length < 2) {
         console.error(
           'Se necesitan al menos dos puntos para calcular la ruta.'
         );
@@ -211,10 +218,14 @@ export default class DisenoRutaListaComponent
       this.directionsService.route(request).subscribe({
         next: (response) => {
           this.directionsResults = response.result;
+
+          // Generar los marcadores personalizados
+          this._generarMarcadoresPersonalizados(response.result);
           this.changeDetectorRef.detectChanges();
         },
         error: (e) => console.error(e),
       });
+
       this.mostrarMapaFlag = true;
       this.changeDetectorRef.detectChanges();
     } else {
@@ -223,5 +234,40 @@ export default class DisenoRutaListaComponent
         'Error'
       );
     }
+  }
+
+  private _generarMarcadoresPersonalizados(
+    result: google.maps.DirectionsResult
+  ) {
+    const route = result.routes[0];
+    const legs = route.legs;
+
+    // Agregar marcador para el punto de inicio
+    this.customMarkers.push({
+      position: {
+        lat: legs[0].start_location.lat(),
+        lng: legs[0].start_location.lng(),
+      },
+
+      label: {} as google.maps.MarkerLabel,
+    });
+
+    // Agregar marcadores para los puntos intermedios (waypoints)
+    let counter = 1;
+    legs.forEach((leg) => {
+      this.customMarkers.push({
+        position: {
+          lat: leg.end_location.lat(),
+          lng: leg.end_location.lng(),
+        },
+        label: {
+          text: counter.toString(),
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: 'bold',
+        } as google.maps.MarkerLabel,
+      });
+      counter++;
+    });
   }
 }
