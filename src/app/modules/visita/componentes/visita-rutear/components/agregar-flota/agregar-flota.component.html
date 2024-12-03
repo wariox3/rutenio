@@ -35,7 +35,7 @@
         >
           <thead>
             <tr>
-              <th class="min-w-[175px]">
+              <th class="min-w-[100px]">
                 <span class="sort asc">
                   <span class="sort-label"> Placa </span>
                 </span>
@@ -43,6 +43,16 @@
               <th class="min-w-[150px]">
                 <span class="sort">
                   <span class="sort-label"> Capacidad </span>
+                </span>
+              </th>
+              <th class="min-w-[150px]">
+                <span class="sort">
+                  <span class="sort-label"> Franja Código </span>
+                </span>
+              </th>
+              <th class="min-w-[150px]">
+                <span class="sort">
+                  <span class="sort-label"> Franja Nombre </span>
                 </span>
               </th>
               <th class="min-w-[125px]">
@@ -76,6 +86,20 @@
                 <div class="flex items-center gap-1.5">
                   <span class="leading-none text-gray-700">
                     {{ vehiculo.capacidad }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="flex items-center gap-1.5">
+                  <span class="leading-none text-gray-700">
+                    {{ vehiculo.franja_codigo }}
+                  </span>
+                </div>
+              </td>
+              <td>
+                <div class="flex items-center gap-1.5">
+                  <span class="leading-none text-gray-700">
+                    {{ vehiculo.franja_nombre }}
                   </span>
                 </div>
               </td>
