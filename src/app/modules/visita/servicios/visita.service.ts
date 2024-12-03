@@ -56,6 +56,15 @@ export class VisitaService {
     return this.http.delete(`ruteo/visita/${id}/`, {});
   }
 
+  retirarVisita(id: number) {
+    return this.http.post<{ mensaje: string }>(
+      `ruteo/visita/despacho-retirar/`,
+      {
+        id,
+      }
+    );
+  }
+
   eliminarMultiples(data: number[]) {
     return this.http.post(`ruteo/visita/eliminar/`, { documentos: data });
   }

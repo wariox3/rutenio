@@ -270,4 +270,36 @@ export default class DisenoRutaListaComponent
       counter++;
     });
   }
+
+  retirarVisita(id: number) {
+    this.visitaService.retirarVisita(id).subscribe({
+      next: (response) => {
+        this.alerta.mensajaExitoso(response?.mensaje);
+        this._consultarVisitas(this.parametrosConsultaVisitas);
+      },
+    });
+  }
+
+  confirmarEliminarVisita(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.eliminarVisita(id);
+        }
+      });
+  }
+
+  eliminarVisita(id: number) {
+    this.visitaService.eliminarVisita(id).subscribe({
+      next: (response) => {
+        this.alerta.mensajaExitoso('Visita eliminada exitosamente');
+        this._consultarVisitas(this.parametrosConsultaVisitas);
+      },
+    });
+  }
 }
