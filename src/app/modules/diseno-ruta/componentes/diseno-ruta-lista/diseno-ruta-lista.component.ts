@@ -302,4 +302,13 @@ export default class DisenoRutaListaComponent
       },
     });
   }
+
+  aprobarDespacho(id: number){
+    this.despachoService.aprobar(id).subscribe((respuesta) => {
+      this.alerta.mensajaExitoso('Despacho aprobado con exito');
+      this.consultarLista();
+      this._limpiarVisitasPorDespacho();
+    })
+  }
+
 }

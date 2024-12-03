@@ -39,4 +39,10 @@ export class DespachoService {
   ordenar() {
     return this._httpService.post<any[]>(`ruteo/despacho/ordenar/`, '');
   }
+
+  aprobar (id: number){
+    return this._httpService.post<any[]>(`ruteo/despacho/aprobar/`, {
+      id
+    });
+  }
 }

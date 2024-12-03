@@ -27,18 +27,13 @@
                         <span class="text-gray-600 text-xs font-medium">
                           Placa: {{ despacho.vehiculo_placa }}
                         </span>
-
                         <div class="text-xs font-medium text-gray-600">
                           <i class="ki-filled ki-calendar-2 mr-1"></i>
-                          <span
-                            >Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}
-                          </span>
+                          <span>Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}</span>
                         </div>
                       </div>
                     </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
+                    <div class="flex justify-between text-gray-500 text-xs mt-1">
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ despacho.peso }} kg</span>
@@ -50,13 +45,15 @@
                     </div>
                   </section>
                   <section class="flex flex-col items-end gap-3">
-                    <div>
+                    <div class="flex gap-2 items-center">
+                      <button
+                        class="btn btn-xs btn-primary"
+                        (click)="aprobarDespacho(despacho.id); $event.stopPropagation()"
+                      >Aprobar
+                      </button>
                       <button
                         class="btn"
-                        (click)="
-                          eliminarDespacho(despacho.id);
-                          $event.stopPropagation()
-                        "
+                        (click)="eliminarDespacho(despacho.id); $event.stopPropagation()"
                       >
                         <i class="ki-filled ki-trash text-xl"></i>
                       </button>
@@ -69,6 +66,7 @@
           </table>
         </div>
       </div>
+      
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visitas por despacho</h3>
