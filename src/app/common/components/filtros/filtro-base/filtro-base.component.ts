@@ -15,7 +15,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
-  Validators
+  Validators,
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { General } from '../../../clases/general';
@@ -83,6 +83,7 @@ export class FiltroBaseComponent extends General {
   @ViewChild('modalFiltrosAvanzado') modalFiltrosAvanzado: TemplateRef<any>;
   @Input() persistirFiltros: boolean = true;
   @Output() emitirFiltros: EventEmitter<any> = new EventEmitter();
+  @Output() emitirLimpiarFiltros: EventEmitter<any> = new EventEmitter();
   @Input({ required: true }) mapeoCampos: any = [];
   nombreFiltro = ``;
 
@@ -91,6 +92,14 @@ export class FiltroBaseComponent extends General {
     private httpService: HttpService
   ) {
     super();
+  }
+
+  private _initListener() {
+    this._filtroBaseService.myEvent.subscribe({
+      next: () => {
+        this.limpiar();
+      },
+    });
   }
 
   abrirModalFiltrosAvanzados(index: number) {
@@ -161,7 +170,8 @@ export class FiltroBaseComponent extends General {
 
   ngOnInit(): void {
     this.initForm();
-    if(this.modeloConsulta) {
+    this._initListener();
+    if (this.modeloConsulta) {
       this.consultarEntidad();
     }
     this.construirPropiedades();
@@ -492,6 +502,15 @@ export class FiltroBaseComponent extends General {
     this.filtros.clear();
     this.agregarNuevoFiltro();
     this.emitirFiltros.emit([]);
+  }
+
+  limpiar() {
+    localStorage.removeItem(this.nombreFiltro);
+    this.formularioItem.reset();
+    this.consultarEntidad();
+    this.filtros.clear();
+    this.agregarNuevoFiltro();
+    this.emitirLimpiarFiltros.emit([]);
   }
 
   limpiarFormularioModal(modal: string) {

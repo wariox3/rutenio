@@ -12,3 +12,10 @@
 .trash-icon {
   color: red !important;
 }
+
+
+.clear-icon {
+  bottom: .5rem;
+  left: .7rem;
+  font-size: 1rem;
+}

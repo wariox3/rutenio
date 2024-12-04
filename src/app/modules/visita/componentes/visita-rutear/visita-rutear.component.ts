@@ -15,7 +15,7 @@ import {
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BehaviorSubject, finalize, Observable, of, switchMap } from 'rxjs';
-import { KTModal } from '../../../../../metronic/core';
+import { KTMenu, KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
 import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
@@ -144,6 +144,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   ngOnInit(): void {
     this._aplicarFiltrosPermanentes();
     this._initView();
+    this._initListeners();
+  }
+
+  private _initListeners() {
+    this._filtroBaseService.myEvent.subscribe({});
   }
 
   private _aplicarFiltrosPermanentes() {
@@ -318,11 +323,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   rutear() {
-    this.visitaService.rutear(this.arrParametrosConsultaVisita).subscribe(() => {
-      this.consultarLista();
-      this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
-      this.router.navigate(['admin/diseno-ruta/lista']);
-    });
+    this.visitaService
+      .rutear(this.arrParametrosConsultaVisita)
+      .subscribe(() => {
+        this.consultarLista();
+        this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
+        this.router.navigate(['admin/diseno-ruta/lista']);
+      });
   }
 
   addMarker(position: google.maps.LatLngLiteral, visitaId: number) {
@@ -525,7 +532,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
-  eliminarVisita(id){
+  eliminarVisita(id: number) {
     this.visitaService.eliminarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
@@ -551,19 +558,34 @@ export default class VisitaRutearComponent extends General implements OnInit {
     })
   }
 
-  // filtrosPersonalizados(filtros: any, modalId: string) {
-  //   let parametrosConsulta: ParametrosConsulta = {
-  //     ...this.arrParametrosConsultaVisita,
-  //   };
+  recibirFiltrosVacios(filtros: any[]) {
+    if (filtros.length >= 1) {
+      this.arrParametrosConsultaVisita.filtros = [
+        { propiedad: 'estado_despacho', valor1: false },
+        ...filtros,
+      ];
+    } else {
+      this.arrParametrosConsultaVisita.filtros = [
+        { propiedad: 'estado_despacho', valor1: false },
+      ];
+    }
 
-  //   if (filtros.length >= 1) {
-  //     parametrosConsulta = {
-  //       ...parametrosConsulta,
-  //       filtros: [...this.arrParametrosConsultaVisita.filtros, ...filtros],
-  //     };
-  //   }
+    this._actualizarFiltrosParaMostrar(filtros);
 
-  //   this._consultarVisitas(parametrosConsulta);
-  //   this.cerrarModalPorId(modalId);
+    this._consultarVisitas(this.arrParametrosConsultaVisita);
+    this._consultarResumen().subscribe();
+  }
+
+  limpiarFiltros(event: Event) {
+    event.stopPropagation();
+    this._filtroBaseService.myEvent.next();
+  }
+
+  // cerrarMenuVisita() {
+  //   const menuEl: HTMLElement = document.querySelector('#my_menu');
+  //   const menuEle: HTMLElement = document.querySelector('#submenu');
+  //   const menu = KTMenu.getInstance(menuEl);
+
+  //   menu.hide(menuEl);
   // }
 }
