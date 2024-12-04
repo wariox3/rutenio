@@ -14,7 +14,7 @@ export const visitaRutearMapeo: any = {
     {
       nombre: 'franja__id',
       campoNombre: 'Franja',
-      campoTipo: 'IntegerField',
+      campoTipo: 'Fk',
       visibleTabla: true,
       visibleFiltro: true,
       ordenable: true,

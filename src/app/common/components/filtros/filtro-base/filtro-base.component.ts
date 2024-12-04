@@ -363,7 +363,7 @@ export class FiltroBaseComponent extends General {
     return this.formBuilder.group({
       propiedad: [campo],
       operador: [operador],
-      valor1: [valor1, [Validators.required]],
+      valor1: [valor1, []],
       valor2: [valor2],
       tipo: [tipo],
       campo: [campo],
@@ -411,6 +411,14 @@ export class FiltroBaseComponent extends General {
     }
   }
 
+  private _handleNullValue(filtro: any) {
+    if (filtro.operador === '__isnull') {
+      return filtro.tipo === 'Fk' ? true : '';
+    }
+
+    return filtro.valor1;
+  }
+
   aplicarFiltro() {
     const filtros = this.formularioItem.value['filtros'];
     const listaFiltros: any[] = [];
@@ -418,6 +426,7 @@ export class FiltroBaseComponent extends General {
     let emitirValores = true;
     filtros.forEach((filtro: any) => {
       if (filtro.propiedad !== '') {
+        filtro.valor1 = this._handleNullValue(filtro);
         if (filtro.valor1 === '') {
           hayFiltrosSinValores = true;
         } else {

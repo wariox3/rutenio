@@ -24,12 +24,7 @@
           </select>
         </div>
         <div class="w-full mb-2">
-          <select
-            class="select"
-            name="select"
-            formControlName="operador"
-            (selectedChange)="seleccionarPropiedad($event, i)"
-          >
+          <select class="select" name="select" formControlName="operador">
             <option value="">Seleccionar</option>
             @for (criterioBusqueda of criteriosBusqueda[i]; track $index) {
             <option [value]="criterioBusqueda.valor">
@@ -48,7 +43,8 @@
               type="date"
             />
           </ng-container>
-          @if (filtro.get('busquedaAvanzada')?.value === 'true') {
+          @if (filtro.get('busquedaAvanzada')?.value === 'true') { @if (
+          filtro.get('operador')?.value !== '__isnull') {
           <ng-select
             [items]="listaOpciones"
             bindLabel="nombre"
@@ -62,8 +58,7 @@
             (keyup)="buscarEntidadNombre($event)"
           >
           </ng-select>
-
-          } @else {
+          } } @else {
           <input
             class="input"
             *ngIf="filtro.get('tipo')?.value !== 'DateField'"

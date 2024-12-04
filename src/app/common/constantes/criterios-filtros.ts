@@ -105,5 +105,12 @@ export const  criteriosFiltros: BaseCriteriosFiltro = {
       texto: "Igual",
       defecto: true,
     },
+     {
+      valor: "__isnull",
+      texto: "Sin asignar",
+      defecto: false,
+    },
   ],
 };
+
+// descripcion__isnull=True 
