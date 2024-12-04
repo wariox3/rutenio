@@ -83,6 +83,10 @@ export class VisitaService {
     return this.http.post<VisitaResumen>('ruteo/visita/resumen/', parametros);
   }
 
+  resumenPendiente(parametros?: ParametrosConsulta){
+    return this.http.post<VisitaResumen>('ruteo/visita/resumen-pendiente/', parametros);
+  }
+
   importarComplementos(parametros: {
     numeroRegistros: number;
     desde: number | string;

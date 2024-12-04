@@ -38,6 +38,7 @@ import { FranjaService } from '../../../franja/servicios/franja.service';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { VisitaResumenPedienteComponent } from "../visita-resumen-pediente/visita-resumen-pediente.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -56,7 +57,8 @@ import { FiltroBaseService } from '../../../../common/components/filtros/filtro-
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
-  ],
+    VisitaResumenPedienteComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -120,6 +122,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalVisitaResumen$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -129,6 +132,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];
+  visitaResumen : any;
 
   constructor() {
     super();
@@ -529,6 +533,22 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this._consultarResumen().subscribe();
       },
     });
+  }
+
+  abrirModalResumen() {
+    this.toggleModalVisitaResumen$.next(true);
+    this.resumen()
+  }
+
+  resumen(){
+    this.visitaService.resumenPendiente().subscribe({
+      next: (response) => {  
+        this.visitaResumen = response.resumen
+        console.log(this.visitaResumen);
+        
+        this.changeDetectorRef.detectChanges();
+      }
+    })
   }
 
   // filtrosPersonalizados(filtros: any, modalId: string) {

@@ -1,0 +1,27 @@
+@if (resumen){
+<div class="card min-w-full">
+  <div class="card-table">
+    <table class="table align-middle text-gray-700 font-medium text-sm">
+      <thead>
+        <tr>
+          <th>Franja id</th>
+          <th>Franja nombre</th>
+          <th>Cantidad</th>
+          <th>Peso</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of resumen; track $index) {
+        <tr>
+          <td>{{ item.franja_id }}</td>
+          <td>{{ item.franja__nombre }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>{{ item.peso }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+}

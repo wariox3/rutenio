@@ -1,12 +1,14 @@
 <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5">
   <div class="card">
-    <div class="card-body">
+    <div class="card-body flex gap-2">
       <app-button
         type="button"
         texto="Rutear"
         (emitirBotonClicked)="rutear()"
         [estaDeshabilitado]="habilitadoParaRutear()"
       ></app-button>
+      <app-button clases="btn btn-secondary" data-modal-toggle="#resumen-pendiente" type="button" texto="Resumen" (click)="abrirModalResumen()">
+      </app-button>
     </div>
   </div>
   <div
@@ -478,3 +480,16 @@
 <app-full-loader-default
   [mostrarCargando]="mostarVistaCargando$ | async"
 ></app-full-loader-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'resumen-pendiente'"
+  titulo="Resumen pendiente"
+>
+  <section *ngIf="toggleModalVisitaResumen$ | async" modal-body>
+    <app-visita-resumen-pediente
+    [resumen]="visitaResumen">
+    </app-visita-resumen-pediente>
+  </section>
+
+</app-modal-default>
