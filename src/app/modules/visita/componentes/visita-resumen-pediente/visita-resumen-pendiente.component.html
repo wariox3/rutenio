@@ -1,27 +1,25 @@
 @if (resumen){
 <div class="card min-w-full">
   <div class="card-table">
-    <table class="table align-middle text-gray-700 font-medium text-sm">
-      <thead>
-        <tr>
-          <th>Franja id</th>
-          <th>Franja nombre</th>
-          <th>Cantidad</th>
-          <th>Peso</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of resumen; track $index) {
-        <tr>
-          <td>{{ item.franja_id }}</td>
-          <td>{{ item.franja__nombre }}</td>
-          <td>{{ item.cantidad }}</td>
-          <td>{{ item.peso }}</td>
-        </tr>
-        }
-      </tbody>
-    </table>
+    <table class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full">
+        <thead>
+          <tr class="bg-gray-100 text-center">
+            <th class="px-2 py-1">Franja id</th>
+            <th class="px-2 py-1">Franja nombre</th>
+            <th class="px-2 py-1 text-center">Cantidad</th>
+            <th class="px-2 py-1 text-center">Peso</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of resumen; let i = index" class="hover:bg-gray-50">
+            <td class="px-2 py-1 text-left">{{ item.franja_id }}</td>
+            <td class="px-2 py-1 text-left">{{ item.franja__nombre }}</td>
+            <td class="px-2 py-1 text-right">{{ item.cantidad }}</td>
+            <td class="px-2 py-1 text-right">{{ item.peso }}</td>
+          </tr>
+        </tbody>
+      </table>
+         
   </div>
 </div>
-
 }
