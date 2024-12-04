@@ -315,6 +315,21 @@ export default class DisenoRutaListaComponent
     });
   }
 
+
+  confirmarAprobarDespacho(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, aprobar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.aprobarDespacho(id);
+        }
+      });
+  }
+
   aprobarDespacho(id: number) {
     this.despachoService.aprobar(id).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho aprobado con exito');
