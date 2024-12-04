@@ -22,6 +22,7 @@ import { KTModal } from '../../../../../../../metronic/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisitaRutearDetalleComponent extends General {
+  @Input() mostarConfiguracionAdicional: boolean = false;
   @Input({ required: true }) visita: Visita;
   @Output() emitirRecargarLista: EventEmitter<void>;
 
@@ -44,7 +45,7 @@ export class VisitaRutearDetalleComponent extends General {
       .seleccionarDireccionAlternativa(parametros)
       .subscribe((respuesta) => {
         this.alerta.mensajaExitoso(respuesta.mensaje);
-        this.emitirRecargarLista.emit()
+        this.emitirRecargarLista.emit();
       });
   }
 }

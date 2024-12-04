@@ -112,7 +112,15 @@
                         <span>Franja: {{ visita.franja_codigo }}</span>
                       </div>
 
-                      <section class="flex">
+                      <section class="flex gap-1">
+                        <button
+                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          data-modal-toggle="#detalle-visita"
+                          (click)="abrirModalDetalleVisita()"
+                        >
+                          <i class="ki-filled ki-eye text-xl"></i>
+                        </button>
+
                         <div class="menu menu-default" data-menu="true">
                           <div
                             class="menu-item"
@@ -228,3 +236,16 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  size="medium"
+  [id]="'detalle-visita'"
+  titulo="Visita"
+  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+>
+  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
+    <app-visita-rutear-detalle
+      [visita]="visitaSeleccionada"
+    ></app-visita-rutear-detalle>
+  </section>
+</app-modal-default>

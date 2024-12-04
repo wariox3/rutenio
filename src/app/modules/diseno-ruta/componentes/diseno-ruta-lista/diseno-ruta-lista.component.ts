@@ -19,11 +19,20 @@ import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { BehaviorSubject } from 'rxjs';
+import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule, PaginacionDefaultComponent],
+  imports: [
+    CommonModule,
+    GoogleMapsModule,
+    PaginacionDefaultComponent,
+    ModalDefaultComponent,
+    VisitaRutearDetalleComponent,
+  ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +69,7 @@ export default class DisenoRutaListaComponent
   };
   directionsResults: google.maps.DirectionsResult | undefined;
   public totalRegistrosVisitas: number = 0;
+  public mostarModalDetalleVisita$: BehaviorSubject<boolean>;
   public parametrosConsultaVisitas: ParametrosConsulta = {
     filtros: [],
     limite: 50,
@@ -82,6 +92,7 @@ export default class DisenoRutaListaComponent
 
   ngOnInit(): void {
     this.consultarLista();
+    this.mostarModalDetalleVisita$ = new BehaviorSubject(false);
   }
 
   private _limpiarVisitasPorDespacho() {
@@ -171,6 +182,7 @@ export default class DisenoRutaListaComponent
   evento(visita: any) {
     this.visitaSeleccionada = visita;
     this.center = { lat: visita.latitud, lng: visita.longitud };
+    this.changeDetectorRef.detectChanges();
     // const marker = this.markerMap.get(visita.id);
     // if (marker) {
     //   this.infoWindow.open(marker);
@@ -303,12 +315,19 @@ export default class DisenoRutaListaComponent
     });
   }
 
-  aprobarDespacho(id: number){
+  aprobarDespacho(id: number) {
     this.despachoService.aprobar(id).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho aprobado con exito');
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
-    })
+    });
   }
 
+  cerrarModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(true);
+  }
+
+  abrirModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(true);
+  }
 }
