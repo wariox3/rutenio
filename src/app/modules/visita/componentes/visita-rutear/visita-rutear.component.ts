@@ -507,6 +507,30 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
+  confirmarEliminarVisita(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.eliminarVisita(id);
+        }
+      });
+  }
+
+  eliminarVisita(id){
+    this.visitaService.eliminarVisita(id).subscribe({
+      next: (response) => {
+        this.alerta.mensajaExitoso('Visita eliminada exitosamente');
+        this._consultarVisitas(this.arrParametrosConsultaVisita);
+        this._consultarResumen().subscribe();
+      },
+    });
+  }
+
   // filtrosPersonalizados(filtros: any, modalId: string) {
   //   let parametrosConsulta: ParametrosConsulta = {
   //     ...this.arrParametrosConsultaVisita,
