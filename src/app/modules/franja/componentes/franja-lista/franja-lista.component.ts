@@ -12,6 +12,7 @@ import { FranjaService } from '../../servicios/franja.service';
 import { BehaviorSubject, map, Observable, of, switchMap, tap } from 'rxjs';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import {
+  GoogleMap,
   GoogleMapsModule,
   MapInfoWindow,
   MapMarker,
@@ -60,6 +61,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   public franjaSeleccionada: any;
   public estaCreando: boolean = false;
   public estaCerrado: boolean = false;
+  public estaEditando: boolean = false;
   public cantidadRegistros: number = 0;
   public formularioFranja: FormGroup;
   public arrParametrosConsulta: any = {
@@ -74,6 +76,9 @@ export default class FranjaListaComponent extends General implements OnInit {
   private _franjaService = inject(FranjaService);
   private franjasSubject = new BehaviorSubject<Franja[]>([]);
   franjas$ = this.franjasSubject.asObservable();
+  @ViewChild('map', { static: false }) map!: GoogleMap;
+  editableFranja: google.maps.Polygon | null = null;
+
 
   constructor() {
     super();
@@ -186,12 +191,15 @@ export default class FranjaListaComponent extends General implements OnInit {
     const coordenadasFormArray = this.formularioFranja.get(
       'coordenadas'
     ) as FormArray;
-  
+
     if (this.estaCreando) {
       const nuevoVertice = evento.latLng.toJSON();
       this.nuevaVertice = [...this.nuevaVertice, nuevoVertice];
       coordenadasFormArray.push(new FormControl(nuevoVertice));
     }
+    this.editableFranja.setEditable(false);
+    this.editableFranja.setMap(null);
+
   }
 
   cerrarPoligono() {
@@ -207,31 +215,35 @@ export default class FranjaListaComponent extends General implements OnInit {
       );
       return;
     }
-  
+
     if (!this.estaCerrado) {
       this.cerrarPoligono();
     }
 
     const colorAleatorio = this.generarColorAleatorio();
-  
+
     this.formularioFranja.patchValue({
       codigo: `franja-${this.franjasTotales + 1}`,
       nombre: `franja-${this.franjasTotales + 1}`,
       color: colorAleatorio, // Usamos el color generado
     });
-  
-    this._franjaService.guardarFranja(this.formularioFranja.value).subscribe(() => {
-      this.alerta.mensajaExitoso('Se ha creado la franja exitosamente.');
-      this.consultarFranjas();
-      this.resetCrearPoligono();
-    });
+
+    this._franjaService
+      .guardarFranja(this.formularioFranja.value)
+      .subscribe(() => {
+        this.alerta.mensajaExitoso('Se ha creado la franja exitosamente.');
+        this.consultarFranjas();
+        this.resetCrearPoligono();
+      });
   }
 
   resetCrearPoligono() {
     this.estaCreando = false;
     this.estaCerrado = false; // Asegúrate de que el polígono no esté cerrado
     this.nuevaVertice = []; // Limpia los vértices
-    const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
+    const coordenadasFormArray = this.formularioFranja.get(
+      'coordenadas'
+    ) as FormArray;
     coordenadasFormArray.clear(); // Limpia las coordenadas en el formulario
   }
 
@@ -241,5 +253,60 @@ export default class FranjaListaComponent extends General implements OnInit {
     const g = generarComponente().toString(16).padStart(2, '0'); // Componente verde
     const b = generarComponente().toString(16).padStart(2, '0'); // Componente azul
     return `${r}${g}${b}`;
+  }
+
+  habiliarFranja(franja: any) {
+
+    if (this.editableFranja) {
+      this.editableFranja.setEditable(false);
+      this.editableFranja.setMap(null); // Opcional: oculta el polígono anterior
+    }
+
+    const polygon = new google.maps.Polygon({
+      paths: franja.coordenadas,
+      editable: true, // Permite mover y ajustar los vértices
+      draggable: false,
+    });
+
+    const googleMapInstance = this.map.googleMap; // Objeto de la API de Google Maps
+
+    polygon.setMap(googleMapInstance);
+
+    // Asignar este polígono como el editable actual
+    this.editableFranja = polygon;
+
+    // Detectar cambios en el polígono
+    google.maps.event.addListener(polygon.getPath(), 'set_at', () => {
+      this._guardarEdicionPoligo(franja, polygon.getPath());
+    });
+
+    google.maps.event.addListener(polygon.getPath(), 'insert_at', () => {
+      this._guardarEdicionPoligo(franja, polygon.getPath());
+    });
+  }
+
+
+
+  private _guardarEdicionPoligo(
+    polygon: any,
+    path: google.maps.MVCArray<google.maps.LatLng>
+  ) {
+    // Convertir los datos del camino en un array de coordenadas
+    const updatedCoordinates = [];
+    for (let i = 0; i < path.getLength(); i++) {
+      const point = path.getAt(i).toJSON();
+      updatedCoordinates.push(point);
+    }
+
+    // Llamar al servicio para guardar en el backend
+    this._franjaService
+      .actualizarFranja(polygon.id, {
+        nombre: polygon.nombre,
+        coordenadas: updatedCoordinates,
+      })
+      .subscribe((response) => {
+        this.consultarFranjas()
+        //console.log('Polígono guardado correctamente:', response);
+      });
   }
 }

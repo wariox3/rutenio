@@ -22,7 +22,10 @@
       <table class="table w-full border-collapse">
         <tbody>
           @for (franja of franjas$ | async; track $index) {
-          <tr class="p-3 border rounded-md cursor-pointer hover:bg-gray-100">
+          <tr
+            class="p-3 border rounded-md cursor-pointer hover:bg-gray-100"
+            (click)="habiliarFranja(franja)"
+          >
             <td class="p-3 w-full flex items-center justify-between">
               <section class="w-full">
                 <div class="flex items-center justify-between space-y-1">
@@ -30,7 +33,7 @@
                     {{ franja.nombre }}
                   </span>
                   <span
-                    class="badge badge-xs text-white"
+                    class="badge badge-xs text-white w-20"
                     [ngStyle]="{ 'background-color': '#' + franja.color }"
                   >
                     #{{ franja.color }}
@@ -70,16 +73,18 @@
     <div class="card-header">
       <div class="card-title my-[9px]">Mapa</div>
       <div class="flex gap-2">
-      <app-button
-        *ngIf="estaCreando"
-        type="button"
-        texto="Guardar"
-        (click)="finalizarPoligono()"
-      ></app-button>
+        @if(estaCreando){
+        <app-button
+          type="button"
+          texto="Guardar"
+          (click)="finalizarPoligono()"
+        ></app-button>
+        }
       </div>
     </div>
     <div class="card-body h-full">
       <google-map
+        #map
         id="map"
         height="100%"
         width="100%"
@@ -95,8 +100,9 @@
             strokeColor: '#' + franja.color,
             fillColor: '#' + franja.color,
             strokeOpacity: 1.0,
-            strokeWeight: 3
+            strokeWeight: 3,
           }"
+          (polygonClick)="habiliarFranja(franja)"
         ></map-polygon>
 
         <!-- Línea en creación -->
