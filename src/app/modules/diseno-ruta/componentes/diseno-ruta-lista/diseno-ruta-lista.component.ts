@@ -84,7 +84,7 @@ export default class DisenoRutaListaComponent
     filtros: [{ propiedad: 'estado_aprobado', valor1: false }],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['id'],
     limite_conteo: 10000,
     modelo: 'RutDespacho',
   };
