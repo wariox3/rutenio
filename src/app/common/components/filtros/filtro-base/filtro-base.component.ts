@@ -611,7 +611,7 @@ export class FiltroBaseComponent extends General {
   consultarEntidad(nombre?: string | null, id?: string | null) {
     let arrFiltros = {
       filtros: [],
-      limite: 10,
+      limite: 50,
       desplazar: 0,
       ordenamientos: [],
       limite_conteo: 10000,
