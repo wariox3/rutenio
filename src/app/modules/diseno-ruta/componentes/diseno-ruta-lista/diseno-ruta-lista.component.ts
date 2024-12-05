@@ -349,9 +349,11 @@ export default class DisenoRutaListaComponent
   }
 
   private initializeConnectedLists(): void {
-    this.connectedLists = this.arrVisitasPorDespacho.map(
+    this.connectedLists = this.arrDespachos.map(
       (_, index) => `listB-${index}`
     );
+    console.log(this.connectedLists);
+    
   }
 
   cerrarModalDetalleVisita() {
