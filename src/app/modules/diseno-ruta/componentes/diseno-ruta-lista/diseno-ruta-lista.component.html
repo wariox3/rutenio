@@ -15,6 +15,7 @@
               <tr
                 class="cursor-pointer"
                 cdkDropList
+                (click)="seleccionarDespacho(despacho)"
                 [id]="'listB-' + $index"
                 [cdkDropListData]="[despacho]"
                 [cdkDropListConnectedTo]="['arrVisitasPorDespacho']"
@@ -25,7 +26,7 @@
                 }"
               >
                 <td class="p-3 w-full flex items-center justify-between">
-                  <div draggable="true" (click)="seleccionarDespacho(despacho)">
+                  <div draggable="true">
                     <div class="flex flex-col space-y-1">
                       <span class="font-semibold text-gray-800 text-sm">
                         {{ despacho.id }}
