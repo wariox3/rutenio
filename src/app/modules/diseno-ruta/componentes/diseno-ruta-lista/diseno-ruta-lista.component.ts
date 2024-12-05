@@ -211,6 +211,7 @@ export default class DisenoRutaListaComponent
         console.error(
           'Se necesitan al menos dos puntos para calcular la ruta.'
         );
+        this.changeDetectorRef.detectChanges();
         return;
       }
 
@@ -295,7 +296,7 @@ export default class DisenoRutaListaComponent
     this.visitaService.retirarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response?.mensaje);
-        this.consultarLista()
+        this.consultarLista();
         this._consultarVisitas(this.parametrosConsultaVisitas);
       },
     });
@@ -319,7 +320,7 @@ export default class DisenoRutaListaComponent
     this.visitaService.eliminarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
-        this.consultarLista()
+        this.consultarLista();
         this._consultarVisitas(this.parametrosConsultaVisitas);
       },
     });
@@ -366,9 +367,12 @@ export default class DisenoRutaListaComponent
       const draggedItem = event.previousContainer.data[event.previousIndex];
       const despacho = this.arrDespachos.find((_, i) => i === index);
 
-      if(draggedItem.despacho_id === despacho.id) {
-        this.alerta.mensajeError('La visita no se pudo mover', 'Actualmente pertenece al despacho')
-        throw new Error('La visita actualmente pertenece al mismo depacho')
+      if (draggedItem.despacho_id === despacho.id) {
+        this.alerta.mensajeError(
+          'La visita no se pudo mover',
+          'Actualmente pertenece al despacho'
+        );
+        throw new Error('La visita actualmente pertenece al mismo depacho');
       }
 
       this.arrVisitasPorDespacho.splice(event.previousIndex, 1);
