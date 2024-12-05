@@ -295,6 +295,7 @@ export default class DisenoRutaListaComponent
     this.visitaService.retirarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response?.mensaje);
+        this.consultarLista()
         this._consultarVisitas(this.parametrosConsultaVisitas);
       },
     });
@@ -318,6 +319,7 @@ export default class DisenoRutaListaComponent
     this.visitaService.eliminarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
+        this.consultarLista()
         this._consultarVisitas(this.parametrosConsultaVisitas);
       },
     });

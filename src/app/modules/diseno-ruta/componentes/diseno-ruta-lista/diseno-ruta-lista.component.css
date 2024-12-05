@@ -60,14 +60,6 @@
   background-color: rgba(40, 167, 69, 0.1); /* Fondo suave verde */
 }
 
-
 tr:hover {
-  background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
-  cursor: grab;
-}
-
-tr:active {
-  transform: scale(0.98); /* Contracción al hacer clic */
-  cursor: grabbing;
-}
-
+    background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
+  }
