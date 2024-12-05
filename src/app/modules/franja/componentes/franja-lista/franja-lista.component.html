@@ -69,6 +69,14 @@
   <div class="card m-4 h-[45rem]">
     <div class="card-header">
       <div class="card-title my-[9px]">Mapa</div>
+      <div class="flex gap-2">
+      <app-button
+        *ngIf="estaCreando"
+        type="button"
+        texto="Guardar"
+        (click)="finalizarPoligono()"
+      ></app-button>
+      </div>
     </div>
     <div class="card-body h-full">
       <google-map
@@ -79,28 +87,44 @@
         [zoom]="zoom"
         (mapClick)="clickMap($event)"
       >
+        <!-- Polígonos existentes -->
         <map-polygon
           *ngFor="let franja of franjas$ | async"
           [paths]="franja.coordenadas"
           [options]="{
-              strokeColor: '#' + franja.color,
-              fillColor: '#' + franja.color,
-              strokeOpacity: 1.0,
-              strokeWeight: 3,
-            }"
-        />
-        <map-polygon
-          *ngIf="estaCreando"
-          [paths]="nuevaVertice"
-          [options]="polylineOptions"
+            strokeColor: '#' + franja.color,
+            fillColor: '#' + franja.color,
+            strokeOpacity: 1.0,
+            strokeWeight: 3
+          }"
         ></map-polygon>
+
+        <!-- Línea en creación -->
+        <map-polyline
+          *ngIf="estaCreando && !estaCerrado"
+          [path]="nuevaVertice"
+          [options]="polylineOptions"
+        ></map-polyline>
+
+        <!-- Polígono en creación (cuando esté cerrado) -->
+        <map-polygon
+          *ngIf="estaCreando && estaCerrado"
+          [paths]="nuevaVertice"
+          [options]="{
+            strokeColor: polylineOptions.strokeColor,
+            fillColor: polylineOptions.strokeColor,
+            strokeOpacity: 0.5,
+            strokeWeight: 3
+          }"
+        ></map-polygon>
+
         <map-marker
           *ngFor="let markerPosition of markerPositions"
           [position]="markerPosition"
           #marker="mapMarker"
           (mapClick)="openInfoWindow(marker)"
-        >
-        </map-marker>
+        ></map-marker>
+
         <map-info-window>Info Window</map-info-window>
       </google-map>
     </div>

@@ -52,13 +52,14 @@ export default class FranjaListaComponent extends General implements OnInit {
     strokeOpacity: 1.0,
     strokeWeight: 3,
     editable: true,
-    draggable: true,
+    draggable: false,
   };
 
   public franjasTotales: number;
   public mostrarEditarFranjaModal$: BehaviorSubject<boolean>;
   public franjaSeleccionada: any;
   public estaCreando: boolean = false;
+  public estaCerrado: boolean = false;
   public cantidadRegistros: number = 0;
   public formularioFranja: FormGroup;
   public arrParametrosConsulta: any = {
@@ -116,39 +117,6 @@ export default class FranjaListaComponent extends General implements OnInit {
   private _toggleEditarFranja() {
     const valor = this.mostrarEditarFranjaModal$.value;
     this.mostrarEditarFranjaModal$.next(!valor);
-  }
-
-  clickMap(evento: any) {
-    const coordenadasFormArray = this.formularioFranja.get(
-      'coordenadas'
-    ) as FormArray;
-
-    if (this.estaCreando) {
-      this.nuevaVertice = [...this.nuevaVertice, evento.latLng.toJSON()];
-
-      this.nuevaVertice.forEach((vertex) => {
-        coordenadasFormArray.push(new FormControl(vertex));
-      });
-    }
-
-    if (this.nuevaVertice.length === 3 && this.estaCreando) {
-      this.formularioFranja.patchValue({
-        codigo: `franja-${this.franjasTotales + 1}`,
-        nombre: `franja-${this.franjasTotales + 1}`,
-        color: '4d25a8f9',
-      });
-
-      this._franjaService
-        .guardarFranja(this.formularioFranja.value)
-        .subscribe((respuesta: any) => {
-          this.alerta.mensajaExitoso('Se ha creado franja exitosamente.');
-          this.consultarFranjas();
-          this.estaCreando = false;
-          this.nuevaVertice = [];
-          coordenadasFormArray.clear();
-          this.changeDetectorRef.detectChanges();
-        });
-    }
   }
 
   seleccionarFranja(item: any) {
@@ -212,5 +180,66 @@ export default class FranjaListaComponent extends General implements OnInit {
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();
+  }
+
+  clickMap(evento: any) {
+    const coordenadasFormArray = this.formularioFranja.get(
+      'coordenadas'
+    ) as FormArray;
+  
+    if (this.estaCreando) {
+      const nuevoVertice = evento.latLng.toJSON();
+      this.nuevaVertice = [...this.nuevaVertice, nuevoVertice];
+      coordenadasFormArray.push(new FormControl(nuevoVertice));
+    }
+  }
+
+  cerrarPoligono() {
+    this.estaCerrado = true;
+    this.nuevaVertice.push(this.nuevaVertice[0]);
+  }
+
+  finalizarPoligono() {
+    if (this.nuevaVertice.length < 3) {
+      this.alerta.mensajeError(
+        'Error',
+        'El polígono debe tener al menos 3 vértices.'
+      );
+      return;
+    }
+  
+    if (!this.estaCerrado) {
+      this.cerrarPoligono();
+    }
+
+    const colorAleatorio = this.generarColorAleatorio();
+  
+    this.formularioFranja.patchValue({
+      codigo: `franja-${this.franjasTotales + 1}`,
+      nombre: `franja-${this.franjasTotales + 1}`,
+      color: colorAleatorio, // Usamos el color generado
+    });
+  
+    this._franjaService.guardarFranja(this.formularioFranja.value).subscribe(() => {
+      this.alerta.mensajaExitoso('Se ha creado la franja exitosamente.');
+      this.consultarFranjas();
+      this.resetCrearPoligono();
+    });
+  }
+
+  resetCrearPoligono() {
+    this.estaCreando = false;
+    this.estaCerrado = false; // Asegúrate de que el polígono no esté cerrado
+    this.nuevaVertice = []; // Limpia los vértices
+    const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
+    coordenadasFormArray.clear(); // Limpia las coordenadas en el formulario
+  }
+
+  private generarColorAleatorio(): string {
+    const generarComponente = () => Math.floor(Math.random() * 156 + 100); // Valores entre 100 y 255
+    const r = generarComponente().toString(16).padStart(2, '0'); // Componente rojo
+    const g = generarComponente().toString(16).padStart(2, '0'); // Componente verde
+    const b = generarComponente().toString(16).padStart(2, '0'); // Componente azul
+    return `${r}${g}${b}`;
   }
 }
