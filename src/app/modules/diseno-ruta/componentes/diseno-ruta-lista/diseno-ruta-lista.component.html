@@ -5,20 +5,27 @@
         <div class="card-header">
           <h3 class="card-title">Despachos</h3>
         </div>
-        <div class="card-table h-[16rem] overflow-y-auto scrollable">
+        <div
+          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
+        >
           <table class="table w-full border-collapse">
-            <tbody>
+            <tbody           
+            >
               @for (despacho of arrDespachos; track $index) {
               <tr
-                (click)="seleccionarDespacho(despacho)"
                 class="cursor-pointer"
-                [ngClass]="{
+                cdkDropList
+                [id]="'listB-' + $index"
+                [cdkDropListData]="[despacho]"
+                [cdkDropListConnectedTo]="['arrVisitasPorDespacho']"
+                (cdkDropListDropped)="onDropToB($event, $index)"
+                [ngClass]="{  
                   'bg-blue-50 border-l-4 border-blue-500':
                     despachoSeleccionado === despacho
                 }"
               >
                 <td class="p-3 w-full flex items-center justify-between">
-                  <section>
+                  <div draggable="true" (click)="seleccionarDespacho(despacho)">
                     <div class="flex flex-col space-y-1">
                       <span class="font-semibold text-gray-800 text-sm">
                         {{ despacho.id }}
@@ -29,11 +36,16 @@
                         </span>
                         <div class="text-xs font-medium text-gray-600">
                           <i class="ki-filled ki-calendar-2 mr-1"></i>
-                          <span>Fecha: {{ despacho.fecha | date : "yyyy-MM-dd" }}</span>
+                          <span
+                            >Fecha:
+                            {{ despacho.fecha | date : "yyyy-MM-dd" }}</span
+                          >
                         </div>
                       </div>
                     </div>
-                    <div class="flex justify-between text-gray-500 text-xs mt-1">
+                    <div
+                      class="flex justify-between text-gray-500 text-xs mt-1"
+                    >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ despacho.peso }} kg</span>
@@ -43,7 +55,7 @@
                         <span>Visitas: {{ despacho.visitas }} </span>
                       </div>
                     </div>
-                  </section>
+                  </div>
                   <section class="flex flex-col items-end gap-3">
                     <div class="flex gap-2 items-center">
                       <button
@@ -53,7 +65,10 @@
                       </button>
                       <button
                         class="btn"
-                        (click)="eliminarDespacho(despacho.id); $event.stopPropagation()"
+                        (click)="
+                          eliminarDespacho(despacho.id);
+                          $event.stopPropagation()
+                        "
                       >
                         <i class="ki-filled ki-trash text-xl"></i>
                       </button>
@@ -66,17 +81,25 @@
           </table>
         </div>
       </div>
-      
+
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visitas por despacho</h3>
         </div>
-        <div class="card-table h-[16rem] overflow-y-auto scrollable">
+        <div
+          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
+        >
           <table class="table w-full border-collapse">
-            <tbody>
+            <tbody
+            cdkDropList
+            [cdkDropListData]="arrVisitasPorDespacho"
+            [cdkDropListConnectedTo]="connectedLists"
+            >
               @for (visita of arrVisitasPorDespacho; track $index) {
               <tr
                 class="cursor-pointer"
+                cdkDrag
+                
                 [ngClass]="{
                   'bg-blue-50 border-l-4 border-blue-500':
                     visitaSeleccionada === visita
@@ -139,9 +162,7 @@
                               <div class="menu-item" data-menu-dismiss="true">
                                 <button
                                   class="menu-link"
-                                  (click)="
-                                    retirarVisita(visita.id)
-                                  "
+                                  (click)="retirarVisita(visita.id)"
                                 >
                                   <span class="menu-icon">
                                     <i class="ki-filled ki-exit-left"></i>
@@ -152,9 +173,7 @@
                               <div class="menu-item" data-menu-dismiss="true">
                                 <button
                                   class="menu-link"
-                                  (click)="
-                                    confirmarEliminarVisita(visita.id)
-                                  "
+                                  (click)="confirmarEliminarVisita(visita.id)"
                                 >
                                   <span class="menu-icon">
                                     <i
@@ -186,6 +205,7 @@
         </div>
       </div>
     </div>
+
     <div class="card h-[45rem]">
       <div class="card-header">
         <h3 class="card-title my-1.5">Mapa</h3>

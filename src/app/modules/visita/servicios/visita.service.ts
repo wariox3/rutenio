@@ -20,6 +20,13 @@ export class VisitaService {
     );
   }
 
+  cambiarDespachoVisita(visitaId: number, despachoId: number) {
+    return this.http.post<{ mensaje: string }>(`ruteo/visita/despacho-cambiar/`, {
+      id: visitaId,
+      despacho_id: despachoId,
+    });
+  }
+
   listarVisitas(data: any) {
     return this.http.post<any[]>(`ruteo/visita/lista/`, data);
   }
@@ -83,8 +90,11 @@ export class VisitaService {
     return this.http.post<VisitaResumen>('ruteo/visita/resumen/', parametros);
   }
 
-  resumenPendiente(parametros?: ParametrosConsulta){
-    return this.http.post<VisitaResumen>('ruteo/visita/resumen-pendiente/', parametros);
+  resumenPendiente(parametros?: ParametrosConsulta) {
+    return this.http.post<VisitaResumen>(
+      'ruteo/visita/resumen-pendiente/',
+      parametros
+    );
   }
 
   importarComplementos(parametros: {

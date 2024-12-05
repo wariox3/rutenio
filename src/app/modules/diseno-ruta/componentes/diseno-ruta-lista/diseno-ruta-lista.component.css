@@ -12,3 +12,62 @@
 .trash-icon {
   color: red !important;
 }
+
+/* Estilo del elemento que se arrastra */
+.cdk-drag-preview {
+  background-color: #dddddd; /* Azul sólido */
+  display: flex;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0.9;
+  padding: 10px;
+  overflow: hidden; /* Previene overflow del contenido */
+  white-space: nowrap; /* Evita texto multilínea */
+}
+
+/* Placeholder: espacio que deja el elemento arrastrado */
+.cdk-drag-placeholder {
+  visibility: hidden; /* Oculta el espacio temporalmente */
+}
+
+/* Al soltar el elemento */
+.cdk-drag-animating {
+  transition: transform 0.15s ease-in-out;
+}
+
+/* Destacar todas las áreas donde se puede soltar */
+.cdk-drop-list {
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+.cdk-drop-list-dragging {
+  border-color: #007bff; /* Cambia el color del borde */
+  background-color: rgba(0, 123, 255, 0.1); /* Fondo sutil */
+}
+
+/* Destacar el área debajo del mouse */
+.cdk-drag-over {
+  background-color: rgba(0, 123, 255, 0.2); /* Fondo más destacado */
+  border: 2px dashed #007bff; /* Cambia a un borde más visible */
+}
+
+/* Resaltar el despacho seleccionado */
+.cdk-drop-list.cdk-drag-over {
+  border: 3px solid #28a745; /* Verde para indicar selección */
+  background-color: rgba(40, 167, 69, 0.1); /* Fondo suave verde */
+}
+
+
+tr:hover {
+  background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
+  cursor: grab;
+}
+
+tr:active {
+  transform: scale(0.98); /* Contracción al hacer clic */
+  cursor: grabbing;
+}
+

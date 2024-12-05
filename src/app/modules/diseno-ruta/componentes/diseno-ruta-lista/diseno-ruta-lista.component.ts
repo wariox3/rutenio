@@ -1,3 +1,4 @@
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -12,16 +13,16 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { General } from '../../../../common/clases/general';
-import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
-import { Visita } from '../../../../interfaces/visita/visita.interface';
-import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { BehaviorSubject } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
+import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
+import { VisitaService } from '../../../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -32,6 +33,7 @@ import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita
     PaginacionDefaultComponent,
     ModalDefaultComponent,
     VisitaRutearDetalleComponent,
+    DragDropModule,
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
@@ -89,6 +91,11 @@ export default class DisenoRutaListaComponent
 
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
+  connectedLists: string[] = [];
+
+  constructor() {
+    super();
+  }
 
   ngOnInit(): void {
     this.consultarLista();
@@ -156,6 +163,7 @@ export default class DisenoRutaListaComponent
       .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta.registros;
         this.totalRegistrosVisitas = respuesta.cantidad_registros;
+        this.initializeConnectedLists();
         this.changeDetectorRef.detectChanges();
         this.mostrarMapa();
       });
@@ -315,6 +323,13 @@ export default class DisenoRutaListaComponent
     });
   }
 
+  aprobarDespacho(id: number) {
+    this.despachoService.aprobar(id).subscribe((respuesta) => {
+      this.alerta.mensajaExitoso('Despacho aprobado con exito');
+      this.consultarLista();
+      this._limpiarVisitasPorDespacho();
+    });
+  }
 
   confirmarAprobarDespacho(id: number) {
     this.alerta
@@ -330,12 +345,10 @@ export default class DisenoRutaListaComponent
       });
   }
 
-  aprobarDespacho(id: number) {
-    this.despachoService.aprobar(id).subscribe((respuesta) => {
-      this.alerta.mensajaExitoso('Despacho aprobado con exito');
-      this.consultarLista();
-      this._limpiarVisitasPorDespacho();
-    });
+  private initializeConnectedLists(): void {
+    this.connectedLists = this.arrVisitasPorDespacho.map(
+      (_, index) => `listB-${index}`
+    );
   }
 
   cerrarModalDetalleVisita() {
@@ -344,5 +357,29 @@ export default class DisenoRutaListaComponent
 
   abrirModalDetalleVisita() {
     this.mostarModalDetalleVisita$.next(true);
+  }
+
+  onDropToB(event: CdkDragDrop<any[]>, index: number) {
+    if (event.previousContainer.id !== event.container.id) {
+      const draggedItem = event.previousContainer.data[event.previousIndex];
+      const despacho = this.arrDespachos.find((_, i) => i === index);
+
+      if(draggedItem.despacho_id === despacho.id) {
+        this.alerta.mensajeError('La visita no se pudo mover', 'Actualmente pertenece al despacho')
+        throw new Error('La visita actualmente pertenece al mismo depacho')
+      }
+
+      this.arrVisitasPorDespacho.splice(event.previousIndex, 1);
+
+      this.visitaService
+        .cambiarDespachoVisita(draggedItem.id, despacho.id)
+        .subscribe({
+          next: (response) => {
+            this.consultarLista();
+            this._consultarVisitas(this.parametrosConsultaVisitas);
+            this.alerta.mensajaExitoso(response.mensaje);
+          },
+        });
+    }
   }
 }
