@@ -51,7 +51,37 @@
                       </div>
                     </div>
                   </div>
-                  <section class="flex flex-col items-end gap-3"></section>
+                  <section class="flex flex-col items-end gap-2">
+                    <div class="flex gap-2 items-center">
+                      <div class="menu menu-default" data-menu="true">
+                        <div
+                          class="menu-item"
+                          data-menu-item-placement="bottom-start"
+                          data-menu-item-toggle="dropdown"
+                          data-menu-item-trigger="click"
+                        >
+                          <button class="menu-toggle">
+                            <span class="menu-title">
+                              <i class="ki-filled ki-dots-vertical text-xl"></i>
+                            </span>
+                          </button>
+                          <div class="menu-dropdown w-48 py-2">
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                (click)="descargarPlanoSemantica(despacho.id)"
+                                class="menu-link"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-file-down"></i>
+                                </span>
+                                <span class="menu-title"> Plano semántica</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
                 </td>
               </tr>
               }

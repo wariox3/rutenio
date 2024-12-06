@@ -9,8 +9,7 @@
           class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
         >
           <table class="table w-full border-collapse">
-            <tbody           
-            >
+            <tbody>
               @for (despacho of arrDespachos; track $index) {
               <tr
                 class="cursor-pointer"
@@ -20,7 +19,7 @@
                 [cdkDropListData]="[despacho]"
                 [cdkDropListConnectedTo]="['arrVisitasPorDespacho']"
                 (cdkDropListDropped)="onDropToB($event, $index)"
-                [ngClass]="{  
+                [ngClass]="{
                   'bg-blue-50 border-l-4 border-blue-500':
                     despachoSeleccionado === despacho
                 }"
@@ -57,22 +56,61 @@
                       </div>
                     </div>
                   </div>
-                  <section class="flex flex-col items-end gap-3">
+                  <section class="flex flex-col items-end gap-2">
                     <div class="flex gap-2 items-center">
                       <button
                         class="btn btn-xs btn-primary"
-                        (click)="confirmarAprobarDespacho(despacho.id); $event.stopPropagation()"
-                      >Aprobar
-                      </button>
-                      <button
-                        class="btn"
                         (click)="
-                          eliminarDespacho(despacho.id);
+                          confirmarAprobarDespacho(despacho.id);
                           $event.stopPropagation()
                         "
                       >
-                        <i class="ki-filled ki-trash text-xl"></i>
+                        Aprobar
                       </button>
+                      <div class="menu menu-default" data-menu="true">
+                        <div
+                          class="menu-item"
+                          data-menu-item-placement="bottom-start"
+                          data-menu-item-toggle="dropdown"
+                          data-menu-item-trigger="click"
+                        >
+                          <button class="menu-toggle">
+                            <span class="menu-title">
+                              <i class="ki-filled ki-dots-vertical text-xl"></i>
+                            </span>
+                          </button>
+                          <div class="menu-dropdown w-48 py-2">
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                (click)="descargarPlanoSemantica(despacho.id)"
+                                class="menu-link"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-file-down"></i>
+                                </span>
+                                <span class="menu-title"> Plano semántica</span>
+                              </button>
+                            </div>
+
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                (click)="
+                                  eliminarDespacho(despacho.id);
+                                  $event.stopPropagation()
+                                "
+                                class="menu-link"
+                              >
+                                <span class="menu-icon">
+                                  <i
+                                    class="ki-filled ki-trash text-xl trash-icon"
+                                  ></i>
+                                </span>
+                                <span class="menu-title"> Eliminar </span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </section>
                 </td>
@@ -92,15 +130,14 @@
         >
           <table class="table w-full border-collapse">
             <tbody
-            cdkDropList
-            [cdkDropListData]="arrVisitasPorDespacho"
-            [cdkDropListConnectedTo]="connectedLists"
+              cdkDropList
+              [cdkDropListData]="arrVisitasPorDespacho"
+              [cdkDropListConnectedTo]="connectedLists"
             >
               @for (visita of arrVisitasPorDespacho; track $index) {
               <tr
                 class="cursor-pointer"
                 cdkDrag
-                
                 [ngClass]="{
                   'bg-blue-50 border-l-4 border-blue-500':
                     visitaSeleccionada === visita

@@ -12,6 +12,7 @@ import { VisitaService } from '../../../visita/servicios/visita.service';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -25,6 +26,7 @@ export default class TraficoListaComponent extends General implements OnInit {
   private despachoService = inject(DespachoService);
   private visitaService = inject(VisitaService);
   private directionsService: MapDirectionsService;
+  private _generalService = inject(GeneralService);
 
   public visitaSeleccionada: Visita;
 
@@ -156,5 +158,11 @@ export default class TraficoListaComponent extends General implements OnInit {
     this.visitaSeleccionada = visita;
     this.center = { lat: visita.latitud, lng: visita.longitud };
     this.changeDetectorRef.detectChanges();
+  }
+
+  descargarPlanoSemantica(id: number) {
+    this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
+      id,
+    });
   }
 }

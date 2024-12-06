@@ -23,6 +23,7 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -48,6 +49,7 @@ export default class DisenoRutaListaComponent
   private despachoService = inject(DespachoService);
   private visitaService = inject(VisitaService);
   private directionsService = inject(MapDirectionsService);
+  private _generalService = inject(GeneralService);
 
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
@@ -349,11 +351,8 @@ export default class DisenoRutaListaComponent
   }
 
   private initializeConnectedLists(): void {
-    this.connectedLists = this.arrDespachos.map(
-      (_, index) => `listB-${index}`
-    );
+    this.connectedLists = this.arrDespachos.map((_, index) => `listB-${index}`);
     console.log(this.connectedLists);
-    
   }
 
   cerrarModalDetalleVisita() {
@@ -389,5 +388,11 @@ export default class DisenoRutaListaComponent
           },
         });
     }
+  }
+
+  descargarPlanoSemantica(id: number) {
+    this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
+      id,
+    });
   }
 }
