@@ -1,67 +1,3 @@
-<!-- <div class="card h-full">
-    <div class="card-header flex justify-between items-center">
-      <h3 class="card-title">Trafico</h3>
-      <app-button type="button" texto="Mapa"></app-button>
-    </div>
-    <div class="card-body h-full">
-      <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
-        <div class="card flex-1">
-          <div class="card-header">
-            <h3 class="card-title">Despacho</h3>
-          </div>
-          <ul class="space-y-2 p-4">
-            <li
-              *ngFor="let despacho of arrDespachos"
-              (click)="seleccionarDespacho(despacho)"
-              [class.selected]="
-                despachoSeleccionado && despachoSeleccionado.id === despacho.id
-              "
-              class="p-3 border rounded-md cursor-pointer hover:bg-gray-100"
-            >
-              <div class="flex justify-between">
-                <span>{{ despacho.id }}</span>
-                <span>{{ despacho.vehiculo_placa }}</span>
-              </div>
-              <div class="flex justify-between text-gray-500 text-sm">
-                <span>Peso: {{ despacho.peso }}</span>
-                <span>Volumen: {{ despacho.volumen }}</span>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div class="card flex-1">
-          <div class="card-header">
-            <h3 class="card-title">Visitas por despacho</h3>
-          </div>
-          <div class="card-table scrollable-y-auto h-full">
-            <table
-            class="table align-middle text-gray-700 font-medium text-sm w-full"
-          >
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Destinatario</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (visita of arrVisitasPorDespacho; track $index) {
-              <tr>
-                <td>{{ visita.id }}</td>
-                <td>{{ visita.destinatario }}</td>
-                <td>{{ visita.ciudad_nombre }}</td>
-                <td>{{ visita.destinatario_direccion }}</td>
-              </tr>
-              }
-            </tbody>
-          </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-   -->
 <div class="mt-2">
   <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
     <div class="flex flex-col space-y-5 h-full">
@@ -69,68 +5,129 @@
         <div class="card-header">
           <h3 class="card-title">Despachos</h3>
         </div>
-        <div class="card-table h-[16rem] overflow-y-auto scrollable">
+        <div
+          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
+        >
           <table class="table w-full border-collapse">
             <tbody>
-              <tr *ngFor="let despacho of arrDespachos" (click)="seleccionarDespacho(despacho)" [class.selected]="
-                  despachoSeleccionado &&
-                  despachoSeleccionado.id === despacho.id
-                " class="p-3 border rounded-md cursor-pointer hover:bg-gray-100">
+              @for (despacho of arrDespachos; track $index) {
+              <tr
+                class="cursor-pointer"
+                (click)="seleccionarDespacho(despacho)"
+                [ngClass]="{
+                  'bg-blue-50 border-l-4 border-blue-500':
+                    despachoSeleccionado === despacho
+                }"
+              >
+                <td class="p-3 w-full flex items-center justify-between">
+                  <div draggable="true">
+                    <div class="flex flex-col space-y-1">
+                      <span class="font-semibold text-gray-800 text-sm">
+                        {{ despacho.id }}
+                      </span>
+                      <div class="flex gap-1">
+                        <span class="text-gray-600 text-xs font-medium">
+                          Placa: {{ despacho.vehiculo_placa }}
+                        </span>
+                        <div class="text-xs font-medium text-gray-600">
+                          <i class="ki-filled ki-calendar-2 mr-1"></i>
+                          <span
+                            >Fecha:
+                            {{ despacho.fecha | date : "yyyy-MM-dd" }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="flex justify-between text-gray-500 text-xs mt-1"
+                    >
+                      <div class="flex items-center space-x-1">
+                        <i class="ki-filled ki-parcel"></i>
+                        <span>Peso: {{ despacho.peso }} kg</span>
+                        <i class="ki-filled ki-package"></i>
+                        <span>Volumen: {{ despacho.volumen }}</span>
+                        <i class="ki-filled ki-geolocation"></i>
+                        <span>Visitas: {{ despacho.visitas }} </span>
+                      </div>
+                    </div>
+                  </div>
+                  <section class="flex flex-col items-end gap-3"></section>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card flex-1 min-h-[16rem]">
+        <div class="card-header flex justify-between items-center">
+          <h3 class="card-title">Visitas por despacho</h3>
+        </div>
+        <div
+          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
+        >
+          <table class="table w-full border-collapse">
+            <tbody>
+              @for (visita of arrVisitasPorDespacho; track $index) {
+              <tr
+                class="cursor-pointer"
+                cdkDrag
+                [ngClass]="{
+                  'bg-blue-50 border-l-4 border-blue-500':
+                    visitaSeleccionada === visita
+                }"
+                (click)="evento(visita)"
+                [id]="'fila-' + visita.id"
+              >
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
-                    <span class="font-semibold text-gray-800 text-sm">
-                      {{ despacho.id }}
-                    </span>
-                    <span class="text-gray-600 text-xs font-medium">
-                      Placa: {{ despacho.vehiculo_placa }}
-                    </span>
-                  </div>
-                  <div class="flex justify-between text-gray-500 text-xs mt-1">
-                    <div class="flex items-center space-x-1">
-                      <i class="ki-filled ki-parcel"></i>
-                      <span>Peso: {{ despacho.peso }} kg</span>
-                      <i class="ki-filled ki-package"></i>
-                      <span>Volumen: {{ despacho.volumen }}</span>
+                    <div class="flex justify-between items-center">
+                      <span class="font-semibold text-gray-800 text-sm">
+                        {{ visita.destinatario }}
+                      </span>
+                      <span class="text-gray-600 text-xs font-medium">
+                        Número: {{ visita.numero }}
+                      </span>
+                    </div>
+                    <div class="text-gray-700 text-xs max-w-[24rem]">
+                      <i class="ki-filled ki-geolocation-home"></i>
+                      {{ visita.destinatario_direccion }}
+                    </div>
+                    <div
+                      class="flex justify-between text-gray-500 text-xs mt-1"
+                    >
+                      <div class="flex items-center space-x-1">
+                        <i class="ki-filled ki-parcel"></i>
+                        <span>Peso: {{ visita.peso }} kg</span>
+                        <i class="ki-filled ki-arrow-up-down"></i>
+                        <span>Orden: {{ visita.orden }}</span>
+                        <i class="ki-filled ki-time"></i>
+                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
+                        <i class="ki-filled ki-geolocation mr-1"></i>
+                        <span>Franja: {{ visita.franja_codigo }}</span>
+                      </div>
+
+                      <section class="flex gap-1">
+                        @if (visita.estado_entregado) {
+                          <span class="badge badge-success badge-xs">Entregada</span>
+                        }
+                      </section>
                     </div>
                   </div>
                 </td>
               </tr>
+              }
             </tbody>
           </table>
         </div>
         <div class="card-footer flex justify-center">
           <!-- <app-paginacion-default
-            [limite]="50"
-            [totalPaginas]="totalPaginasVisitas"
+            [limite]="parametrosConsultaVisitas.limite"
+            [totalRegistros]="totalRegistrosVisitas"
+            [maxPaginasVisibles]="5"
             (paginar)="paginar($event)"
           ></app-paginacion-default> -->
-        </div>
-      </div>
-      <div class="card flex-1 min-h-[16rem]">
-        <div class="card-header flex justify-between items-center">
-          <h3 class="card-title">Visitas por despacho</h3>
-        </div>
-        <div class="card-table scrollable-y-auto h-[16rem]">
-          <table class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Destinatario</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (visita of arrVisitasPorDespacho; track $index) {
-                <tr>
-                  <td>{{ visita.id }}</td>
-                  <td>{{ visita.destinatario }}</td>
-                  <td>{{ visita.ciudad_nombre }}</td>
-                  <td>{{ visita.destinatario_direccion }}</td>
-                </tr>
-                }
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

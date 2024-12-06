@@ -10,7 +10,7 @@ export class DespachoService {
   private _httpService = inject(HttpService);
 
   lista(parametros: any) {
-    return this._httpService.post<RespuestaGeneralLista<any>>(
+    return this._httpService.post<RespuestaGeneralLista<Despacho>>(
       `general/funcionalidad/lista/`,
       parametros
     );

@@ -12,6 +12,7 @@ export interface Visita {
   volumen: number;
   estado_decodificado: boolean;
   latitud: number;
+  estado_entregado: boolean;
   longitud: number;
   orden: number;
   distancia_proxima: number;

@@ -5,17 +5,18 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
 import { GoogleMapsModule, MapDirectionsService } from '@angular/google-maps';
-import { VisitaService } from '../../../visita/servicios/visita.service';
+import { General } from '../../../../common/clases/general';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { PaginacionDefaultComponent } from "../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component";
+import { VisitaService } from '../../../visita/servicios/visita.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
 
 @Component({
   selector: 'app-trafico-lista',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule, ButtonComponent, PaginacionDefaultComponent],
+  imports: [CommonModule, GoogleMapsModule],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -24,6 +25,8 @@ export default class TraficoListaComponent extends General implements OnInit {
   private despachoService = inject(DespachoService);
   private visitaService = inject(VisitaService);
   private directionsService: MapDirectionsService;
+
+  public visitaSeleccionada: Visita;
 
   despachoSeleccionado: any = null;
   mostrarMapaFlag: boolean = false;
@@ -40,17 +43,20 @@ export default class TraficoListaComponent extends General implements OnInit {
   };
   directionsResults: google.maps.DirectionsResult | undefined;
 
-  arrParametrosConsulta: any = {
-    filtros: [],
+  arrParametrosConsulta: ParametrosConsulta = {
+    filtros: [
+      { propiedad: 'estado_aprobado', valor1: true },
+      { propiedad: 'estado_terminado', valor1: false },
+    ],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['id'],
     limite_conteo: 10000,
     modelo: 'RutDespacho',
   };
 
-  arrDespachos: any = [];
-  arrVisitasPorDespacho: any = [];
+  arrDespachos: Despacho[] = [];
+  arrVisitasPorDespacho: Visita[] = [];
 
   ngOnInit(): void {
     this.consultarLista();
@@ -60,7 +66,7 @@ export default class TraficoListaComponent extends General implements OnInit {
     this.despachoService
       .lista(this.arrParametrosConsulta)
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta;
+        this.arrDespachos = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -69,7 +75,7 @@ export default class TraficoListaComponent extends General implements OnInit {
     this.despachoSeleccionado = despacho;
     this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
-    this.directionsResults = undefined; 
+    this.directionsResults = undefined;
     this.changeDetectorRef.detectChanges();
 
     const parametrosConsultaVisitas = {
@@ -144,5 +150,11 @@ export default class TraficoListaComponent extends General implements OnInit {
         'Error'
       );
     }
+  }
+
+  evento(visita: any) {
+    this.visitaSeleccionada = visita;
+    this.center = { lat: visita.latitud, lng: visita.longitud };
+    this.changeDetectorRef.detectChanges();
   }
 }
