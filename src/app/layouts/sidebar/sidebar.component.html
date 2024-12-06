@@ -73,11 +73,11 @@
             </span>
             <span
               routerLinkActive="text-primary font-semibold before:bg-primary"
-              class="menu-title text-sm font-semibold text-gray-700"
+              class="menu-title text-sm font-semibold"
               [ngClass]="{
-				'rounded-lg': isActive(menu.link),
-				'text-gray-700': !isActive(menu.link)
-			  }"
+                'rounded-lg': isActive(menu.link),
+                'text-gray-700': !isActive(menu.link)
+              }"
             >
               {{ menu.nombre }}
             </span>
@@ -99,7 +99,7 @@
               <i [class]="menu.iconoClase + ' text-lg'"></i>
             </span>
             <span
-              class="menu-title text-sm font-semibold text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary"
+              class="menu-title text-sm  text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary"
             >
               {{ menu.nombre }}
             </span>
@@ -119,12 +119,12 @@
             @for (subMenu of menu?.children; track $index) {
             <div class="menu-item">
               <a
-                class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow  dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
+                class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow dark:menu-item-active:bg-coal-300 dark:menu-item-active:border-gray-100 dark:hover:bg-coal-300 dark:hover:border-gray-100 hover:rounded-lg"
                 [routerLink]="subMenu.link"
-				[ngClass]="{
-					'bg-secondary-active rounded-lg': isActive(subMenu.link),
-					'text-gray-700': !isActive(subMenu.link)
-				  }"
+                [ngClass]="{
+                  'bg-secondary-active rounded-lg': isActive(subMenu.link),
+                  'text-gray-700': !isActive(subMenu.link)
+                }"
                 tabindex="0"
               >
                 <span
@@ -133,10 +133,12 @@
                 </span>
                 <span
                   class="menu-title text-2sm font-medium menu-item-active: menu-link-hover:!text-primary"
-				  [ngClass]="{
-					'text-primary font-semibold before:bg-primary': isActive(subMenu.link),
-					'text-gray-700': !isActive(subMenu.link)
-				  }"
+                  [ngClass]="{
+                    'text-primary font-semibold before:bg-primary': isActive(
+                      subMenu.link
+                    ),
+                    'text-gray-700': !isActive(subMenu.link)
+                  }"
                 >
                   {{ subMenu.nombre }}
                 </span>
