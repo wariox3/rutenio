@@ -1,15 +1,18 @@
 import { Component, HostBinding } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SidebarMenu } from '../../interfaces/general/sidebar/menu.interface';
+import { RouterLinkActive } from '@angular/router';
+import { General } from '../../common/clases/general';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent {
+export class SidebarComponent extends General {
   @HostBinding('class') hostClass =
     'sidebar dark:bg-coal-600 bg-light border-r border-r-gray-200 dark:border-r-coal-100 fixed z-20 hidden lg:flex flex-col items-stretch shrink-0';
   @HostBinding('attr.data-drawer') drawer = 'true';
@@ -33,13 +36,13 @@ export class SidebarComponent {
     },
     {
       nombre: 'Diseño ruta',
-      link: '/admin/diseno-ruta',
+      link: '/admin/diseno-ruta/lista',
       iconoClase: 'ki-filled ki-design-1',
       activo: false,
     },
     {
       nombre: 'Tráfico',
-      link: '/admin/trafico',
+      link: '/admin/trafico/lista',
       iconoClase: 'ki-filled ki-delivery',
       activo: false,
     },
@@ -101,4 +104,8 @@ export class SidebarComponent {
       activo: false,
     },
   ];
+
+  isActive(link: string): boolean {
+    return this.router.url === link;
+  }
 }
