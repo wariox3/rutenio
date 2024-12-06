@@ -38,7 +38,7 @@ import { FranjaService } from '../../../franja/servicios/franja.service';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
-import { VisitaResumenPedienteComponent } from "../visita-resumen-pediente/visita-resumen-pediente.component";
+import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -57,8 +57,8 @@ import { VisitaResumenPedienteComponent } from "../visita-resumen-pediente/visit
     FiltroBaseComponent,
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
-    VisitaResumenPedienteComponent
-],
+    VisitaResumenPedienteComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,7 +132,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];
-  visitaResumen : any;
+  visitaResumen: any;
 
   constructor() {
     super();
@@ -498,8 +498,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     this._actualizarFiltrosParaMostrar(filtros);
 
-    this._consultarVisitas(this.arrParametrosConsultaVisita);
-    this._consultarResumen().subscribe();
+    this.consultarVisitas();
+
     this.cerrarModalPorId(modalId);
   }
 
@@ -536,26 +536,25 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.visitaService.eliminarVisita(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
-        this._consultarVisitas(this.arrParametrosConsultaVisita);
-        this._consultarResumen().subscribe();
+        this.consultarVisitas();
       },
     });
   }
 
   abrirModalResumen() {
     this.toggleModalVisitaResumen$.next(true);
-    this.resumen()
+    this.resumen();
   }
 
-  resumen(){
+  resumen() {
     this.visitaService.resumenPendiente().subscribe({
-      next: (response) => {  
-        this.visitaResumen = response.resumen
+      next: (response) => {
+        this.visitaResumen = response.resumen;
         console.log(this.visitaResumen);
-        
+
         this.changeDetectorRef.detectChanges();
-      }
-    })
+      },
+    });
   }
 
   recibirFiltrosVacios(filtros: any[]) {
@@ -572,8 +571,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     this._actualizarFiltrosParaMostrar(filtros);
 
-    this._consultarVisitas(this.arrParametrosConsultaVisita);
-    this._consultarResumen().subscribe();
+    this.consultarVisitas();
   }
 
   limpiarFiltros(event: Event) {
