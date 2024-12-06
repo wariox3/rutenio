@@ -125,9 +125,16 @@
                       <span class="font-semibold text-gray-800 text-sm">
                         {{ visita.destinatario }}
                       </span>
-                      <span class="text-gray-600 text-xs font-medium">
-                        Número: {{ visita.numero }}
-                      </span>
+                      <div>
+                        @if (visita.estado_entregado) {
+                        <span class="badge badge-success badge-xs"
+                          >Entregada</span
+                        >
+                        }
+                        <span class="text-gray-600 text-xs font-medium">
+                          Número: {{ visita.numero }}
+                        </span>
+                      </div>
                     </div>
                     <div class="text-gray-700 text-xs max-w-[24rem]">
                       <i class="ki-filled ki-geolocation-home"></i>
@@ -147,12 +154,14 @@
                         <span>Franja: {{ visita.franja_codigo }}</span>
                       </div>
 
-                      <section class="flex gap-1">
-                        @if (visita.estado_entregado) {
-                        <span class="badge badge-success badge-xs"
-                          >Entregada</span
+                      <section class="flex gap-1 items-center">
+                        <button
+                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          data-modal-toggle="#detalle-visita"
+                          (click)="abrirModalDetalleVisita()"
                         >
-                        }
+                          <i class="ki-filled ki-eye text-xl"></i>
+                        </button>
                       </section>
                     </div>
                   </div>
@@ -180,3 +189,16 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  size="medium"
+  [id]="'detalle-visita'"
+  titulo="Visita"
+  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+>
+  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
+    <app-visita-rutear-detalle
+      [visita]="visitaSeleccionada"
+    ></app-visita-rutear-detalle>
+  </section>
+</app-modal-default>

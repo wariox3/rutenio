@@ -58,15 +58,6 @@
                   </div>
                   <section class="flex flex-col items-end gap-2">
                     <div class="flex gap-2 items-center">
-                      <button
-                        class="btn btn-xs btn-primary"
-                        (click)="
-                          confirmarAprobarDespacho(despacho.id);
-                          $event.stopPropagation()
-                        "
-                      >
-                        Aprobar
-                      </button>
                       <div class="menu menu-default" data-menu="true">
                         <div
                           class="menu-item"
@@ -80,6 +71,21 @@
                             </span>
                           </button>
                           <div class="menu-dropdown w-48 py-2">
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                (click)="
+                                  confirmarAprobarDespacho(despacho.id);
+                                  $event.stopPropagation()
+                                "
+                                class="menu-link"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-check-circle"></i>
+                                </span>
+                                <span class="menu-title"> Aprobar</span>
+                              </button>
+                            </div>
+
                             <div class="menu-item" data-menu-dismiss="true">
                               <button
                                 (click)="descargarPlanoSemantica(despacho.id)"

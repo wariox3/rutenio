@@ -13,11 +13,14 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { GeneralService } from '../../../../common/services/general.service';
+import { BehaviorSubject } from 'rxjs';
+import { ModalDefaultComponent } from "../../../../common/components/ui/modals/modal-default/modal-default.component";
+import { VisitaRutearDetalleComponent } from "../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component";
 
 @Component({
   selector: 'app-trafico-lista',
   standalone: true,
-  imports: [CommonModule, GoogleMapsModule],
+  imports: [CommonModule, GoogleMapsModule, ModalDefaultComponent, VisitaRutearDetalleComponent],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,6 +32,7 @@ export default class TraficoListaComponent extends General implements OnInit {
   private _generalService = inject(GeneralService);
 
   public visitaSeleccionada: Visita;
+  public mostarModalDetalleVisita$: BehaviorSubject<boolean>;
 
   despachoSeleccionado: any = null;
   mostrarMapaFlag: boolean = false;
@@ -59,6 +63,11 @@ export default class TraficoListaComponent extends General implements OnInit {
 
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
+
+  constructor() {
+    super();
+    this.mostarModalDetalleVisita$ = new BehaviorSubject(false);
+  }
 
   ngOnInit(): void {
     this.consultarLista();
@@ -193,5 +202,13 @@ export default class TraficoListaComponent extends General implements OnInit {
   private _limpiarInformacionAdicional() {
     this.arrVisitasPorDespacho = [];
     this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(true);
+  }
+
+  cerrarModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(false);
   }
 }
