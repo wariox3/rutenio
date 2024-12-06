@@ -196,6 +196,22 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Aprobado',
+        campoNombre: 'estado_aprobado',
+        campoTipo: 'Boolean',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
+        encabezado: 'Terminado',
+        campoNombre: 'estado_terminado',
+        campoTipo: 'Boolean',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'Visitas',
         campoNombre: 'visitas',
         campoTipo: 'CharField',

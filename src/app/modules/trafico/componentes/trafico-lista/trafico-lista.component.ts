@@ -165,4 +165,33 @@ export default class TraficoListaComponent extends General implements OnInit {
       id,
     });
   }
+
+  confirmarTerminarDespacho(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, terminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.terminarDespacho(id);
+        }
+      });
+  }
+
+  terminarDespacho(id: number) {
+    this.despachoService.terminarDespacho(id).subscribe({
+      next: (respuesta) => {
+        this.alerta.mensajaExitoso(respuesta.mensaje);
+        this.consultarLista();
+        this._limpiarInformacionAdicional();
+      },
+    });
+  }
+
+  private _limpiarInformacionAdicional() {
+    this.arrVisitasPorDespacho = [];
+    this.changeDetectorRef.detectChanges();
+  }
 }

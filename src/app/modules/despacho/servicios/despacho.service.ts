@@ -28,6 +28,12 @@ export class DespachoService {
     return this._httpService.delete(`ruteo/despacho/${id}/`, {});
   }
 
+  terminarDespacho(id: number) {
+    return this._httpService.post<{ mensaje: string }>(`ruteo/despacho/terminar/`, {
+      id,
+    });
+  }
+
   importarVisitas(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/importar/`, data);
   }
@@ -40,9 +46,9 @@ export class DespachoService {
     return this._httpService.post<any[]>(`ruteo/despacho/ordenar/`, '');
   }
 
-  aprobar (id: number){
+  aprobar(id: number) {
     return this._httpService.post<any[]>(`ruteo/despacho/aprobar/`, {
-      id
+      id,
     });
   }
 }

@@ -5,17 +5,16 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
+import { Observable, of, switchMap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { DespachoService } from '../../servicios/despacho.service';
-import { Observable, of, switchMap } from 'rxjs';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 
 @Component({
   selector: 'app-despacho-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, TablaComunComponent],
+  imports: [CommonModule, TablaComunComponent],
   templateUrl: './despacho-lista.component.html',
   styleUrl: './despacho-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

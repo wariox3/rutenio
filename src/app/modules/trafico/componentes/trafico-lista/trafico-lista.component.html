@@ -53,6 +53,15 @@
                   </div>
                   <section class="flex flex-col items-end gap-2">
                     <div class="flex gap-2 items-center">
+                      <button
+                        class="btn btn-xs btn-primary"
+                        (click)="
+                          confirmarTerminarDespacho(despacho.id);
+                          $event.stopPropagation()
+                        "
+                      >
+                        Terminar
+                      </button>
                       <div class="menu menu-default" data-menu="true">
                         <div
                           class="menu-item"
@@ -140,7 +149,9 @@
 
                       <section class="flex gap-1">
                         @if (visita.estado_entregado) {
-                          <span class="badge badge-success badge-xs">Entregada</span>
+                        <span class="badge badge-success badge-xs"
+                          >Entregada</span
+                        >
                         }
                       </section>
                     </div>
