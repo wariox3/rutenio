@@ -6,9 +6,12 @@ import { inject } from "@angular/core";
 import { throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { AlertaService } from "../services/alerta.service";
+import { AuthService } from "../../modules/auth/components/services/auth.service";
 
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const alerta = inject(AlertaService);
+  const auth = inject(AuthService);
+
   return next(req).pipe(
     catchError((error: any) => {
       let errorCodigo: string;
@@ -18,6 +21,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
         switch (error.status) {
           case 401:
             errorMensaje = "Credenciales invalidas.";
+            auth.logout();
             break;
           case 500:
             errorMensaje = "Se produjo un error interno en el servidor.";
