@@ -507,7 +507,9 @@ export class FiltroBaseComponent extends General {
   limpiarFormulario() {
     localStorage.removeItem(this.nombreFiltro);
     this.formularioItem.reset();
-    this.consultarEntidad();
+    if (this.modeloConsulta) {
+      this.consultarEntidad();
+    }
     this.filtros.clear();
     this.agregarNuevoFiltro();
     this.emitirFiltros.emit([]);
@@ -516,7 +518,9 @@ export class FiltroBaseComponent extends General {
   limpiar() {
     localStorage.removeItem(this.nombreFiltro);
     this.formularioItem.reset();
-    this.consultarEntidad();
+    if (this.modeloConsulta) {
+      this.consultarEntidad();
+    }
     this.filtros.clear();
     this.agregarNuevoFiltro();
     this.emitirLimpiarFiltros.emit([]);
