@@ -144,13 +144,6 @@ export default class FranjaListaComponent extends General implements OnInit {
     });
 
     this.changeDetectorRef.detectChanges();
-
-    // this.windowRef = this.windowService.open(this.editarFranja, {
-    //   title: "Editar franja",
-    //   context: {
-    //     franja: "item",
-    //   },
-    // });
   }
 
   toggleEstaCreando() {
@@ -163,8 +156,18 @@ export default class FranjaListaComponent extends General implements OnInit {
         'Se ha eliminado la franja exitosamente.',
         'Guardado con éxito.'
       );
+      this.limpiarMapa();
       this.consultarFranjas();
     });
+  }
+
+  limpiarMapa() {
+    this.markerPositions = [];
+    if (this.editableFranja) {
+      this.editableFranja.setMap(null);
+      this.editableFranja = null;
+    }
+    this.changeDetectorRef.detectChanges();
   }
 
   openInfoWindow(marker: MapMarker) {
@@ -185,21 +188,25 @@ export default class FranjaListaComponent extends General implements OnInit {
     const modal = KTModal.getInstance(modalEl);
 
     modal.hide();
+    this.resetCrearPoligono();
+    this.limpiarMapa();
   }
 
   clickMap(evento: any) {
-    const coordenadasFormArray = this.formularioFranja.get(
-      'coordenadas'
-    ) as FormArray;
-
+    const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
+  
     if (this.estaCreando) {
+      // Asegúrate de que las coordenadas son solo de la nueva franja
       const nuevoVertice = evento.latLng.toJSON();
       this.nuevaVertice = [...this.nuevaVertice, nuevoVertice];
       coordenadasFormArray.push(new FormControl(nuevoVertice));
     }
-    this.editableFranja.setEditable(false);
-    this.editableFranja.setMap(null);
-
+  
+    if (this.editableFranja) {
+      this.editableFranja.setEditable(false);
+      this.editableFranja.setMap(null);
+    }
+    this.changeDetectorRef.detectChanges();
   }
 
   cerrarPoligono() {
@@ -235,23 +242,24 @@ export default class FranjaListaComponent extends General implements OnInit {
         this.consultarFranjas();
         this.resetCrearPoligono();
       });
+
+      this.changeDetectorRef.detectChanges();
   }
 
   resetCrearPoligono() {
     this.estaCreando = false;
-    this.estaCerrado = false; // Asegúrate de que el polígono no esté cerrado
-    this.nuevaVertice = []; // Limpia los vértices
-    const coordenadasFormArray = this.formularioFranja.get(
-      'coordenadas'
-    ) as FormArray;
-    coordenadasFormArray.clear(); // Limpia las coordenadas en el formulario
+    this.estaCerrado = false; 
+    this.nuevaVertice = [];
+    const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
+    coordenadasFormArray.clear();
+    this.changeDetectorRef.detectChanges();
   }
 
   private generarColorAleatorio(): string {
-    const generarComponente = () => Math.floor(Math.random() * 156 + 100); // Valores entre 100 y 255
-    const r = generarComponente().toString(16).padStart(2, '0'); // Componente rojo
-    const g = generarComponente().toString(16).padStart(2, '0'); // Componente verde
-    const b = generarComponente().toString(16).padStart(2, '0'); // Componente azul
+    const generarComponente = () => Math.floor(Math.random() * 156 + 100);
+    const r = generarComponente().toString(16).padStart(2, '0'); 
+    const g = generarComponente().toString(16).padStart(2, '0');
+    const b = generarComponente().toString(16).padStart(2, '0');
     return `${r}${g}${b}`;
   }
 
@@ -259,23 +267,19 @@ export default class FranjaListaComponent extends General implements OnInit {
 
     if (this.editableFranja) {
       this.editableFranja.setEditable(false);
-      this.editableFranja.setMap(null); // Opcional: oculta el polígono anterior
+      this.editableFranja.setMap(null);
     }
 
     const polygon = new google.maps.Polygon({
       paths: franja.coordenadas,
-      editable: true, // Permite mover y ajustar los vértices
+      editable: true,
       draggable: false,
     });
 
-    const googleMapInstance = this.map.googleMap; // Objeto de la API de Google Maps
+    const googleMapInstance = this.map.googleMap;
 
     polygon.setMap(googleMapInstance);
-
-    // Asignar este polígono como el editable actual
     this.editableFranja = polygon;
-
-    // Detectar cambios en el polígono
     google.maps.event.addListener(polygon.getPath(), 'set_at', () => {
       this._guardarEdicionPoligo(franja, polygon.getPath());
     });
@@ -291,14 +295,12 @@ export default class FranjaListaComponent extends General implements OnInit {
     polygon: any,
     path: google.maps.MVCArray<google.maps.LatLng>
   ) {
-    // Convertir los datos del camino en un array de coordenadas
     const updatedCoordinates = [];
     for (let i = 0; i < path.getLength(); i++) {
       const point = path.getAt(i).toJSON();
       updatedCoordinates.push(point);
     }
 
-    // Llamar al servicio para guardar en el backend
     this._franjaService
       .actualizarFranja(polygon.id, {
         nombre: polygon.nombre,
@@ -306,7 +308,6 @@ export default class FranjaListaComponent extends General implements OnInit {
       })
       .subscribe((response) => {
         this.consultarFranjas()
-        //console.log('Polígono guardado correctamente:', response);
       });
   }
 }

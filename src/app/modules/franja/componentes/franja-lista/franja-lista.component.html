@@ -92,7 +92,7 @@
         [zoom]="zoom"
         (mapClick)="clickMap($event)"
       >
-        <!-- Polígonos existentes -->
+
         <map-polygon
           *ngFor="let franja of franjas$ | async"
           [paths]="franja.coordenadas"
@@ -105,14 +105,14 @@
           (polygonClick)="habiliarFranja(franja)"
         ></map-polygon>
 
-        <!-- Línea en creación -->
+
         <map-polyline
           *ngIf="estaCreando && !estaCerrado"
           [path]="nuevaVertice"
           [options]="polylineOptions"
         ></map-polyline>
 
-        <!-- Polígono en creación (cuando esté cerrado) -->
+
         <map-polygon
           *ngIf="estaCreando && estaCerrado"
           [paths]="nuevaVertice"
