@@ -64,6 +64,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   public estaEditando: boolean = false;
   public cantidadRegistros: number = 0;
   public formularioFranja: FormGroup;
+  public franjaClickeada: any = null
   public arrParametrosConsulta: any = {
     filtros: [],
     limite: 50,
@@ -256,7 +257,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   private generarColorAleatorio(): string {
-    const generarComponente = () => Math.floor(Math.random() * 156 + 100);
+    const generarComponente = () => Math.floor(Math.random() * 100 + 30);
     const r = generarComponente().toString(16).padStart(2, '0'); 
     const g = generarComponente().toString(16).padStart(2, '0');
     const b = generarComponente().toString(16).padStart(2, '0');
@@ -264,7 +265,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   habiliarFranja(franja: any) {
-
+    this.franjaClickeada = franja.id
     if (this.editableFranja) {
       this.editableFranja.setEditable(false);
       this.editableFranja.setMap(null);

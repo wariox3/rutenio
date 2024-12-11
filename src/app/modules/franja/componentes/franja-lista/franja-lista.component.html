@@ -23,7 +23,11 @@
         <tbody>
           @for (franja of franjas$ | async; track $index) {
           <tr
-            class="p-3 border rounded-md cursor-pointer hover:bg-gray-100"
+            class="cursor-pointer"
+            [ngClass]="{
+              'bg-blue-50 border-l-4 border-blue-500':
+              franja.id === franjaClickeada
+            }"
             (click)="habiliarFranja(franja)"
           >
             <td class="p-3 w-full flex items-center justify-between">
