@@ -69,7 +69,7 @@ export default class FranjaListaComponent extends General implements OnInit {
     filtros: [],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ["-id"],
     limite_conteo: 10000,
     modelo: 'RutFranja',
   };
@@ -149,6 +149,20 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   toggleEstaCreando() {
     this.estaCreando = !this.estaCreando;
+  }
+
+  confirmarEliminarFranja(item: any) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.eliminarFranja(item);
+        }
+      });
   }
 
   eliminarFranja(item: any) {
