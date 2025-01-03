@@ -90,6 +90,21 @@
                             abrirModal()
                           "
                           class="menu-link"
+                          data-modal-toggle="#invitarContenedor"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-users"></i>
+                          </span>
+                          <span class="menu-title"> Invitar </span>
+                        </button>
+                      </div>
+                      <div class="menu-item">
+                        <button
+                          (click)="
+                            seleccionarContenedorParaEliminar(contenedor);
+                            abrirModal()
+                          "
+                          class="menu-link"
                           data-modal-toggle="#eliminarContenedor"
                         >
                           <span class="menu-icon">
@@ -124,5 +139,18 @@
       [contenedor]="contenedor"
       (emitirEliminarContenedor)="eliminarContenedor()"
     ></app-contenedor-eliminar>
+  </div>
+</app-modal-default>
+
+<!-- Enviar invitacion -->
+
+<app-modal-default
+  titulo="Invitaciones"
+  size="medium"
+  [id]="'invitarContenedor'"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <div *ngIf="toggleModal$ | async" modal-body>
+    <app-contenedor-invitar [contenedor]="contenedor"></app-contenedor-invitar>
   </div>
 </app-modal-default>

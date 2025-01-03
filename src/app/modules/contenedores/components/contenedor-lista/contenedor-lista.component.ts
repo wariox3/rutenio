@@ -15,6 +15,7 @@ import { ContenedorActionInit } from '../../../../redux/actions/contenedor/conte
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';
 import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-eliminar.component';
+import { ContenedorInvitarComponent } from "../contenedor-invitar/contenedor-invitar.component";
 
 @Component({
   selector: 'app-contenedor-lista',
@@ -25,7 +26,8 @@ import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-e
     RouterLink,
     ModalDefaultComponent,
     ContenedorEliminarComponent,
-  ],
+    ContenedorInvitarComponent
+],
   templateUrl: './contenedor-lista.component.html',
   styleUrl: './contenedor-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
