@@ -94,6 +94,48 @@ export class FiltroBaseComponent extends General {
     super();
   }
 
+  ngOnInit(): void {
+    this.initForm();
+    this._initListener();
+    if (this.modeloConsulta) {
+      this.consultarEntidad();
+    }
+    this.construirPropiedades();
+    this.activatedRoute.queryParams.subscribe((parametro) => {
+      this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
+
+      const localStorageFiltro = localStorage.getItem(this.nombreFiltro);
+      let filtrosParseados: [] | null = null;
+
+      if (localStorageFiltro) {
+        filtrosParseados = JSON.parse(localStorageFiltro!);
+      }
+
+      if (filtrosParseados?.length) {
+        this.filtrosAplicados = JSON.parse(localStorageFiltro!);
+        this.formularioItem.reset();
+        this.filtros.clear();
+        this.filtrosAplicados.map((propiedad, index) => {
+          this.filtros.push(this.crearControlFiltros(propiedad, index));
+        });
+      } else {
+        this.formularioItem.reset();
+        this.filtros.clear();
+        this.filtrosAplicados = [
+          {
+            propiedad: '',
+            operador: '',
+            valor1: '',
+            valor2: '',
+            visualizarBtnAgregarFiltro: true,
+          },
+        ];
+        this.filtros.push(this.crearControlFiltros(null, 0));
+        this.changeDetectorRef.detectChanges();
+      }
+    });
+  }
+
   private _initListener() {
     this._filtroBaseService.myEvent.subscribe({
       next: () => {
@@ -165,48 +207,6 @@ export class FiltroBaseComponent extends General {
   initFormulularioModal() {
     this.formularioFiltrosModal = this.formBuilder.group({
       filtros: this.formBuilder.array([]),
-    });
-  }
-
-  ngOnInit(): void {
-    this.initForm();
-    this._initListener();
-    if (this.modeloConsulta) {
-      this.consultarEntidad();
-    }
-    this.construirPropiedades();
-    this.activatedRoute.queryParams.subscribe((parametro) => {
-      this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
-
-      const localStorageFiltro = localStorage.getItem(this.nombreFiltro);
-      let filtrosParseados: [] | null = null;
-
-      if (localStorageFiltro) {
-        filtrosParseados = JSON.parse(localStorageFiltro!);
-      }
-
-      if (filtrosParseados?.length) {
-        this.filtrosAplicados = JSON.parse(localStorageFiltro!);
-        this.formularioItem.reset();
-        this.filtros.clear();
-        this.filtrosAplicados.map((propiedad, index) => {
-          this.filtros.push(this.crearControlFiltros(propiedad, index));
-        });
-      } else {
-        this.formularioItem.reset();
-        this.filtros.clear();
-        this.filtrosAplicados = [
-          {
-            propiedad: '',
-            operador: '',
-            valor1: '',
-            valor2: '',
-            visualizarBtnAgregarFiltro: true,
-          },
-        ];
-        this.filtros.push(this.crearControlFiltros(null, 0));
-        this.changeDetectorRef.detectChanges();
-      }
     });
   }
 
@@ -412,7 +412,7 @@ export class FiltroBaseComponent extends General {
   }
 
   private _handleNullValue(filtro: any) {
-    if (filtro.operador === '__isnull') {
+    if (filtro.operador === 'isnull') {
       return filtro.tipo === 'Fk' ? true : '';
     }
 
@@ -435,6 +435,7 @@ export class FiltroBaseComponent extends General {
             nuevoFiltro = {
               ...filtro,
               ...{
+                operador: 'exact',
                 propiedad: `${filtro.propiedad}`,
                 campo: filtro.propiedad,
                 valor1: filtro.operador === 'true' ? true : false,
@@ -442,9 +443,6 @@ export class FiltroBaseComponent extends General {
             };
           } else {
             let propiedad = filtro.propiedad;
-            if (filtro.operador !== 'igual') {
-              propiedad = `${filtro.propiedad}${filtro.operador}`;
-            }
             nuevoFiltro = {
               ...filtro,
               ...{
@@ -549,6 +547,7 @@ export class FiltroBaseComponent extends General {
             nuevoFiltro = {
               ...filtro,
               ...{
+                operador: 'exact',
                 propiedad: `${filtro.propiedad}`,
                 campo: filtro.propiedad,
                 valor1: filtro.operador === 'true' ? true : false,
@@ -557,7 +556,7 @@ export class FiltroBaseComponent extends General {
           } else {
             let propiedad = filtro.propiedad;
             if (filtro.operador !== 'igual') {
-              propiedad = `${filtro.propiedad}${filtro.operador}`;
+              propiedad = `${filtro.propiedad}`;
             }
             nuevoFiltro = {
               ...filtro,
@@ -625,8 +624,8 @@ export class FiltroBaseComponent extends General {
 
     if (nombre) {
       arrFiltros.filtros.push({
-        operador: '__icontains',
-        propiedad: 'nombre__icontains',
+        operador: 'icontains',
+        propiedad: 'nombre',
         valor1: nombre,
         valor2: '',
       });
@@ -634,8 +633,8 @@ export class FiltroBaseComponent extends General {
 
     if (id) {
       arrFiltros.filtros.push({
-        operador: '__icontains',
-        propiedad: 'id__icontains',
+        operador: 'icontains',
+        propiedad: 'id',
         valor1: id,
         valor2: '',
       });

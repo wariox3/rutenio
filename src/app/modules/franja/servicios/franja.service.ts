@@ -18,8 +18,8 @@ export class FranjaService {
         filtros: [
           {
             id: '1692284537644-1688',
-            operador: '__icontains',
-            propiedad: 'nombre__icontains',
+            operador: 'icontains',
+            propiedad: 'nombre',
             valor1: ``,
             valor2: '',
           },

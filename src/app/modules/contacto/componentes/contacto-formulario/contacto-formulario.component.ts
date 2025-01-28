@@ -142,8 +142,8 @@ export default class ContactoFormularioComponent
     let arrFiltros = {
       filtros: [
         {
-          operador: '__icontains',
-          propiedad: 'nombre__icontains',
+          operador: 'icontains',
+          propiedad: 'nombre',
           valor1: nombre,
           valor2: '',
         },

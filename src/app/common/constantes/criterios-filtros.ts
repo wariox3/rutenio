@@ -11,81 +11,81 @@ export type BaseCriteriosFiltro = {
 export const  criteriosFiltros: BaseCriteriosFiltro = {
   IntegerField: [
     {
-      valor: "igual",
+      valor: "exact",
       texto: "Igual",
       defecto: true,
     },
     {
-      valor: "__gt",
+      valor: "gt",
       texto: "Mayor Que",
     },
     {
-      valor: "__gte",
+      valor: "gte",
       texto: "Mayor Igual Que",
     },
     {
-      valor: "__lt",
+      valor: "lt",
       texto: "Menor Que",
     },
     {
-      valor: "__lte",
+      valor: "lte",
       texto: "Menor Igual Que",
     },
   ],
   FloatField: [
     {
-      valor: "igual",
+      valor: "exact",
       texto: "IGUAL",
       defecto: true,
     },
     {
-      valor: "__gt",
+      valor: "gt",
       texto: "MAYORQUE",
     },
     {
-      valor: "__gte",
+      valor: "gte",
       texto: "MAYORIGUALQUE",
     },
     {
-      valor: "__lt",
+      valor: "lt",
       texto: "MENORQUE",
     },
     {
-      valor: "__lte",
+      valor: "lte",
       texto: "MENORIGUALQUE",
     },
   ],
   CharField: [
     {
-      valor: "igual",
+      valor: "exact",
       texto: "Igual",
     },
     {
-      valor: "__icontains",
+      valor: "icontains",
       texto: "Contiene",
       defecto: true,
     },
   ],
   DateField: [
     {
-      valor: "igual",
+      valor: "exact",
       texto: "Igual",
       defecto: true,
     },
     {
-      valor: "__gt",
+      valor: "gt",
       texto: "Mayor Que",
     },
     {
-      valor: "__gte",
+      valor: "gte",
       texto: "Mayor Igual Que",
     },
     {
-      valor: "__lt",
+      valor: "lt",
       texto: "Menor Que",
     },
     {
-      valor: "__lte",
+      valor: "lte",
       texto: "Menor Igual Que",
     },
   ],
@@ -101,16 +101,16 @@ export const  criteriosFiltros: BaseCriteriosFiltro = {
   ],
   Fk: [
     {
-      valor: "igual",
+      valor: "exact",
       texto: "Igual",
       defecto: true,
     },
      {
-      valor: "__isnull",
+      valor: "isnull",
       texto: "Sin asignar",
       defecto: false,
     },
   ],
 };
 
-// descripcion__isnull=True 
+// descripcionisnull=True 

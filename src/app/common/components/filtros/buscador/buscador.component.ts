@@ -59,8 +59,8 @@ export class BuscadorComponent extends General {
 
     if (nombre) {
       arrFiltros.filtros.push({
-        operador: '__icontains',
-        propiedad: 'nombre__icontains',
+        operador: 'icontains',
+        propiedad: 'nombre',
         valor1: nombre,
         valor2: '',
       });

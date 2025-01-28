@@ -44,7 +44,7 @@
             />
           </ng-container>
           @if (filtro.get('busquedaAvanzada')?.value === 'true') { @if (
-          filtro.get('operador')?.value !== '__isnull') {
+          filtro.get('operador')?.value !== 'isnull') {
           <ng-select
             [items]="listaOpciones"
             bindLabel="nombre"
@@ -82,10 +82,14 @@
           } }
         </div>
         <div class="w-full mb-2 flex gap-4 justify-center">
-          <button (click)="agregarNuevoFiltro()">
+          <button type="button" (click)="agregarNuevoFiltro()">
             <i class="ki-filled ki-plus text-xl"></i>
           </button>
-          <button *ngIf="filtros.length > 1" (click)="eliminarFiltroLista(i)">
+          <button
+            type="button"
+            *ngIf="filtros.length > 1"
+            (click)="eliminarFiltroLista(i)"
+          >
             <i class="ki-filled ki-trash text-xl"></i>
           </button>
         </div>
@@ -97,10 +101,15 @@
       class="mr-1 btn btn-secondary"
       (click)="limpiarFormulario()"
       *ngIf="filtros.length >= 1"
+      type="button"
     >
       Limpiar
     </button>
-    <button class="btn btn-outline btn-primary" (click)="aplicarFiltro()">
+    <button
+      type="submit"
+      class="btn btn-outline btn-primary"
+      (click)="aplicarFiltro()"
+    >
       Filtrar
     </button>
   </div>

@@ -98,8 +98,8 @@ export class AgregarFlotaComponent extends General implements OnInit {
             ...this._parametrosConsulta,
             filtros: [
               {
-                operador: '__icontains',
-                propiedad: 'placa__icontains',
+                operador: 'icontains',
+                propiedad: 'placa',
                 valor1: busqueda,
               },
             ],

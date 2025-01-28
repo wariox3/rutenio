@@ -285,13 +285,13 @@ export default class VisitaListaComponent extends General implements OnInit {
       filtros: [
         ...this.arrParametrosConsulta.filtros,
         {
-          operador: '__icontains',
-          propiedad: 'id__icontains',
+          operador: 'icontains',
+          propiedad: 'id',
           valor1: this.formularioFiltros.get('id').value,
         },
         {
-          operador: '__icontains',
-          propiedad: 'guia__icontains',
+          operador: 'icontains',
+          propiedad: 'guia',
           valor1: this.formularioFiltros.get('guia').value,
         },
       ],
