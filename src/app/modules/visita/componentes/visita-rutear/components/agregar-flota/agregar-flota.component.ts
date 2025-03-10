@@ -41,7 +41,6 @@ import { KTModal } from '../../../../../../../metronic/core';
     CommonModule,
     ReactiveFormsModule,
     NgSelectModule,
-    LabelComponent,
     ButtonComponent,
   ],
   templateUrl: './agregar-flota.component.html',

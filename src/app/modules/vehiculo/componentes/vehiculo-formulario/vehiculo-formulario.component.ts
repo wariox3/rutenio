@@ -54,9 +54,7 @@ export default class VehiculoFormularioComponent
 
   public franjaOpciones: AutocompletarFranja[];
   public formularioVehiculo = new FormGroup({
-    franja: new FormControl(null),
     franja_codigo: new FormControl(''),
-    franja_nombre: new FormControl(''),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -81,9 +79,7 @@ export default class VehiculoFormularioComponent
 
   private _poblarFormulario() {
     this.formularioVehiculo.patchValue({
-      franja: this.informacionVehiculo.franja_id,
       franja_codigo: this.informacionVehiculo.franja_codigo,
-      franja_nombre: this.informacionVehiculo.franja_nombre,
       placa: this.informacionVehiculo.placa,
       tiempo: this.informacionVehiculo.tiempo,
       capacidad: this.informacionVehiculo.capacidad,

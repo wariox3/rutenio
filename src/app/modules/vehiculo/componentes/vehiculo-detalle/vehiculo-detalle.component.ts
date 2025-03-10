@@ -22,10 +22,8 @@ export default class VehiculoDetalleComponent extends General implements OnInit 
   vehiculo: any = {
     placa: '',
     capacidad: 0,
-    franja_id: null,
     franja_codigo: '',
     tiempo: 0,
-    franja_nombre: ''
   }
 
 ngOnInit(): void {
