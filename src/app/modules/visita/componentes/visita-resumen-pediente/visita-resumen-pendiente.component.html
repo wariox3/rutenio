@@ -6,9 +6,7 @@
     >
       <thead>
         <tr class="bg-gray-100 text-center">
-          <th class="px-2 py-1">Franja id</th>
-          <th class="px-2 py-1">Franja nombre</th>
-          <th class="px-2 py-1">Franja color</th>
+          <th class="px-2 py-1">Franja código</th>
           <th class="px-2 py-1 text-center">Cantidad</th>
           <th class="px-2 py-1 text-center">Peso</th>
         </tr>
@@ -18,18 +16,7 @@
           *ngFor="let item of resumen; let i = index"
           class="hover:bg-gray-50"
         >
-          <td class="px-2 py-1 text-left">{{ item.franja_id }}</td>
-          <td class="px-2 py-1 text-left">{{ item.franja__nombre }}</td>
-          <td class="px-2 py-1 text-left">
-            @if (item.franja__color) {
-            <span
-              class="badge badge-xs text-white w-full"
-              [ngStyle]="{ 'background-color': '#' + item.franja__color }"
-            >
-              #{{ item.franja__color }}
-            </span>
-            }
-          </td>
+          <td class="px-2 py-1 text-left">{{ item.franja_codigo }}</td>
           <td class="px-2 py-1 text-right">{{ item.cantidad }}</td>
           <td class="px-2 py-1 text-right">{{ item.peso }}</td>
         </tr>
