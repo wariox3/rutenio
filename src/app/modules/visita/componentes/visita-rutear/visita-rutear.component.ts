@@ -494,7 +494,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this.errorCapacidad ||
       this.arrFlota?.length <= 0 ||
       this.cantidadErrores > 0 ||
-      this.visitasTotales <= 0
+      this.visitasTotales <= 0 ||
+      this.errorTiempo
     );
   }
 
