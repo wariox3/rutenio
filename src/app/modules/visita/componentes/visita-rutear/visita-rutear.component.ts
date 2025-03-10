@@ -5,6 +5,7 @@ import {
   inject,
   OnInit,
   QueryList,
+  signal,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -108,7 +109,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public flotasSeleccionadas: number[] = [];
   public capacidadTotal: number = 0;
   public pesoTotal: number = 0;
+  public servicio = signal<number>(0);
+  public tiempoTotal = signal<number>(0);
   public porcentajeCapacidad: number = 0;
+  public porcentajeTiempo: number = 0;
+  public errorTiempo: boolean = false;
+  public barraTiempo: number = 0;
   public barraCapacidad: number = 0;
   public errorCapacidad: boolean = false;
   public cantidadErrores: number = 0;
@@ -211,6 +217,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
           this.cantidadErrores = response?.errores?.cantidad;
           this.cantidadAlertas = response?.alertas?.cantidad;
           this.pesoTotal = response?.resumen?.peso;
+          this.servicio.set(response.resumen.tiempo_servicio);
           this.changeDetectorRef.detectChanges();
           return of(null);
         })
@@ -224,10 +231,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
+  private _limpiarBarraTiempo() {
+    this.barraTiempo = 0;
+    this.errorTiempo = false;
+    this.porcentajeTiempo = 0;
+    this.changeDetectorRef.detectChanges();
+  }
+
   private _consultarVisitas(parametros: ParametrosConsulta) {
     this.visitaService.generalLista(parametros).subscribe((respuesta) => {
       this.limpiarMarkers();
       this._limpiarBarraCapacidad();
+      this._limpiarBarraTiempo();
       this.totalRegistrosVisitas = respuesta.cantidad_registros;
 
       respuesta.registros.forEach((punto) => {
@@ -237,6 +252,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
       // this._consultarErrores();
       this._calcularPorcentajeCapacidad();
+      this._calcularPorcentajeTiempo();
       this.arrVisitas = respuesta.registros;
       this.changeDetectorRef.detectChanges();
     });
@@ -262,7 +278,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
         );
 
         this._calcularCapacidadTotal(response.registros);
+        this._calcularTiempoTotal(response.registros);
         this._calcularPorcentajeCapacidad();
+        this._calcularPorcentajeTiempo();
         this.arrFlota = response.registros;
         this.changeDetectorRef.detectChanges();
       });
@@ -295,11 +313,36 @@ export default class VisitaRutearComponent extends General implements OnInit {
     }
   }
 
+  private _calcularPorcentajeTiempo() {
+    let total = 0;
+    if (this.tiempoTotal() > 0) {
+      total = (this.servicio() / this.tiempoTotal()) * 100;
+    }
+
+    this.porcentajeTiempo = this._redondear(total, 0);
+
+    if (this.porcentajeTiempo > 100) {
+      this.barraTiempo = 100;
+      this.errorTiempo = true;
+    } else {
+      this.barraTiempo = this.porcentajeTiempo;
+      this.errorTiempo = false;
+    }
+  }
+
   private _calcularCapacidadTotal(flotas: ListaFlota[]) {
     this.capacidadTotal = flotas.reduce(
       (acc, curVal) => acc + curVal.vehiculo_capacidad,
       0
     );
+  }
+
+  private _calcularTiempoTotal(flotas: ListaFlota[]) {
+    const tiempoTotal = flotas.reduce(
+      (acc, curVal) => acc + curVal.vehiculo_tiempo,
+      0
+    );
+    this.tiempoTotal.set(tiempoTotal);
   }
 
   private _redondear(valor: number, decimales: number): number {
