@@ -228,6 +228,9 @@
                       </span>
                       <span class="text-gray-600 text-xs font-medium">
                         Número: {{ visita.numero }}
+                        <span class="font-semibold text-sm text-gray-800">
+                          {{ visita.orden }}
+                        </span>
                       </span>
                     </div>
                     <div class="text-gray-700 text-xs max-w-[24rem]">
@@ -240,10 +243,13 @@
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
-                        <i class="ki-filled ki-arrow-up-down"></i>
-                        <span>Orden: {{ visita.orden }}</span>
                         <i class="ki-filled ki-time"></i>
-                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
+                        <span
+                          >Servicio: {{ visita.tiempo_servicio }}/{{
+                            visita.tiempo_trayecto
+                          }}
+                          min</span
+                        >
                         <i class="ki-filled ki-geolocation mr-1"></i>
                         <span>Franja: {{ visita.franja_codigo }}</span>
                       </div>
