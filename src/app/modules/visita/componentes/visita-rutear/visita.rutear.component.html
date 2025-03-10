@@ -227,7 +227,7 @@
                         {{ visita.destinatario }}
                       </span>
                       <span class="text-gray-600 text-xs font-medium">
-                        Número: {{ visita.numero }}
+                        Número: {{ visita.numero }} ·
                         <span class="font-semibold text-sm text-gray-800">
                           {{ visita.orden }}
                         </span>
@@ -245,7 +245,7 @@
                         <span>Peso: {{ visita.peso }} kg</span>
                         <i class="ki-filled ki-time"></i>
                         <span
-                          >Servicio: {{ visita.tiempo_servicio }}/{{
+                          >Servicio: {{ visita.tiempo_servicio }}+{{
                             visita.tiempo_trayecto
                           }}
                           min</span
