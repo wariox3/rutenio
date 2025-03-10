@@ -48,8 +48,8 @@ export const mapeo: any = {
         encabezado: 'Franja Nombre',
         campoNombre: 'franja_nombre',
         campoTipo: 'CharField',
-        visibleTabla: true,
-        visibleFiltro: true,
+        visibleTabla: false,
+        visibleFiltro: false,
         ordenable: true,
       },
       {
