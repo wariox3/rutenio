@@ -8,4 +8,5 @@ export interface ListaVehiculo {
   franja_nombre: string;
   estado_activo: boolean;
   estado_asignado: boolean;
+  tiempo: number;
 }

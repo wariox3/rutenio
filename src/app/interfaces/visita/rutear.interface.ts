@@ -2,6 +2,7 @@ export interface VisitaResumen {
   resumen: {
     cantidad: number;
     peso: number;
+    tiempo_servicio: number;
   };
   errores: {
     cantidad: number;
