@@ -62,7 +62,7 @@
           </div>
           <div>
             <app-progreso-circular
-              data-tooltip="#tooltip_left"
+              data-tooltip="#tooltip_tiempo"
               [progress]="porcentajeTiempo"
               [error]="errorTiempo"
               [barraProgreso]="barraTiempo"
@@ -441,6 +441,13 @@
   id="tooltip_left"
 >
   Porcentaje de capacidad
+</div>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_tiempo"
+>
+  Porcentaje de tiempo
 </div>
 
 <app-modal-default
