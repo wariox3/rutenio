@@ -53,6 +53,13 @@
                         <span>Volumen: {{ despacho.volumen }}</span>
                         <i class="ki-filled ki-geolocation"></i>
                         <span>Visitas: {{ despacho.visitas }} </span>
+                        <i class="ki-filled ki-timer"></i>
+                        <span
+                          >Tiempo: {{ despacho.tiempo | redondear }} ({{
+                            despacho.tiempo_servicio | redondear
+                          }}/{{ despacho.tiempo_trayecto | redondear }})
+                          min</span
+                        >
                       </div>
                     </div>
                   </div>
@@ -283,9 +290,11 @@
                 </div>
                 <div>
                   <i class="ki-filled ki-time"></i>
-                  <span class="ml-1">{{
-                    visitaSeleccionada?.tiempo_servicio
-                  }}</span>
+                  <span class="ml-1"
+                    >{{ visitaSeleccionada?.tiempo_servicio }}+{{
+                      visitaSeleccionada?.tiempo_trayecto | redondear : 1
+                    }} min</span
+                  >
                 </div>
               </div>
             </section>

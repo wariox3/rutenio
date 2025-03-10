@@ -20,7 +20,9 @@ export interface Visita {
   franja_codigo: any;
   franja_nombre: string;
   numero: number;
+  tiempo: number;
   tiempo_servicio: number;
+  tiempo_trayecto: number;
   estado_decodificado_alerta: boolean;
   estado_despacho: boolean;
   destinatario_direccion_formato: string;

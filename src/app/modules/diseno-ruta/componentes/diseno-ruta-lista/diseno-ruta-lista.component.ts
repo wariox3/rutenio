@@ -24,6 +24,7 @@ import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { GeneralService } from '../../../../common/services/general.service';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -35,6 +36,7 @@ import { GeneralService } from '../../../../common/services/general.service';
     ModalDefaultComponent,
     VisitaRutearDetalleComponent,
     DragDropModule,
+    RedondearPipe,
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
