@@ -54,7 +54,12 @@
                         <i class="ki-filled ki-geolocation"></i>
                         <span>Visitas: {{ despacho.visitas }} </span>
                         <i class="ki-filled ki-timer"></i>
-                        <span>Tiempo: {{ despacho.tiempo }} ({{despacho.tiempo_servicio}}/{{despacho.tiempo_trayecto}}) min</span>
+                        <span
+                          >Tiempo: {{ despacho.tiempo | redondear }} ({{
+                            despacho.tiempo_servicio | redondear
+                          }}/{{ despacho.tiempo_trayecto | redondear }})
+                          min</span
+                        >
                       </div>
                     </div>
                   </div>
