@@ -40,6 +40,7 @@ import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -59,6 +60,7 @@ import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visit
     VisitaRutearDetalleComponent,
     FullLoaderDefaultComponent,
     VisitaResumenPedienteComponent,
+    RedondearPipe,
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
