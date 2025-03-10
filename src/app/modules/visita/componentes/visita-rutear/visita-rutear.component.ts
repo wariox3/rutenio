@@ -217,7 +217,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
           this.cantidadErrores = response?.errores?.cantidad;
           this.cantidadAlertas = response?.alertas?.cantidad;
           this.pesoTotal = response?.resumen?.peso;
-          this.servicio.set(response.resumen.tiempo);
+          this.servicio.set(this._redondear(response.resumen.tiempo, 0));
           this.changeDetectorRef.detectChanges();
           return of(null);
         })
