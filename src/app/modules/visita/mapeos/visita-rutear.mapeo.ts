@@ -12,13 +12,14 @@ export const visitaRutearMapeo: any = {
       ordenable: true,
     },
     {
-      nombre: 'franja__id',
+      nombre: 'franja_id',
       campoNombre: 'Franja',
       campoTipo: 'Fk',
       visibleTabla: true,
       visibleFiltro: true,
       ordenable: true,
       esFk: true,
+      busquedaAvanzada: true,
       modeloFk: 'RutFranja',
     },
     {

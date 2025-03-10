@@ -7,7 +7,13 @@
         (emitirBotonClicked)="rutear()"
         [estaDeshabilitado]="habilitadoParaRutear()"
       ></app-button>
-      <app-button clases="btn btn-secondary" data-modal-toggle="#resumen-pendiente" type="button" texto="Resumen" (click)="abrirModalResumen()">
+      <app-button
+        clases="btn btn-secondary"
+        data-modal-toggle="#resumen-pendiente"
+        type="button"
+        texto="Resumen"
+        (click)="abrirModalResumen()"
+      >
       </app-button>
     </div>
   </div>
@@ -26,13 +32,6 @@
             >
           </div>
           <div>
-            <p class="text-xs text-slate-600">Capacidad</p>
-            <span class="font-semibold">
-              <i class="ki-filled ki-package"></i>
-              {{ capacidadTotal }}</span
-            >
-          </div>
-          <div>
             <p class="text-xs text-slate-600">Visitas</p>
             <span class="font-semibold">
               <i class="ki-filled ki-geolocation"></i>
@@ -40,10 +39,10 @@
             >
           </div>
           <div>
-            <p class="text-xs text-slate-600">Peso</p>
+            <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
               <i class="ki-filled ki-package"></i>
-              {{ pesoTotal }}</span
+              {{ pesoTotal }}/{{ capacidadTotal }}</span
             >
           </div>
           <div>
@@ -52,6 +51,21 @@
               [progress]="porcentajeCapacidad"
               [error]="errorCapacidad"
               [barraProgreso]="barraCapacidad"
+            ></app-progreso-circular>
+          </div>
+          <div>
+            <p class="text-xs text-slate-600">Tiempo</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-timer"></i>
+              {{ servicio() }}/{{ tiempoTotal() }}
+            </span>
+          </div>
+          <div>
+            <app-progreso-circular
+              data-tooltip="#tooltip_tiempo"
+              [progress]="porcentajeTiempo"
+              [error]="errorTiempo"
+              [barraProgreso]="barraTiempo"
             ></app-progreso-circular>
           </div>
         </section>
@@ -91,12 +105,14 @@
           </section>
           <section class="flex items-center">
             @if (valoresFiltrados) {
-              <button class="btn" (click)="limpiarFiltros($event)">
-                <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
-                  <i class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"></i>
-                </i>
-              </button>
-              }
+            <button class="btn" (click)="limpiarFiltros($event)">
+              <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
+                <i
+                  class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"
+                ></i>
+              </i>
+            </button>
+            }
             <div
               class="dropdown"
               data-dropdown="true"
@@ -211,7 +227,10 @@
                         {{ visita.destinatario }}
                       </span>
                       <span class="text-gray-600 text-xs font-medium">
-                        Número: {{ visita.numero }}
+                        Número: {{ visita.numero }} ·
+                        <span class="font-semibold text-sm text-gray-800">
+                          {{ visita.orden }}
+                        </span>
                       </span>
                     </div>
                     <div class="text-gray-700 text-xs max-w-[24rem]">
@@ -224,10 +243,13 @@
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
-                        <i class="ki-filled ki-arrow-up-down"></i>
-                        <span>Orden: {{ visita.orden }}</span>
                         <i class="ki-filled ki-time"></i>
-                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
+                        <span
+                          >Servicio: {{ visita.tiempo_servicio }}+{{
+                            visita.tiempo_trayecto | redondear : 1
+                          }}
+                          min</span
+                        >
                         <i class="ki-filled ki-geolocation mr-1"></i>
                         <span>Franja: {{ visita.franja_codigo }}</span>
                       </div>
@@ -312,6 +334,7 @@
               <tr>
                 <th>Placa</th>
                 <th>Capacidad</th>
+                <th>Tiempo</th>
                 <th>Franja</th>
                 <th></th>
               </tr>
@@ -321,6 +344,7 @@
               <tr>
                 <td>{{ vehiculo.vehiculo_placa }}</td>
                 <td>{{ vehiculo.vehiculo_capacidad }}</td>
+                <td>{{ vehiculo.vehiculo_tiempo }}</td>
                 <td>{{ vehiculo.vehiculo_franja_nombre }}</td>
                 <td>
                   <button (click)="eliminarFlota(vehiculo.id)">
@@ -388,9 +412,11 @@
                 </div>
                 <div>
                   <i class="ki-filled ki-time"></i>
-                  <span class="ml-1">{{
-                    selectedVisita?.tiempo_servicio
-                  }}</span>
+                  <span class="ml-1"
+                    >{{ selectedVisita?.tiempo_servicio }}+{{
+                      selectedVisita?.tiempo_trayecto | redondear : 1
+                    }} min</span
+                  >
                 </div>
               </div>
             </section>
@@ -403,7 +429,7 @@
 
 <app-modal-default
   titulo="Agregar flota"
-  size="medium"
+  size="large"
   [id]="'agregar-flota'"
   (emitirModalCerrado)="cerrarModal()"
 >
@@ -423,6 +449,13 @@
   id="tooltip_left"
 >
   Porcentaje de capacidad
+</div>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_tiempo"
+>
+  Porcentaje de tiempo
 </div>
 
 <app-modal-default
@@ -504,9 +537,7 @@
   titulo="Resumen pendiente"
 >
   <section *ngIf="toggleModalVisitaResumen$ | async" modal-body>
-    <app-visita-resumen-pediente
-    [resumen]="visitaResumen">
+    <app-visita-resumen-pediente [resumen]="visitaResumen">
     </app-visita-resumen-pediente>
   </section>
-
 </app-modal-default>
