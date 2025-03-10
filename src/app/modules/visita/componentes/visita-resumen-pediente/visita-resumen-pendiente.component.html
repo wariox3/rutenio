@@ -22,9 +22,15 @@
           <td class="px-2 py-1 text-left">{{ item.franja_codigo }}</td>
           <td class="px-2 py-1 text-right">{{ item.cantidad }}</td>
           <td class="px-2 py-1 text-right">{{ item.peso }}</td>
-          <td class="px-2 py-1 text-right">{{ item.tiempo }}</td>
-          <td class="px-2 py-1 text-right">{{ item.tiempo_servicio }}</td>
-          <td class="px-2 py-1 text-right">{{ item.tiempo_trayecto }}</td>
+          <td class="px-2 py-1 text-right">
+            {{ item.tiempo | redondear : 1 }}
+          </td>
+          <td class="px-2 py-1 text-right">
+            {{ item.tiempo_servicio | redondear : 1 }}
+          </td>
+          <td class="px-2 py-1 text-right">
+            {{ item.tiempo_trayecto | redondear : 1 }}
+          </td>
         </tr>
       </tbody>
     </table>

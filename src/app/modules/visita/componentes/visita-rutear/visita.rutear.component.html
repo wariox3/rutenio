@@ -246,7 +246,7 @@
                         <i class="ki-filled ki-time"></i>
                         <span
                           >Servicio: {{ visita.tiempo_servicio }}+{{
-                            visita.tiempo_trayecto
+                            visita.tiempo_trayecto | redondear:1
                           }}
                           min</span
                         >
