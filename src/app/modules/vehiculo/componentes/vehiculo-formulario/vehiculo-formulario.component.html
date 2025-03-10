@@ -33,17 +33,10 @@
 
         <div class="">
           <app-label>Franja</app-label>
-          <ng-select
-            [items]="franjaOpciones"
-            formControlName="franja"
-            bindLabel="nombre"
-            bindValue="id"
-            notFoundText="Sin elementos"
-            placeholder="Selecciona un elemento"
-            loadingText="Buscando..."
-            class="select2Custom"
-          >
-          </ng-select>
+          <app-input
+            [control]="formularioVehiculo.controls.franja_codigo"
+            [maxLenght]="6"
+          ></app-input>
         </div>
       </div>
 
@@ -58,9 +51,7 @@
         </div>
         <div>
           <app-label [required]="true">Tiempo</app-label>
-          <app-input
-            [control]="formularioVehiculo.controls.tiempo"
-          ></app-input>
+          <app-input [control]="formularioVehiculo.controls.tiempo"></app-input>
         </div>
       </div>
 

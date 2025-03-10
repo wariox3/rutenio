@@ -30,6 +30,14 @@ export const visitaRutearMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
+    // {
+    //   nombre: 'franja_codigo',
+    //   campoNombre: 'Franja código',
+    //   campoTipo: 'CharField',
+    //   visibleTabla: true,
+    //   visibleFiltro: true,
+    //   ordenable: false,
+    // },
     {
       nombre: 'estado_decodificado_alerta',
       campoNombre: 'Alerta',
