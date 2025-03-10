@@ -7,4 +7,5 @@ export interface Despacho {
   vehiculo_id: number;
   vehiculo_placa: string;
   estado_aprobado: boolean;
+  tiempo: number;
 }
