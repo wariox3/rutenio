@@ -1,8 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  standalone: true,
   name: 'redondear',
+  standalone: true,
 })
 export class RedondearPipe implements PipeTransform {
   transform(value: number, decimalPlaces: number = 0): number {
