@@ -290,9 +290,11 @@
                 </div>
                 <div>
                   <i class="ki-filled ki-time"></i>
-                  <span class="ml-1">{{
-                    visitaSeleccionada?.tiempo_servicio
-                  }}</span>
+                  <span class="ml-1"
+                    >{{ visitaSeleccionada?.tiempo_servicio }}+{{
+                      visitaSeleccionada?.tiempo_trayecto | redondear : 1
+                    }}</span
+                  >
                 </div>
               </div>
             </section>
