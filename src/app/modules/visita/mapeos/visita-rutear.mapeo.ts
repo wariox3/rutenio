@@ -12,12 +12,15 @@ export const visitaRutearMapeo: any = {
       ordenable: true,
     },
     {
-      nombre: 'franja_codigo',
+      nombre: 'franja_id',
       campoNombre: 'Franja',
-      campoTipo: 'CharField',
+      campoTipo: 'Fk',
       visibleTabla: true,
       visibleFiltro: true,
       ordenable: true,
+      esFk: true,
+      busquedaAvanzada: true,
+      modeloFk: 'RutFranja',
     },
     {
       nombre: 'estado_decodificado',

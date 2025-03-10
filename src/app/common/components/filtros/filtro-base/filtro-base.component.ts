@@ -593,7 +593,7 @@ export class FiltroBaseComponent extends General {
     let valorFiltro = '';
     if (propiedad.esFk) {
       valorFiltro =
-        propiedad.modeloFk.toLocaleLowerCase().substring(3) + '__id';
+        propiedad.modeloFk.toLocaleLowerCase().substring(3) + '_id';
     } else {
       if (propiedad.nombreFiltroRelacion) {
         valorFiltro = propiedad.nombreFiltroRelacion;
