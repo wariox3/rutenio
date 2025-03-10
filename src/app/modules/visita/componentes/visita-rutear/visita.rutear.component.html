@@ -246,7 +246,7 @@
                         <i class="ki-filled ki-time"></i>
                         <span
                           >Servicio: {{ visita.tiempo_servicio }}+{{
-                            visita.tiempo_trayecto | redondear:1
+                            visita.tiempo_trayecto | redondear : 1
                           }}
                           min</span
                         >
@@ -412,9 +412,11 @@
                 </div>
                 <div>
                   <i class="ki-filled ki-time"></i>
-                  <span class="ml-1">{{
-                    selectedVisita?.tiempo_servicio
-                  }}</span>
+                  <span class="ml-1"
+                    >{{ selectedVisita?.tiempo_servicio }}+{{
+                      selectedVisita?.tiempo_trayecto | redondear : 1
+                    }}</span
+                  >
                 </div>
               </div>
             </section>
