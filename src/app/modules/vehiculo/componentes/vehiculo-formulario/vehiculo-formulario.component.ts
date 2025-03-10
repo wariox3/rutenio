@@ -66,6 +66,7 @@ export default class VehiculoFormularioComponent
       Validators.compose([Validators.required, Validators.pattern('^[0-9]*$')])
     ),
     estado_activo: new FormControl(true),
+    tiempo: new FormControl(0),
     estado_asignado: new FormControl(false),
   });
 
@@ -84,6 +85,7 @@ export default class VehiculoFormularioComponent
       franja_codigo: this.informacionVehiculo.franja_codigo,
       franja_nombre: this.informacionVehiculo.franja_nombre,
       placa: this.informacionVehiculo.placa,
+      tiempo: this.informacionVehiculo.tiempo,
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
