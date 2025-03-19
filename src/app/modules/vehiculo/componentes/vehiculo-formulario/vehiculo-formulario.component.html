@@ -55,6 +55,15 @@
         </div>
       </div>
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <app-label>Usuario app</app-label>
+          <app-input-email
+            [control]="formularioVehiculo.controls.usuario_app"
+          ></app-input-email>
+        </div>
+      </div>
+
       <div class="mb-5">
         <div class="inline-block">
           <app-switch
