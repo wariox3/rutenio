@@ -24,6 +24,8 @@ import { GeneralService } from '../../../../common/services/general.service';
 import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -37,6 +39,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     SwitchComponent,
     LabelComponent,
     NgSelectModule,
+    InputEmailComponent,
   ],
   templateUrl: './vehiculo-formulario.component.html',
   styleUrl: './vehiculo-formulario.component.css',
@@ -54,7 +57,10 @@ export default class VehiculoFormularioComponent
 
   public franjaOpciones: AutocompletarFranja[];
   public formularioVehiculo = new FormGroup({
-    franja_codigo: new FormControl(''),
+    franja_codigo: new FormControl(
+      null,
+      cambiarVacioPorNulo.validar
+    ),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -66,6 +72,11 @@ export default class VehiculoFormularioComponent
     estado_activo: new FormControl(true),
     tiempo: new FormControl(0),
     estado_asignado: new FormControl(false),
+    usuario_app: new FormControl(null, [
+      Validators.maxLength(255),
+      Validators.email,
+      cambiarVacioPorNulo.validar,
+    ]),
   });
 
   ngOnInit(): void {
@@ -85,6 +96,7 @@ export default class VehiculoFormularioComponent
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
+      usuario_app: this.informacionVehiculo.usuario_app,
     });
   }
 
