@@ -23,6 +23,7 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { DespachoTabVisitaComponent } from "../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -33,7 +34,8 @@ import { VisitaService } from '../../../visita/servicios/visita.service';
     ModalDefaultComponent,
     GoogleMapsModule,
     RedondearPipe,
-  ],
+    DespachoTabVisitaComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,6 +90,8 @@ export default class TraficoListaComponent extends General implements OnInit {
 
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
+
+  selectedDespachoId: number | null = null;
 
   constructor() {
     super();
@@ -149,13 +153,20 @@ export default class TraficoListaComponent extends General implements OnInit {
     });
   }
 
-  abrirModalDetalleVisita() {
+  abrirModalDetalleVisita(despacho_id: number) {
+    this.selectedDespachoId = despacho_id;
     this.mostarModalDetalleVisita$.next(true);
+    
+    setTimeout(() => {
+      this.changeDetectorRef.detectChanges();
+    }, 0);
   }
 
   cerrarModalDetalleVisita() {
     this.mostarModalDetalleVisita$.next(false);
+    this.selectedDespachoId = null;
   }
+  
 
   abrirModal(despacho_id) {
     this.parametrosConsultaVisitas.filtros = [

@@ -15,7 +15,6 @@
             <th>Hora</th>
             <th>Progreso</th>
             <th></th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +32,6 @@
                     [style.width]="obtenerAnchoProgreso(despacho.estado, despacho.visitas_entregadas, despacho.visitas)">
                   </div>
                 </div>
-
                 <div class="text-xs text-gray-500 text-right">
                   <ng-container *ngIf="despacho.estado !== 'retrazado'; else retrasadoTemplate">
                     {{ despacho.visitas_entregadas }} / {{ despacho.visitas }}
@@ -42,14 +40,13 @@
                   <ng-template #retrasadoTemplate>
                     Visitas esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                     Entregadas: {{ despacho.visitas_entregadas }}
-                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas_entregadas_esperadas)
-                    }}%)
+                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas_entregadas_esperadas) }}%)
                   </ng-template>
                 </div>
               </div>
             </td>
-            <section class="flex flex-col items-end gap-2">
-              <div class="flex gap-2 items-center">
+            <td class="w-12">
+              <div class="flex items-center justify-end gap-2">
                 <div class="menu menu-default" data-menu="true">
                   <div class="menu-item" data-menu-item-placement="bottom-start" data-menu-item-toggle="dropdown"
                     data-menu-item-trigger="click">
@@ -60,10 +57,8 @@
                     </button>
                     <div class="menu-dropdown w-48 py-2">
                       <div class="menu-item" data-menu-dismiss="true">
-                        <button (click)="
-                          confirmarTerminarDespacho(despacho.id);
-                          $event.stopPropagation()
-                        " class="menu-link">
+                        <button (click)="confirmarTerminarDespacho(despacho.id); $event.stopPropagation()"
+                          class="menu-link">
                           <span class="menu-icon">
                             <i class="ki-filled ki-check-circle"></i>
                           </span>
@@ -90,8 +85,12 @@
                     </div>
                   </div>
                 </div>
+                <button class="btn btn-sm btn-icon btn-clear btn-light p-1"
+                  data-modal-toggle="#trafico-despacho-visitas" (click)="abrirModalDetalleVisita(despacho.id)">
+                  <i class="ki-filled ki-eye"></i>
+                </button>
               </div>
-            </section>
+            </td>
           </tr>
           }
         </tbody>
@@ -100,30 +99,14 @@
   </div>
 </div>
 
-<app-modal-default
-  size="large"
-  [id]="'trafico-ruta-modal'"
-  titulo="Ruta"
-  (emitirModalCerrado)="cerrarModal()"
-  (onOpen)="onModalOpened()"
-  #traficoRuta
->
+<app-modal-default size="large" [id]="'trafico-ruta-modal'" titulo="Ruta" (emitirModalCerrado)="cerrarModal()"
+  (onOpen)="onModalOpened()" #traficoRuta>
   <section *ngIf="toggleModal$ | async" modal-body>
     <div class="card-body h-full" style="height: 600px;">
-      <google-map 
-        height="100%" 
-        width="100%" 
-        [center]="center" 
-        [zoom]="zoom"
-        (mapInitialized)="onMapReady($event)"
-      >
+      <google-map height="100%" width="100%" [center]="center" [zoom]="zoom" (mapInitialized)="onMapReady($event)">
         @for (markerPosition of customMarkers; track $index) {
-        <map-marker
-          [position]="markerPosition.position"
-          #marker="mapMarker"
-          [label]="markerPosition.label"
-          (mapClick)="openInfoWindow(marker, $index - 1)"
-        ></map-marker>
+        <map-marker [position]="markerPosition.position" #marker="mapMarker" [label]="markerPosition.label"
+          (mapClick)="openInfoWindow(marker, $index - 1)"></map-marker>
         }
         <map-info-window>
           <section>
@@ -132,7 +115,7 @@
               <i class="ki-filled ki-geolocation"></i>
               <span class="ml-1">{{
                 visitaSeleccionada?.destinatario_direccion
-              }}</span>
+                }}</span>
             </div>
             <div>
               <span> # {{ visitaSeleccionada?.numero }} </span>
@@ -144,22 +127,24 @@
               </div>
               <div>
                 <i class="ki-filled ki-time"></i>
-                <span class="ml-1"
-                  >{{ visitaSeleccionada?.tiempo_servicio }}+{{
-                    visitaSeleccionada?.tiempo_trayecto | redondear : 1
+                <span class="ml-1">{{ visitaSeleccionada?.tiempo_servicio }}+{{
+                  visitaSeleccionada?.tiempo_trayecto | redondear : 1
                   }}
-                  min</span
-                >
+                  min</span>
               </div>
             </div>
           </section>
         </map-info-window>
-        <map-directions-renderer
-          *ngIf="directionsResults"
-          [directions]="directionsResults"
-          [options]="directionsRendererOptions"
-        ></map-directions-renderer>
+        <map-directions-renderer *ngIf="directionsResults" [directions]="directionsResults"
+          [options]="directionsRendererOptions"></map-directions-renderer>
       </google-map>
     </div>
   </section>
+</app-modal-default>
+
+<app-modal-default size="large" [id]="'trafico-despacho-visitas'" titulo="Visitas" #visitas, (emitirModalCerrado)="cerrarModalDetalleVisita()">
+  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
+    <app-despacho-tab-visita *ngIf="selectedDespachoId" [despachoId]="selectedDespachoId">
+    </app-despacho-tab-visita>
+    </section>
 </app-modal-default>
