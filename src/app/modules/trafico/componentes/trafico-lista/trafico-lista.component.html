@@ -1,209 +1,165 @@
-<div class="mt-2">
-  <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
-    <div class="flex flex-col space-y-5 h-full">
-      <div class="card flex-1 min-h-[16rem]">
-        <div class="card-header">
-          <h3 class="card-title">Despachos</h3>
-        </div>
-        <div
-          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
-        >
-          <table class="table w-full border-collapse">
-            <tbody>
-              @for (despacho of arrDespachos; track $index) {
-              <tr
-                class="cursor-pointer"
-                (click)="seleccionarDespacho(despacho)"
-                [ngClass]="{
-                  'bg-blue-50 border-l-4 border-blue-500':
-                    despachoSeleccionado === despacho
-                }"
-              >
-                <td class="p-3 w-full flex items-center justify-between">
-                  <div draggable="true">
-                    <div class="flex flex-col space-y-1">
-                      <span class="font-semibold text-gray-800 text-sm">
-                        {{ despacho.id }}
-                      </span>
-                      <div class="flex gap-1">
-                        <span class="text-gray-600 text-xs font-medium">
-                          Placa: {{ despacho.vehiculo_placa }}
-                        </span>
-                        <div class="text-xs font-medium text-gray-600">
-                          <i class="ki-filled ki-calendar-2 mr-1"></i>
-                          <span
-                            >Fecha:
-                            {{ despacho.fecha | date : "yyyy-MM-dd" }}</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
-                      <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
-                        <span>Peso: {{ despacho.peso }} kg</span>
-                        <i class="ki-filled ki-package"></i>
-                        <span>Volumen: {{ despacho.volumen }}</span>
-                        <i class="ki-filled ki-geolocation"></i>
-                        <span>Visitas: {{ despacho.visitas }} </span>
-                      </div>
-                    </div>
-                  </div>
-                  <section class="flex flex-col items-end gap-2">
-                    <div class="flex gap-2 items-center">
-                      <div class="menu menu-default" data-menu="true">
-                        <div
-                          class="menu-item"
-                          data-menu-item-placement="bottom-start"
-                          data-menu-item-toggle="dropdown"
-                          data-menu-item-trigger="click"
-                        >
-                          <button class="menu-toggle">
-                            <span class="menu-title">
-                              <i class="ki-filled ki-dots-vertical text-xl"></i>
-                            </span>
-                          </button>
-                          <div class="menu-dropdown w-48 py-2">
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                (click)="
-                                  confirmarTerminarDespacho(despacho.id);
-                                  $event.stopPropagation()
-                                "
-                                class="menu-link"
-                              >
-                                <span class="menu-icon">
-                                  <i class="ki-filled ki-check-circle"></i>
-                                </span>
-                                <span class="menu-title"> Terminar</span>
-                              </button>
-                            </div>
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                (click)="descargarPlanoSemantica(despacho.id)"
-                                class="menu-link"
-                              >
-                                <span class="menu-icon">
-                                  <i class="ki-filled ki-file-down"></i>
-                                </span>
-                                <span class="menu-title"> Plano semántica</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card flex-1 min-h-[16rem]">
-        <div class="card-header flex justify-between items-center">
-          <h3 class="card-title">Visitas por despacho</h3>
-        </div>
-        <div
-          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
-        >
-          <table class="table w-full border-collapse">
-            <tbody>
-              @for (visita of arrVisitasPorDespacho; track $index) {
-              <tr
-                class="cursor-pointer"
-                cdkDrag
-                [ngClass]="{
-                  'bg-blue-50 border-l-4 border-blue-500':
-                    visitaSeleccionada === visita
-                }"
-                (click)="evento(visita)"
-                [id]="'fila-' + visita.id"
-              >
-                <td class="p-3 w-full">
-                  <div class="flex flex-col space-y-1">
-                    <div class="flex justify-between items-center">
-                      <span class="font-semibold text-gray-800 text-sm">
-                        {{ visita.destinatario }}
-                      </span>
-                      <div>
-                        @if (visita.estado_entregado) {
-                        <span class="badge badge-success badge-xs"
-                          >Entregada</span
-                        >
-                        }
-                        <span class="text-gray-600 text-xs font-medium">
-                          Número: {{ visita.numero }}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="text-gray-700 text-xs max-w-[24rem]">
-                      <i class="ki-filled ki-geolocation-home"></i>
-                      {{ visita.destinatario_direccion }}
-                    </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
-                      <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
-                        <span>Peso: {{ visita.peso }} kg</span>
-                        <i class="ki-filled ki-arrow-up-down"></i>
-                        <span>Orden: {{ visita.orden }}</span>
-                        <i class="ki-filled ki-time"></i>
-                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
-                        <i class="ki-filled ki-geolocation mr-1"></i>
-                        <span>Franja: {{ visita.franja_codigo }}</span>
-                      </div>
-
-                      <section class="flex gap-1 items-center">
-                        <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
-                          data-modal-toggle="#detalle-visita"
-                          (click)="abrirModalDetalleVisita()"
-                        >
-                          <i class="ki-filled ki-eye text-xl"></i>
-                        </button>
-                      </section>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer flex justify-center">
-          <!-- <app-paginacion-default
-            [limite]="parametrosConsultaVisitas.limite"
-            [totalRegistros]="totalRegistrosVisitas"
-            [maxPaginasVisibles]="5"
-            (paginar)="paginar($event)"
-          ></app-paginacion-default> -->
-        </div>
+<div class="h-[70vh] flex flex-col p-4 bg-gray-50">
+  <div class="card flex-1 flex flex-col min-h-0">
+    <div class="card-header">
+      <h3 class="card-title">Despachos</h3>
+      <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
       </div>
     </div>
-    <div class="card h-[45rem]">
-      <div class="card-header">
-        <h3 class="card-title my-1.5">Mapa</h3>
-      </div>
-      <div class="card-body h-full"></div>
+    <div class="card-table flex-1 overflow-auto">
+      <table class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table">
+        <thead class="sticky top-0 bg-white z-10">
+          <tr>
+            <th>Id</th>
+            <th>Placa</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Progreso</th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (despacho of arrDespachos; track $index) {
+          <tr>
+            <td>{{ despacho.id }}</td>
+            <td>{{ despacho.vehiculo_placa }}</td>
+            <td>{{ despacho.fecha_salida | formatFecha:'Y-m-d' }}</td>
+            <td>{{ despacho.fecha_salida | formatFecha:'H:i' }}</td>
+            <td>
+              <div class="flex flex-col space-y-1">
+                <div class="progress-container bg-gray-200 rounded-full h-4 w-full">
+                  <div class="progress-bar h-4 rounded-full"
+                    [ngClass]="obtenerColorBarra(despacho.estado, despacho.visitas_entregadas, despacho.visitas)"
+                    [style.width]="obtenerAnchoProgreso(despacho.estado, despacho.visitas_entregadas, despacho.visitas)">
+                  </div>
+                </div>
+
+                <div class="text-xs text-gray-500 text-right">
+                  <ng-container *ngIf="despacho.estado !== 'retrazado'; else retrasadoTemplate">
+                    {{ despacho.visitas_entregadas }} / {{ despacho.visitas }}
+                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas) }}%)
+                  </ng-container>
+                  <ng-template #retrasadoTemplate>
+                    Visitas esperadas: {{ despacho.visitas_entregadas_esperadas }} |
+                    Entregadas: {{ despacho.visitas_entregadas }}
+                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas_entregadas_esperadas)
+                    }}%)
+                  </ng-template>
+                </div>
+              </div>
+            </td>
+            <section class="flex flex-col items-end gap-2">
+              <div class="flex gap-2 items-center">
+                <div class="menu menu-default" data-menu="true">
+                  <div class="menu-item" data-menu-item-placement="bottom-start" data-menu-item-toggle="dropdown"
+                    data-menu-item-trigger="click">
+                    <button class="menu-toggle">
+                      <span class="menu-title">
+                        <i class="ki-filled ki-dots-vertical text-xl"></i>
+                      </span>
+                    </button>
+                    <div class="menu-dropdown w-48 py-2">
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button (click)="
+                          confirmarTerminarDespacho(despacho.id);
+                          $event.stopPropagation()
+                        " class="menu-link">
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-check-circle"></i>
+                          </span>
+                          <span class="menu-title"> Terminar</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button (click)="descargarPlanoSemantica(despacho.id)" class="menu-link">
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-file-down"></i>
+                          </span>
+                          <span class="menu-title"> Plano semántica</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button class="menu-link" data-modal-toggle="#trafico-ruta-modal"
+                          (click)="abrirModal(despacho.id)">
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery-geolocation"></i>
+                          </span>
+                          <span class="menu-title"> Ruta</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
 <app-modal-default
-  size="medium"
-  [id]="'detalle-visita'"
-  titulo="Visita"
-  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+  size="large"
+  [id]="'trafico-ruta-modal'"
+  titulo="Ruta"
+  (emitirModalCerrado)="cerrarModal()"
+  (onOpen)="onModalOpened()"
+  #traficoRuta
 >
-  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
-    <app-visita-rutear-detalle
-      [visita]="visitaSeleccionada"
-    ></app-visita-rutear-detalle>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <div class="card-body h-full" style="height: 600px;">
+      <google-map 
+        height="100%" 
+        width="100%" 
+        [center]="center" 
+        [zoom]="zoom"
+        (mapInitialized)="onMapReady($event)"
+      >
+        @for (markerPosition of customMarkers; track $index) {
+        <map-marker
+          [position]="markerPosition.position"
+          #marker="mapMarker"
+          [label]="markerPosition.label"
+          (mapClick)="openInfoWindow(marker, $index - 1)"
+        ></map-marker>
+        }
+        <map-info-window>
+          <section>
+            <p class="font-bold">{{ visitaSeleccionada?.destinatario }}</p>
+            <div>
+              <i class="ki-filled ki-geolocation"></i>
+              <span class="ml-1">{{
+                visitaSeleccionada?.destinatario_direccion
+              }}</span>
+            </div>
+            <div>
+              <span> # {{ visitaSeleccionada?.numero }} </span>
+            </div>
+            <div class="mt-2 flex gap-2 items-center">
+              <div>
+                <i class="ki-filled ki-package"></i>
+                <span class="ml-1">{{ visitaSeleccionada?.peso }}</span>
+              </div>
+              <div>
+                <i class="ki-filled ki-time"></i>
+                <span class="ml-1"
+                  >{{ visitaSeleccionada?.tiempo_servicio }}+{{
+                    visitaSeleccionada?.tiempo_trayecto | redondear : 1
+                  }}
+                  min</span
+                >
+              </div>
+            </div>
+          </section>
+        </map-info-window>
+        <map-directions-renderer
+          *ngIf="directionsResults"
+          [directions]="directionsResults"
+          [options]="directionsRendererOptions"
+        ></map-directions-renderer>
+      </google-map>
+    </div>
   </section>
 </app-modal-default>
