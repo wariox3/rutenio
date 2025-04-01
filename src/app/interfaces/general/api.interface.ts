@@ -10,6 +10,7 @@ export interface RespuestaGeneralLista<T> {
       ordenamientos: any,
       limite_conteo: number;
       modelo: string;
+      serializador?: string
   }
   
   export interface Listafiltros {
