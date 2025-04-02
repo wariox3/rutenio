@@ -8,3 +8,22 @@
   top: 0;
   z-index: 1;
 }
+
+/* Asegurar que el texto sea legible */
+.font-bold {
+  font-weight: 700;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+/* Colores mejorados */
+.bg-green-500 {
+  background-color: #10b981;
+}
+
+.bg-red-500 {
+  background-color: #f43f5e;
+}
+
+.bg-green-100 {
+  background-color: #dcfce7;
+}

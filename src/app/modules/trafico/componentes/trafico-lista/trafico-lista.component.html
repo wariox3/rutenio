@@ -1,8 +1,12 @@
-<div class="h-[70vh] flex flex-col p-4 bg-gray-50">
+<div class="h-[70vh] flex flex-col p-1">
   <div class="card flex-1 flex flex-col min-h-0">
-    <div class="card-header">
-      <h3 class="card-title">Despachos</h3>
-      <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
+    <div class="card-header flex justify-between">
+      <h3 class="card-title my-[8px]">Despachos</h3>
+      <div>
+        <button class="btn btn-primary">
+          <i class="ki-filled ki-delivery-time"></i>
+          Ubicación actual 
+        </button>
       </div>
     </div>
     <div class="card-table flex-1 overflow-auto">
@@ -26,21 +30,30 @@
             <td>{{ despacho.fecha_salida | formatFecha:'H:i' }}</td>
             <td>
               <div class="flex flex-col space-y-1">
-                <div class="progress-container bg-gray-200 rounded-full h-4 w-full">
-                  <div class="progress-bar h-4 rounded-full"
+                <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
+                  <!-- Fondo difuminado (todo el ancho) -->
+                  <div class="absolute h-4 rounded-full w-full"
+                    [ngClass]="{
+                      'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
+                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas > 0,
+                      'bg-gray-400/20': despacho.estado === 'tiempo' && despacho.visitas_entregadas === 0
+                    }">
+                  </div>
+                  <!-- Barra de progreso (sólida) -->
+                  <div class="progress-bar h-4 rounded-full absolute"
                     [ngClass]="obtenerColorBarra(despacho.estado, despacho.visitas_entregadas, despacho.visitas)"
                     [style.width]="obtenerAnchoProgreso(despacho.estado, despacho.visitas_entregadas, despacho.visitas)">
                   </div>
                 </div>
                 <div class="text-xs text-gray-500 text-right">
                   <ng-container *ngIf="despacho.estado !== 'retrazado'; else retrasadoTemplate">
-                    {{ despacho.visitas_entregadas }} / {{ despacho.visitas }}
+                    Entregadas {{ despacho.visitas_entregadas }} / {{ despacho.visitas }}
                     ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas) }}%)
                   </ng-container>
                   <ng-template #retrasadoTemplate>
-                    Visitas esperadas: {{ despacho.visitas_entregadas_esperadas }} |
-                    Entregadas: {{ despacho.visitas_entregadas }}
-                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas_entregadas_esperadas) }}%)
+                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
+                    Entregadas: {{ despacho.visitas_entregadas }} / {{despacho.visitas}}
+                    ({{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas) }}%)
                   </ng-template>
                 </div>
               </div>
