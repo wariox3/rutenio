@@ -26,7 +26,7 @@ export class DespachoTabVisitaComponent extends General implements OnInit {
   private baseParametrosConsulta: Omit<ParametrosConsulta, 'filtros'> = {
     limite: 50,
     desplazar: 0,
-    ordenamientos: ['id'],
+    ordenamientos: ['orden'],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };

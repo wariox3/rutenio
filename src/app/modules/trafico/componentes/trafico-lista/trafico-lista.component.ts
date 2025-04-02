@@ -50,8 +50,10 @@ export default class TraficoListaComponent extends General implements OnInit, On
   private destroy$ = new Subject<void>();
 
   public visitaSeleccionada: Visita;
+  public despachoSeleccionado: Despacho;
   public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalUbicacion$ = new BehaviorSubject(false);
 
   customMarkers: any[] = [];
   directionsRendererOptions = { suppressMarkers: true };
@@ -60,7 +62,7 @@ export default class TraficoListaComponent extends General implements OnInit, On
     lat: 6.200713725811437,
     lng: -75.58609508555918,
   };
-  zoom = 8;
+  zoom = 11;
   marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [];
   polylineOptions: google.maps.PolylineOptions = {
     strokeColor: '#FF0000',
@@ -86,6 +88,8 @@ export default class TraficoListaComponent extends General implements OnInit, On
   arrVisitasPorDespacho: Visita[] = [];
   selectedDespachoId: number | null = null;
   private map: google.maps.Map;
+  arrRegistros: []
+  selectedMarkerInfo: any;
 
   constructor() {
     super();
@@ -173,11 +177,17 @@ export default class TraficoListaComponent extends General implements OnInit, On
     this.consultarVisitas(despacho_id).subscribe((respuesta) => {
       this.arrVisitasPorDespacho = respuesta.registros;
       if (this.arrVisitasPorDespacho.length > 0) {
-        this.mostrarMapa();
+        this.mostrarMapa(this.arrVisitasPorDespacho, true, false);
       }
       this.toggleModal$.next(true);
       this.changeDetectorRef.detectChanges();
     });
+  }
+
+  abrirModalUbicacion() {
+      this.mostrarMapa(this.arrDespachos, false, true);
+      this.toggleModalUbicacion$.next(true);
+      this.changeDetectorRef.detectChanges();
   }
 
   cerrarModal() {
@@ -186,8 +196,8 @@ export default class TraficoListaComponent extends General implements OnInit, On
   }
 
   obtenerColorBarra(estado: string, entregadas: number, totales: number): string {
-    if (estado === 'tiempo' && entregadas === 0) {
-      return 'bg-gray-400';
+    if (estado === 'tiempo') {
+      return 'bg-green-500';
     }
     return (estado === 'retrazado' || entregadas === 0) ? 'bg-red-500' : 'bg-green-500';
   }
@@ -206,29 +216,37 @@ export default class TraficoListaComponent extends General implements OnInit, On
     this.infoWindow.open(marker);
   }
 
-  mostrarMapa() {
-    if (!this.arrVisitasPorDespacho?.length) {
-      console.error('No hay visitas para mostrar en el mapa');
-      return;
-    }
+  openInfoWindowUbicacion(marker: MapMarker, index: number) {
+    this.despachoSeleccionado = this.arrDespachos[index];
+    this.infoWindow.open(marker);
+  }
 
+  mostrarMapa(arrRegistros, calcular_ruta, index_personalizado) {
     this.customMarkers = [];
     this.marcarPosicionesVisitasOrdenadas = [
       { lat: 6.200713725811437, lng: -75.58609508555918 }
     ];
-
-    this.arrVisitasPorDespacho.forEach((visita, index) => {
-      if (visita.latitud && visita.longitud) {
-        const position = { lat: visita.latitud, lng: visita.longitud };
+  
+    arrRegistros.forEach((registro, index) => {
+      if (registro.latitud && registro.longitud) {
+        const position = { lat: registro.latitud, lng: registro.longitud };
+        let label;
+        
+        if (!index_personalizado) {
+          label = (index + 1).toString();
+        } else {
+          label = registro.vehiculo_placa;
+        }
+        
         this.marcarPosicionesVisitasOrdenadas.push(position);
-        this.addMarker(position, (index + 1).toString());
+        this.addMarker(position, label, registro);
       }
     });
-
-    if (this.marcarPosicionesVisitasOrdenadas.length >= 2) {
+  
+    if (this.marcarPosicionesVisitasOrdenadas.length >= 2 && calcular_ruta) {
       this.calcularRuta();
     }
-
+  
     this.mostrarMapaFlag = true;
     this.changeDetectorRef.detectChanges();
   }
@@ -265,16 +283,20 @@ export default class TraficoListaComponent extends General implements OnInit, On
       });
   }
 
-  addMarker(position: { lat: number; lng: number }, label: string) {
+  addMarker(position: { lat: number; lng: number }, label: string, registroData: any) {
     this.customMarkers.push({
       position,
       label: {
         text: label,
-        color: '#FFFFFF',
+        color: '#000000',
         fontWeight: 'bold',
-        fontSize: '14px'
+        fontSize: '12px'
       },
-      title: `Marker ${label}`
+      title: `Marker ${label}`,
+      infoContent: {
+        titulo: `Visita #${label}`,
+        datosVisita: registroData
+      }
     });
   }
 

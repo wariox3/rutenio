@@ -3,9 +3,9 @@
     <div class="card-header flex justify-between">
       <h3 class="card-title my-[8px]">Despachos</h3>
       <div>
-        <button class="btn btn-primary">
+        <button class="btn btn-primary" (click)="abrirModalUbicacion()" data-modal-toggle="#trafico-ubicacion-actual">
           <i class="ki-filled ki-delivery-time"></i>
-          Ubicación actual 
+          Ubicación actual
         </button>
       </div>
     </div>
@@ -32,11 +32,9 @@
               <div class="flex flex-col space-y-1">
                 <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
                   <!-- Fondo difuminado (todo el ancho) -->
-                  <div class="absolute h-4 rounded-full w-full"
-                    [ngClass]="{
+                  <div class="absolute h-4 rounded-full w-full" [ngClass]="{
                       'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
-                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas > 0,
-                      'bg-gray-400/20': despacho.estado === 'tiempo' && despacho.visitas_entregadas === 0
+                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0,
                     }">
                   </div>
                   <!-- Barra de progreso (sólida) -->
@@ -119,31 +117,42 @@
       <google-map height="100%" width="100%" [center]="center" [zoom]="zoom" (mapInitialized)="onMapReady($event)">
         @for (markerPosition of customMarkers; track $index) {
         <map-marker [position]="markerPosition.position" #marker="mapMarker" [label]="markerPosition.label"
-          (mapClick)="openInfoWindow(marker, $index - 1)"></map-marker>
+          (mapClick)="openInfoWindow(marker, $index)"></map-marker>
         }
         <map-info-window>
-          <section>
-            <p class="font-bold">{{ visitaSeleccionada?.destinatario }}</p>
-            <div>
-              <i class="ki-filled ki-geolocation"></i>
-              <span class="ml-1">{{
-                visitaSeleccionada?.destinatario_direccion
-                }}</span>
+          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+            <p class="font-bold text-gray-800 text-lg">{{ visitaSeleccionada?.destinatario }}</p>
+            
+            <!-- Dirección -->
+            <div class="flex items-center text-gray-700">
+              <i class="ki-filled ki-geolocation text-blue-500 text-lg"></i>
+              <span class="ml-2">{{ visitaSeleccionada?.destinatario_direccion }}</span>
             </div>
-            <div>
-              <span> # {{ visitaSeleccionada?.numero }} </span>
+          
+            <div class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium mt-1">
+              #{{ visitaSeleccionada?.numero }}
             </div>
-            <div class="mt-2 flex gap-2 items-center">
-              <div>
-                <i class="ki-filled ki-package"></i>
-                <span class="ml-1">{{ visitaSeleccionada?.peso }}</span>
+          
+            <div class="border-t border-gray-100 my-2"></div>
+          
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center">
+                <i class="ki-filled ki-package text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Peso</p>
+                  <p class="font-semibold">{{ visitaSeleccionada?.peso }}</p>
+                </div>
               </div>
-              <div>
-                <i class="ki-filled ki-time"></i>
-                <span class="ml-1">{{ visitaSeleccionada?.tiempo_servicio }}+{{
-                  visitaSeleccionada?.tiempo_trayecto | redondear : 1
-                  }}
-                  min</span>
+          
+              <div class="flex items-center">
+                <i class="ki-filled ki-time text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Tiempo total</p>
+                  <p class="font-semibold">
+                    {{ visitaSeleccionada?.tiempo_servicio }} + 
+                    {{ visitaSeleccionada?.tiempo_trayecto | redondear : 1 }} min
+                  </p>
+                </div>
               </div>
             </div>
           </section>
@@ -155,9 +164,63 @@
   </section>
 </app-modal-default>
 
-<app-modal-default size="large" [id]="'trafico-despacho-visitas'" titulo="Visitas" #visitas, (emitirModalCerrado)="cerrarModalDetalleVisita()">
+<app-modal-default size="large" [id]="'trafico-ubicacion-actual'" titulo="Ubicación actual"
+  (emitirModalCerrado)="cerrarModal()" (onOpen)="onModalOpened()" #traficoUbicacionActual>
+  <section *ngIf="toggleModalUbicacion$ | async" modal-body>
+    <div class="card-body h-full" style="height: 600px;">
+      <google-map height="100%" width="100%" [center]="center" [zoom]="zoom" (mapInitialized)="onMapReady($event)">
+        @for (markerPosition of customMarkers; track $index) {
+        <map-marker [position]="markerPosition.position" #marker="mapMarker" [label]="markerPosition.label"
+          (mapClick)="openInfoWindowUbicacion(marker, $index)"></map-marker>
+        }
+        <map-info-window>
+          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+
+            <div class="flex items-center text-gray-700">
+              <i class="ki-filled ki-delivery text-blue-500 text-lg"></i>
+              <span class="ml-2 font-medium">Placa:</span>
+              <span class="ml-1 font-semibold">{{ despachoSeleccionado?.vehiculo_placa }}</span>
+            </div>
+          
+            <div class="flex items-center">
+              <i class="ki-filled ki-watch text-blue-500 text-lg"></i>
+              <span class="ml-2 font-medium">Estado:</span>
+              <span class="ml-1 font-semibold capitalize">{{ despachoSeleccionado?.estado }}</span>
+            </div>
+          
+            <div class="border-t border-gray-100 my-2"></div>
+          
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center">
+                <i class="ki-filled ki-parcel text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Visitas</p>
+                  <p class="font-semibold">{{ despachoSeleccionado?.visitas }}</p>
+                </div>
+              </div>
+          
+              <div class="flex items-center">
+                <i class="ki-filled ki-time text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Tiempo total</p>
+                  <p class="font-semibold">
+                    {{ despachoSeleccionado?.tiempo_servicio }} + 
+                    {{ despachoSeleccionado?.tiempo_trayecto | redondear : 1 }} min
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </map-info-window>
+      </google-map>
+    </div>
+  </section>
+</app-modal-default>
+
+<app-modal-default size="large" [id]="'trafico-despacho-visitas'" titulo="Visitas" #visitas,
+  (emitirModalCerrado)="cerrarModalDetalleVisita()">
   <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
     <app-despacho-tab-visita *ngIf="selectedDespachoId" [despachoId]="selectedDespachoId">
     </app-despacho-tab-visita>
-    </section>
+  </section>
 </app-modal-default>
