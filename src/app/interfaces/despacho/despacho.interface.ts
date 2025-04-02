@@ -14,4 +14,6 @@ export interface Despacho {
   tiempo_trayecto: number;
   tiempo_servicio: number;
   fecha_salida: string;
+  latitud: string;
+  longitud: string;
 }
