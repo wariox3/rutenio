@@ -16,4 +16,9 @@ export default [
     loadComponent: () =>
       import('./componentes/visita-nuevo/visita-nuevo.component'),
   },
+  {
+    path: 'detalle/:id',
+    loadComponent: () =>
+      import('./componentes/visita-detalle/visita-detalle.component'),
+  },
 ] as Routes;

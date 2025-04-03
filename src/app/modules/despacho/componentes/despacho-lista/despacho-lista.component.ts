@@ -46,7 +46,7 @@ export default class DespachoListaComponent extends General implements OnInit {
       );
   }
 
-  detalleVehiculo(id: number) {
+  detalleDespacho(id: number) {
     this.router.navigateByUrl(`/admin/despacho/detalle/${id}`);
   }
 }
