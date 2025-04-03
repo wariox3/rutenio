@@ -16,4 +16,5 @@ export interface Despacho {
   fecha_salida: string;
   latitud: string;
   longitud: string;
+  entrega_id: number;
 }
