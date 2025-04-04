@@ -1,0 +1,61 @@
+@if (visualizarAlerta === true) {
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+      <div class="flex items-start">
+        <!-- Icono -->
+        <div class="flex-shrink-0">
+          <i class="ki-duotone ki-shield-tick text-2xl text-blue-500 mr-3">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        
+        <!-- Contenido -->
+        <div class="flex-1 flex items-center justify-between">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-sm font-semibold text-blue-800" translate="FORMULARIOS.MENSAJES.COMUNES.ALERTASUSPENCIONTITULO"></h4>
+            <p class="mt-1 text-sm text-blue-700">
+                Se ha generado el pedido correspondiente al consumo de tu cuenta y tienes un saldo de: 
+              <strong class="font-bold">${{ usuarioVrSaldo | number }}</strong>
+              disponible para pago. Fecha límite:
+              <strong class="font-bold">{{ usuarioFechaLimitePago | date : "YYYY-MM-dd" }}</strong>
+            </p>
+          </div>
+          <div class="ml-4 flex-shrink-0">
+            <button (click)="navegar()" class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Pagar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+    
+    <!-- Alerta de Fecha Límite -->
+    @if (usuarioVrSaldo > 0 && usuarioFechaLimitePago < hoy) {
+    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+      <div class="flex items-start">
+        <!-- Icono -->
+        <div class="flex-shrink-0">
+          <i class="ki-duotone ki-information-3 text-2xl text-red-500 mr-3">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+        
+        <!-- Contenido -->
+        <div class="flex-1">
+          <h4 class="text-sm font-semibold text-red-800">
+            Se cumplió la fecha límite de su pago
+          </h4>
+          <p class="mt-1 text-sm text-red-700">
+            Por favor cancele el saldo pendiente para seguir disfrutando de
+            nuestros servicios, con este importe aseguramos la disponibilidad de
+            nuestra infraestructura y la remuneración de nuestros chicos. Si tiene
+            alguna duda puede comunicarse por WhatsApp 3205015059.
+          </p>
+        </div>
+      </div>
+    </div>
+    }

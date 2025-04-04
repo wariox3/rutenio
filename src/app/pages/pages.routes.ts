@@ -16,6 +16,18 @@ export default [
     ],
   },
   {
+    path: 'facturacion',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./facturacion-layout/facturacion-layout.component'),
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('../modules/facturacion/facturacion.routes'),
+      },
+    ],
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

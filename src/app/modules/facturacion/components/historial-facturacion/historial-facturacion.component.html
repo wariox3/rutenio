@@ -1,0 +1,30 @@
+<div class="table-responsive">
+    <table class="table table-row-bordered align-middle gy-4 gs-9">
+      <thead
+        class="border-bottom border-gray-200 fs-6 text-gray-600 fw-bold bg-light bg-opacity-75"
+      >
+        <tr class="fw-bold text-gray-800">
+          <th>Id</th>
+          <th>Tipo</th>
+          <th>Fecha</th>
+          <th>Total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let movimiento of movientos">
+          <td>{{ movimiento.id }}</td>
+          <td>{{ movimiento.tipo }}</td>
+          <td>{{ movimiento.fecha | formatFecha:'Y-m-d'  }}</td>
+          <td class="text-end">{{ movimiento.vr_total | convertir_valor_moneda  }}</td>
+          <td class="text-center">
+            <i
+                class="ki-filled ki-cloud-download"
+              (click)="descargarDocumento(movimiento.id)"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
