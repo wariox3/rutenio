@@ -5,9 +5,7 @@ import { General } from '../../../../common/clases/general';
 import { VisitaService } from '../../servicios/visita.service';
 import { Visita } from '../../interfaces/visita.interface';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
-import { ModalDefaultComponent } from "../../../../common/components/ui/modals/modal-default/modal-default.component";
-import { BehaviorSubject } from 'rxjs';
-import { ArchivosComponent } from "../../../../common/components/botonera-opciones/botonera-opciones.component";
+import { BotoneraOpcionesComponent } from "../../../../common/components/botonera-opciones/botonera-opciones.component";
 
 @Component({
   selector: 'app-visita-detalle',
@@ -16,8 +14,7 @@ import { ArchivosComponent } from "../../../../common/components/botonera-opcion
     CommonModule,
     RouterLink,
     FormatFechaPipe,
-    ModalDefaultComponent,
-    ArchivosComponent
+    BotoneraOpcionesComponent
 ],
   templateUrl: './visita-detalle.component.html',
   styleUrl: './visita-detalle.component.css',
@@ -25,8 +22,6 @@ import { ArchivosComponent } from "../../../../common/components/botonera-opcion
 })
 export default class VisitaDetalleComponent extends General implements OnInit { 
   private visitaService = inject(VisitaService)
-
-  public toggleModalArchivos$ = new BehaviorSubject(false);
 
   visitaId : number
 
@@ -78,12 +73,4 @@ export default class VisitaDetalleComponent extends General implements OnInit {
     );
   }
   
-  abrirModalArchivos() {
-    this.toggleModalArchivos$.next(true);
-  }
-
-  cerrarModalArchivos() {
-    this.toggleModalArchivos$.next(false);
-  }
-
 }
