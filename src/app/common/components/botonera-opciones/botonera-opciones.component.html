@@ -1,0 +1,29 @@
+<div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
+  <button class="dropdown-toggle btn btn-secondary flex items-center">Opciones
+  </button>
+  <div class="dropdown-content w-full max-w-56 py-2">
+    <div class="menu menu-default flex flex-col w-full">
+      <div class="menu-item">
+        <button class="menu-link" data-modal-toggle="#archivos" (click)="abrirModalArchivos()" >
+          <span class="menu-icon">
+            <i class="ki-filled ki-document"></i>
+          </span>
+          <span class="menu-title">Archivos</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para archivos -->
+<app-modal-default
+  titulo="Archivos"
+  size="large"
+  [id]="'archivos'"
+  (emitirModalCerrado)="cerrarModalArchivos()"
+>
+  <section *ngIf="toggleModalArchivos$ | async" modal-body>
+    <app-archivos [registroId]="registroId" [modelo]="modelo">
+    </app-archivos>
+  </section>
+</app-modal-default>

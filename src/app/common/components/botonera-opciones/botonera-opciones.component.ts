@@ -1,33 +1,33 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ModalDefaultComponent } from "../ui/modals/modal-default/modal-default.component";
+import { BehaviorSubject } from 'rxjs';
+import { ArchivosComponent } from "../archivos/archivos.component";
 
 @Component({
   selector: 'app-botonera-opciones',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="dropdown" data-dropdown="true" data-dropdown-trigger="click" data-dropdown-dismiss="true">
-      <button class="dropdown-toggle btn btn-light">Opciones
-      </button>
-      <div class="dropdown-content w-full max-w-56 py-2">
-        <div class="menu menu-default flex flex-col w-full">
-          <div class="menu-item">
-            <button class="menu-link" (click)="abrirModalArchivos.emit()">
-              <span class="menu-icon">
-                <i class="ki-filled ki-document"></i>
-              </span>
-              <span class="menu-title">Archivos</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
+  imports: [CommonModule, ModalDefaultComponent, ArchivosComponent],
+  templateUrl: './botonera-opciones.component.html',
   styleUrls: ['./botonera-opciones.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ArchivosComponent {
+export class BotoneraOpcionesComponent implements OnInit {
+
+  public toggleModalArchivos$ = new BehaviorSubject(false);
+  
   @Input() modelo: string = '';
   @Input() registroId: number = 0;
-  @Output() abrirModalArchivos = new EventEmitter<void>();
+
+  ngOnInit(): void {
+    
+  }
+
+  abrirModalArchivos() {
+    this.toggleModalArchivos$.next(true);
+  }
+
+  cerrarModalArchivos() {
+    this.toggleModalArchivos$.next(false);
+  }
 }

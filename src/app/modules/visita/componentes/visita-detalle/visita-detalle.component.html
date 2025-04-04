@@ -4,6 +4,10 @@
       <i class="ki-filled ki-arrow-left mr-1"></i>
       Atrás
     </button>
+    <app-botonera-opciones 
+    [modelo]="'RutVisita'" 
+    [registroId]="visita().id"
+  ></app-botonera-opciones>
   </div>
 </div>
 
@@ -11,11 +15,6 @@
   <div class="card-table">
     <div class="card-header">
       <h3 class="card-title">Detalle visita - {{ visita().id }}</h3>
-      <app-botonera-opciones 
-      [modelo]="'Visita'" 
-      [registroId]="visita().id"
-      (abrirModalArchivos)="abrirModalArchivos()"
-    ></app-botonera-opciones>
     </div>
     <div class="card-body">
       <div class="overflow-x-auto">
@@ -98,21 +97,3 @@
   </div>
 </div>
 
-<!-- Modal para archivos -->
-<app-modal-default
-  titulo="Archivos de Visita #{{ visita().id }}"
-  size="large"
-  [id]="'archivos-visita'"
-  (emitirModalCerrado)="cerrarModalArchivos()"
->
-  <section *ngIf="toggleModalArchivos$ | async" modal-body>
-    <!-- Contenido del modal de archivos -->
-    <p>Gestor de archivos para Visita ID: {{ visita().id }}</p>
-    <!-- 
-      <app-gestor-archivos
-        [modelo]="'Visita'"
-        [registroId]="visita().id"
-      ></app-gestor-archivos>
-    -->
-  </section>
-</app-modal-default>

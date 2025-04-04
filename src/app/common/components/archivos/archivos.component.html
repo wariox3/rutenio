@@ -1,0 +1,33 @@
+<table id="tableDetalles" class="table table-bordered table-sm">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="bg-gray-100" style="width: 50px">Id</th>
+      <th class="bg-gray-100">Fecha</th>
+      <th class="bg-gray-100">Nombre</th>
+      <th class="bg-gray-100">Tamaño</th>
+      <th class="bg-gray-100" style="width: 50px"></th>
+      <th class="bg-gray-100" style="width: 50px"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (archivo of listaArchivos(); track $index) {
+      <tr>
+        <td class="w-40px">{{ archivo.id }}</td>
+        <td>{{ archivo.fecha }}</td>
+        <td>{{ archivo.nombre }}</td>
+        <td>{{ archivo.tamano }}</td>
+        <td>
+          <button
+            style="padding-top: 0; padding-bottom: 0; font-weight: bold"
+            (click)="descargarArchivo(archivo)"
+            class="btn"
+          >
+            <i class="ki-filled ki-cloud-download"></i>
+          </button>
+        </td>
+        <td class="text-center">
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
