@@ -1,11 +1,24 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { HeaderBasicComponent } from '../../layouts/header-basic/header-basic.component';
+import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
+import { FooterComponent } from '../../layouts/footer/footer.component';
+import { RouterOutlet } from '@angular/router';
+import { AlertaSuspensionComponent } from "../../common/components/alerta-suspension/alerta-suspension.component";
 
 @Component({
   selector: 'app-facturacion-layout',
   standalone: true,
-  imports: [],
-  template: `<p>facturacion-layout works!</p>`,
-  styleUrl: './facturacion-layout.component.css',
+  imports: [
+    RouterOutlet,
+    FooterComponent,
+    SearchModalComponent,
+    HeaderBasicComponent,
+    AlertaSuspensionComponent
+],
+  templateUrl: './facturacion-layout.component.html',
+  styleUrl: './facturacion-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FacturacionLayoutComponent { }
+export default class FacturacionLayoutComponent implements OnInit {
+  ngOnInit(): void {}
+}
