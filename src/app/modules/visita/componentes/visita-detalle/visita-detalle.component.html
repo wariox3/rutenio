@@ -1,0 +1,99 @@
+<div class="flex items-center mb-4">
+  <div class="btn-group gap-1">
+    <button class="btn btn-secondary flex items-center" [routerLink]="['/admin/visita/lista']">
+      <i class="ki-filled ki-arrow-left mr-1"></i>
+      Atrás
+    </button>
+    <app-botonera-opciones 
+    [modelo]="'RutVisita'" 
+    [registroId]="visita().id"
+  ></app-botonera-opciones>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-table">
+    <div class="card-header">
+      <h3 class="card-title">Detalle visita - {{ visita().id }}</h3>
+    </div>
+    <div class="card-body">
+      <div class="overflow-x-auto">
+        <table class="table-auto border border-gray-300 text-sm w-full">
+          <tbody>
+            <tr class="border-b border-gray-300">
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Número
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().numero }}
+              </td>
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Fecha
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().fecha | formatFecha:'Y-m-d' }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Destinatario
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().destinatario }}
+              </td>
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Dirección
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().destinatario_direccion }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Teléfono
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().destinatario_telefono }}
+              </td>
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Correo
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().destinatario_correo }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Documento
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().documento }}
+              </td>
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Franja
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().franja_nombre }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Peso
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().peso }}
+              </td>
+              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+                Volumen
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().volumen }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

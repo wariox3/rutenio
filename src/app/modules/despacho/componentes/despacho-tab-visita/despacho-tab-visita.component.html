@@ -1,0 +1,24 @@
+<table class="table-auto border border-gray-300 text-sm w-full">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">ID</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Fecha</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Documento</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Destinatario</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Dirección</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Teléfono</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Estado entregado</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let visita of visitas()" class="border-b border-gray-300">
+            <td class="px-4 py-2 border border-gray-300">{{ visita.id }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.fecha | formatFecha:'Y-m-d' }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.numero }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.destinatario }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.destinatario_direccion }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.destinatario_telefono }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ visita.estado_entregado | validarBooleano }}</td>
+        </tr>
+    </tbody>
+</table>
