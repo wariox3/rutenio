@@ -25,6 +25,7 @@ import {
 } from '@angular/google-maps';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { DespachoTabVisitaComponent } from "../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component";
+import { DespachoTabUbicacionComponent } from "../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -35,8 +36,9 @@ import { DespachoTabVisitaComponent } from "../../../despacho/componentes/despac
     ModalDefaultComponent,
     GoogleMapsModule,
     RedondearPipe,
-    DespachoTabVisitaComponent
-  ],
+    DespachoTabVisitaComponent,
+    DespachoTabUbicacionComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -90,6 +92,7 @@ export default class TraficoListaComponent extends General implements OnInit, On
   private map: google.maps.Map;
   arrRegistros: []
   selectedMarkerInfo: any;
+  activeTab: string = 'visitas';
 
   constructor() {
     super();

@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { Despacho } from '../../interfaces/despacho.interface';
 import { DespachoTabVisitaComponent } from "../despacho-tab-visita/despacho-tab-visita.component";
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despacho-tab-ubicacion.component";
 
 @Component({
   selector: 'app-despacho-detalle',
@@ -14,7 +15,8 @@ import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
     CommonModule,
     RouterLink,
     DespachoTabVisitaComponent,
-    FormatFechaPipe
+    FormatFechaPipe,
+    DespachoTabUbicacionComponent
 ],
   templateUrl: './despacho-detalle.component.html',
   styleUrl: './despacho-detalle.component.css',

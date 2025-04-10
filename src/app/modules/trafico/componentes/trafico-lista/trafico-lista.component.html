@@ -236,9 +236,7 @@
                   <p class="text-xs text-gray-500">Tiempo total</p>
                   <p class="font-semibold">
                     {{ visitaSeleccionada?.tiempo_servicio }} +
-                    {{
-                      visitaSeleccionada?.tiempo_trayecto | redondear : 1
-                    }}
+                    {{ visitaSeleccionada?.tiempo_trayecto | redondear : 1 }}
                     min
                   </p>
                 </div>
@@ -318,9 +316,7 @@
                   <p class="text-xs text-gray-500">Tiempo total</p>
                   <p class="font-semibold">
                     {{ despachoSeleccionado?.tiempo_servicio }} +
-                    {{
-                      despachoSeleccionado?.tiempo_trayecto | redondear : 1
-                    }}
+                    {{ despachoSeleccionado?.tiempo_trayecto | redondear : 1 }}
                     min
                   </p>
                 </div>
@@ -336,16 +332,43 @@
 <app-modal-default
   size="large"
   [id]="'trafico-despacho-visitas'"
-  titulo="Visitas"
-  #visitas,
+  titulo=""
+  #visitas
   (emitirModalCerrado)="cerrarModalDetalleVisita()"
 >
-  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
-    <app-despacho-tab-visita
-      *ngIf="selectedDespachoId"
-      [despachoId]="selectedDespachoId"
-    >
-    </app-despacho-tab-visita>
+  <section modal-body>
+    <div *ngIf="mostarModalDetalleVisita$ | async">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px pl-8">
+          <button 
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
+            [class]="activeTab === 'visitas' ? 
+                    'border-blue-500 text-blue-600' : 
+                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+            (click)="activeTab = 'visitas'">
+            Visitas
+          </button>
+          <button 
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
+            [class]="activeTab === 'ubicaciones' ? 
+                    'border-blue-500 text-blue-600' : 
+                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+            (click)="activeTab = 'ubicaciones'">
+            Ubicaciones
+          </button>
+        </nav>
+      </div>
+    
+      <div class="modal-tab-content">
+        <div *ngIf="activeTab === 'visitas' && selectedDespachoId" class="overflow-x-auto">
+          <app-despacho-tab-visita [despachoId]="selectedDespachoId"></app-despacho-tab-visita>
+        </div>
+        
+        <div *ngIf="activeTab === 'ubicaciones' && selectedDespachoId" class="overflow-x-auto">
+          <app-despacho-tab-ubicacion [despachoId]="selectedDespachoId"></app-despacho-tab-ubicacion>
+        </div>
+      </div>
+    </div>
   </section>
 </app-modal-default>
 

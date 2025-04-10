@@ -1,6 +1,9 @@
 <div class="flex items-center mb-4">
   <div class="btn-group gap-1">
-    <button class="btn btn-secondary flex items-center" [routerLink]="['/admin/despacho/lista']">
+    <button
+      class="btn btn-secondary flex items-center"
+      [routerLink]="['/admin/despacho/lista']"
+    >
       <i class="ki-filled ki-arrow-left mr-1"></i>
       Atrás
     </button>
@@ -17,27 +20,35 @@
         <table class="table-auto border border-gray-300 text-sm w-full">
           <tbody>
             <tr class="border-b border-gray-300">
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Placa
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ despacho().vehiculo_placa }}
               </td>
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Fecha
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ despacho().fecha | formatFecha:'Y-m-d' }}
+                {{ despacho().fecha | formatFecha : "Y-m-d" }}
               </td>
             </tr>
             <tr class="border-b border-gray-300">
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Peso
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ despacho().peso }}
               </td>
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Volumen
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
@@ -45,13 +56,17 @@
               </td>
             </tr>
             <tr class="border-b border-gray-300">
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Tiempo
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ despacho().tiempo }}
               </td>
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Tiempo servicio
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
@@ -59,13 +74,17 @@
               </td>
             </tr>
             <tr class="border-b border-gray-300">
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Visitas
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ despacho().visitas }}
               </td>
-              <td class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
                 Visitas entregadas
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
@@ -81,20 +100,32 @@
   <div class="card mt-4">
     <div class="border-b border-gray-200">
       <nav class="flex -mb-px pl-8">
-        <button class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" [class]="activeTab === 'visitas' ? 
-                   'border-blue-500 text-blue-600' : 
-                   'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+        <button 
+          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
+          [class]="activeTab === 'visitas' ? 
+                  'border-blue-500 text-blue-600' : 
+                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
           (click)="activeTab = 'visitas'">
           Visitas
         </button>
+        <button 
+          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
+          [class]="activeTab === 'ubicaciones' ? 
+                  'border-blue-500 text-blue-600' : 
+                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+          (click)="activeTab = 'ubicaciones'">
+          Ubicaciones
+        </button>
       </nav>
     </div>
-
+  
     <div class="card-body">
       <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
-        <app-despacho-tab-visita [despachoId]="despachoId">
-
-        </app-despacho-tab-visita>
+        <app-despacho-tab-visita [despachoId]="despachoId"></app-despacho-tab-visita>
+      </div>
+      
+      <div *ngIf="activeTab === 'ubicaciones'" class="overflow-x-auto">
+        <app-despacho-tab-ubicacion [despachoId]="despachoId"></app-despacho-tab-ubicacion>
       </div>
     </div>
   </div>
