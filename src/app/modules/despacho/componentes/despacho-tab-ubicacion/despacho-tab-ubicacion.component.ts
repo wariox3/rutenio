@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { UbicacionService } from '../../../ubicacion/ubicacion.service';
+import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
 import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
 import { CommonModule } from '@angular/common';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';

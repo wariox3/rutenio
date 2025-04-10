@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from '../../common/services/http.service';
-import { RespuestaGeneralLista } from '../../interfaces/general/api.interface';
-import { Ubicacion } from '../../interfaces/ubicacion/ubicacion.interface';
+import { HttpService } from '../../../common/services/http.service';
+import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
+import { Ubicacion } from '../../../interfaces/ubicacion/ubicacion.interface';
 
 @Injectable({
   providedIn: 'root',

@@ -183,9 +183,20 @@
   #traficoRuta
 >
   <section *ngIf="toggleModal$ | async" modal-body>
-    <div class="card-body h-full" style="height: 600px">
+    <div class="h-full" style="height: 600px; position: relative">
+      <div class="flex justify-end mb-2">
+        <button
+          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow "
+          (click)="toggleUbicaciones(despachoIdActual)"
+        >
+          {{
+            mostrarUbicaciones ? "Ocultar Ubicaciones" : "Mostrar Ubicaciones"
+          }}
+        </button>
+      </div>
+
       <google-map
-        height="100%"
+        height="90%"
         width="100%"
         [center]="center"
         [zoom]="zoom"
@@ -244,10 +255,19 @@
             </div>
           </section>
         </map-info-window>
+
+        <!-- Primera ruta (visitas) -->
         <map-directions-renderer
-          *ngIf="directionsResults"
-          [directions]="directionsResults"
+          *ngIf="directionsResultsVisitas"
+          [directions]="directionsResultsVisitas"
           [options]="directionsRendererOptions"
+        ></map-directions-renderer>
+
+        <!-- Segunda ruta (ubicaciones) -->
+        <map-directions-renderer
+          *ngIf="mostrarUbicaciones && directionsResultsUbicaciones"
+          [directions]="directionsResultsUbicaciones"
+          [options]="directionsRendererOptionsUbicaciones"
         ></map-directions-renderer>
       </google-map>
     </div>
@@ -340,32 +360,48 @@
     <div *ngIf="mostarModalDetalleVisita$ | async">
       <div class="border-b border-gray-200">
         <nav class="flex -mb-px pl-8">
-          <button 
-            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
-            [class]="activeTab === 'visitas' ? 
-                    'border-blue-500 text-blue-600' : 
-                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-            (click)="activeTab = 'visitas'">
+          <button
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+            [class]="
+              activeTab === 'visitas'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            (click)="activeTab = 'visitas'"
+          >
             Visitas
           </button>
-          <button 
-            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
-            [class]="activeTab === 'ubicaciones' ? 
-                    'border-blue-500 text-blue-600' : 
-                    'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-            (click)="activeTab = 'ubicaciones'">
+          <button
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+            [class]="
+              activeTab === 'ubicaciones'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            (click)="activeTab = 'ubicaciones'"
+          >
             Ubicaciones
           </button>
         </nav>
       </div>
-    
+
       <div class="modal-tab-content">
-        <div *ngIf="activeTab === 'visitas' && selectedDespachoId" class="overflow-x-auto">
-          <app-despacho-tab-visita [despachoId]="selectedDespachoId"></app-despacho-tab-visita>
+        <div
+          *ngIf="activeTab === 'visitas' && selectedDespachoId"
+          class="overflow-x-auto"
+        >
+          <app-despacho-tab-visita
+            [despachoId]="selectedDespachoId"
+          ></app-despacho-tab-visita>
         </div>
-        
-        <div *ngIf="activeTab === 'ubicaciones' && selectedDespachoId" class="overflow-x-auto">
-          <app-despacho-tab-ubicacion [despachoId]="selectedDespachoId"></app-despacho-tab-ubicacion>
+
+        <div
+          *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
+          class="overflow-x-auto"
+        >
+          <app-despacho-tab-ubicacion
+            [despachoId]="selectedDespachoId"
+          ></app-despacho-tab-ubicacion>
         </div>
       </div>
     </div>
