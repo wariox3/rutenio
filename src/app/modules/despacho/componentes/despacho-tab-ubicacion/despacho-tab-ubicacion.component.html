@@ -1,0 +1,22 @@
+<table class="table-auto border border-gray-300 text-sm w-full">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">ID</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Fecha</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Latitud</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Longitud</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">usuario</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Detenido</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let ubicacion of ubicaciones()" class="border-b border-gray-300">
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.id }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.fecha | formatFecha:'Y-m-d H:i:s' }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.latitud }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.longitud }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.usuario_id }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ ubicacion.detenido }}</td>
+        </tr>
+    </tbody>
+</table>
