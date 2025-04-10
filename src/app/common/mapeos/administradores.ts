@@ -37,6 +37,14 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Usuario app',
+        campoNombre: 'usuario_app',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: false,
+      },
+      {
         encabezado: 'Franja Nombre',
         campoNombre: 'franja_nombre',
         campoTipo: 'CharField',
