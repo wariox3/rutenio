@@ -54,7 +54,7 @@ export default class VehiculoFormularioComponent
 
   public franjaOpciones: AutocompletarFranja[];
   public formularioVehiculo = new FormGroup({
-    franja_codigo: new FormControl(''),
+    franja_codigo: new FormControl(null),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -66,6 +66,7 @@ export default class VehiculoFormularioComponent
     estado_activo: new FormControl(true),
     tiempo: new FormControl(0),
     estado_asignado: new FormControl(false),
+    usuario_app: new FormControl(null),
   });
 
   ngOnInit(): void {
@@ -85,6 +86,7 @@ export default class VehiculoFormularioComponent
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
+      usuario_app: this.informacionVehiculo.usuario_app
     });
   }
 
@@ -114,7 +116,14 @@ export default class VehiculoFormularioComponent
 
   enviar() {
     if (this.formularioVehiculo.valid) {
-      return this.dataFormulario.emit(this.formularioVehiculo.value);
+      const formValue = this.formularioVehiculo.value;
+      const cleanedValue = Object.fromEntries(
+        Object.entries(formValue).map(([key, value]) => [
+          key, 
+          typeof value === 'string' && value.trim() === '' ? null : value
+        ])
+      );
+      return this.dataFormulario.emit(cleanedValue);
     } else {
       this.formularioVehiculo.markAllAsTouched();
     }
