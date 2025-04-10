@@ -1,209 +1,416 @@
-<div class="mt-2">
-  <div class="grid grid-cols-1 xl:grid-cols-[.5fr,1fr] gap-5 h-full">
-    <div class="flex flex-col space-y-5 h-full">
-      <div class="card flex-1 min-h-[16rem]">
-        <div class="card-header">
-          <h3 class="card-title">Despachos</h3>
-        </div>
-        <div
-          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
+<div class="h-[70vh] flex flex-col p-1">
+  <div class="card flex-1 flex flex-col min-h-0">
+    <div class="card-header flex justify-between">
+      <h3 class="card-title my-[8px]">Despachos</h3>
+      <div>
+        <button
+          class="btn btn-primary"
+          (click)="abrirModalUbicacion()"
+          data-modal-toggle="#trafico-ubicacion-actual"
         >
-          <table class="table w-full border-collapse">
-            <tbody>
-              @for (despacho of arrDespachos; track $index) {
-              <tr
-                class="cursor-pointer"
-                (click)="seleccionarDespacho(despacho)"
-                [ngClass]="{
-                  'bg-blue-50 border-l-4 border-blue-500':
-                    despachoSeleccionado === despacho
-                }"
-              >
-                <td class="p-3 w-full flex items-center justify-between">
-                  <div draggable="true">
-                    <div class="flex flex-col space-y-1">
-                      <span class="font-semibold text-gray-800 text-sm">
-                        {{ despacho.id }}
-                      </span>
-                      <div class="flex gap-1">
-                        <span class="text-gray-600 text-xs font-medium">
-                          Placa: {{ despacho.vehiculo_placa }}
-                        </span>
-                        <div class="text-xs font-medium text-gray-600">
-                          <i class="ki-filled ki-calendar-2 mr-1"></i>
-                          <span
-                            >Fecha:
-                            {{ despacho.fecha | date : "yyyy-MM-dd" }}</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
-                      <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
-                        <span>Peso: {{ despacho.peso }} kg</span>
-                        <i class="ki-filled ki-package"></i>
-                        <span>Volumen: {{ despacho.volumen }}</span>
-                        <i class="ki-filled ki-geolocation"></i>
-                        <span>Visitas: {{ despacho.visitas }} </span>
-                      </div>
-                    </div>
-                  </div>
-                  <section class="flex flex-col items-end gap-2">
-                    <div class="flex gap-2 items-center">
-                      <div class="menu menu-default" data-menu="true">
-                        <div
-                          class="menu-item"
-                          data-menu-item-placement="bottom-start"
-                          data-menu-item-toggle="dropdown"
-                          data-menu-item-trigger="click"
-                        >
-                          <button class="menu-toggle">
-                            <span class="menu-title">
-                              <i class="ki-filled ki-dots-vertical text-xl"></i>
-                            </span>
-                          </button>
-                          <div class="menu-dropdown w-48 py-2">
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                (click)="
-                                  confirmarTerminarDespacho(despacho.id);
-                                  $event.stopPropagation()
-                                "
-                                class="menu-link"
-                              >
-                                <span class="menu-icon">
-                                  <i class="ki-filled ki-check-circle"></i>
-                                </span>
-                                <span class="menu-title"> Terminar</span>
-                              </button>
-                            </div>
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                (click)="descargarPlanoSemantica(despacho.id)"
-                                class="menu-link"
-                              >
-                                <span class="menu-icon">
-                                  <i class="ki-filled ki-file-down"></i>
-                                </span>
-                                <span class="menu-title"> Plano semántica</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card flex-1 min-h-[16rem]">
-        <div class="card-header flex justify-between items-center">
-          <h3 class="card-title">Visitas por despacho</h3>
-        </div>
-        <div
-          class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
-        >
-          <table class="table w-full border-collapse">
-            <tbody>
-              @for (visita of arrVisitasPorDespacho; track $index) {
-              <tr
-                class="cursor-pointer"
-                cdkDrag
-                [ngClass]="{
-                  'bg-blue-50 border-l-4 border-blue-500':
-                    visitaSeleccionada === visita
-                }"
-                (click)="evento(visita)"
-                [id]="'fila-' + visita.id"
-              >
-                <td class="p-3 w-full">
-                  <div class="flex flex-col space-y-1">
-                    <div class="flex justify-between items-center">
-                      <span class="font-semibold text-gray-800 text-sm">
-                        {{ visita.destinatario }}
-                      </span>
-                      <div>
-                        @if (visita.estado_entregado) {
-                        <span class="badge badge-success badge-xs"
-                          >Entregada</span
-                        >
-                        }
-                        <span class="text-gray-600 text-xs font-medium">
-                          Número: {{ visita.numero }}
-                        </span>
-                      </div>
-                    </div>
-                    <div class="text-gray-700 text-xs max-w-[24rem]">
-                      <i class="ki-filled ki-geolocation-home"></i>
-                      {{ visita.destinatario_direccion }}
-                    </div>
-                    <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
-                    >
-                      <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
-                        <span>Peso: {{ visita.peso }} kg</span>
-                        <i class="ki-filled ki-arrow-up-down"></i>
-                        <span>Orden: {{ visita.orden }}</span>
-                        <i class="ki-filled ki-time"></i>
-                        <span>Servicio: {{ visita.tiempo_servicio }} min</span>
-                        <i class="ki-filled ki-geolocation mr-1"></i>
-                        <span>Franja: {{ visita.franja_codigo }}</span>
-                      </div>
-
-                      <section class="flex gap-1 items-center">
-                        <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
-                          data-modal-toggle="#detalle-visita"
-                          (click)="abrirModalDetalleVisita()"
-                        >
-                          <i class="ki-filled ki-eye text-xl"></i>
-                        </button>
-                      </section>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer flex justify-center">
-          <!-- <app-paginacion-default
-            [limite]="parametrosConsultaVisitas.limite"
-            [totalRegistros]="totalRegistrosVisitas"
-            [maxPaginasVisibles]="5"
-            (paginar)="paginar($event)"
-          ></app-paginacion-default> -->
-        </div>
+          <i class="ki-filled ki-delivery-time"></i>
+          Ubicación actual
+        </button>
       </div>
     </div>
-    <div class="card h-[45rem]">
-      <div class="card-header">
-        <h3 class="card-title my-1.5">Mapa</h3>
-      </div>
-      <div class="card-body h-full"></div>
+    <div class="card-table flex-1 overflow-auto">
+      <table
+        class="table align-middle text-gray-700 font-medium text-sm w-full"
+      >
+        <thead class="top-0 bg-white">
+          <tr>
+            <th>Id</th>
+            <th>
+              <span
+                data-tooltip="#tooltip_orden_entrega"
+                nbTooltipStatus="primary"
+                >O_E</span
+              >
+            </th>
+            <th>Placa</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Progreso</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (despacho of arrDespachos; track $index) {
+          <tr>
+            <td>{{ despacho.id }}</td>
+            <td>{{ despacho.entrega_id }}</td>
+            <td>{{ despacho.vehiculo_placa }}</td>
+            <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
+            <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
+            <td>
+              <div class="flex flex-col space-y-1">
+                <div
+                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
+                >
+                  <!-- Fondo difuminado (todo el ancho) -->
+                  <div
+                    class="absolute h-4 rounded-full w-full"
+                    [ngClass]="{
+                      'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
+                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0,
+                    }"
+                  ></div>
+                  <!-- Barra de progreso (sólida) -->
+                  <div
+                    class="progress-bar h-4 rounded-full absolute"
+                    [ngClass]="
+                      obtenerColorBarra(
+                        despacho.estado,
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    "
+                    [style.width]="
+                      obtenerAnchoProgreso(
+                        despacho.estado,
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    "
+                  ></div>
+                </div>
+                <div class="text-xs text-gray-500 text-right">
+                  <ng-container
+                    *ngIf="
+                      despacho.estado !== 'retrazado';
+                      else retrasadoTemplate
+                    "
+                  >
+                    Entregadas {{ despacho.visitas_entregadas }} /
+                    {{ despacho.visitas }} ({{
+                      obtenerPorcentajeVisual(
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    }}%)
+                  </ng-container>
+                  <ng-template #retrasadoTemplate>
+                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
+                    Entregadas: {{ despacho.visitas_entregadas }} /
+                    {{ despacho.visitas }} ({{
+                      obtenerPorcentajeVisual(
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    }}%)
+                  </ng-template>
+                </div>
+              </div>
+            </td>
+            <td class="w-12">
+              <div class="flex items-center justify-end gap-2">
+                <div class="menu menu-default" data-menu="true">
+                  <div
+                    class="menu-item"
+                    data-menu-item-placement="bottom-start"
+                    data-menu-item-toggle="dropdown"
+                    data-menu-item-trigger="click"
+                  >
+                    <button class="menu-toggle">
+                      <span class="menu-title">
+                        <i class="ki-filled ki-dots-vertical text-xl"></i>
+                      </span>
+                    </button>
+                    <div class="menu-dropdown w-48 py-2">
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="
+                            confirmarTerminarDespacho(despacho.id);
+                            $event.stopPropagation()
+                          "
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-check-circle"></i>
+                          </span>
+                          <span class="menu-title"> Terminar</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="descargarPlanoSemantica(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-file-down"></i>
+                          </span>
+                          <span class="menu-title"> Plano semántica</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#trafico-ruta-modal"
+                          (click)="abrirModal(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery-geolocation"></i>
+                          </span>
+                          <span class="menu-title"> Ruta</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  class="btn btn-sm btn-icon btn-clear btn-light p-1"
+                  data-modal-toggle="#trafico-despacho-visitas"
+                  (click)="abrirModalDetalleVisita(despacho.id)"
+                >
+                  <i class="ki-filled ki-eye"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 
 <app-modal-default
-  size="medium"
-  [id]="'detalle-visita'"
-  titulo="Visita"
-  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+  size="large"
+  [id]="'trafico-ruta-modal'"
+  titulo="Ruta"
+  (emitirModalCerrado)="cerrarModal()"
+  (onOpen)="onModalOpened()"
+  #traficoRuta
 >
-  <section *ngIf="mostarModalDetalleVisita$ | async" modal-body>
-    <app-visita-rutear-detalle
-      [visita]="visitaSeleccionada"
-    ></app-visita-rutear-detalle>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <div class="h-full" style="height: 600px; position: relative">
+      <div class="flex justify-end mb-2">
+        <button
+          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow "
+          (click)="toggleUbicaciones(despachoIdActual)"
+        >
+          {{
+            mostrarUbicaciones ? "Ocultar Ubicaciones" : "Mostrar Ubicaciones"
+          }}
+        </button>
+      </div>
+
+      <google-map
+        height="90%"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        (mapInitialized)="onMapReady($event)"
+      >
+        @for (markerPosition of customMarkers; track $index) {
+        <map-marker
+          [position]="markerPosition.position"
+          #marker="mapMarker"
+          [label]="markerPosition.label"
+          (mapClick)="openInfoWindow(marker, $index)"
+        ></map-marker>
+        }
+        <map-info-window>
+          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+            <p class="font-bold text-gray-800 text-lg">
+              {{ visitaSeleccionada?.destinatario }}
+            </p>
+
+            <!-- Dirección -->
+            <div class="flex items-center text-gray-700">
+              <i class="ki-filled ki-geolocation text-blue-500 text-lg"></i>
+              <span class="ml-2">{{
+                visitaSeleccionada?.destinatario_direccion
+              }}</span>
+            </div>
+
+            <div
+              class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium mt-1"
+            >
+              #{{ visitaSeleccionada?.numero }}
+            </div>
+
+            <div class="border-t border-gray-100 my-2"></div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center">
+                <i class="ki-filled ki-package text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Peso</p>
+                  <p class="font-semibold">{{ visitaSeleccionada?.peso }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <i class="ki-filled ki-time text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Tiempo total</p>
+                  <p class="font-semibold">
+                    {{ visitaSeleccionada?.tiempo_servicio }} +
+                    {{ visitaSeleccionada?.tiempo_trayecto | redondear : 1 }}
+                    min
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </map-info-window>
+
+        <!-- Primera ruta (visitas) -->
+        <map-directions-renderer
+          *ngIf="directionsResultsVisitas"
+          [directions]="directionsResultsVisitas"
+          [options]="directionsRendererOptions"
+        ></map-directions-renderer>
+
+        <!-- Segunda ruta (ubicaciones) -->
+        <map-directions-renderer
+          *ngIf="mostrarUbicaciones && directionsResultsUbicaciones"
+          [directions]="directionsResultsUbicaciones"
+          [options]="directionsRendererOptionsUbicaciones"
+        ></map-directions-renderer>
+      </google-map>
+    </div>
   </section>
 </app-modal-default>
+
+<app-modal-default
+  size="large"
+  [id]="'trafico-ubicacion-actual'"
+  titulo="Ubicación actual"
+  (emitirModalCerrado)="cerrarModal()"
+  (onOpen)="onModalOpened()"
+  #traficoUbicacionActual
+>
+  <section *ngIf="toggleModalUbicacion$ | async" modal-body>
+    <div class="card-body h-full" style="height: 600px">
+      <google-map
+        height="100%"
+        width="100%"
+        [center]="center"
+        [zoom]="zoom"
+        (mapInitialized)="onMapReady($event)"
+      >
+        @for (markerPosition of customMarkers; track $index) {
+        <map-marker
+          [position]="markerPosition.position"
+          #marker="mapMarker"
+          [label]="markerPosition.label"
+          (mapClick)="openInfoWindowUbicacion(marker, $index)"
+        ></map-marker>
+        }
+        <map-info-window>
+          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+            <div class="flex items-center text-gray-700">
+              <i class="ki-filled ki-delivery text-blue-500 text-lg"></i>
+              <span class="ml-2 font-medium">Placa:</span>
+              <span class="ml-1 font-semibold">{{
+                despachoSeleccionado?.vehiculo_placa
+              }}</span>
+            </div>
+
+            <div class="flex items-center">
+              <i class="ki-filled ki-watch text-blue-500 text-lg"></i>
+              <span class="ml-2 font-medium">Estado:</span>
+              <span class="ml-1 font-semibold capitalize">{{
+                despachoSeleccionado?.estado
+              }}</span>
+            </div>
+
+            <div class="border-t border-gray-100 my-2"></div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex items-center">
+                <i class="ki-filled ki-parcel text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Visitas</p>
+                  <p class="font-semibold">
+                    {{ despachoSeleccionado?.visitas }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <i class="ki-filled ki-time text-blue-500 text-lg"></i>
+                <div class="ml-2">
+                  <p class="text-xs text-gray-500">Tiempo total</p>
+                  <p class="font-semibold">
+                    {{ despachoSeleccionado?.tiempo_servicio }} +
+                    {{ despachoSeleccionado?.tiempo_trayecto | redondear : 1 }}
+                    min
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </map-info-window>
+      </google-map>
+    </div>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="large"
+  [id]="'trafico-despacho-visitas'"
+  titulo=""
+  #visitas
+  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+>
+  <section modal-body>
+    <div *ngIf="mostarModalDetalleVisita$ | async">
+      <div class="border-b border-gray-200">
+        <nav class="flex -mb-px pl-8">
+          <button
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+            [class]="
+              activeTab === 'visitas'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            (click)="activeTab = 'visitas'"
+          >
+            Visitas
+          </button>
+          <button
+            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+            [class]="
+              activeTab === 'ubicaciones'
+                ? 'border-blue-500 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            "
+            (click)="activeTab = 'ubicaciones'"
+          >
+            Ubicaciones
+          </button>
+        </nav>
+      </div>
+
+      <div class="modal-tab-content">
+        <div
+          *ngIf="activeTab === 'visitas' && selectedDespachoId"
+          class="overflow-x-auto"
+        >
+          <app-despacho-tab-visita
+            [despachoId]="selectedDespachoId"
+          ></app-despacho-tab-visita>
+        </div>
+
+        <div
+          *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
+          class="overflow-x-auto"
+        >
+          <app-despacho-tab-ubicacion
+            [despachoId]="selectedDespachoId"
+          ></app-despacho-tab-ubicacion>
+        </div>
+      </div>
+    </div>
+  </section>
+</app-modal-default>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_orden_entrega"
+>
+  Orden de entrega
+</div>

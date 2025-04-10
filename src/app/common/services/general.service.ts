@@ -48,6 +48,7 @@ export class GeneralService extends Subdomino {
     );
   }
 
+
   importar(url: string, data: any) {
     return this.http.post<{ mensaje: string }>(url, data);
   }
@@ -114,4 +115,5 @@ export class GeneralService extends Subdomino {
         }
       });
   }
+  
 }

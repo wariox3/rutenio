@@ -10,6 +10,7 @@ import {
   InvitarUsuario,
   RespuestaInvitacionUsuario,
 } from '../interfaces/invitar-contenedor.interface';
+import { Movimientos } from '../../facturacion/interfaces/Facturacion';
 
 @Injectable({
   providedIn: 'root',
@@ -98,6 +99,24 @@ export class ContenedorService {
   detalle(codigoContenedor: string) {
     return this.http.get<ContenedorDetalle>(
       `${environment.url_api}/contenedor/contenedor/${codigoContenedor}/`
+    );
+  }
+
+  contenedorGenerarIntegridad(data: any) {
+    return this.http.post<{ hash: string }>(
+      `${environment.url_api}/contenedor/movimiento/generar-integridad/`,
+      {
+        ...data,
+      }
+    );
+  }
+
+  consultaUsuario(usuario_id: number) {
+    return this.http.post<Movimientos>(
+      `${environment.url_api}/contenedor/movimiento/consulta-usuario/`,
+      {
+        usuario_id,
+      }
     );
   }
 }

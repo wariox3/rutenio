@@ -329,4 +329,8 @@ export default class VisitaListaComponent extends General implements OnInit {
 
     this.consultaLista(this.arrParametrosConsulta);
   }
+
+  detalleVisita(id: number) {
+    this.router.navigateByUrl(`/admin/visita/detalle/${id}`);
+  }
 }

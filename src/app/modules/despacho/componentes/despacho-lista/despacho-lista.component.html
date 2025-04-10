@@ -11,5 +11,6 @@
     campoMapeo="Despacho"
     [mapeo]="mapeoDocumento"
     [datos]="despachos$ | async"
+    (emitirDetalleItem)="detalleDespacho($event)"
   ></app-tabla-comun>
 </div>

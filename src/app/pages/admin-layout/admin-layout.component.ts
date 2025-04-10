@@ -10,6 +10,7 @@ import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
 import KTLayout from '../../../metronic/app/layouts/demo1';
+import { AlertaSuspensionComponent } from "../../common/components/alerta-suspension/alerta-suspension.component";
 
 @Component({
   selector: 'app-admin-layout',
@@ -21,7 +22,8 @@ import KTLayout from '../../../metronic/app/layouts/demo1';
     SidebarComponent,
     SearchModalComponent,
     HeaderComponent,
-  ],
+    AlertaSuspensionComponent
+],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
