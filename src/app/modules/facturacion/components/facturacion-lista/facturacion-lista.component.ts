@@ -270,4 +270,16 @@ export default class FacturacionComponent
     this.abrirModal();
   }
 
+  consultarDetalle() {
+    this.facturacionService
+      .informacionFacturacion(this.codigoUsuario)
+      .subscribe((respuesta) => {
+        this.arrFacturacionInformacion = respuesta.informaciones_facturacion;
+        if (this.arrFacturacionInformacion.length > 0) {
+          this.informacionFacturacionSeleccionada = this.arrFacturacionInformacion[0].id;
+        }
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
 }
