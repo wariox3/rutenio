@@ -41,5 +41,18 @@ export class FacturacionService {
     );
   }
 
+  crearInformacionFacturacion(data: any) {
+    return this.http.post<{ data: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/`,
+      data,
+    );
+  }
+
+  obtenerInformacionFacturacion(usuario_id: any) {
+    return this.http.get<{ usuario_id: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${usuario_id}/`,
+    );
+  }
+
 
 }

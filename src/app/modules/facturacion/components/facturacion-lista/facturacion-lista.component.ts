@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, Renderer2, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+  signal,
+} from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
-import { BehaviorSubject, zip } from 'rxjs';
+import { BehaviorSubject, Subject, zip } from 'rxjs';
 import { FacturacionService } from '../../servicios/facturacion.service';
 import { Consumo, Factura } from '../../interfaces/Facturacion';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
@@ -11,27 +18,37 @@ import { CommonModule } from '@angular/common';
 import { environment } from '../../../../../environments/environment';
 import { AlertaService } from '../../../../common/services/alerta.service';
 import { ContenedorService } from '../../../contenedores/services/contenedor.service';
-import { HistorialFacturacionComponent } from "../historial-facturacion/historial-facturacion.component";
-
+import { HistorialFacturacionComponent } from '../historial-facturacion/historial-facturacion.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { InformacionFacturacionComponent } from '../informacion-facturacion/informacion-facturacion.component';
 
 @Component({
   selector: 'app-facturacion',
   standalone: true,
-  imports: [FormatFechaPipe, ConvertirValorMonedaPipe, CommonModule, HistorialFacturacionComponent],
+  imports: [
+    FormatFechaPipe,
+    ConvertirValorMonedaPipe,
+    CommonModule,
+    HistorialFacturacionComponent,
+    ModalDefaultComponent,
+    InformacionFacturacionComponent,
+  ],
   templateUrl: './facturacion-lista.component.html',
   styleUrl: './facturacion-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class FacturacionComponent extends General implements OnInit, OnDestroy {
-
+export default class FacturacionComponent
+  extends General
+  implements OnInit, OnDestroy
+{
   constructor(
     private facturacionService: FacturacionService,
     public fechaServices: FechasService,
     private renderer: Renderer2,
     public alertaService: AlertaService,
     private contenedorServices: ContenedorService
-  ){
-    super()
+  ) {
+    super();
   }
 
   public registrosSeleccionados = signal<number[]>([]);
@@ -40,11 +57,16 @@ export default class FacturacionComponent extends General implements OnInit, OnD
   active: number = 1;
   consumoTotal = 0;
   codigoUsuario = 0;
-  
+
   arrFacturasSeleccionados: any[] = [];
   arrFacturacionInformacion: any[] = [];
   totalPagar = new BehaviorSubject(0);
-  informacionFacturacion: number | null = null;
+  public toggleModal$ = new BehaviorSubject(false);
+  public informacionFacturacionSeleccionadaId: string;
+  informacionFacturacionSeleccionada: number | null = null;
+  public estaEditando = false;
+  private destroy$ = new Subject<void>();
+  
 
   ngOnInit(): void {
     this.store.select(obtenerUsuarioId).subscribe((codigoUsuario) => {
@@ -60,13 +82,13 @@ export default class FacturacionComponent extends General implements OnInit, OnD
     zip(
       this.facturacionService.facturacion(this.codigoUsuario),
       this.facturacionService.facturacionFechas(this.codigoUsuario, fechaHasta),
-      this.facturacionService.informacionFacturacion(this.codigoUsuario),
+      this.facturacionService.informacionFacturacion(this.codigoUsuario)
     ).subscribe((respuesta) => {
       this.facturas = respuesta[0].movimientos;
       this.consumos = respuesta[1].consumos;
       this.arrFacturacionInformacion = respuesta[2].informaciones_facturacion;
       if (this.arrFacturacionInformacion.length > 0) {
-        this.informacionFacturacion = this.arrFacturacionInformacion[0].id;
+        this.informacionFacturacionSeleccionada = this.arrFacturacionInformacion[0].id;
       }
       respuesta[1].consumos.map((consumo: Consumo) => {
         this.consumoTotal += consumo.vr_total;
@@ -89,35 +111,35 @@ export default class FacturacionComponent extends General implements OnInit, OnD
 
   public removerIdRegistrosSeleccionados(id: number) {
     const itemsFiltrados = this.registrosSeleccionados().filter(
-      (item) => item !== id,
+      (item) => item !== id
     );
     this.registrosSeleccionados.set(itemsFiltrados);
   }
 
   agregarRegistrosPagar(item: Factura) {
-    if (this.informacionFacturacion === null || '') {
+    if (this.informacionFacturacionSeleccionada === null || '') {
       this.alertaService.mensajeError(
         'Error',
-        'Debe seleccionar la información de facturación antes de realizar el pago',
+        'Debe seleccionar la información de facturación antes de realizar el pago'
       );
       return;
     }
 
     const index = this.arrFacturasSeleccionados.findIndex(
-      (documento) => documento.id === item.id,
+      (documento) => documento.id === item.id
     );
     let valorActualPagar = this.totalPagar.getValue();
 
     if (index !== -1) {
       this.totalPagar.next(
-        valorActualPagar - parseInt(item.vr_saldo_enmascarado),
+        valorActualPagar - parseInt(item.vr_saldo_enmascarado)
       );
       this.arrFacturasSeleccionados.splice(index, 1);
       this.removerIdRegistrosSeleccionados(item.id);
       this.changeDetectorRef.detectChanges();
     } else {
       this.totalPagar.next(
-        valorActualPagar + parseInt(item.vr_saldo_enmascarado),
+        valorActualPagar + parseInt(item.vr_saldo_enmascarado)
       );
       this.arrFacturasSeleccionados.push(item);
       this.agregarIdARegistrosSeleccionados(item.id);
@@ -176,7 +198,7 @@ export default class FacturacionComponent extends General implements OnInit, OnD
     let url = 'http://localhost:4200/estado';
     if (environment.production) {
       url = `${environment.dominioHttp}://${environment.dominioApp.slice(
-        1,
+        1
       )}/estado`;
     }
 
@@ -187,19 +209,19 @@ export default class FacturacionComponent extends General implements OnInit, OnD
         this.renderer.setAttribute(
           script,
           'src',
-          'https://checkout.wompi.co/widget.js',
+          'https://checkout.wompi.co/widget.js'
         );
         this.renderer.setAttribute(script, 'data-render', 'button');
         this.renderer.setAttribute(
           script,
           'data-public-key',
-          environment.llavePublica,
+          environment.llavePublica
         );
         this.renderer.setAttribute(script, 'data-currency', 'COP');
         this.renderer.setAttribute(
           script,
           'data-amount-in-cents',
-          total.toString(),
+          total.toString()
         );
         this.renderer.setAttribute(script, 'data-redirect-url', url);
         this.renderer.setAttribute(script, 'data-reference', referencia);
@@ -217,12 +239,35 @@ export default class FacturacionComponent extends General implements OnInit, OnD
   }
 
   seleccionarInformacion(id: number) {
-    this.informacionFacturacion = id;
-    this.changeDetectorRef.detectChanges(); // Forzar actualización de vista
+    this.informacionFacturacionSeleccionada = id;
   }
 
   ngOnDestroy(): void {
     this.alertaService.cerrarMensajes();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
- }
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  editarInformacion(id: number) {
+    this.estaEditando = true
+    this.informacionFacturacionSeleccionadaId = id.toString();
+    this.abrirModal()
+    this.changeDetectorRef.detectChanges();
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
+    this.informacionFacturacionSeleccionadaId = null;
+  }
+
+  abrirModalParaNuevo() {
+    this.estaEditando = false
+    this.informacionFacturacionSeleccionadaId = null;
+    this.abrirModal();
+  }
+
+}
