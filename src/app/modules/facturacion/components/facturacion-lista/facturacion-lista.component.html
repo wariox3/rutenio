@@ -1,230 +1,287 @@
 <div class="card bg-white rounded-lg shadow-md p-6 w-full">
-    <!-- Card principal - Facturación -->
-    <div class="mb-6">
-        <h5 class="card-title">Facturación</h5>
+  <!-- Card principal - Facturación -->
+  <div class="mb-6">
+    <h5 class="card-title">Facturación</h5>
+  </div>
+
+  <!-- Sección Pendiente por pagar -->
+  <div
+    *ngIf="facturas.length > 0"
+    class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200"
+  >
+    <div class="flex justify-between items-center mb-4">
+      <h5>Pendiente por pagar</h5>
+      <div id="wompiWidget"></div>
+    </div>
+    <p class="mb-4 text-gray-600 text-sm">Seleccione las facturas para pago.</p>
+
+    <!-- Tabla de facturas -->
+    <div class="overflow-x-auto">
+      <table class="table align-middle">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Importe</th>
+            <th class="w-[60px]"></th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (factura of facturas; let idx = $index; track idx;) {
+          <tr>
+            <td>{{ factura.fecha | formatFecha : "Y-m-d" }}</td>
+            <td>{{ factura.tipo }}</td>
+            <td class="text-end">
+              {{ factura.vr_total | convertir_valor_moneda }}
+            </td>
+            <td class="w-[60px]">
+              <input
+                class="checkbox checkbox-sm"
+                data-datatable-check="true"
+                type="checkbox"
+              />
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="mb-4 text-gray-600 text-sm">
+      * La factura electrónica se envía al correo o podrá descargarla en la
+      pestaña historial después de realizar el pago.
+    </p>
+  </div>
+
+  <!-- Sección Valor estimado -->
+  <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+    <div class="flex items-center">
+      <h5 class="d-inline-block">Valor estimado</h5>
+      <span
+        class="badge badge-sm badge-success badge-outline d-inline-block ms-2"
+      >
+        Mes actual
+      </span>
+    </div>
+    <b style="font-size: 24px">{{ consumoTotal | convertir_valor_moneda }}</b>
+    <p class="mb-4 text-gray-600 text-sm">
+      Esta es una estimación de la cantidad que debe pagar de este usuario en el
+      mes hasta la fecha después de créditos y pagos por adelantado.
+    </p>
+    <div class="mb-0">
+      <div class="flex flex-wrap">
+        <!-- Columna 1 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{
+              fechaServices.obtenerPrimerDiaDelMesSiguiente()
+                | formatFecha : "Y-m-d"
+            }}
+          </div>
+          <p>Fecha de pago</p>
+        </div>
+
+        <!-- Columna 2 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">{{ 0 | convertir_valor_moneda }}</div>
+          <p>
+            Pagos anticipados
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
+        </div>
+
+        <!-- Columna 3 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{ consumoTotal | convertir_valor_moneda }}
+          </div>
+          <p>
+            Uso total
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
+        </div>
+
+        <!-- Columna 4 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{ consumoTotal | convertir_valor_moneda }}
+          </div>
+          <p>
+            Valor estimado
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Valor estimado -->
+  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+    <div class="flex items-center mb-4">
+      <!-- Añadí mb-4 aquí -->
+      <h5 class="d-inline-block">Consumos</h5>
     </div>
 
-    <!-- Sección Pendiente por pagar -->
-    <div *ngIf="facturas.length > 0" class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-        <div class="flex justify-between items-center mb-4">
-            <h5>Pendiente por pagar</h5>
-            <div id="wompiWidget"></div>
-        </div>
-        <p class="mb-4 text-gray-600 text-sm">Seleccione las facturas para pago.</p>
-
-        <!-- Tabla de facturas -->
-        <div class="overflow-x-auto">
-            <table class="table align-middle">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium ">Importe</th>
-                        <th class="w-[60px]"></th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @for (factura of facturas; let idx = $index; track idx;) {
-                    <tr>
-                        <td>{{ factura.fecha | formatFecha:'Y-m-d' }}</td>
-                        <td>{{ factura.tipo }}</td>
-                        <td class="text-end">
-                            {{ factura.vr_total | convertir_valor_moneda }}
-                        </td>
-                        <td class="w-[60px]">
-                            <input class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox" />
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <p class="mb-4 text-gray-600 text-sm">* La factura electrónica se envía al correo o podrá descargarla en la
-            pestaña historial después de realizar el pago.</p>
+    <!-- Tabla consumos -->
+    <div class="overflow-x-auto">
+      <table class="table align-middle">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium">Subdominio</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Empresa</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Plan</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Total</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (consumo of consumos; let idx = $index; track idx;) {
+          <tr>
+            <td>{{ consumo.subdominio }}</td>
+            <td>{{ consumo.contenedor }}</td>
+            <td>{{ consumo.plan__nombre }}</td>
+            <td class="text-end">
+              {{ consumo.vr_total | convertir_valor_moneda }}
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
     </div>
-
-    <!-- Sección Valor estimado -->
-    <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-        <div class="flex items-center">
-            <h5 class="d-inline-block">Valor estimado</h5>
-            <span class="badge badge-sm badge-success badge-outline d-inline-block ms-2">
-                Mes actual
-            </span>
-        </div>
-        <b style="font-size: 24px">{{ consumoTotal | convertir_valor_moneda }}</b>
-        <p class="mb-4 text-gray-600 text-sm">
-            Esta es una estimación de la cantidad que debe pagar de este usuario en el mes hasta la fecha
-            después de créditos y pagos por adelantado.
-        </p>
-        <div class="mb-0">
-            <div class="flex flex-wrap">
-                <!-- Columna 1 -->
-                <div class="w-full sm:w-full md:w-1/4 p-2">
-                    <div class="font-bold">
-                        {{ fechaServices.obtenerPrimerDiaDelMesSiguiente() | formatFecha:'Y-m-d' }}
-                    </div>
-                    <p>Fecha de pago</p>
-                </div>
-
-                <!-- Columna 2 -->
-                <div class="w-full sm:w-full md:w-1/4 p-2">
-                    <div class="font-bold">{{ 0 | convertir_valor_moneda }}</div>
-                    <p>Pagos anticipados
-                        <i class="ki-outline ki-information-2 ml-2"></i>
-                    </p>
-                </div>
-
-                <!-- Columna 3 -->
-                <div class="w-full sm:w-full md:w-1/4 p-2">
-                    <div class="font-bold">{{ consumoTotal | convertir_valor_moneda }}</div>
-                    <p>Uso total
-                        <i class="ki-outline ki-information-2 ml-2"></i>
-                    </p>
-                </div>
-
-                <!-- Columna 4 -->
-                <div class="w-full sm:w-full md:w-1/4 p-2">
-                    <div class="font-bold">{{ consumoTotal | convertir_valor_moneda }}</div>
-                    <p>Valor estimado
-                        <i class="ki-outline ki-information-2 ml-2"></i>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección Valor estimado -->
-    <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-        <div class="flex items-center mb-4"> <!-- Añadí mb-4 aquí -->
-            <h5 class="d-inline-block">Consumos</h5>
-        </div>
-
-        <!-- Tabla consumos -->
-        <div class="overflow-x-auto">
-            <table class="table align-middle">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium">Subdominio</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium">Empresa</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium ">Plan</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium ">Total</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @for (consumo of consumos; let idx = $index; track idx;) {
-                    <tr>
-                        <td>{{ consumo.subdominio }}</td>
-                        <td>{{ consumo.contenedor }}</td>
-                        <td>{{ consumo.plan__nombre }}</td>
-                        <td class="text-end">
-                            {{ consumo.vr_total | convertir_valor_moneda }}
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </div>
 </div>
 
 <div class="card bg-white rounded-lg shadow-md p-6 w-full mt-6">
-    <div class="mb-6">
-        <h5 class="text-lg font-semibold text-gray-800">Información facturación</h5>
-    </div>
+  <div class="mb-6">
+    <h5 class="text-lg font-semibold text-gray-800">Información facturación</h5>
+  </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-4 items-stretch">
-        @for (informacion of arrFacturacionInformacion; track informacion.id) {
-        <div class="col h-full">
-            <div class="flex flex-col text-start p-4 relative h-full min-h-[200px]
+  <div
+    class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-4 items-stretch"
+  >
+    @for (informacion of arrFacturacionInformacion; track informacion.id) {
+    <div class="col h-full">
+      <div
+        class="flex flex-col text-start p-4 relative h-full min-h-[200px]
                     border-2 rounded-lg transition-all duration-200
                     cursor-pointer
-                    {{ informacionFacturacionSeleccionada === informacion.id ? 
-                       'border-blue-500 bg-blue-50 shadow-md' : 
-                       'border-gray-200 hover:border-blue-300' }}">
-                
-                <!-- Área principal de selección -->
-                <div class="w-full h-full" (click)="seleccionarInformacion(informacion.id)">
-                    <div class="flex justify-between w-full">
-                        <div class="space-y-2 w-full">
-                            <!-- Información -->
-                            <div class="flex items-center">
-                                <span class="text-gray-600 text-xs font-medium mr-2">ID:</span>
-                                <span class="text-gray-800 text-sm">
-                                    {{ getIdentificacionPrefix(informacion.identificacion_id) }}
-                                    {{ informacion.numero_identificacion }}
-                                </span>
-                            </div>
+                    {{
+          informacionFacturacionSeleccionada === informacion.id
+            ? 'border-blue-500 bg-blue-50 shadow-md'
+            : 'border-gray-200 hover:border-blue-300'
+        }}"
+      >
+        <!-- Área principal de selección -->
+        <div
+          class="w-full h-full"
+          (click)="seleccionarInformacion(informacion.id)"
+        >
+          <div class="flex justify-between w-full">
+            <div class="space-y-2 w-full">
+              <!-- Información -->
+              <div class="flex items-center">
+                <span class="text-gray-600 text-xs font-medium mr-2">ID:</span>
+                <span class="text-gray-800 text-sm">
+                  {{ getIdentificacionPrefix(informacion.identificacion_id) }}
+                  {{ informacion.numero_identificacion }}
+                </span>
+              </div>
 
-                            <h6 class="{{ informacionFacturacionSeleccionada === informacion.id ? 'text-blue-600' : 'text-gray-800' }} font-bold text-base truncate">
-                                {{ informacion.nombre_corto }}
-                            </h6>
+              <h6
+                class="{{
+                  informacionFacturacionSeleccionada === informacion.id
+                    ? 'text-blue-600'
+                    : 'text-gray-800'
+                }} font-bold text-base truncate"
+              >
+                {{ informacion.nombre_corto }}
+              </h6>
 
-                            <!-- Iconos y detalles -->
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i class="ki-outline ki-phone text-gray-500 mr-2 text-base"></i>
-                                {{ informacion.telefono }}
-                            </div>
+              <!-- Iconos y detalles -->
+              <div class="flex items-center text-sm text-gray-600">
+                <i class="ki-outline ki-phone text-gray-500 mr-2 text-base"></i>
+                {{ informacion.telefono }}
+              </div>
 
-                            <div class="flex items-start text-sm text-gray-600">
-                                <i class="ki-outline ki-location text-gray-500 mr-2 mt-0.5 text-base"></i>
-                                {{ informacion.direccion }}
-                            </div>
+              <div class="flex items-start text-sm text-gray-600">
+                <i
+                  class="ki-outline ki-location text-gray-500 mr-2 mt-0.5 text-base"
+                ></i>
+                {{ informacion.direccion }}
+              </div>
 
-                            <div class="flex items-center text-sm text-gray-600">
-                                <i class="ki-outline ki-geolocation text-gray-500 mr-2 text-base"></i>
-                                {{ informacion.ciudad_nombre }} - {{ informacion.ciudad_estado_nombre }}
-                            </div>
-                        </div>
-
-                        <!-- Checkmark de selección -->
-                        <div class="absolute top-3 right-3">
-                            <div [class]="informacionFacturacionSeleccionada === informacion.id ? 
-                                         'bg-blue-500 text-white' : 
-                                         'bg-gray-200 text-gray-400'"
-                                class="rounded-full w-5 h-5 flex items-center justify-center transition-all">
-                                <i class="ki-outline ki-check text-xs"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Botón Editar -->
-                <div class="absolute bottom-3 right-3 z-10" data-modal-toggle="#informacion-facturacion">
-                    <button (click)="editarInformacion(informacion.id)" 
-                            class="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center
-                                   bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200
-                                   hover:bg-blue-50 transition-all">
-                        <i class="ki-outline ki-pencil text-base mr-1"></i>
-                        Editar
-                    </button>
-                </div>
+              <div class="flex items-center text-sm text-gray-600">
+                <i
+                  class="ki-outline ki-geolocation text-gray-500 mr-2 text-base"
+                ></i>
+                {{ informacion.ciudad_nombre }} -
+                {{ informacion.ciudad_estado_nombre }}
+              </div>
             </div>
-        </div>
-        }
-        
-        <!-- Tarjeta para agregar nueva información -->
-        <div class="col h-full">
-            <div (click)="abrirModalParaNuevo()" data-modal-toggle="#informacion-facturacion" class="flex flex-col items-center justify-center p-6 h-full min-h-[200px]
-                    border-2 border-dashed border-blue-300 bg-blue-50 rounded-lg
-                    hover:border-blue-400 hover:bg-blue-100 transition-colors
-                    cursor-pointer text-blue-500">
-                <i class="ki-outline ki-plus-circle text-2xl mb-2"></i>
-                <span class="font-medium">Agregar nueva información</span>
+
+            <!-- Checkmark de selección -->
+            <div class="absolute top-3 right-3">
+              <div
+                [class]="
+                  informacionFacturacionSeleccionada === informacion.id
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-400'
+                "
+                class="rounded-full w-5 h-5 flex items-center justify-center transition-all"
+              >
+                <i class="ki-outline ki-check text-xs"></i>
+              </div>
             </div>
+          </div>
         </div>
+
+        <!-- Botón Editar -->
+        <div
+          class="absolute bottom-3 right-3 z-10"
+          data-modal-toggle="#informacion-facturacion"
+        >
+          <button
+            (click)="editarInformacion(informacion.id)"
+            class="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200 hover:bg-blue-50 transition-all"
+          >
+            <i class="ki-outline ki-pencil text-base mr-1"></i>
+            Editar
+          </button>
+        </div>
+      </div>
     </div>
+    }
+
+    <!-- Tarjeta para agregar nueva información -->
+    <div class="col h-full">
+      <div
+        (click)="abrirModalParaNuevo()"
+        data-modal-toggle="#informacion-facturacion"
+        class="flex flex-col items-center justify-center p-6 h-full min-h-[200px] border-2 border-dashed border-blue-300 bg-blue-50 rounded-lg hover:border-blue-400 hover:bg-blue-100 transition-colors cursor-pointer text-blue-500"
+      >
+        <i class="ki-outline ki-plus-circle text-2xl mb-2"></i>
+        <span class="font-medium">Agregar nueva información</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="card bg-white rounded-lg shadow-md p-6 w-full mt-6">
-    <div class="mb-6">
-        <h5 class="text-lg font-semibold text-gray-800">Historial facturación</h5>
-    </div>
-    <app-historial-facturacion></app-historial-facturacion>
+  <div class="mb-6">
+    <h5 class="text-lg font-semibold text-gray-800">Historial facturación</h5>
+  </div>
+  <app-historial-facturacion></app-historial-facturacion>
 </div>
 
-<app-modal-default size="large" [id]="'informacion-facturacion'" titulo="Información de facturación"
-#informacionFacturacion>
-<section *ngIf="toggleModal$ | async" modal-body>
-    <app-informacion-facturacion  [informacionFacturacionId]="informacionFacturacionSeleccionadaId" [estaEditando]="estaEditando"></app-informacion-facturacion>
-</section>
+<app-modal-default
+  size="large"
+  [id]="'informacion-facturacion'"
+  titulo="Información de facturación"
+  (emitirModalCerrado)="cerrarModal()"
+  #informacionFacturacion
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-informacion-facturacion
+      [informacionFacturacionId]="informacionFacturacionSeleccionadaId"
+      [estaEditando]="estaEditando"
+    ></app-informacion-facturacion>
+  </section>
 </app-modal-default>
