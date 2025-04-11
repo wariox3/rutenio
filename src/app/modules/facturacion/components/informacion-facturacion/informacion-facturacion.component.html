@@ -103,6 +103,6 @@
   <app-button
     texto="Guardar"
     [estaDeshabilitado]="!formularioInformacionFacturacion.valid"
-    (click)="enviarFormulario()"
+    (emitirBotonClicked)="enviarFormulario()"
   ></app-button>
 </div>
