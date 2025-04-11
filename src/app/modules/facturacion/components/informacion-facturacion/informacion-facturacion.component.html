@@ -14,7 +14,9 @@
       <div>
         <app-label [required]="true">Número de identificación</app-label>
         <app-input
-          [control]="formularioInformacionFacturacion.controls.numero_identificacion"
+          [control]="
+            formularioInformacionFacturacion.controls.numero_identificacion
+          "
           (blur)="calcularDigitoVerificacion()"
         ></app-input>
       </div>
@@ -99,8 +101,8 @@
 
 <div class="flex gap-2 mb-4">
   <app-button
-        texto="Guardar"
-        [estaDeshabilitado]="!formularioInformacionFacturacion.valid"
-        (click)="enviarFormulario()"
-      ></app-button>
+    texto="Guardar"
+    [estaDeshabilitado]="!formularioInformacionFacturacion.valid"
+    (click)="enviarFormulario()"
+  ></app-button>
 </div>
