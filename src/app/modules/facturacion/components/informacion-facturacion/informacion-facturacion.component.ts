@@ -53,6 +53,7 @@ export class InformacionFacturacionComponent extends General implements OnInit {
   ciudadSeleccionada: string | null;
   @Input() informacionFacturacionId: string = '';
   @Input() estaEditando: boolean = false;
+  @Output() emitirActualizacion: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private formBuilder: FormBuilder,
@@ -100,10 +101,6 @@ export class InformacionFacturacionComponent extends General implements OnInit {
       });
     });
 
-    this.consultarCiudad(
-      this.formularioInformacionFacturacion.get('ciudad_nombre').value
-    );
-
     this.formularioInformacionFacturacion
       .get('numero_identificacion')
       .valueChanges.subscribe((value) => {
@@ -123,11 +120,15 @@ export class InformacionFacturacionComponent extends General implements OnInit {
         identificacion: respuesta.identificacion_id,
         ciudad: respuesta.ciudad_id,
         correo: respuesta.correo,
-        ciudad_nombre: `${respuesta.ciudad_nombre}-${respuesta.ciudad_estado_nombre}`,
+        ciudad_nombre: respuesta.ciudad_nombre,
         usuario: respuesta.usuario_id,
         digito_verificacion: respuesta.digito_verificacion,
       });
+      this.consultarCiudad(
+        this.formularioInformacionFacturacion.get('ciudad_nombre').value
+      );
     })
+    
   }
 
   private _consultarInformacion() {
@@ -185,7 +186,19 @@ export class InformacionFacturacionComponent extends General implements OnInit {
   }
 
   enviarFormulario() {
-    this.facturacionService
+    if(this.estaEditando){
+      this.facturacionService.actualizarDatosInformacionFacturacion(
+        this.informacionFacturacionId,
+        this.formularioInformacionFacturacion.value
+      ).subscribe((respuesta:any) => {
+        this.alerta.mensajaExitoso(
+          'Se ha actualizado la información de facturación correctamente.'
+        );
+        this.dismissModal();
+        return this.emitirActualizacion.emit(true);
+      })
+    } else {
+      this.facturacionService
       .crearInformacionFacturacion(this.formularioInformacionFacturacion.value)
       .subscribe((respuesta: any) => {
         this.alerta.mensajaExitoso(
@@ -193,6 +206,7 @@ export class InformacionFacturacionComponent extends General implements OnInit {
         );
         this.dismissModal();
       });
+    }
   }
 
   calcularDigitoVerificacion() {

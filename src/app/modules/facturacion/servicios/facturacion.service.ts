@@ -54,5 +54,12 @@ export class FacturacionService {
     );
   }
 
+  actualizarDatosInformacionFacturacion(informacion_id: any, data: any) {
+    return this.http.put<{ informacion_id: any; data: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${informacion_id}/`,
+      data,
+    );
+  }
+
 
 }

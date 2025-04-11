@@ -282,6 +282,7 @@
     <app-informacion-facturacion
       [informacionFacturacionId]="informacionFacturacionSeleccionadaId"
       [estaEditando]="estaEditando"
+      (emitirActualizacion)="consultarDetalle()"
     ></app-informacion-facturacion>
   </section>
 </app-modal-default>
