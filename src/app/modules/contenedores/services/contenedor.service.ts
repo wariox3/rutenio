@@ -11,6 +11,7 @@ import {
   RespuestaInvitacionUsuario,
 } from '../interfaces/invitar-contenedor.interface';
 import { Movimientos } from '../../facturacion/interfaces/Facturacion';
+import { TipoIdentificacionLista } from '../../../interfaces/identificacion/identificacion.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,7 @@ export class ContenedorService {
   }
 
   listaTipoIdentificacion() {
-    return this.http.post<any[]>(
+    return this.http.post<TipoIdentificacionLista>(
       `${environment.url_api}/contenedor/funcionalidad/lista-autocompletar/`,
       {
         filtros: [],
@@ -47,7 +48,7 @@ export class ContenedorService {
   }
 
   listaCiudades(arrFiltros: any) {
-    return this.http.post<any[]>(
+    return this.http.post<any>(
       `${environment.url_api}/contenedor/funcionalidad/lista-autocompletar/`,
       arrFiltros
     );

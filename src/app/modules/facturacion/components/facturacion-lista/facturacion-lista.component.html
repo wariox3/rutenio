@@ -132,73 +132,85 @@
         <h5 class="text-lg font-semibold text-gray-800">Información facturación</h5>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-4 items-stretch">
         @for (informacion of arrFacturacionInformacion; track informacion.id) {
-        <div class="col">
-            <label class="flex flex-col text-start p-4 relative cursor-pointer
-                        border-2 rounded-lg transition-all duration-200
-                        hover:border-blue-300"
-                  [class.border-blue-500]="informacionFacturacion === informacion.id"
-                  [class.bg-blue-50]="informacionFacturacion === informacion.id"
-                  [class.shadow-md]="informacionFacturacion === informacion.id"
-                  [class.border-gray-200]="informacionFacturacion !== informacion.id"
-                  (click)="seleccionarInformacion(informacion.id)">
+        <div class="col h-full">
+            <div class="flex flex-col text-start p-4 relative h-full min-h-[200px]
+                    border-2 rounded-lg transition-all duration-200
+                    cursor-pointer
+                    {{ informacionFacturacionSeleccionada === informacion.id ? 
+                       'border-blue-500 bg-blue-50 shadow-md' : 
+                       'border-gray-200 hover:border-blue-300' }}">
                 
-                <div class="flex justify-between w-full">
-                    <div class="space-y-2">
-                        <!-- Información -->
-                        <div class="flex items-center">
-                            <span class="text-gray-600 text-xs font-medium mr-2">ID:</span>
-                            <span class="text-gray-800 text-sm">
-                                {{ getIdentificacionPrefix(informacion.identificacion_id) }}
-                                {{ informacion.numero_identificacion }}
-                            </span>
-                        </div>
-                        
-                        <h6 class="text-gray-800 font-bold text-base truncate">
-                            {{ informacion.nombre_corto }}
-                        </h6>
-                        
-                        <!-- Iconos y detalles -->
-                        <div class="flex items-center text-sm text-gray-600">
-                            <i class="ki-outline ki-phone text-gray-500 mr-2 text-base"></i>
-                            {{ informacion.telefono }}
-                        </div>
-                        
-                        <div class="flex items-start text-sm text-gray-600">
-                            <i class="ki-outline ki-location text-gray-500 mr-2 mt-0.5 text-base"></i>
-                            {{ informacion.direccion }}
-                        </div>
-                        
-                        <div class="flex items-center text-sm text-gray-600">
-                            <i class="ki-outline ki-geolocation text-gray-500 mr-2 text-base"></i>
-                            {{ informacion.ciudad_nombre }} - {{ informacion.ciudad_estado_nombre }}
-                        </div>
-                    </div>
+                <!-- Área principal de selección -->
+                <div class="w-full h-full" (click)="seleccionarInformacion(informacion.id)">
+                    <div class="flex justify-between w-full">
+                        <div class="space-y-2 w-full">
+                            <!-- Información -->
+                            <div class="flex items-center">
+                                <span class="text-gray-600 text-xs font-medium mr-2">ID:</span>
+                                <span class="text-gray-800 text-sm">
+                                    {{ getIdentificacionPrefix(informacion.identificacion_id) }}
+                                    {{ informacion.numero_identificacion }}
+                                </span>
+                            </div>
 
-                    <!-- Checkmark de selección mejorado -->
-                    <div class="absolute top-3 right-3">
-                        <div [class]="informacionFacturacion === informacion.id ? 
-                                     'bg-blue-500 text-white' : 
-                                     'bg-gray-200 text-gray-400'"
-                             class="rounded-full w-5 h-5 flex items-center justify-center transition-colors">
-                            <i class="ki-outline ki-check text-xs"></i>
+                            <h6 class="{{ informacionFacturacionSeleccionada === informacion.id ? 'text-blue-600' : 'text-gray-800' }} font-bold text-base truncate">
+                                {{ informacion.nombre_corto }}
+                            </h6>
+
+                            <!-- Iconos y detalles -->
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="ki-outline ki-phone text-gray-500 mr-2 text-base"></i>
+                                {{ informacion.telefono }}
+                            </div>
+
+                            <div class="flex items-start text-sm text-gray-600">
+                                <i class="ki-outline ki-location text-gray-500 mr-2 mt-0.5 text-base"></i>
+                                {{ informacion.direccion }}
+                            </div>
+
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="ki-outline ki-geolocation text-gray-500 mr-2 text-base"></i>
+                                {{ informacion.ciudad_nombre }} - {{ informacion.ciudad_estado_nombre }}
+                            </div>
+                        </div>
+
+                        <!-- Checkmark de selección -->
+                        <div class="absolute top-3 right-3">
+                            <div [class]="informacionFacturacionSeleccionada === informacion.id ? 
+                                         'bg-blue-500 text-white' : 
+                                         'bg-gray-200 text-gray-400'"
+                                class="rounded-full w-5 h-5 flex items-center justify-center transition-all">
+                                <i class="ki-outline ki-check text-xs"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </label>
+
+                <!-- Botón Editar -->
+                <div class="absolute bottom-3 right-3 z-10" data-modal-toggle="#informacion-facturacion">
+                    <button (click)="editarInformacion(informacion.id)" 
+                            class="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center
+                                   bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200
+                                   hover:bg-blue-50 transition-all">
+                        <i class="ki-outline ki-pencil text-base mr-1"></i>
+                        Editar
+                    </button>
+                </div>
+            </div>
         </div>
         }
-
-        <!-- Botón para agregar nueva información -->
-        <div class="col">
-            <label class="flex flex-col items-center justify-center p-6 h-full
-                        border-2 border-dashed border-blue-300 bg-blue-50 rounded-lg
-                        hover:border-blue-400 hover:bg-blue-100 transition-colors
-                        cursor-pointer text-blue-500">
+        
+        <!-- Tarjeta para agregar nueva información -->
+        <div class="col h-full">
+            <div (click)="abrirModalParaNuevo()" data-modal-toggle="#informacion-facturacion" class="flex flex-col items-center justify-center p-6 h-full min-h-[200px]
+                    border-2 border-dashed border-blue-300 bg-blue-50 rounded-lg
+                    hover:border-blue-400 hover:bg-blue-100 transition-colors
+                    cursor-pointer text-blue-500">
                 <i class="ki-outline ki-plus-circle text-2xl mb-2"></i>
                 <span class="font-medium">Agregar nueva información</span>
-            </label>
+            </div>
         </div>
     </div>
 </div>
@@ -209,3 +221,10 @@
     </div>
     <app-historial-facturacion></app-historial-facturacion>
 </div>
+
+<app-modal-default size="large" [id]="'informacion-facturacion'" titulo="Información de facturación"
+#informacionFacturacion>
+<section *ngIf="toggleModal$ | async" modal-body>
+    <app-informacion-facturacion  [informacionFacturacionId]="informacionFacturacionSeleccionadaId" [estaEditando]="estaEditando"></app-informacion-facturacion>
+</section>
+</app-modal-default>
