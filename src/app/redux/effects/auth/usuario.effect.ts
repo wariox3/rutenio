@@ -1,12 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { tap } from 'rxjs/operators';
-import { getCookie, setCookie } from 'typescript-cookie';
-import {
-  usuarioActionActualizarVrSaldo,
-  usuarioIniciar,
-} from '../../actions/auth/usuario.actions';
-import { Usuario } from '../../../interfaces/user/user.interface';
+import { Injectable, inject } from "@angular/core";
+import { createEffect, Actions, ofType } from "@ngrx/effects";
+import { tap } from "rxjs/operators";
+import { getCookie, setCookie } from "typescript-cookie";
+import { usuarioActionActualizarVrSaldo, usuarioIniciar } from "../../actions/auth/usuario.actions";
+import { Usuario } from "../../../interfaces/user/user.interface";
+import { environment } from "../../../../environments/environment.development";
 
 @Injectable()
 export class UsuarioEffects {
@@ -18,11 +16,11 @@ export class UsuarioEffects {
         ofType(usuarioIniciar),
         tap((action: { usuario: Usuario }) => {
           let calcularTiempo = new Date(
-            new Date().getTime() + 3 * 60 * 60 * 1000
+            new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
-          setCookie('usuario', JSON.stringify(action.usuario), {
+          setCookie("usuario", JSON.stringify(action.usuario), {
             expires: calcularTiempo,
-            path: '/',
+            path: "/",
           });
         })
       ),

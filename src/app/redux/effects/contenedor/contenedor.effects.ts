@@ -7,6 +7,7 @@ import {
   ContenedorActionBorrarInformacion,
   ContenedorActionInit,
 } from '../../actions/contenedor/contenedor.actions';
+import { environment } from '../../../../environments/environment.development';
 
 @Injectable()
 export class ContenedorEffects {
@@ -16,7 +17,7 @@ export class ContenedorEffects {
         ofType(ContenedorActionInit),
         tap((action: { contenedor: Contenedor }) => {
           let calcularTresHoras = new Date(
-            new Date().getTime() + 3 * 60 * 60 * 1000
+            new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
           setCookie('contenedor', JSON.stringify(action.contenedor), {
             expires: calcularTresHoras,
