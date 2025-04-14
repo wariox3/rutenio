@@ -16,6 +16,7 @@ import { TokenService } from '../services/token.service';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { environment } from '../../../../../environments/environment.development';
 
 @Component({
   selector: 'app-login',
@@ -71,7 +72,7 @@ export default class LoginComponent {
       .subscribe((resultado: RespuestaLogin) => {
         if (resultado.token) {
           let calcularTiempo = new Date(
-            new Date().getTime() + 3 * 60 * 60 * 1000
+            new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
           this.store.dispatch(
             usuarioIniciar({
