@@ -61,5 +61,11 @@ export class FacturacionService {
     );
   }
 
+  eliminarInformacionFacturacion(informacion_id: any) {
+    return this.http.delete<{ informacion_id: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${informacion_id}/`,
+    );
+  }
+
 
 }
