@@ -45,6 +45,15 @@
                 <span class="badge badge-outline badge-xs">{{
                   contenedor.rol
                 }}</span>
+                @if (contenedor.acceso_restringido) {
+                <span
+                  class="inline-block bg-red-50 text-red-700 px-2 py-1 rounded text-xs font-bold whitespace-normal text-left w-full mt-1"
+                >
+                  El acceso a este contenedor está temporalmente suspendido. Por
+                  favor, revise su cuenta o la del propietario para solucionar
+                  el inconveniente
+                </span>
+                }
               </div>
             </div>
           </td>
@@ -64,6 +73,9 @@
           <td>
             <div class="flex gap-4">
               <app-button
+                [estaDeshabilitado]="
+                  contenedor.acceso_restringido && contenedor.rol !== 'control'
+                "
                 (emitirBotonClicked)="
                   seleccionarEmpresa(contenedor.contenedor_id, idx)
                 "
