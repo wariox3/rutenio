@@ -66,7 +66,6 @@ export default class FacturacionComponent
   informacionFacturacionSeleccionada: number | null = null;
   public estaEditando = false;
   private destroy$ = new Subject<void>();
-  
 
   ngOnInit(): void {
     this.store.select(obtenerUsuarioId).subscribe((codigoUsuario) => {
@@ -88,7 +87,8 @@ export default class FacturacionComponent
       this.consumos = respuesta[1].consumos;
       this.arrFacturacionInformacion = respuesta[2].informaciones_facturacion;
       if (this.arrFacturacionInformacion.length > 0) {
-        this.informacionFacturacionSeleccionada = this.arrFacturacionInformacion[0].id;
+        this.informacionFacturacionSeleccionada =
+          this.arrFacturacionInformacion[0].id;
       }
       respuesta[1].consumos.map((consumo: Consumo) => {
         this.consumoTotal += consumo.vr_total;
@@ -253,9 +253,9 @@ export default class FacturacionComponent
   }
 
   editarInformacion(id: number) {
-    this.estaEditando = true
+    this.estaEditando = true;
     this.informacionFacturacionSeleccionadaId = id.toString();
-    this.abrirModal()
+    this.abrirModal();
     this.changeDetectorRef.detectChanges();
   }
 
@@ -265,7 +265,7 @@ export default class FacturacionComponent
   }
 
   abrirModalParaNuevo() {
-    this.estaEditando = false
+    this.estaEditando = false;
     this.informacionFacturacionSeleccionadaId = null;
     this.abrirModal();
   }
@@ -276,10 +276,28 @@ export default class FacturacionComponent
       .subscribe((respuesta) => {
         this.arrFacturacionInformacion = respuesta.informaciones_facturacion;
         if (this.arrFacturacionInformacion.length > 0) {
-          this.informacionFacturacionSeleccionada = this.arrFacturacionInformacion[0].id;
+          this.informacionFacturacionSeleccionada =
+            this.arrFacturacionInformacion[0].id;
         }
         this.changeDetectorRef.detectChanges();
       });
   }
 
+  eliminarInformacion(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, eliminar',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.facturacionService
+            .eliminarInformacionFacturacion(id)
+            .subscribe(() => {
+              this.consultarDetalle();
+            });
+        }
+      });
+  }
 }

@@ -93,6 +93,8 @@ export class InformacionFacturacionComponent extends General implements OnInit {
   ngOnInit(): void {
     if (this.informacionFacturacionId) {
       this._poblarFormulario();
+    }else {
+      this.consultarCiudad('');
     }
     this._consultarInformacion();
     this.store.select(obtenerUsuarioId).subscribe((codigoUsuario) => {
@@ -205,6 +207,7 @@ export class InformacionFacturacionComponent extends General implements OnInit {
           'Se ha creado la información de facturación correctamente.'
         );
         this.dismissModal();
+        return this.emitirActualizacion.emit(true);
       });
     }
   }
