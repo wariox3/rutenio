@@ -22,7 +22,7 @@
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
             <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
-            <th class="px-6 py-3 text-left text-xs font-medium">Importe</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Saldo pendiente</th>
             <th class="w-[60px]"></th>
           </tr>
         </thead>
@@ -31,7 +31,7 @@
           <tr>
             <td>{{ factura.fecha | formatFecha : "Y-m-d" }}</td>
             <td>{{ factura.tipo }}</td>
-            <td class="text-end">
+            <td class="text-end font-bold text-2xl">
               {{ factura.vr_total | convertir_valor_moneda }}
             </td>
             <td class="w-[60px]">
@@ -39,6 +39,8 @@
                 class="checkbox checkbox-sm"
                 data-datatable-check="true"
                 type="checkbox"
+                [checked]="idEstaEnLista(factura.id)"
+                (click)="agregarRegistrosPagar(factura)"
               />
             </td>
           </tr>

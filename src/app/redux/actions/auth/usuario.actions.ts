@@ -5,3 +5,8 @@ export const usuarioIniciar = createAction(
     '[Usuario] informacion',
     props<{usuario: Usuario}>()
 );
+
+export const usuarioActionActualizarVrSaldo = createAction(
+    '[Usuario] actualizar vr saldo',
+    props<{ vr_saldo: number }>()
+  );

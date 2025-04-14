@@ -32,6 +32,12 @@ export class FacturacionService {
     );
   }
 
+  obtenerUsuarioVrSaldo(usuario_id: number) {
+    return this.http.get<{ saldo: number }>(
+      `${environment.url_api}/seguridad/usuario/saldo/${usuario_id}/`,
+    );
+  }
+
   informacionFacturacion(usuario_id: number) {
     return this.http.post<any>(
       `${environment.url_api}/contenedor/informacion_facturacion/consulta-usuario/`,

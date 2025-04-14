@@ -294,8 +294,27 @@ export default class FacturacionComponent
         if (respuesta.isConfirmed) {
           this.facturacionService
             .eliminarInformacionFacturacion(id)
-            .subscribe(() => {
-              this.consultarDetalle();
+            .subscribe((respuesta) => {
+              if (respuesta) {
+                this.alertaService.mensajaExitoso(
+                  'Se ha eliminado correctamente la información de facturación',
+                );
+              }
+              
+              // Agregamos la misma lógica de validación
+              this.facturacionService
+                .informacionFacturacion(this.codigoUsuario)
+                .subscribe((respuesta) => {
+                  this.arrFacturacionInformacion =
+                    respuesta.informaciones_facturacion;
+                  if (this.arrFacturacionInformacion.length > 0) {
+                    this.informacionFacturacionSeleccionada =
+                      this.arrFacturacionInformacion[0].id;
+                  } else {
+                    this.informacionFacturacionSeleccionada = null;
+                  }
+                  this.changeDetectorRef.detectChanges();
+                });
             });
         }
       });
