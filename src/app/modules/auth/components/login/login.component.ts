@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,16 +12,33 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { BehaviorSubject, catchError, finalize, of, pipe } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
+import { environment } from '../../../../../environments/environment.development';
+import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
-import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { environment } from '../../../../../environments/environment.development';
+
+declare global {
+  interface Window {
+    onTurnstileSuccess: (token: string) => void;
+    onTurnstileError: () => void;
+    turnstile?: {
+      render: (
+        container: string,
+        options: {
+          sitekey: string;
+          callback: (token: string) => void;
+          'error-callback': () => void;
+        }
+      ) => void;
+    };
+  }
+}
 
 @Component({
   selector: 'app-login',
@@ -33,15 +55,16 @@ import { environment } from '../../../../../environments/environment.development
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class LoginComponent {
+export default class LoginComponent extends General implements OnInit {
   private tokenService = inject(TokenService);
   private authService = inject(AuthService);
-  private store = inject(Store);
   private _router = inject(Router);
-
+  turnstileToken: string = '';
+  turnstileSiteKey: string = environment.turnstileSiteKey;
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
   formularioLogin = new FormGroup({
+    turnstileToken: new FormControl('', [Validators.required]),
     username: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl(
       '',
@@ -52,6 +75,52 @@ export default class LoginComponent {
       ])
     ),
   });
+
+  ngOnInit(): void {
+    this.loadTurnstileScript();
+    window.onTurnstileSuccess = (token: string) =>
+      this.onTurnstileSuccess(token);
+    window.onTurnstileError = () => this.onTurnstileError();
+    this.resetTurnstileWidget();
+  }
+
+  onTurnstileSuccess(token: string): void {
+    this.turnstileToken = token;
+    this.formularioLogin.get('turnstileToken')?.setValue(token);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  onTurnstileError(): void {
+    console.error('Error al cargar Turnstile');
+    this.turnstileToken = '';
+    this.formularioLogin.get('turnstileToken')?.setValue('');
+    this.changeDetectorRef.detectChanges();
+  }
+
+  resetTurnstileWidget() {
+    const container = document.querySelector('.cf-turnstile');
+    if (container) {
+      container.innerHTML = '';
+      if (window.turnstile) {
+        window.turnstile.render('.cf-turnstile', {
+          sitekey: this.turnstileSiteKey,
+          callback: (token: string) => this.onTurnstileSuccess(token),
+          'error-callback': () => this.onTurnstileError(),
+        });
+      }
+    }
+  }
+
+  // Cargar el script de Turnstile dinámicamente
+  private loadTurnstileScript(): void {
+    if (typeof document !== 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }
 
   enviar() {
     if (this.formularioLogin.invalid) {

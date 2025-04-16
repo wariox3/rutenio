@@ -1,53 +1,74 @@
-<div class="flex h-[100vh] justify-center items-center p-8 lg:p-10 order-2 lg:order-1">
-    <div class="card max-w-[400px] w-full">
-        <form [formGroup]="formulario" class="card-body flex flex-col gap-5 p-10" id="sign_up_form" method="post"
-            (submit)="enviar()">
-            <div class="text-center mb-2.5">
-                <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
-                    Registrarse
-                </h3>
-                <div class="flex items-center justify-center">
-                    <span class="text-2sm text-gray-700 me-1.5">
-                        ¿Ya tiene una cuenta?
-                    </span>
-                    <a class="text-2sm link" routerLink="/auth/login">
-                        Iniciar sesión
-                    </a>
-                </div>
-            </div>
-            <div class="flex flex-col gap-1">
-                <label class="form-label text-gray-900">
-                    Email
-                </label>
-                <app-input-email [control]="formulario.controls.username"></app-input-email>
-
-            </div>
-            <div class="flex flex-col gap-1">
-                <label class="form-label font-normal text-gray-900">
-                    Contraseña
-                </label>
-                <app-input-password [control]="formulario.controls.password"></app-input-password>
-
-            </div>
-            <div class="flex flex-col gap-1">
-                <label class="form-label font-normal text-gray-900">
-                    Confirmar contraseña
-                </label>
-                <app-input-password [control]="formulario.controls.confirmarContrasena"></app-input-password>
-            </div>
-            <label class="checkbox-group">
-                <input formControlName="terminoCondicion" class="checkbox checkbox-sm" name="check" type="checkbox"
-                    value="1" />
-                <span class="checkbox-label">
-                    Acepto
-                    <a class="text-2sm link" href="#" target="_blank">
-                        Terminos & Condiciones
-                    </a>
-                </span>
-            </label>
-            <app-button [texto]="'Crear cuenta'" [textoCargando]="'Creando...'" [estaCargando]="registrando$ | async"
-                [clases]="'btn btn-primary w-full text-center justify-center'"
-                [estaDeshabilitado]="!this.formulario.valid"></app-button>
-        </form>
-    </div>
+<div
+  class="flex h-[100vh] justify-center items-center p-8 lg:p-10 order-2 lg:order-1"
+>
+  <div class="card max-w-[400px] w-full">
+    <form
+      [formGroup]="formulario"
+      class="card-body flex flex-col gap-5 p-10"
+      id="sign_up_form"
+      method="post"
+      (submit)="enviar()"
+    >
+      <div class="text-center mb-2.5">
+        <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
+          Registrarse
+        </h3>
+        <div class="flex items-center justify-center">
+          <span class="text-2sm text-gray-700 me-1.5">
+            ¿Ya tiene una cuenta?
+          </span>
+          <a class="text-2sm link" routerLink="/auth/login"> Iniciar sesión </a>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="form-label text-gray-900"> Email </label>
+        <app-input-email
+          [control]="formulario.controls.username"
+        ></app-input-email>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="form-label font-normal text-gray-900"> Contraseña </label>
+        <app-input-password
+          [control]="formulario.controls.password"
+        ></app-input-password>
+      </div>
+      <div class="flex flex-col gap-1">
+        <label class="form-label font-normal text-gray-900">
+          Confirmar contraseña
+        </label>
+        <app-input-password
+          [control]="formulario.controls.confirmarContrasena"
+        ></app-input-password>
+      </div>
+      <label class="checkbox-group">
+        <input
+          formControlName="terminoCondicion"
+          class="checkbox checkbox-sm"
+          name="check"
+          type="checkbox"
+          value="1"
+        />
+        <span class="checkbox-label">
+          Acepto
+          <a class="text-2sm link" href="#" target="_blank">
+            Terminos & Condiciones
+          </a>
+        </span>
+      </label>
+      <div
+        class="cf-turnstile mb-3"
+        [attr.data-sitekey]="turnstileSiteKey"
+        data-callback="onTurnstileSuccess"
+        data-error-callback="onTurnstileError"
+        data-language="es"
+      ></div>
+      <app-button
+        [texto]="'Crear cuenta'"
+        [textoCargando]="'Creando...'"
+        [estaCargando]="registrando$ | async"
+        [clases]="'btn btn-primary w-full text-center justify-center'"
+        [estaDeshabilitado]="!this.formulario.valid"
+      ></app-button>
+    </form>
+  </div>
 </div>
