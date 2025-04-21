@@ -1,19 +1,57 @@
-# Metronic Tailwind Angular
+# Ruteo App
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
+[![Angular Version](https://img.shields.io/badge/Angular-17-%23DD0031?logo=angular)](https://angular.io/)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-## Getting Started
+Ruteo App es una solución integral para la gestión inteligente de envíos y flotas de transporte, desarrollada con Angular 17.
 
-### Prerequisites
+## Requisitos previos
 
-Before getting started, you will need to purchase the Metronic theme, which includes the Tailwind CSS source files.
+- Node.js v18+
+- npm v9+
+- Angular CLI v17+
 
-To integrate Metronic Tailwind into your Angular project, you need to follow these steps:
+## Instalación
 
-1. Purchase the Metronic theme, which includes the Tailwind CSS source files.
+1. Clonar el repositorio:
+   ```bash
+   git clone git@github.com:wariox3/renio.git
+   cd renio
+   ```
+2. Instalar las dependencias
+   ```
+   npm install --legacy-peer-deps
+   ```
 
-2. After purchasing, refer to the official documentation for detailed instructions on integrating Metronic Tailwind into your Angular project.
+## Variables de entorno
+Se debe configurar el archivo `environment.ts` dentro de la carpeta `/environments`
+   ```
+   export const environment = {
+      production: false,
+      url_api: 'http://reddocapi.online',
+      url_api_subdominio: 'http://subdominio.reddocapi.online',
+      dominioApp: '.ruteo.online',
+      dominioHttp: 'http',
+      llavePublica: '',
+      sessionLifeTime: 24,
+      turnstileSiteKey: '',
+    };
+   ```
 
-3. The documentation can be found at the following link:
+## Ejecución
+Servidor de desarrollo:
 
-   https://keenthemes.com/metronic/tailwind/docs/getting-started/integration/angular
+   ```bash
+    ng serve
+   ```
+
+Abre http://localhost:4200 en tu navegador.
+
+Build para producción:
+
+   ```bash
+    ng build
+   ```
+
+Los archivos compilados se guardarán en la carpeta `dist/`.
+
