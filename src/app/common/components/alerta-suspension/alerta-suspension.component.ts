@@ -42,4 +42,8 @@ export class AlertaSuspensionComponent extends General implements OnInit {
   navegar() {
     this.router.navigate([`/facturacion/lista`]);
   }
+
+  validarEstado() {
+    this.router.navigate([`/estado`]);
+  }
 }
