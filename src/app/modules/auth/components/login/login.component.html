@@ -50,8 +50,13 @@
         />
         <span class="checkbox-label"> Recuerdame </span>
       </label>
-      <ngx-turnstile [siteKey]="turnstileSiteKey" (resolved)="onTurnstileSuccess($event)"></ngx-turnstile>
 
+      @if(isProduction) {
+      <ngx-turnstile
+        [siteKey]="turnstileSiteKey"
+        (resolved)="onTurnstileSuccess($event)"
+      ></ngx-turnstile>
+      }
 
       <!-- <ng-container
         [ngTemplateOutlet]="formError"
