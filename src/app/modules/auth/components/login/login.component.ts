@@ -34,22 +34,23 @@ import { NgxTurnstileModule } from 'ngx-turnstile';
     InputEmailComponent,
     ButtonComponent,
     RouterLink,
-    NgxTurnstileModule
+    NgxTurnstileModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class LoginComponent extends General {
+export default class LoginComponent extends General implements OnInit {
   private tokenService = inject(TokenService);
   private authService = inject(AuthService);
   private _router = inject(Router);
   turnstileToken: string = '';
   turnstileSiteKey: string = environment.turnstileSiteKey;
   public isLoading$ = new BehaviorSubject<boolean>(false);
+  isProduction: boolean = environment.production;
 
   formularioLogin = new FormGroup({
-    cf_turnstile_response: new FormControl('', [Validators.required]),
+    cf_turnstile_response: new FormControl(''),
     proyecto: new FormControl('RUTEO'),
     username: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl(
@@ -61,6 +62,14 @@ export default class LoginComponent extends General {
       ])
     ),
   });
+
+  ngOnInit(): void {
+    if (this.isProduction) {
+      this.formularioLogin
+        .get('cf_turnstile_response')
+        ?.addValidators([Validators.required]);
+    }
+  }
 
   onTurnstileSuccess(token: string): void {
     this.turnstileToken = token;

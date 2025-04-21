@@ -55,11 +55,13 @@
           </a>
         </span>
       </label>
-      
+
+      @if(isProduction) {
       <ngx-turnstile
         [siteKey]="turnstileSiteKey"
         (resolved)="onTurnstileSuccess($event)"
       ></ngx-turnstile>
+      }
 
       <app-button
         [texto]="'Crear cuenta'"
