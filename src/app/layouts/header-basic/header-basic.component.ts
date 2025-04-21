@@ -25,7 +25,18 @@ export class HeaderBasicComponent extends General implements OnInit {
   public usuarioNombre$: Observable<string>;
   public contenedorNombre$: Observable<string>;
 
-  public menuItems: MenuItems[] = [];
+  public menuItems: MenuItems[] = [
+    {
+      titulo: 'Mis contenedores',
+      icono: 'ki-filled ki-abstract-26',
+      link: '/contenedor/lista',
+    },
+    {
+      titulo: 'Facturación',
+      icono: 'ki-cheque ki-abstract-26',
+      link: '/facturacion/lista',
+    },
+  ];
 
   constructor() {
     super();

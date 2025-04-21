@@ -32,12 +32,44 @@ export class FacturacionService {
     );
   }
 
+  obtenerUsuarioVrSaldo(usuario_id: number) {
+    return this.http.get<{ saldo: number }>(
+      `${environment.url_api}/seguridad/usuario/saldo/${usuario_id}/`,
+    );
+  }
+
   informacionFacturacion(usuario_id: number) {
     return this.http.post<any>(
       `${environment.url_api}/contenedor/informacion_facturacion/consulta-usuario/`,
       {
         usuario_id,
       }
+    );
+  }
+
+  crearInformacionFacturacion(data: any) {
+    return this.http.post<{ data: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/`,
+      data,
+    );
+  }
+
+  obtenerInformacionFacturacion(usuario_id: any) {
+    return this.http.get<{ usuario_id: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${usuario_id}/`,
+    );
+  }
+
+  actualizarDatosInformacionFacturacion(informacion_id: any, data: any) {
+    return this.http.put<{ informacion_id: any; data: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${informacion_id}/`,
+      data,
+    );
+  }
+
+  eliminarInformacionFacturacion(informacion_id: any) {
+    return this.http.delete<{ informacion_id: any }>(
+      `${environment.url_api}/contenedor/informacion_facturacion/${informacion_id}/`,
     );
   }
 
