@@ -55,13 +55,12 @@
           </a>
         </span>
       </label>
-      <div
-        class="cf-turnstile mb-3"
-        [attr.data-sitekey]="turnstileSiteKey"
-        data-callback="onTurnstileSuccess"
-        data-error-callback="onTurnstileError"
-        data-language="es"
-      ></div>
+      
+      <ngx-turnstile
+        [siteKey]="turnstileSiteKey"
+        (resolved)="onTurnstileSuccess($event)"
+      ></ngx-turnstile>
+
       <app-button
         [texto]="'Crear cuenta'"
         [textoCargando]="'Creando...'"
