@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -17,6 +22,8 @@ import { AuthService } from '../services/auth.service';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { General } from '../../../../common/clases/general';
+import { environment } from '../../../../../environments/environment.development';
+import { NgxTurnstileModule } from 'ngx-turnstile';
 
 @Component({
   selector: 'app-register',
@@ -28,6 +35,7 @@ import { General } from '../../../../common/clases/general';
     InputEmailComponent,
     InputPasswordComponent,
     RouterLink,
+    NgxTurnstileModule
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -37,6 +45,9 @@ export default class RegisterComponent extends General {
   private authService = inject(AuthService);
   private _router = inject(Router);
   public registrando$ = new BehaviorSubject<boolean>(false);
+  turnstileToken: string = '';
+  turnstileSiteKey: string = environment.turnstileSiteKey;
+  public isLoading$ = new BehaviorSubject<boolean>(false);
 
   validarContrasena(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -47,7 +58,15 @@ export default class RegisterComponent extends General {
     };
   }
 
+  onTurnstileSuccess(token: string): void {
+    this.turnstileToken = token;
+    this.formulario.get('turnstileToken')?.setValue(token);
+    this.changeDetectorRef.detectChanges();
+  }
+
+
   formulario = new FormGroup({
+    turnstileToken: new FormControl('', [Validators.required]),
     username: new FormControl('', Validators.required),
     password: new FormControl(
       '',

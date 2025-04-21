@@ -1,5 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -7,15 +12,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { BehaviorSubject, catchError, finalize, of, pipe } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
+import { environment } from '../../../../../environments/environment.development';
+import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../services/auth.service';
 import { TokenService } from '../services/token.service';
-import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { NgxTurnstileModule } from 'ngx-turnstile';
 
 @Component({
   selector: 'app-login',
@@ -27,20 +34,23 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
     InputEmailComponent,
     ButtonComponent,
     RouterLink,
+    NgxTurnstileModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class LoginComponent {
+export default class LoginComponent extends General {
   private tokenService = inject(TokenService);
   private authService = inject(AuthService);
-  private store = inject(Store);
   private _router = inject(Router);
-
+  turnstileToken: string = '';
+  turnstileSiteKey: string = environment.turnstileSiteKey;
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
   formularioLogin = new FormGroup({
+    cf_turnstile_response: new FormControl('', [Validators.required]),
+    proyecto: new FormControl('RUTEO'),
     username: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl(
       '',
@@ -51,6 +61,12 @@ export default class LoginComponent {
       ])
     ),
   });
+
+  onTurnstileSuccess(token: string): void {
+    this.turnstileToken = token;
+    this.formularioLogin.get('cf_turnstile_response')?.setValue(token);
+    this.changeDetectorRef.detectChanges();
+  }
 
   enviar() {
     if (this.formularioLogin.invalid) {
@@ -71,7 +87,7 @@ export default class LoginComponent {
       .subscribe((resultado: RespuestaLogin) => {
         if (resultado.token) {
           let calcularTiempo = new Date(
-            new Date().getTime() + 3 * 60 * 60 * 1000
+            new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
           this.store.dispatch(
             usuarioIniciar({

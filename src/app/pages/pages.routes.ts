@@ -28,6 +28,20 @@ export default [
     ],
   },
   {
+    path: 'estado',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./facturacion-layout/facturacion-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>  import(
+              '../modules/facturacion/components/facturacion-mensaje-pago/facturacion-mensaje-pago.component'
+            ).then((c) => c.FacturacionMensajePagoComponent),
+      },
+    ]
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

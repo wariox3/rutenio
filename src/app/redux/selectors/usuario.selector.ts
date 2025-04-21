@@ -26,3 +26,6 @@ export const obtenerUsuarioVrSaldo = createSelector(
   Usuario,
   (Usuario) => Usuario.vr_saldo
 );
+
+export const obtenerValidacionSaldo = (saldo: number) =>
+  createSelector(Usuario, (Usuario) => Usuario.vr_saldo !== saldo);
