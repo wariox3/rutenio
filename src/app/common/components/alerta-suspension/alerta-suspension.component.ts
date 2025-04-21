@@ -44,6 +44,8 @@ export class AlertaSuspensionComponent extends General implements OnInit {
   }
 
   validarEstado() {
+    localStorage.removeItem('isFirstTime');
+    this.changeDetectorRef.detectChanges()
     this.router.navigate([`/estado`]);
   }
 }

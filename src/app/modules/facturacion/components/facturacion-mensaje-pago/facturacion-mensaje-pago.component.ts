@@ -1,9 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { General } from '../../../../common/clases/general';
-import {
-  obtenerUsuarioId,
-  obtenerValidacionSaldo,
-} from '../../../../redux/selectors/usuario.selector';
+import { obtenerUsuarioId, obtenerValidacionSaldo } from '../../../../redux/selectors/usuario.selector';
 import { FacturacionService } from '../../servicios/facturacion.service';
 import { of, switchMap, tap } from 'rxjs';
 import { usuarioActionActualizarVrSaldo } from '../../../../redux/actions/auth/usuario.actions';
@@ -19,19 +16,30 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FacturacionMensajePagoComponent extends General implements OnInit {
+
   procesando = true;
   vr_saldo: number;
 
-  constructor(private facturacionService: FacturacionService) {
-    super();
+  constructor(private facturacionService: FacturacionService){
+    super()
   }
 
+
   ngOnInit(): void {
-    setTimeout(() => {
+    const isFirstTime = !localStorage.getItem('isFirstTime');
+
+    if (isFirstTime) {
+      localStorage.setItem('isFirstTime', 'false');
+      setTimeout(() => {
+        this.procesando = false;
+        this.changeDetectorRef.detectChanges();
+        this.consultarInformacion();
+      }, 5000);
+    } else {
       this.procesando = false;
       this.changeDetectorRef.detectChanges();
       this.consultarInformacion();
-    }, 5000);
+    }
   }
 
   consultarInformacion() {
@@ -64,4 +72,5 @@ export class FacturacionMensajePagoComponent extends General implements OnInit {
       .subscribe();
     this.changeDetectorRef.detectChanges();
   }
-}
+
+ }
