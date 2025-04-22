@@ -186,11 +186,11 @@
     <div class="h-full" style="height: 600px; position: relative">
       <div class="flex justify-end mb-2">
         <button
-          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow "
+          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
           (click)="toggleUbicaciones(despachoIdActual)"
         >
           {{
-            mostrarUbicaciones ? "Ocultar Ubicaciones" : "Mostrar Ubicaciones"
+            mostrarUbicaciones ? "Ocultar ubicaciones" : "Mostrar ubicaciones"
           }}
         </button>
       </div>
@@ -255,6 +255,16 @@
             </div>
           </section>
         </map-info-window>
+        <map-marker
+          *ngFor="let marker of customUbicacionMarkers"
+          [position]="marker.position"
+          [label]="{
+            text: marker.label,
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }"
+        ></map-marker>
 
         <!-- Primera ruta (visitas) -->
         <map-directions-renderer
@@ -263,12 +273,6 @@
           [options]="directionsRendererOptions"
         ></map-directions-renderer>
 
-        <!-- Segunda ruta (ubicaciones) -->
-        <map-directions-renderer
-          *ngIf="mostrarUbicaciones && directionsResultsUbicaciones"
-          [directions]="directionsResultsUbicaciones"
-          [options]="directionsRendererOptionsUbicaciones"
-        ></map-directions-renderer>
       </google-map>
     </div>
   </section>
