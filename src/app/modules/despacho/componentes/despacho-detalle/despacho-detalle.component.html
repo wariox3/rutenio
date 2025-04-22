@@ -97,36 +97,44 @@
     </div>
   </div>
 
-  <div class="card mt-4">
-    <div class="border-b border-gray-200">
-      <nav class="flex -mb-px pl-8">
-        <button 
-          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
-          [class]="activeTab === 'visitas' ? 
-                  'border-blue-500 text-blue-600' : 
-                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          (click)="activeTab = 'visitas'">
-          Visitas
-        </button>
-        <button 
-          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm" 
-          [class]="activeTab === 'ubicaciones' ? 
-                  'border-blue-500 text-blue-600' : 
-                  'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
-          (click)="activeTab = 'ubicaciones'">
-          Ubicaciones
-        </button>
-      </nav>
+  <div class="border-b border-gray-200">
+    <nav class="flex -mb-px pl-8">
+      <button
+        class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+        [class]="
+          activeTab === 'visitas'
+            ? 'border-blue-500 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+        "
+        (click)="activeTab = 'visitas'"
+      >
+        Visitas
+      </button>
+      <button
+        class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+        [class]="
+          activeTab === 'ubicaciones'
+            ? 'border-blue-500 text-blue-600'
+            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+        "
+        (click)="activeTab = 'ubicaciones'"
+      >
+        Ubicaciones
+      </button>
+    </nav>
+  </div>
+
+  <div class="card-body">
+    <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
+      <app-despacho-tab-visita
+        [despachoId]="despachoId"
+      ></app-despacho-tab-visita>
     </div>
-  
-    <div class="card-body">
-      <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
-        <app-despacho-tab-visita [despachoId]="despachoId"></app-despacho-tab-visita>
-      </div>
-      
-      <div *ngIf="activeTab === 'ubicaciones'" class="overflow-x-auto">
-        <app-despacho-tab-ubicacion [despachoId]="despachoId"></app-despacho-tab-ubicacion>
-      </div>
+
+    <div *ngIf="activeTab === 'ubicaciones'" class="overflow-x-auto">
+      <app-despacho-tab-ubicacion
+        [despachoId]="despachoId"
+      ></app-despacho-tab-ubicacion>
     </div>
   </div>
 </div>

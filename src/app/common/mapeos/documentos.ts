@@ -116,6 +116,14 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Fecha',
+        campoNombre: 'fecha',
+        campoTipo: 'DateField',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'Vehículo',
         campoNombre: 'vehiculo_placa',
         campoTipo: 'CharField',
@@ -140,6 +148,14 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Visitas',
+        campoNombre: 'visitas',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'Aprobado',
         campoNombre: 'estado_aprobado',
         campoTipo: 'Boolean',
@@ -154,15 +170,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
-      },
-      {
-        encabezado: 'Visitas',
-        campoNombre: 'visitas',
-        campoTipo: 'CharField',
-        visibleTabla: true,
-        visibleFiltro: true,
-        ordenable: true,
-      },
+      }
     ],
   },
 };
