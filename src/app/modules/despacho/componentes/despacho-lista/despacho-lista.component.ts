@@ -27,7 +27,7 @@ export default class DespachoListaComponent extends General implements OnInit {
     filtros: [],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['-fecha'],
     limite_conteo: 10000,
     modelo: 'RutDespacho',
   };
