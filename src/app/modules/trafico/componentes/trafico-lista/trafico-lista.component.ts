@@ -13,7 +13,7 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { GeneralService } from '../../../../common/services/general.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, forkJoin, Subject, takeUntil } from 'rxjs';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
@@ -103,6 +103,13 @@ export default class TraficoListaComponent
   directionsResultsVisitas: google.maps.DirectionsResult;
   directionsResultsUbicaciones: google.maps.DirectionsResult;
   despachoIdActual: number | null = null;
+  lineasConectoras: google.maps.LatLng[][] = [];
+  private MAX_WAYPOINTS = 23;
+  directionsResultsUbicacionesArray;
+  customUbicacionMarkers: {
+    position: google.maps.LatLngLiteral;
+    label: string;
+  }[] = [];
 
   constructor() {
     super();
@@ -154,10 +161,10 @@ export default class TraficoListaComponent
   private consultarUbicacion(despachoId: number) {
     const parametrosConsultaUbicacion: ParametrosConsulta = {
       filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
-      limite: 50,
+      limite: 25,
       desplazar: 0,
       ordenamientos: ['-fecha'],
-      limite_conteo: 10000,
+      limite_conteo: 25,
       modelo: 'RutUbicacion',
     };
 
@@ -299,17 +306,6 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  // Opciones para la segunda ruta (con color diferente)
-  directionsRendererOptionsUbicaciones: google.maps.DirectionsRendererOptions =
-    {
-      polylineOptions: {
-        strokeColor: '#FF0000', // Rojo para diferenciar
-        strokeOpacity: 0.8,
-        strokeWeight: 6,
-      },
-      suppressMarkers: true,
-    };
-
   calcularRuta() {
     const origin = this.marcarPosicionesVisitasOrdenadas[0];
     const destination =
@@ -346,43 +342,24 @@ export default class TraficoListaComponent
       });
   }
 
-  // Método para calcular la ruta de ubicaciones
   calcularRutaUbicaciones() {
-    if (this.marcarPosicionesUbicacionesOrdenadas.length < 2) return;
+    this.directionsResultsUbicacionesArray = [];
+    this.lineasConectoras = [];
 
-    const origin = this.marcarPosicionesUbicacionesOrdenadas[0];
-    const destination =
-      this.marcarPosicionesUbicacionesOrdenadas[
-        this.marcarPosicionesUbicacionesOrdenadas.length - 1
-      ];
-    const waypoints = this.marcarPosicionesUbicacionesOrdenadas
-      .slice(1, -1)
-      .map((position) => ({
-        location: new google.maps.LatLng(position.lat, position.lng),
-        stopover: true,
+    this.customUbicacionMarkers = [...this.marcarPosicionesUbicacionesOrdenadas]
+      .reverse()
+      .map((pos, index) => ({
+        position: pos,
+        label: (index + 1).toString(),
       }));
 
-    const request: google.maps.DirectionsRequest = {
-      origin: new google.maps.LatLng(origin.lat, origin.lng),
-      destination: new google.maps.LatLng(destination.lat, destination.lng),
-      waypoints,
-      travelMode: google.maps.TravelMode.DRIVING,
-      optimizeWaypoints: false,
-    };
+    if (this.customUbicacionMarkers.length > 0) {
+      const primerMarcador = this.customUbicacionMarkers[0];
+      this.map.panTo(primerMarcador.position);
+      this.map.setZoom(24);
+    }
 
-    this.directionsService
-      .route(request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.directionsResultsUbicaciones = response.result;
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (e) => {
-          console.error('Error al calcular la ruta de ubicaciones:', e);
-          this.changeDetectorRef.detectChanges();
-        },
-      });
+    this.changeDetectorRef.detectChanges();
   }
 
   addMarker(
@@ -425,7 +402,6 @@ export default class TraficoListaComponent
     this.consultarUbicacion(despacho_id).subscribe((respuesta) => {
       this.arrUbicaciones = respuesta.registros;
       this.marcarPosicionesUbicacionesOrdenadas = [
-        { lat: 6.200713725811437, lng: -75.58609508555918 },
         ...this.arrUbicaciones.map((ubicacion) => ({
           lat: parseFloat(ubicacion.latitud),
           lng: parseFloat(ubicacion.longitud),
@@ -449,6 +425,7 @@ export default class TraficoListaComponent
       this.directionsResultsUbicaciones = null;
       this.arrUbicaciones = [];
       this.marcarPosicionesUbicacionesOrdenadas = [];
+      this.customUbicacionMarkers = [];
       this.mostrarUbicaciones = false;
       this.changeDetectorRef.detectChanges();
     }
