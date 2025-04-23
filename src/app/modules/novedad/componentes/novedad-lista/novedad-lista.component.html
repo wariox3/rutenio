@@ -1,0 +1,23 @@
+<div class="card mb-5">
+  <div class="card-header">
+    <h3 class="card-title">Filtros</h3>
+  </div>
+  <div class="card-body">
+    <app-filtro-base
+      (emitirFiltros)="filtrosPersonalizados($event)"
+      [mapeoCampos]="mapeoFiltros"
+    ></app-filtro-base>
+  </div>
+</div>
+
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Novedades</h3>
+  </div>
+  <app-tabla-comun
+    campoMapeo="Novedad"
+    [mapeo]="mapeoDocumento"
+    [datos]="novedades$ | async"
+    (emitirDetalleItem)="detalleNovedad($event)"
+  ></app-tabla-comun>
+</div>

@@ -79,6 +79,10 @@ export default [
         loadChildren: () => import('../modules/visita/visita.routes'),
       },
       {
+        path: 'novedad',
+        loadChildren: () => import('../modules/novedad/novedad.routes'),
+      },
+      {
         path: 'rutear',
         loadComponent: () =>
           import(
