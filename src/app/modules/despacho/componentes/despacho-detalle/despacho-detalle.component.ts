@@ -25,6 +25,7 @@ import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despach
 export default class DespachoDetalleComponent extends General implements OnInit {
   private despachoService = inject(DespachoService)
 
+
   despachoId : number
 
 

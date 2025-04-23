@@ -108,7 +108,7 @@ export const mapeo: any = {
     tipo: 'Documento',
     datos: [
       {
-        encabezado: 'ID',
+        encabezado: 'Id',
         campoNombre: 'id',
         campoTipo: 'IntegerField',
         visibleTabla: true,
