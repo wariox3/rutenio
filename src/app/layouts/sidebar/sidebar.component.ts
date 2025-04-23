@@ -61,6 +61,10 @@ export class SidebarComponent extends General {
           nombre: 'Despacho',
           link: '/admin/despacho/lista',
         },
+        {
+          nombre: 'Novedad',
+          link: '/admin/novedad/lista',
+        },
       ],
     },
     {
