@@ -7,6 +7,10 @@ import { Despacho } from '../../interfaces/despacho.interface';
 import { DespachoTabVisitaComponent } from "../despacho-tab-visita/despacho-tab-visita.component";
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despacho-tab-ubicacion.component";
+import { ModalDefaultComponent } from "../../../../common/components/ui/modals/modal-default/modal-default.component";
+import { BehaviorSubject } from 'rxjs';
+import { VisitaLiberarComponent } from "../../../visita/componentes/visita-liberar/visita-liberar.component";
+import VisitaListaComponent from "../../../visita/componentes/visita-lista/visita-lista.component";
 
 @Component({
   selector: 'app-despacho-detalle',
@@ -16,7 +20,9 @@ import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despach
     RouterLink,
     DespachoTabVisitaComponent,
     FormatFechaPipe,
-    DespachoTabUbicacionComponent
+    DespachoTabUbicacionComponent,
+    ModalDefaultComponent,
+    VisitaLiberarComponent
 ],
   templateUrl: './despacho-detalle.component.html',
   styleUrl: './despacho-detalle.component.css',
@@ -24,7 +30,7 @@ import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despach
 })
 export default class DespachoDetalleComponent extends General implements OnInit {
   private despachoService = inject(DespachoService)
-
+  public toggleModal$ = new BehaviorSubject(false);
 
   despachoId : number
 
@@ -37,6 +43,7 @@ export default class DespachoDetalleComponent extends General implements OnInit 
     volumen: 0,
     visitas: 0,
     visitas_entregadas: 0,
+    visitas_liberadas: 0,
     visitas_entregadas_esperadas: 0,
     vehiculo_id: 0,
     vehiculo_placa: '',
@@ -64,6 +71,14 @@ export default class DespachoDetalleComponent extends General implements OnInit 
     this.activatedRoute.params.subscribe(
       (params:any) => {this.despachoId = params.id}
     );
+  }
+
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
   }
 
  }

@@ -25,6 +25,7 @@ export interface Visita {
   tiempo_trayecto: number;
   estado_decodificado_alerta: boolean;
   estado_despacho: boolean;
+  estado_novedad: boolean;
   destinatario_direccion_formato: string;
   resultados: any[];
 }

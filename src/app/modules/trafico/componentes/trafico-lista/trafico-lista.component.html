@@ -151,7 +151,19 @@
                           <span class="menu-icon">
                             <i class="ki-filled ki-delivery-geolocation"></i>
                           </span>
-                          <span class="menu-title"> Ruta</span>
+                          <span class="menu-title">Ruta</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#visita-liberar-modal"
+                          (click)="abrirModal(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery-2"></i>
+                          </span>
+                          <span class="menu-title">Liberar visita</span>
                         </button>
                       </div>
                     </div>
@@ -409,6 +421,18 @@
         </div>
       </div>
     </div>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'visita-liberar-modal'"
+  titulo="Liberar visita"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
   </section>
 </app-modal-default>
 

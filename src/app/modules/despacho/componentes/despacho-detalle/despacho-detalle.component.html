@@ -7,6 +7,37 @@
       <i class="ki-filled ki-arrow-left mr-1"></i>
       Atrás
     </button>
+    <div class="menu menu-default p-0" data-menu="true">
+      <div
+        class="menu-item"
+        data-menu-item-placement="bottom-start"
+        data-menu-item-toggle="dropdown"
+        data-menu-item-trigger="click"
+      >
+        <button
+          class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
+        >
+          <span class=""> Acciones </span>
+          <span class="menu-arrow">
+            <i class="ki-outline ki-down"> </i>
+          </span>
+        </button>
+        <div class="menu-dropdown w-48 py-2">
+          <div class="menu-item" data-menu-dismiss="true">
+            <button
+              class="menu-link"
+              data-modal-toggle="#redespacho-modal"
+              (click)="abrirModal()"
+            >
+              <span class="menu-icon">
+                <i class="ki-filled ki-delivery-2"></i>
+              </span>
+              <span class="menu-title"> Liberar visita </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -84,12 +115,36 @@
               </td>
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              ></td>
+              <td class="px-4 py-3 border-r border-gray-300"></td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
               >
-                Visitas entregadas
+                Entregadas
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ despacho().visitas_entregadas }}
               </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              ></td>
+              <td class="px-4 py-3 border-r border-gray-300"></td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Liberadas
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ despacho().visitas_liberadas }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              ></td>
+              <td class="px-4 py-3 border-r border-gray-300"></td>
             </tr>
           </tbody>
         </table>
@@ -138,3 +193,15 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  size="medium"
+  [id]="'redespacho-modal'"
+  titulo="Liberar visita"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-visita-liberar [despachoId]="despachoId"></app-visita-liberar>
+  </section>
+</app-modal-default>

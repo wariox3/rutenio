@@ -52,6 +52,7 @@ export default class VisitaDetalleComponent extends General implements OnInit {
       tiempo_trayecto: 0,
       estado_decodificado_alerta: false,
       estado_despacho: false,
+      estado_novedad: false,
       destinatario_direccion_formato: '',
       resultados: []
     })
