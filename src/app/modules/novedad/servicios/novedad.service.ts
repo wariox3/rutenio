@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
-import { Novedad } from '../interfaces/despacho.interface';
+import { Novedad } from '../interfaces/novedad.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class NovedadService {
   }
 
   consultarDetalle(id: number) {
-    return this._httpService.getDetalle<any>(`ruteo/despacho/${id}/`);
+    return this._httpService.getDetalle<any>(`ruteo/novedad/${id}/`);
   }
 
   eliminarDespacho(id: number) {

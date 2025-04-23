@@ -16,9 +16,9 @@ export default [
   //   loadComponent: () =>
   //     import('./componentes/despacho-nuevo/despacho-nuevo.component'),
   // },
-  // {
-  //   path: 'detalle/:id',
-  //   loadComponent: () =>
-  //     import('./componentes/despacho-detalle/despacho-detalle.component'),
-  // },
+  {
+    path: 'detalle/:id',
+    loadComponent: () =>
+      import('./componentes/novedad-detalle/novedad-detalle.component'),
+  },
 ] as Routes;

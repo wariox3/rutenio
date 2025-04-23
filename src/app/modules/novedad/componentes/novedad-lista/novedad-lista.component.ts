@@ -131,6 +131,6 @@ export default class NovedadListaComponent extends General implements OnInit {
   }
 
   detalleNovedad(id: number) {
-    this.router.navigateByUrl(`/admin/despacho/detalle/${id}`);
+    this.router.navigateByUrl(`/admin/novedad/detalle/${id}`);
   }
 }

@@ -1,0 +1,87 @@
+<div class="flex items-center mb-4">
+  <div class="btn-group gap-1">
+    <button
+      class="btn btn-secondary flex items-center"
+      [routerLink]="['/admin/novedad/lista']"
+    >
+      <i class="ki-filled ki-arrow-left mr-1"></i>
+      Atrás
+    </button>
+    <!-- <app-botonera-opciones
+      [modelo]="'RutNovedad'"
+      [registroId]="novedad().id"
+    ></app-botonera-opciones> -->
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-table">
+    <div class="card-header">
+      <h3 class="card-title">Detalle novedad - {{ novedad().id }}</h3>
+    </div>
+    <div class="card-body">
+      <div class="overflow-x-auto">
+        <table class="table-auto border border-gray-300 text-sm w-full">
+          <tbody>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Fecha
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().fecha | formatFecha : "Y-m-d" }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Tipo
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().novedad_tipo_nombre }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Descripción
+              </td>
+              <td class="px-4 py-3" colspan="3">
+                {{ novedad().descripcion }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Solucionado
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().estado_solucion | validarBooleano }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Fecha solución
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().fecha_solucion | formatFecha : "Y-m-d" }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Solución
+              </td>
+              <td class="px-4 py-3" colspan="3">
+                {{ novedad().solucion }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
