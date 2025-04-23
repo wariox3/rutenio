@@ -27,6 +27,7 @@ import { VisitaService } from '../../../visita/servicios/visita.service';
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
+import { VisitaLiberarComponent } from "../../../visita/componentes/visita-liberar/visita-liberar.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -39,7 +40,8 @@ import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service
     RedondearPipe,
     DespachoTabVisitaComponent,
     DespachoTabUbicacionComponent,
-  ],
+    VisitaLiberarComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

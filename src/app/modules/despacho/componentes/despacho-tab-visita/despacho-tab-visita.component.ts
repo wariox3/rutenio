@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { Visita } from '../../../visita/interfaces/visita.interface';
@@ -6,6 +6,7 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { CommonModule } from '@angular/common';
 import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-despacho-tab-visita',
@@ -15,10 +16,10 @@ import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
   styleUrl: './despacho-tab-visita.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DespachoTabVisitaComponent extends General implements OnInit {
+export class DespachoTabVisitaComponent extends General implements OnInit, OnDestroy {
 
   @Input() despachoId: number;
-
+  private _destroy$ = new Subject<void>()
   private visitaService = inject(VisitaService)
 
   visitas = signal<Visita[]>([])
@@ -32,6 +33,9 @@ export class DespachoTabVisitaComponent extends General implements OnInit {
   };
 
   ngOnInit(): void {
+    this.visitaService.actualizarLista$.pipe(takeUntil(this._destroy$)).subscribe(() => {
+      this.consultarVisitaPorDespacho();
+    })
     this.consultarVisitaPorDespacho();
   }
 
@@ -55,6 +59,11 @@ export class DespachoTabVisitaComponent extends General implements OnInit {
         console.error('Error al cargar visitas:', error);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.unsubscribe();
   }
 
  }
