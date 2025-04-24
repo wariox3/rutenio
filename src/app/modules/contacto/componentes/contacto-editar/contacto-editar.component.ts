@@ -56,7 +56,7 @@ export default class ContactoEditarComponent extends General implements OnInit {
           'Se ha actualizado el contacto exitosamente.'
         );
         this.router.navigate([
-          '/admin/contacto/detalle',
+          '/administracion/contacto/detalle',
           respuesta.id,
         ]);
       });

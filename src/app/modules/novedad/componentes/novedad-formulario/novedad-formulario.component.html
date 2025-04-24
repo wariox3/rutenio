@@ -1,0 +1,46 @@
+<form [formGroup]="formularioNovedad" (submit)="enviar()">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div>
+      <app-label [required]="true">Novedad tipo</app-label>
+      <select
+        class="select mt-1 w-full"
+        name="select"
+        [formControl]="formularioNovedad.controls.novedad_tipo"
+      >
+        <option value="0">Seleccionar</option>
+        @for (tipoPersona of arrTipoNovedad; track $index) {
+        <option [value]="tipoPersona.id">
+          {{ tipoPersona.nombre }}
+        </option>
+        }
+      </select>
+    </div>
+    <div>
+      <div>
+        <app-label [required]="true"> Visita id </app-label>
+        <app-input [control]="formularioNovedad.controls.visita"></app-input>
+      </div>
+    </div>
+  </div>
+
+  <div class="mb-5 md:col-span-2">
+    <app-label [required]="true"> Descripción</app-label>
+    <app-input-textarea
+      [control]="formularioNovedad.controls.descripcion"
+      placeholder=""
+      [rows]="4"
+      [minLength]="10"
+      [maxLength]="500"
+    ></app-input-textarea>
+  </div>
+
+  <div class="flex justify-between">
+    <button class="btn btn-secondary" routerLink="/movimiento/novedad/lista">
+      Atrás
+    </button>
+    <app-button
+      texto="Guardar"
+      [estaDeshabilitado]="!formularioNovedad.valid"
+    ></app-button>
+  </div>
+</form>

@@ -24,25 +24,25 @@ export class SidebarComponent extends General {
   public sidebarMenu: SidebarMenu[] = [
     {
       nombre: 'Inicio',
-      link: '/admin/dashboard',
+      link: '/dashboard',
       iconoClase: 'ki-filled ki-home',
       activo: false,
     },
     {
       nombre: 'Rutear',
-      link: '/admin/rutear',
+      link: '/rutear',
       iconoClase: 'ki-filled ki-map',
       activo: false,
     },
     {
       nombre: 'Diseño ruta',
-      link: '/admin/diseno-ruta/lista',
+      link: '/diseno-ruta/lista',
       iconoClase: 'ki-filled ki-design-1',
       activo: false,
     },
     {
       nombre: 'Tráfico',
-      link: '/admin/trafico/lista',
+      link: '/trafico/lista',
       iconoClase: 'ki-filled ki-delivery',
       activo: false,
     },
@@ -55,11 +55,15 @@ export class SidebarComponent extends General {
       children: [
         {
           nombre: 'Visita',
-          link: '/admin/visita/lista',
+          link: '/movimiento/visita/lista',
         },
         {
           nombre: 'Despacho',
-          link: '/admin/despacho/lista',
+          link: '/movimiento/despacho/lista',
+        },
+        {
+          nombre: 'Novedad',
+          link: '/movimiento/novedad/lista',
         },
       ],
     },
@@ -72,34 +76,21 @@ export class SidebarComponent extends General {
       children: [
         {
           nombre: 'Vehículos',
-          link: '/admin/vehiculo/lista',
+          link: '/administracion/vehiculo/lista',
         },
         {
           nombre: 'Contactos',
-          link: '/admin/contacto/lista',
+          link: '/administracion/contacto/lista',
         },
         {
           nombre: 'Franjas',
-          link: '/admin/franja/lista',
+          link: '/administracion/franja/lista',
         },
       ],
     },
-    // {
-    //   nombre: 'Utilidad',
-    //   link: '',
-    //   iconoClase: 'ki-filled ki-folder',
-    //   activo: false,
-    //   tipoAcordion: true,
-    //   children: [
-    //     {
-    //       nombre: 'Importar visitas',
-    //       link: '/admin/visita/lista',
-    //     },
-    //   ],
-    // },
     {
       nombre: 'Complementos',
-      link: '/admin/complemento/lista',
+      link: '/complemento/lista',
       iconoClase: 'ki-filled ki-plus-squared',
       activo: false,
     },

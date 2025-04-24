@@ -56,10 +56,10 @@ export default class ContactoListaComponent extends General implements OnInit {
   }
 
   editarContacto(id: number) {
-    this.router.navigateByUrl(`/admin/contacto/editar/${id}`);
+    this.router.navigateByUrl(`/administracion/contacto/editar/${id}`);
   }
   
   detalleContacto(id: number) {
-    this.router.navigateByUrl(`/admin/contacto/detalle/${id}`);
+    this.router.navigateByUrl(`/administracion/contacto/detalle/${id}`);
   }
 }
