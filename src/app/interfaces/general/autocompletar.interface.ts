@@ -34,4 +34,9 @@ export interface RespuestaAutocompletar<T> {
     nombre: string;
     codigo: number;
   }
+
+  export interface AutocompletarTipoNovedad {
+    id: number;
+    nombre: string;
+  }
   
