@@ -432,4 +432,8 @@ export default class TraficoListaComponent
       this.changeDetectorRef.detectChanges();
     }
   }
+
+  anular(despacho_id){
+    
+  }
 }
