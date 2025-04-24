@@ -39,6 +39,7 @@ export class NovedadSolucionComponent extends General implements OnInit {
   
   solucion(){
     this._novedadService.solucionarNovedad(this.formularioNovedad.value).subscribe(() => {
+      this._novedadService.notificarActualizacionLista();
       this._alertaService.mensajaExitoso(
         'Se ha solucionado la novedad.'
       );

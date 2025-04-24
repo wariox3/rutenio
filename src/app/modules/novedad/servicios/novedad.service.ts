@@ -3,12 +3,21 @@ import { HttpService } from '../../../common/services/http.service';
 import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
 import { Novedad } from '../interfaces/novedad.interface';
 import { RespuestaAutocompletar } from '../../../interfaces/general/autocompletar.interface';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NovedadService {
   private _httpService = inject(HttpService);
+  
+  private actualizarListaSubject = new Subject<void>();
+
+  actualizarLista$ = this.actualizarListaSubject.asObservable();
+
+  notificarActualizacionLista() {
+    this.actualizarListaSubject.next();
+  }
 
   lista(parametros: any) {
     return this._httpService.post<RespuestaGeneralLista<Novedad>>(
