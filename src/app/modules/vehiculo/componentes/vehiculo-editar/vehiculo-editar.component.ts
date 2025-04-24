@@ -52,7 +52,7 @@ export default class VehiculoEditarComponent extends General implements OnInit {
         this.alerta.mensajaExitoso(
           'Se ha actualizado el vehículo exitosamente.'
         );
-        this.router.navigate(['/admin/vehiculo/lista']);
+        this.router.navigate(['/administracion/vehiculo/lista']);
       });
   }
 }

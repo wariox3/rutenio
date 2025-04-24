@@ -24,7 +24,7 @@ export default class ContactoNuevoComponent extends General {
       .guardarContacto(formulario)
       .subscribe((respuesta: any) => {
         this.alerta.mensajaExitoso('Se ha creado el vehículo exitosamente.');
-        this.router.navigate(['/admin/contacto/lista']);
+        this.router.navigate(['/administracion/contacto/lista']);
       });
   }
 }

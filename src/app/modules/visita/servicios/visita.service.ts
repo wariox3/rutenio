@@ -6,12 +6,22 @@ import {
   ParametrosConsulta,
   RespuestaGeneralLista,
 } from '../../../interfaces/general/api.interface';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VisitaService {
   constructor(private http: HttpService) {}
+
+  private actualizarListaSubject = new Subject<void>();
+
+  actualizarLista$ = this.actualizarListaSubject.asObservable();
+
+
+  notificarActualizacionLista() {
+    this.actualizarListaSubject.next();
+  }
 
   generalLista(data: any) {
     return this.http.post<RespuestaGeneralLista<Visita>>(
@@ -72,6 +82,25 @@ export class VisitaService {
     );
   }
 
+  consultarDocumento(despacho_id: any, numero: any) {
+    return this.http.post<{id: string}>( 
+      `ruteo/visita/consulta-documento/`,
+      {
+        despacho_id,
+        numero,
+      }
+    );
+  }
+
+  liberar(id: string) {
+    return this.http.post<{ mensaje: string }>(
+      `ruteo/visita/liberar/`,
+      {
+        id,
+      }
+    );
+  }
+
   eliminarMultiples(data: number[]) {
     return this.http.post(`ruteo/visita/eliminar/`, { documentos: data });
   }
@@ -110,4 +139,6 @@ export class VisitaService {
       pendiente_despacho: parametros.pendienteDespacho,
     });
   }
+
+  
 }

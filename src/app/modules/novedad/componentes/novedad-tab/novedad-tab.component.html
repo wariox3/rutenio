@@ -1,0 +1,46 @@
+<table class="table-auto border border-gray-300 text-sm w-full">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Id</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Fecha</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Descrpción</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Fecha solución</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Solucion</th>
+            <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Sol</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let novedad of novedades()" class="border-b border-gray-300">
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.id }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.fecha | formatFecha:'Y-m-d' }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.descripcion }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.fecha_solucion | formatFecha:'Y-m-d' }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.solucion }}</td>
+            <td class="px-4 py-2 border border-gray-300">{{ novedad.estado_solucion | validarBooleano }}</td>
+            <td class="px-4 py-2 border border-gray-300 text-center">
+                <div class="flex justify-center">
+                    <button
+                        class="dropdown-toggle btn btn-secondary flex items-center"
+                        data-modal-toggle="#solucion-novedad-modal"
+                        (click)="abrirModal(novedad.id)"
+                        [disabled]="novedad.estado_solucion"
+                    >
+                        <span class="menu-title"> Solución </span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<app-modal-default
+    size="medium"
+    [id]="'solucion-novedad-modal'"
+    titulo="Solución"
+    (emitirModalCerrado)="cerrarModal()"
+>
+    <section *ngIf="toggleModal$ | async" modal-body>
+        <app-novedad-solucion [novedadId]="selectedNovedadId" (emitirNovedadSolucion)="actualizarNovedad()"></app-novedad-solucion>
+    </section>
+</app-modal-default>

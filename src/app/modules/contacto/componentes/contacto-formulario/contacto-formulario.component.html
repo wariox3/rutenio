@@ -1,7 +1,7 @@
 <div class="flex gap-2 mb-4">
   <button
     class="btn btn-secondary flex items-center"
-    routerLink="/admin/contacto/lista"
+    routerLink="/administracion/contacto/lista"
   >
     <i class="ki-filled ki-arrow-left mr-1"></i>
 
@@ -45,14 +45,14 @@
             <app-label [required]="true">Número de identificación</app-label>
             <app-input
               [control]="formularioContacto.controls.numero_identificacion"
-              [maxLenght]="20"
+              [maxLength]="20"
             ></app-input>
           </section>
           <section>
             <app-label [required]="true">Digito verificación</app-label>
             <app-input
               [control]="formularioContacto.controls.digito_verificacion"
-              [maxLenght]="1"
+              [maxLength]="1"
             ></app-input>
           </section>
         </div>
@@ -78,14 +78,14 @@
           <app-label>Primer nombre</app-label>
           <app-input
             [control]="formularioContacto.controls.nombre1"
-            [maxLenght]="50"
+            [maxLength]="50"
           ></app-input>
         </div>
         <div>
           <app-label>Segundo nombre</app-label>
           <app-input
             [control]="formularioContacto.controls.nombre2"
-            [maxLenght]="50"
+            [maxLength]="50"
           ></app-input>
         </div>
       </div>
@@ -95,14 +95,14 @@
           <app-label>Primer apellido</app-label>
           <app-input
             [control]="formularioContacto.controls.apellido1"
-            [maxLenght]="50"
+            [maxLength]="50"
           ></app-input>
         </div>
         <div>
           <app-label>Segundo apellido</app-label>
           <app-input
             [control]="formularioContacto.controls.apellido2"
-            [maxLenght]="50"
+            [maxLength]="50"
           ></app-input>
         </div>
       </div>
@@ -112,7 +112,7 @@
           <app-label [required]="true">Teléfono</app-label>
           <app-input
             [control]="formularioContacto.controls.telefono"
-            [maxLenght]="50"
+            [maxLength]="50"
             [minLength]="3"
           ></app-input>
         </div>
@@ -120,7 +120,7 @@
           <app-label [required]="true">Celular</app-label>
           <app-input
             [control]="formularioContacto.controls.celular"
-            [maxLenght]="50"
+            [maxLength]="50"
             [minLength]="3"
           ></app-input>
         </div>

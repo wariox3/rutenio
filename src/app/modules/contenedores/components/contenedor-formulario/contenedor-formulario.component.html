@@ -7,7 +7,7 @@
             </span>
         </label>
         <app-input (keyup)="modificarCampoFormulario('subdominio', $event)"
-            [control]="formularioContenedor.controls.nombre" [minLength]='3' [maxLenght]="100"></app-input>
+            [control]="formularioContenedor.controls.nombre" [minLength]='3' [maxLength]="100"></app-input>
         <span *ngIf="nombreEmpresa !== ''" class="form-hint cursor-pointer hover:text-blue-300"
             (click)="editarSubdominio()">
             {{
@@ -51,7 +51,7 @@
                     </span>
                 </label>
                 <app-input [control]="formularioContenedor.controls.telefono" [minLength]='3'
-                    [maxLenght]="50"></app-input>
+                    [maxLength]="50"></app-input>
             </div>
         </div>
     </div>

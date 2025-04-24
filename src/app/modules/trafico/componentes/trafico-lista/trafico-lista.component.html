@@ -151,7 +151,19 @@
                           <span class="menu-icon">
                             <i class="ki-filled ki-delivery-geolocation"></i>
                           </span>
-                          <span class="menu-title"> Ruta</span>
+                          <span class="menu-title">Ruta</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#visita-liberar-modal"
+                          (click)="abrirModal(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery-2"></i>
+                          </span>
+                          <span class="menu-title">Liberar visita</span>
                         </button>
                       </div>
                     </div>
@@ -186,11 +198,11 @@
     <div class="h-full" style="height: 600px; position: relative">
       <div class="flex justify-end mb-2">
         <button
-          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow "
+          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
           (click)="toggleUbicaciones(despachoIdActual)"
         >
           {{
-            mostrarUbicaciones ? "Ocultar Ubicaciones" : "Mostrar Ubicaciones"
+            mostrarUbicaciones ? "Ocultar ubicaciones" : "Mostrar ubicaciones"
           }}
         </button>
       </div>
@@ -255,6 +267,16 @@
             </div>
           </section>
         </map-info-window>
+        <map-marker
+          *ngFor="let marker of customUbicacionMarkers"
+          [position]="marker.position"
+          [label]="{
+            text: marker.label,
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }"
+        ></map-marker>
 
         <!-- Primera ruta (visitas) -->
         <map-directions-renderer
@@ -263,12 +285,6 @@
           [options]="directionsRendererOptions"
         ></map-directions-renderer>
 
-        <!-- Segunda ruta (ubicaciones) -->
-        <map-directions-renderer
-          *ngIf="mostrarUbicaciones && directionsResultsUbicaciones"
-          [directions]="directionsResultsUbicaciones"
-          [options]="directionsRendererOptionsUbicaciones"
-        ></map-directions-renderer>
       </google-map>
     </div>
   </section>
@@ -405,6 +421,18 @@
         </div>
       </div>
     </div>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'visita-liberar-modal'"
+  titulo="Liberar visita"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
   </section>
 </app-modal-default>
 
