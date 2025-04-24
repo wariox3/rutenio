@@ -37,7 +37,7 @@ export default class VisitaNuevoComponent extends General implements OnInit {
   enviarFormulario(formulario: any) {
     this.guiaService.guardarGuias(formulario).subscribe((respuesta: any) => {
       this.alerta.mensajaExitoso('Se ha creado el contacto exitosamente.')
-      this.router.navigate(['/admin/visita/lista']);
+      this.router.navigate(['/movimiento/visita/lista']);
     });
   }
 

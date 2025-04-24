@@ -1,46 +1,67 @@
 <form [formGroup]="formularioNovedad" (submit)="enviar()">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-      <div class="mb-5">
-        <div>
-          <label class="form-label flex items-center gap-1 text-gray-900">
-            Fecha
-            <span class="text-danger"> * </span>
-          </label>
-          <app-input-date 
-          [control]="formularioNovedad.controls.fecha"
-          placeholder="Fecha de nacimiento"
-          [maxDate]="'YYYY-MM-DD'"
-        ></app-input-date>
-        </div>
-      </div>
-      <div class="mb-5">
-        <div>
-          <label class="form-label flex items-center gap-1 text-gray-900">
-            Descripción
-            <span class="text-danger"> * </span>
-          </label>
-          <app-input
-            [control]="formularioNovedad.controls.descripcion"
-          ></app-input>
-        </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div>
+      <app-label [required]="true">Novedad tipo</app-label>
+      <select
+        class="select mt-1 w-full"
+        name="select"
+        [formControl]="formularioNovedad.controls.novedad_tipo"
+      >
+        <option value="0">Seleccionar</option>
+        @for (tipoPersona of arrTipoNovedad; track $index) {
+        <option [value]="tipoPersona.id">
+          {{ tipoPersona.nombre }}
+        </option>
+        }
+      </select>
+    </div>
+    <div>
+      <div>
+        <app-label [required]="true"> Visita id </app-label>
+        <app-input [control]="formularioNovedad.controls.visita"></app-input>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-      <div class="mb-5">
-        <app-switch
-          titulo="Activo"
-          [control]="formularioNovedad.controls.estado_solucion"
-        ></app-switch>
-      </div>
+  </div>
+
+  <div class="mb-5 md:col-span-2">
+    <app-label [required]="true"> Descripción</app-label>
+    <app-input-textarea
+      [control]="formularioNovedad.controls.descripcion"
+      placeholder=""
+      [rows]="4"
+      [minLength]="10"
+      [maxLength]="500"
+    ></app-input-textarea>
+  </div>
+
+  <div class="mb-5 md:col-span-2">
+    <app-label> Solución</app-label>
+    <app-input-textarea
+      [control]="formularioNovedad.controls.solucion"
+      placeholder=""
+      [rows]="4"
+      [minLength]="10"
+      [maxLength]="500"
+    ></app-input-textarea>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="mb-5 md:col-span-1">
+      <app-switch
+        titulo="Solución"
+        [control]="formularioNovedad.controls.estado_solucion"
+      ></app-switch>
     </div>
-    <div class="flex justify-between">
-      <button class="btn btn-secondary" routerLink="/movimiento/novedad/lista">
-        Atrás
-      </button>
-      <app-button
-        texto="Guardar"
-        [estaDeshabilitado]="!formularioNovedad.valid"
-      ></app-button>
-    </div>
-  </form>
-  
+    <div class="md:col-span-1"></div>
+  </div>
+
+  <div class="flex justify-between">
+    <button class="btn btn-secondary" routerLink="/movimiento/novedad/lista">
+      Atrás
+    </button>
+    <app-button
+      texto="Guardar"
+      [estaDeshabilitado]="!formularioNovedad.valid"
+    ></app-button>
+  </div>
+</form>
