@@ -48,4 +48,8 @@ export class NovedadService {
     );
   }
 
+  solucionarNovedad(data: any) {
+    return this._httpService.post<any[]>(`ruteo/novedad/solucionar/`, data);
+  }
+
 }

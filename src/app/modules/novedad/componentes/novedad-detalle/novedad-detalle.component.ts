@@ -13,6 +13,10 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
+import { BehaviorSubject } from 'rxjs';
+import { ModalDefaultComponent } from "../../../../common/components/ui/modals/modal-default/modal-default.component";
+import { NovedadSolucionComponent } from "../novedad-solucion/novedad-solucion.component";
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-novedad-detalle',
@@ -22,14 +26,18 @@ import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
     CommonModule,
     RouterLink,
     FormatFechaPipe,
-    ValidarBooleanoPipe
-  ],
+    ValidarBooleanoPipe,
+    ModalDefaultComponent,
+    NovedadSolucionComponent
+],
   templateUrl: './novedad-detalle.component.html',
   styleUrl: './novedad-detalle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class NovedadDetalleComponent extends General implements OnInit {
   private novedadService = inject(NovedadService);
+
+  public toggleModal$ = new BehaviorSubject(false);
 
   novedadId: number;
 
@@ -45,10 +53,10 @@ export default class NovedadDetalleComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this.obtenerParametroRuta();
-    this.consultarVisita();
+    this.consultarNovedad();
   }
 
-  consultarVisita() {
+  consultarNovedad() {
     this.novedadService
       .consultarDetalle(this.novedadId)
       .subscribe((respuesta) => {
@@ -61,4 +69,25 @@ export default class NovedadDetalleComponent extends General implements OnInit {
       this.novedadId = params.id;
     });
   }
+
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
+  }
+
+  actualizarNovedad(){
+    this.modalDismiss();
+    this.consultarNovedad();
+  }
+
+  modalDismiss() {
+    const modalEl: HTMLElement = document.querySelector('#solucion-novedad-modal');
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.toggle();
+  }
+
 }
