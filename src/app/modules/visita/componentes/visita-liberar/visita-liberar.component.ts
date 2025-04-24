@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { VisitaService } from '../../servicios/visita.service';
+import { of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-visita-liberar',
@@ -14,10 +15,11 @@ import { VisitaService } from '../../servicios/visita.service';
 })
 export class VisitaLiberarComponent extends General implements OnInit { 
   private _visitaService = inject(VisitaService);
-  selectedOption: string | null = null;
+  selectedOption: string = 'id';
   inputValue: string = '';
   searchByDocument: boolean = false;
   @Input() despachoId: number;
+  @ViewChild('inputLiberar') inputLiberar!: ElementRef;
 
   ngOnInit(): void {
     
@@ -30,27 +32,38 @@ export class VisitaLiberarComponent extends General implements OnInit {
   }
 
   liberar(): void {
-    if (!this.selectedOption || !this.inputValue) return;
-    if (this.searchByDocument) {
-      this._visitaService.consultarDocumento(this.despachoId, this.inputValue).subscribe({
-        next: (response) => {
-          if (response?.id) {
-            this._visitaService.liberar(response.id).subscribe({
-              next: (liberarResponse) => {
-                this._visitaService.notificarActualizacionLista();
-                this.alerta.mensajaExitoso(liberarResponse?.mensaje);
-              }
-            });
-          }
-        },
-      });
-    } else {
-      this._visitaService.liberar(this.inputValue).subscribe({
-        next: (response) => {
+    if (!this.selectedOption || !this.inputValue.trim()) return;
+    
+    const valorActual = this.inputValue
+    this.inputValue = '';
+    
+    const liberar$ = this.searchByDocument 
+      ? this._visitaService.consultarDocumento(this.despachoId, valorActual).pipe(
+          switchMap(response => response?.id 
+            ? this._visitaService.liberar(response.id) 
+            : of(null)
+          )
+        )
+      : this._visitaService.liberar(valorActual);
+
+    liberar$.subscribe({
+      next: (response) => {
+        if (response) {
           this._visitaService.notificarActualizacionLista();
-          this.alerta.mensajaExitoso(response?.mensaje);
-        },
-      });
-    }
+          this.alerta.mensajaExitoso(response.mensaje);
+          this.establecerFoco();
+        }
+      },
+      error: () => {
+        this.inputValue = valorActual;
+        this.establecerFoco();
+      }
+    });
+  }
+
+  private establecerFoco(): void {
+    requestAnimationFrame(() => {
+      this.inputLiberar.nativeElement.focus();
+    });
   }
 }

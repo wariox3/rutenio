@@ -30,6 +30,9 @@
             <th>Placa</th>
             <th>Fecha</th>
             <th>Hora</th>
+            <th>Tiempo</th>
+            <th>Peso</th>
+            <th>Volumen</th>
             <th>Progreso</th>
             <th></th>
           </tr>
@@ -42,63 +45,42 @@
             <td>{{ despacho.vehiculo_placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
+            <td>{{ despacho.tiempo }}</td>
+            <td>{{ despacho.peso }}</td>
+            <td>{{ despacho.volumen }}</td>
             <td>
               <div class="flex flex-col space-y-1">
-                <div
-                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
-                >
-                  <!-- Fondo difuminado (todo el ancho) -->
-                  <div
-                    class="absolute h-4 rounded-full w-full"
+                <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
+                  <!-- Fondo difuminado -->
+                  <div class="absolute h-4 rounded-full w-full"
                     [ngClass]="{
                       'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
-                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0,
-                    }"
-                  ></div>
-                  <!-- Barra de progreso (sólida) -->
-                  <div
-                    class="progress-bar h-4 rounded-full absolute"
-                    [ngClass]="
-                      obtenerColorBarra(
-                        despacho.estado,
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    "
-                    [style.width]="
-                      obtenerAnchoProgreso(
-                        despacho.estado,
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    "
-                  ></div>
+                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0
+                    }">
+                  </div>
+                  <!-- Barra de progreso -->
+                  <div class="progress-bar h-4 rounded-full absolute"
+                    [ngClass]="obtenerColorBarra(despacho.estado, despacho.visitas_entregadas, despacho.visitas)"
+                    [style.width]="obtenerAnchoProgreso(despacho.estado, despacho.visitas_entregadas, despacho.visitas)">
+                  </div>
                 </div>
                 <div class="text-xs text-gray-500 text-right">
-                  <ng-container
-                    *ngIf="
-                      despacho.estado !== 'retrazado';
-                      else retrasadoTemplate
-                    "
-                  >
-                    Entregadas {{ despacho.visitas_entregadas }} /
-                    {{ despacho.visitas }} ({{
-                      obtenerPorcentajeVisual(
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    }}%)
+                  <ng-container *ngIf="despacho.estado === 'retrazado'; else normalTemplate">
+                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} | 
                   </ng-container>
-                  <ng-template #retrasadoTemplate>
-                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
-                    Entregadas: {{ despacho.visitas_entregadas }} /
-                    {{ despacho.visitas }} ({{
-                      obtenerPorcentajeVisual(
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    }}%)
+                  <ng-template #normalTemplate>
+                    <ng-container *ngIf="despacho.visitas_entregadas_esperadas">
+                      Esperadas: {{ despacho.visitas_entregadas_esperadas }} | 
+                    </ng-container>
                   </ng-template>
+                  
+                  Entregadas: {{ despacho.visitas_entregadas }}/{{ despacho.visitas }} |
+                  
+                  <span *ngIf="despacho.visitas_liberadas !== undefined">
+                    Liberadas: {{ despacho.visitas_liberadas }} |
+                  </span>
+                  
+                  {{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas) }}%
                 </div>
               </div>
             </td>
