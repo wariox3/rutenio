@@ -16,11 +16,13 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
 import { novedadMapeo } from '../../mapeos/novedad-mapeo';
 import { mapeo } from '../../../../common/mapeos/documentos';
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-novedad-lista',
   standalone: true,
-  imports: [FiltroBaseComponent, TablaComunComponent, CommonModule],
+  imports: [FiltroBaseComponent, TablaComunComponent, CommonModule, ButtonComponent, RouterLink],
   templateUrl: './novedad-lista.component.html',
   styleUrl: './novedad-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -131,6 +133,6 @@ export default class NovedadListaComponent extends General implements OnInit {
   }
 
   detalleNovedad(id: number) {
-    this.router.navigateByUrl(`/admin/novedad/detalle/${id}`);
+    this.router.navigateByUrl(`/movimiento/novedad/detalle/${id}`);
   }
 }

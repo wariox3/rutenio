@@ -16,8 +16,8 @@ export class NovedadService {
     );
   }
 
-  guardarGuias(data: any) {
-    return this._httpService.post<any[]>(`ruteo/despacho/`, data);
+  guardarNovedad(data: any) {
+    return this._httpService.post<any[]>(`ruteo/novedad/`, data);
   }
 
   consultarDetalle(id: number) {

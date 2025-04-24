@@ -70,7 +70,7 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   detalleDespacho(id: number) {
-    this.router.navigateByUrl(`/admin/despacho/detalle/${id}`);
+    this.router.navigateByUrl(`/movimiento/despacho/detalle/${id}`);
   }
 
   filtrosPersonalizados(filtros: any) {
