@@ -1,7 +1,7 @@
 <div class="flex gap-2 mb-4">
   <button
     class="btn btn-secondary flex items-center"
-    routerLink="/admin/vehiculo/lista"
+    routerLink="/administracion/vehiculo/lista"
   >
     <i class="ki-filled ki-arrow-left mr-1"></i>
     Atrás
@@ -26,7 +26,7 @@
             <app-label [required]="true">Placa</app-label>
             <app-input
               [control]="formularioVehiculo.controls.placa"
-              [maxLenght]="6"
+              [maxLength]="6"
             ></app-input>
           </div>
         </div>
@@ -35,7 +35,7 @@
           <app-label>Franja</app-label>
           <app-input
             [control]="formularioVehiculo.controls.franja_codigo"
-            [maxLenght]="6"
+            [maxLength]="6"
           ></app-input>
         </div>
       </div>
@@ -60,7 +60,7 @@
           <app-label>Usuario app</app-label>
           <app-input
             [control]="formularioVehiculo.controls.usuario_app"
-            [maxLenght]="6"
+            [maxLength]="6"
           ></app-input>
         </div>
       </div>

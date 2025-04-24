@@ -11,11 +11,11 @@ export default [
     loadComponent: () =>
       import('./componentes/novedad-lista/novedad-lista.component'),
   },
-  // {
-  //   path: 'nuevo',
-  //   loadComponent: () =>
-  //     import('./componentes/despacho-nuevo/despacho-nuevo.component'),
-  // },
+  {
+    path: 'nuevo',
+    loadComponent: () =>
+      import('./componentes/novedad-nuevo/novedad-nuevo.component'),
+  },
   {
     path: 'detalle/:id',
     loadComponent: () =>

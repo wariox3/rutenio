@@ -1,0 +1,24 @@
+<input 
+  [formControl]="control" 
+  class="input" 
+  [placeholder]="placeholder" 
+  type="date"
+  [min]="minDate"
+  [max]="maxDate"
+  [ngClass]="{
+    'border-danger': control.touched && control.invalid,
+    'border-success': control.touched && control.valid
+  }" 
+/>
+
+<ng-container *ngIf="control.invalid && control.touched">
+  <span *ngIf="control.hasError('required')" class="text-danger text-xs">
+    La fecha es requerida.
+  </span>
+  <span *ngIf="control.hasError('min')" class="text-danger text-xs">
+    La fecha no puede ser anterior a {{minDate}}.
+  </span>
+  <span *ngIf="control.hasError('max')" class="text-danger text-xs">
+    La fecha no puede ser posterior a {{maxDate}}.
+  </span>
+</ng-container>
