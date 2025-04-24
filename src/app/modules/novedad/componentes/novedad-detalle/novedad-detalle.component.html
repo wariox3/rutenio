@@ -11,6 +11,14 @@
       [modelo]="'RutNovedad'"
       [registroId]="novedad().id"
     ></app-botonera-opciones>
+    <button
+    class="dropdown-toggle btn btn-secondary flex items-center"
+    data-modal-toggle="#solucion-novedad-modal"
+    (click)="abrirModal()"
+    [disabled]="novedad().estado_solucion"
+  >
+    <span class="menu-title"> Solución </span>
+  </button>
   </div>
 </div>
 
@@ -85,3 +93,14 @@
     </div>
   </div>
 </div>
+
+<app-modal-default
+  size="medium"
+  [id]="'solucion-novedad-modal'"
+  titulo="Solución"
+  (emitirModalCerrado)="cerrarModal()"
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-novedad-solucion [novedadId]="novedadId" (emitirNovedadSolucion)="actualizarNovedad()"></app-novedad-solucion>
+  </section>
+</app-modal-default>

@@ -31,7 +31,7 @@ export default class NovedadNuevoComponent extends General implements OnInit {
   ngOnInit() {}
 
   enviarFormulario(formulario: any) {
-    this.novedadService.guardarNovedad(formulario).subscribe((respuesta: any) => {
+    this.novedadService.guardarNovedad(formulario).subscribe(() => {
       this.alerta.mensajaExitoso('Se ha creado el contacto exitosamente.')
       this.router.navigate(['/movimiento/novedad/lista']);
     });

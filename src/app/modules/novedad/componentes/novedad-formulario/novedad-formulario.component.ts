@@ -59,8 +59,6 @@ export default class NovedadFormularioComponent
     fecha: new FormControl(''),
     visita: new FormControl('', [Validators.required]),
     descripcion: new FormControl('', [Validators.required]),
-    solucion: new FormControl(null),
-    estado_solucion: new FormControl(false),
   });
 
   constructor() {
@@ -74,8 +72,6 @@ export default class NovedadFormularioComponent
         fecha: this.informacionNovedad.fecha,
         visita: this.informacionNovedad.visita_id,
         descripcion: this.informacionNovedad.descripcion,
-        solucion: this.informacionNovedad.solucion,
-        estado_solucion: this.informacionNovedad.estado_solucion,
         novedad_tipo: this.informacionNovedad.tipo_novedad_id,
       });
     }

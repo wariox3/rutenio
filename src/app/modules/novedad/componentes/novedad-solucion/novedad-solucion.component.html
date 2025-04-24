@@ -1,0 +1,18 @@
+<form [formGroup]="formularioNovedad" (submit)="solucion()">
+  <div class="mb-5 md:col-span-2">
+    <app-label [required]="true"> Solución</app-label>
+    <app-input-textarea
+      [control]="formularioNovedad.controls.solucion"
+      placeholder=""
+      [rows]="4"
+      [minLength]="10"
+      [maxLength]="500"
+    ></app-input-textarea>
+  </div>
+  <div class="flex justify-end">
+    <app-button
+      texto="Guardar"
+      [estaDeshabilitado]="!formularioNovedad.valid"
+    ></app-button>
+  </div>
+</form>
