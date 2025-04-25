@@ -234,7 +234,8 @@ export default class TraficoListaComponent
     });
   }
 
-  abrirModalAdicionar(){
+  abrirModalAdicionar(despacho_id){
+    this.despachoIdActual = despacho_id;
     this.toggleModal$.next(true);
     this.changeDetectorRef.detectChanges();
   }
@@ -248,6 +249,12 @@ export default class TraficoListaComponent
   cerrarModal() {
     this.toggleModal$.next(false);
     this.limpiarInformacionAdicional();
+  }
+
+  cerrarModalAdicionar() {
+    this.toggleModal$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
   }
 
   obtenerColorBarra(

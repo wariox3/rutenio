@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  Input,
   OnInit,
 } from '@angular/core';
 import { General } from '../../../../common/clases/general';
@@ -13,7 +14,8 @@ import { FiltroBaseComponent } from '../../../../common/components/filtros/filtr
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { guiaMapeo } from '../../../visita/mapeos/guia-mapeo';
-import { Observable, of, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
+import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 
 @Component({
   selector: 'app-despacho-adicionar-visita',
@@ -24,17 +26,18 @@ import { Observable, of, switchMap } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisitaAdicionarComponent extends General implements OnInit {
+  @Input() despachoId: number;
   private _despachoService = inject(DespachoService);
-  private _visitaService = inject(VisitaService);
   private _filtroBaseService = inject(FiltroBaseService)
 
   public nombreFiltro = '';
   public mapeoFiltros = guiaMapeo;
   public visitasPendientes$: Observable<any[]>;
+  public procesando: number | null = null;
 
   arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despachado', valor1: false }],
-    limite: 50,
+    filtros: [{ propiedad: 'estado_despacho', valor1: false }],
+    limite: 10,
     desplazar: 0,
     ordenamientos: ['id'],
     limite_conteo: 10000,
@@ -121,5 +124,22 @@ export class VisitaAdicionarComponent extends General implements OnInit {
         return of(response.registros);
       })
     );
+  }
+
+  seleccionarVisita(visitaId: number) {
+    this.procesando = visitaId;
+    
+    this._despachoService.adicionarVisita(this.despachoId, visitaId).subscribe({
+      next: (response) => {
+        this.alerta.mensajaExitoso(response.mensaje);
+        this.procesando = null;
+        
+        this.visitasPendientes$ = this.visitasPendientes$.pipe(
+          map(visitas => visitas.filter(v => v.id !== visitaId))
+        );
+        
+        this.changeDetectorRef.detectChanges();
+      },
+    });
   }
 }
