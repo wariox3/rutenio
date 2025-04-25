@@ -28,6 +28,7 @@ import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despac
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
 import { VisitaLiberarComponent } from "../../../visita/componentes/visita-liberar/visita-liberar.component";
+import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -40,7 +41,8 @@ import { VisitaLiberarComponent } from "../../../visita/componentes/visita-liber
     RedondearPipe,
     DespachoTabVisitaComponent,
     DespachoTabUbicacionComponent,
-    VisitaLiberarComponent
+    VisitaLiberarComponent,
+    VisitaAdicionarComponent
 ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
@@ -230,6 +232,11 @@ export default class TraficoListaComponent
       this.toggleModal$.next(true);
       this.changeDetectorRef.detectChanges();
     });
+  }
+
+  abrirModalAdicionar(){
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
   }
 
   abrirModalUbicacion() {
