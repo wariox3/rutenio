@@ -50,37 +50,68 @@
             <td>{{ despacho.volumen }}</td>
             <td>
               <div class="flex flex-col space-y-1">
-                <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
+                <div
+                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
+                >
                   <!-- Fondo difuminado -->
-                  <div class="absolute h-4 rounded-full w-full"
+                  <div
+                    class="absolute h-4 rounded-full w-full"
                     [ngClass]="{
-                      'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
-                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0
-                    }">
-                  </div>
+                      'bg-red-500/20':
+                        (despacho.estado === 'retrazado' ||
+                          despacho.visitas_entregadas === 0) &&
+                        despacho.estado !== 'tiempo',
+                      'bg-green-500/20':
+                        despacho.estado !== 'retrazado' &&
+                        despacho.visitas_entregadas >= 0
+                    }"
+                  ></div>
                   <!-- Barra de progreso -->
-                  <div class="progress-bar h-4 rounded-full absolute"
-                    [ngClass]="obtenerColorBarra(despacho.estado, despacho.visitas_entregadas, despacho.visitas)"
-                    [style.width]="obtenerAnchoProgreso(despacho.estado, despacho.visitas_entregadas, despacho.visitas)">
-                  </div>
+                  <div
+                    class="progress-bar h-4 rounded-full absolute"
+                    [ngClass]="
+                      obtenerColorBarra(
+                        despacho.estado,
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    "
+                    [style.width]="
+                      obtenerAnchoProgreso(
+                        despacho.estado,
+                        despacho.visitas_entregadas,
+                        despacho.visitas
+                      )
+                    "
+                  ></div>
                 </div>
                 <div class="text-xs text-gray-500 text-right">
-                  <ng-container *ngIf="despacho.estado === 'retrazado'; else normalTemplate">
-                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} | 
+                  <ng-container
+                    *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
+                  >
+                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                   </ng-container>
                   <ng-template #normalTemplate>
                     <ng-container *ngIf="despacho.visitas_entregadas_esperadas">
-                      Esperadas: {{ despacho.visitas_entregadas_esperadas }} | 
+                      Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                     </ng-container>
                   </ng-template>
-                  
-                  Entregadas: {{ despacho.visitas_entregadas }}/{{ despacho.visitas }} |
-                  
+
+                  Entregadas: {{ despacho.visitas_entregadas }}/{{
+                    despacho.visitas
+                  }}
+                  |
+
                   <span *ngIf="despacho.visitas_liberadas !== undefined">
                     Liberadas: {{ despacho.visitas_liberadas }} |
                   </span>
-                  
-                  {{ obtenerPorcentajeVisual(despacho.visitas_entregadas, despacho.visitas) }}%
+
+                  {{
+                    obtenerPorcentajeVisual(
+                      despacho.visitas_entregadas,
+                      despacho.visitas
+                    )
+                  }}%
                 </div>
               </div>
             </td>
@@ -101,9 +132,7 @@
                     <div class="menu-dropdown w-48 py-2">
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                          (click)="
-                            confirmarTerminarDespacho(despacho.id);
-                          "
+                          (click)="confirmarTerminarDespacho(despacho.id)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
@@ -149,15 +178,25 @@
                       </div>
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                        (click)="
-                        confirmarAnularDespacho(despacho.id);
-                      "
+                          (click)="confirmarAnularDespacho(despacho.id)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
                             <i class="ki-filled ki-information-4"></i>
                           </span>
                           <span class="menu-title"> Anular</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#adicionar-visita-pendiente"
+                          (click)="abrirModalAdicionar()"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-parcel"></i>
+                          </span>
+                          <span class="menu-title">Adicionar visita pendiente</span>
                         </button>
                       </div>
                     </div>
@@ -278,7 +317,6 @@
           [directions]="directionsResultsVisitas"
           [options]="directionsRendererOptions"
         ></map-directions-renderer>
-
       </google-map>
     </div>
   </section>
@@ -427,6 +465,18 @@
 >
   <section *ngIf="toggleModal$ | async" modal-body>
     <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'adicionar-visita-pendiente'"
+  titulo="Adicionar visita pendiente"
+  (emitirModalCerrado)="cerrarModal()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-despacho-adicionar-visita></app-despacho-adicionar-visita>
   </section>
 </app-modal-default>
 
