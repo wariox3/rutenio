@@ -73,6 +73,10 @@ export default class DespachoListaComponent extends General implements OnInit {
     this.router.navigateByUrl(`/movimiento/despacho/detalle/${id}`);
   }
 
+  navegarDespachoEditar(id: number) {
+    this.router.navigateByUrl(`/movimiento/despacho/editar/${id}`);
+  }
+
   filtrosPersonalizados(filtros: any) {
     if (filtros.length >= 1) {
       this.arrParametrosConsulta.filtros = filtros;

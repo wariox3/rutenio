@@ -16,5 +16,6 @@
     [mapeo]="mapeoDocumento"
     [datos]="despachos$ | async"
     (emitirDetalleItem)="detalleDespacho($event)"
+    (emitirEditarItem)="navegarDespachoEditar($event)"
   ></app-tabla-comun>
 </div>
