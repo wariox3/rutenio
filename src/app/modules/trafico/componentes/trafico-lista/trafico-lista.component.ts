@@ -3,32 +3,36 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   ViewChild,
-  OnDestroy,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
-import { Visita } from '../../../../interfaces/visita/visita.interface';
-import { GeneralService } from '../../../../common/services/general.service';
-import { BehaviorSubject, forkJoin, Subject, takeUntil } from 'rxjs';
-import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
-import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import {
   GoogleMapsModule,
   MapDirectionsService,
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { GeneralService } from '../../../../common/services/general.service';
+import {
+  Despacho,
+  DespachoDetalle,
+} from '../../../../interfaces/despacho/despacho.interface';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
+import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
+import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
+import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
-import { VisitaLiberarComponent } from "../../../visita/componentes/visita-liberar/visita-liberar.component";
-import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
+import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
+import { VisitaService } from '../../../visita/servicios/visita.service';
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -42,8 +46,8 @@ import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho
     DespachoTabVisitaComponent,
     DespachoTabUbicacionComponent,
     VisitaLiberarComponent,
-    VisitaAdicionarComponent
-],
+    DespachoFormularioComponent,
+  ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -234,7 +238,7 @@ export default class TraficoListaComponent
     });
   }
 
-  abrirModalAdicionar(despacho_id){
+  abrirModalAdicionar(despacho_id) {
     this.despachoIdActual = despacho_id;
     this.toggleModal$.next(true);
     this.changeDetectorRef.detectChanges();
@@ -473,5 +477,30 @@ export default class TraficoListaComponent
           this.limpiarInformacionAdicional();
         },
       });
+  }
+
+  abrirModalEditarDespacho(id: number) {
+    this.despachoSeleccionado = this.arrDespachos[id];
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  actualizarDespacho(despacho: DespachoDetalle) {
+    this.despachoService
+      .actualizar(this.despachoSeleccionado.id, despacho)
+      .subscribe((respuesta) => {
+        this.alerta.mensajaExitoso(
+          'Se ha actualizado el despacho exitosamente.'
+        );
+        this.dismissModal();
+        this.consultarLista();
+      });
+  }
+
+  dismissModal() {
+    const modalEl: HTMLElement = document.querySelector('#editar-despacho');
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.toggle();
   }
 }
