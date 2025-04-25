@@ -103,7 +103,6 @@
                         <button
                           (click)="
                             confirmarTerminarDespacho(despacho.id);
-                            $event.stopPropagation()
                           "
                           class="menu-link"
                         >
@@ -150,7 +149,9 @@
                       </div>
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                          (click)="anular(despacho.id)"
+                        (click)="
+                        confirmarAnularDespacho(despacho.id);
+                      "
                           class="menu-link"
                         >
                           <span class="menu-icon">

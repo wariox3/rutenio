@@ -85,6 +85,7 @@ export default class TraficoListaComponent
     filtros: [
       { propiedad: 'estado_aprobado', valor1: true },
       { propiedad: 'estado_terminado', valor1: false },
+      { propiedad: 'estado_anulado', valor1: false },
     ],
     limite: 50,
     desplazar: 0,
@@ -433,7 +434,30 @@ export default class TraficoListaComponent
     }
   }
 
-  anular(despacho_id){
-    
+  confirmarAnularDespacho(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, anular',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.anular(id);
+        }
+      });
+  }
+
+  anular(id: number) {
+    this.despachoService
+      .anular(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => {
+          this.alerta.mensajaExitoso(respuesta.mensaje);
+          this.consultarLista();
+          this.limpiarInformacionAdicional();
+        },
+      });
   }
 }
