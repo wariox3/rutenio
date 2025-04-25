@@ -49,7 +49,13 @@ export default class DespachoEditarComponent extends General implements OnInit {
     this._despachoService
       .actualizar(this.detalleId, despacho)
       .subscribe((respuesta) => {
-        console.log(respuesta);
+        this.alerta.mensajaExitoso(
+          'Se ha actualizado el despacho exitosamente.'
+        );
+        this.router.navigate([
+          '/movimiento/despacho/detalle',
+          respuesta.id,
+        ]);
       });
   }
 }

@@ -17,7 +17,9 @@ import {
 import { NgSelectModule } from '@ng-select/ng-select';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { GeneralService } from '../../../../common/services/general.service';
 import { DespachoDetalle } from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
@@ -82,7 +84,7 @@ export default class DespachoFormularioComponent extends General {
       Validators.required,
       Validators.min(0),
     ]),
-    vehiculo_id: new FormControl<number>(0, [Validators.required]),
+    vehiculo: new FormControl<number>(0, [Validators.required]),
     vehiculo_placa: new FormControl<string>('', [
       Validators.required,
       Validators.minLength(3),
@@ -138,7 +140,7 @@ export default class DespachoFormularioComponent extends General {
       visitas: this.despacho.visitas,
       visitas_entregadas: this.despacho.visitas_entregadas,
       visitas_liberadas: this.despacho.visitas_liberadas,
-      vehiculo_id: this.despacho.vehiculo_id,
+      vehiculo: this.despacho.vehiculo_id,
       vehiculo_placa: this.despacho.vehiculo_placa,
       entrega_id: this.despacho.entrega_id,
       estado_aprobado: this.despacho.estado_aprobado,
