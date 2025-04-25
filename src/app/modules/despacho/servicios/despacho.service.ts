@@ -52,4 +52,9 @@ export class DespachoService {
     });
   }
 
+  anular(id: number) {
+    return this._httpService.post<{ mensaje: string }>(`ruteo/despacho/anular/`, {
+      id,
+    });
+  }
 }
