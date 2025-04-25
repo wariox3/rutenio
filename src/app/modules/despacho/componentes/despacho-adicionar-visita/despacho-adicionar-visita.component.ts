@@ -16,6 +16,7 @@ import { FiltroBaseService } from '../../../../common/components/filtros/filtro-
 import { guiaMapeo } from '../../../visita/mapeos/guia-mapeo';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { visitaAdicionarMapeo } from '../../../visita/mapeos/visita-adicionar-mapeo';
 
 @Component({
   selector: 'app-despacho-adicionar-visita',
@@ -28,16 +29,16 @@ import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 export class VisitaAdicionarComponent extends General implements OnInit {
   @Input() despachoId: number;
   private _despachoService = inject(DespachoService);
-  private _filtroBaseService = inject(FiltroBaseService)
+  private _filtroBaseService = inject(FiltroBaseService);
 
   public nombreFiltro = '';
-  public mapeoFiltros = guiaMapeo;
+  public mapeoFiltros = visitaAdicionarMapeo;
   public visitasPendientes$: Observable<any[]>;
   public procesando: number | null = null;
 
   arrParametrosConsulta: ParametrosConsulta = {
     filtros: [{ propiedad: 'estado_despacho', valor1: false }],
-    limite: 10,
+    limite: 20,
     desplazar: 0,
     ordenamientos: ['id'],
     limite_conteo: 10000,
@@ -46,8 +47,9 @@ export class VisitaAdicionarComponent extends General implements OnInit {
 
   public formularioFiltros = new FormGroup({
     id: new FormControl(''),
-    guia: new FormControl(''),
-    estado_decodificado: new FormControl('todos'),
+    numero: new FormControl(''),
+    destinatario: new FormControl(''),
+    documento: new FormControl(''),
   });
 
   ngOnInit(): void {
@@ -65,57 +67,53 @@ export class VisitaAdicionarComponent extends General implements OnInit {
     }
   }
 
-  filtrosPersonalizados(filtros: any) {
-    if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = filtros;
-    } else {
-      this.arrParametrosConsulta.filtros = [];
-    }
-
-    this.consultaLista(this.arrParametrosConsulta);
-  }
-
   aplicarFiltros() {
-    const estadoAprobado = this.formularioFiltros.get('estado_aprobado').value;
-    const estadoTerminado =
-      this.formularioFiltros.get('estado_terminado').value;
+    // Filtro base que siempre debe aplicarse
+    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
+
+    // Filtros del formulario
+    const filtrosFormulario = [
+      {
+        operador: '',
+        propiedad: 'id',
+        valor1: this.formularioFiltros.get('id').value,
+      },
+      {
+        operador: 'numero',
+        propiedad: 'numero',
+        valor1: this.formularioFiltros.get('numero').value,
+      },
+      {
+        operador: 'icontains',
+        propiedad: 'destinatario',
+        valor1: this.formularioFiltros.get('destinatario').value,
+      },
+      {
+        operador: 'icontains',
+        propiedad: 'documento',
+        valor1: this.formularioFiltros.get('documento').value,
+      },
+    ].filter((filtro) => filtro.valor1 !== '' && filtro.valor1 !== null); // Filtrar los vacíos
 
     let parametrosConsulta: ParametrosConsulta = {
       ...this.arrParametrosConsulta,
-      filtros: [
-        ...this.arrParametrosConsulta.filtros,
-        {
-          operador: '',
-          propiedad: 'id',
-          valor1: this.formularioFiltros.get('id').value,
-        },
-        {
-          operador: 'icontains',
-          propiedad: 'vehiculo__placa',
-          valor1: this.formularioFiltros.get('vehiculo__placa').value,
-        },
-        ...(estadoAprobado !== 'todos'
-          ? [
-              {
-                operador: '',
-                propiedad: 'estado_aprobado',
-                valor1: estadoAprobado === 'si',
-              },
-            ]
-          : []),
-        ...(estadoTerminado && estadoTerminado !== 'todos'
-          ? [
-              {
-                operador: '',
-                propiedad: 'estado_terminado',
-                valor1: estadoTerminado === 'si',
-              },
-            ]
-          : []),
-      ],
+      filtros: [filtroBase, ...filtrosFormulario],
     };
 
     this.consultaLista(parametrosConsulta);
+  }
+
+  filtrosPersonalizados(filtros: any) {
+    // Filtro base que siempre debe aplicarse
+    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
+
+    if (filtros.length >= 1) {
+      this.arrParametrosConsulta.filtros = [filtroBase, ...filtros];
+    } else {
+      this.arrParametrosConsulta.filtros = [filtroBase];
+    }
+
+    this.consultaLista(this.arrParametrosConsulta);
   }
 
   consultaLista(filtros: any) {
@@ -128,16 +126,16 @@ export class VisitaAdicionarComponent extends General implements OnInit {
 
   seleccionarVisita(visitaId: number) {
     this.procesando = visitaId;
-    
+
     this._despachoService.adicionarVisita(this.despachoId, visitaId).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response.mensaje);
         this.procesando = null;
-        
+
         this.visitasPendientes$ = this.visitasPendientes$.pipe(
-          map(visitas => visitas.filter(v => v.id !== visitaId))
+          map((visitas) => visitas.filter((v) => v.id !== visitaId))
         );
-        
+
         this.changeDetectorRef.detectChanges();
       },
     });
