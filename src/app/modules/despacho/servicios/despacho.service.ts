@@ -5,12 +5,22 @@ import {
   Despacho,
   DespachoDetalle,
 } from '../../../interfaces/despacho/despacho.interface';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DespachoService {
   private _httpService = inject(HttpService);
+
+    private actualizarListaSubject = new Subject<void>();
+  
+    actualizarLista$ = this.actualizarListaSubject.asObservable();
+  
+  
+    notificarActualizacionLista() {
+      this.actualizarListaSubject.next();
+    }
 
   lista(parametros: any) {
     return this._httpService.post<RespuestaGeneralLista<Despacho>>(
@@ -75,4 +85,25 @@ export class DespachoService {
       }
     );
   }
+
+  adicionarVisita(id: number, visita_id) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/visita-adicionar/`,
+      {
+        id,
+        visita_id,
+      }
+    );
+  }
+
+  consultarDocumento(despacho_id: any, numero: any) {
+    return this._httpService.post<{id: number}>( 
+      `ruteo/visita/consulta-documento/`,
+      {
+        despacho_id,
+        numero,
+      }
+    );
+  }
+
 }
