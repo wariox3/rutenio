@@ -97,7 +97,7 @@ export class DespachoService {
   }
 
   consultarDocumento(despacho_id: any, numero: any) {
-    return this._httpService.post<{id: number}>( 
+    return this._httpService.post<{ mensaje: string }>( 
       `ruteo/visita/consulta-documento/`,
       {
         despacho_id,

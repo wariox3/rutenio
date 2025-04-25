@@ -10,8 +10,8 @@
       <tr class="bg-gray-100">
         <th class="bg-gray-100" style="width: 50px">Id</th>
         <th class="bg-gray-100">Número</th>
-        <!-- <th class="bg-gray-100" style="width: 50px"></th>
-        <th class="bg-gray-100" style="width: 50px"></th> -->
+        <th class="bg-gray-100">Destinatario</th>
+        <th class="bg-gray-100" style="width: 50px"></th>
       </tr>
     </thead>
     <tbody>
@@ -19,17 +19,16 @@
         <tr>
           <td class="w-40px">{{ visitaPendiente.id }}</td>
           <td>{{ visitaPendiente.numero }}</td>
-          <!-- <td>
-            <button
-              style="padding-top: 0; padding-bottom: 0; font-weight: bold"
-              (click)="descargarArchivo(archivo)"
-              class="btn"
-            >
-              <i class="ki-filled ki-cloud-download"></i>
+          <td>{{ visitaPendiente.destinatario }}</td>
+          <td>
+            <button class="btn btn-sm btn-link" (click)="seleccionarVisita(visitaPendiente.id)" [disabled]="procesando === visitaPendiente.id">
+              @if (procesando === visitaPendiente.id) {
+                <i class="ki-duotone ki-spinner spinner"></i>
+              } @else {
+                <i class="ki-filled ki-check-circle"></i>
+              }
             </button>
           </td>
-          <td class="text-center">
-          </td> -->
         </tr>
       }
     </tbody>

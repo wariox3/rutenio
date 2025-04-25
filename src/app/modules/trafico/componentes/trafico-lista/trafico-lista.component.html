@@ -191,7 +191,7 @@
                         <button
                           class="menu-link"
                           data-modal-toggle="#adicionar-visita-pendiente"
-                          (click)="abrirModalAdicionar()"
+                          (click)="abrirModalAdicionar(despacho.id)"
                         >
                           <span class="menu-icon">
                             <i class="ki-filled ki-parcel"></i>
@@ -469,14 +469,14 @@
 </app-modal-default>
 
 <app-modal-default
-  size="medium"
+  size="large"
   [id]="'adicionar-visita-pendiente'"
   titulo="Adicionar visita pendiente"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
   #importarPorExcelModal
 >
   <section *ngIf="toggleModal$ | async" modal-body>
-    <app-despacho-adicionar-visita></app-despacho-adicionar-visita>
+    <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
   </section>
 </app-modal-default>
 
