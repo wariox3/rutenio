@@ -1,7 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface';
-import { Despacho } from '../../../interfaces/despacho/despacho.interface';
+import {
+  Despacho,
+  DespachoDetalle,
+} from '../../../interfaces/despacho/despacho.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -21,17 +24,29 @@ export class DespachoService {
   }
 
   consultarDetalle(id: number) {
-    return this._httpService.getDetalle<any>(`ruteo/despacho/${id}/`);
+    return this._httpService.getDetalle<DespachoDetalle>(
+      `ruteo/despacho/${id}/`
+    );
   }
 
   eliminarDespacho(id: number) {
     return this._httpService.delete(`ruteo/despacho/${id}/`, {});
   }
 
+  actualizar(id: number, data: any) {
+    return this._httpService.put<DespachoDetalle>(
+      `ruteo/despacho/${id}/`,
+      data
+    );
+  }
+
   terminarDespacho(id: number) {
-    return this._httpService.post<{ mensaje: string }>(`ruteo/despacho/terminar/`, {
-      id,
-    });
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/terminar/`,
+      {
+        id,
+      }
+    );
   }
 
   importarVisitas(data: any) {
@@ -53,8 +68,11 @@ export class DespachoService {
   }
 
   anular(id: number) {
-    return this._httpService.post<{ mensaje: string }>(`ruteo/despacho/anular/`, {
-      id,
-    });
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/anular/`,
+      {
+        id,
+      }
+    );
   }
 }

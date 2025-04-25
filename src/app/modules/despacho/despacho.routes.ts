@@ -17,6 +17,11 @@ export default [
       import('./componentes/despacho-nuevo/despacho-nuevo.component'),
   },
   {
+    path: 'editar/:id',
+    loadComponent: () =>
+      import('./componentes/despacho-editar/despacho-editar.component'),
+  },
+  {
     path: 'detalle/:id',
     loadComponent: () =>
       import('./componentes/despacho-detalle/despacho-detalle.component'),
