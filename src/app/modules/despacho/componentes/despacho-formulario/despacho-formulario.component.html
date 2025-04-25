@@ -77,10 +77,10 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
           <div>
             <div>
-              <app-label [required]="true">Vehiculo</app-label>
+              <app-label [required]="true">Placa</app-label>
               <ng-select
                 [items]="vehiculos()"
-                formControlName="vehiculo_id"
+                formControlName="vehiculo"
                 bindLabel="placa"
                 bindValue="id"
                 notFoundText="Sin elementos"
@@ -94,12 +94,12 @@
               <ng-container
                 class="flex flex-col"
                 *ngIf="
-                  despachoForm.controls.vehiculo_id.invalid &&
-                  despachoForm.controls.vehiculo_id.touched
+                  despachoForm.controls.vehiculo.invalid &&
+                  despachoForm.controls.vehiculo.touched
                 "
               >
                 <span
-                  *ngIf="despachoForm.controls.vehiculo_id.hasError('required')"
+                  *ngIf="despachoForm.controls.vehiculo.hasError('required')"
                   class="text-danger text-xs block"
                 >
                   El campo es requerido.
