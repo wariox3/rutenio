@@ -17,15 +17,15 @@ import {
 import { NgSelectModule } from '@ng-select/ng-select';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { GeneralService } from '../../../../common/services/general.service';
-import { DespachoDetalle } from '../../../../interfaces/despacho/despacho.interface';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import {
-  Vehiculo
-} from '../../../../interfaces/vehiculo/vehiculo.interface';
+  Despacho,
+  DespachoDetalle,
+} from '../../../../interfaces/despacho/despacho.interface';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Vehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-despacho-formulario',
@@ -35,6 +35,7 @@ import {
     ButtonComponent,
     ReactiveFormsModule,
     LabelComponent,
+    RouterLink,
     NgSelectModule,
   ],
   templateUrl: './despacho-formulario.component.html',
@@ -47,13 +48,13 @@ export default class DespachoFormularioComponent extends General {
   public vehiculos = signal<Vehiculo[]>([]);
 
   @Input() isEditando: boolean;
-  @Input() despacho: DespachoDetalle;
+  @Input() isModal: boolean;
+  @Input() despacho: DespachoDetalle | Despacho;
 
   @Output() emitirFormulario: EventEmitter<any> = new EventEmitter();
 
   public despachoForm = new FormGroup({
     fecha: new FormControl<string>('', [Validators.required]),
-    fecha_salida: new FormControl<string>('', [Validators.required]),
     fecha_ubicacion: new FormControl<any>(null),
     peso: new FormControl<number>(0, [Validators.required, Validators.min(0)]),
     volumen: new FormControl<number>(0, [
@@ -90,7 +91,6 @@ export default class DespachoFormularioComponent extends General {
       Validators.minLength(3),
       Validators.maxLength(10),
     ]),
-    entrega_id: new FormControl<number>(0, [Validators.required]),
     estado_aprobado: new FormControl<boolean>(false),
     estado_terminado: new FormControl<boolean>(false),
   });
@@ -130,7 +130,6 @@ export default class DespachoFormularioComponent extends General {
   private _initValoresFormulario() {
     this.despachoForm.setValue({
       fecha: this.despacho.fecha,
-      fecha_salida: this.despacho.fecha_salida,
       fecha_ubicacion: this.despacho.fecha_ubicacion,
       peso: this.despacho.peso,
       volumen: this.despacho.volumen,
@@ -142,7 +141,6 @@ export default class DespachoFormularioComponent extends General {
       visitas_liberadas: this.despacho.visitas_liberadas,
       vehiculo: this.despacho.vehiculo_id,
       vehiculo_placa: this.despacho.vehiculo_placa,
-      entrega_id: this.despacho.entrega_id,
       estado_aprobado: this.despacho.estado_aprobado,
       estado_terminado: this.despacho.estado_terminado,
     });

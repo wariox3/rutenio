@@ -189,6 +189,18 @@
                       </div>
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
+                          (click)="abrirModalEditarDespacho($index)"
+                          data-modal-toggle="#editar-despacho"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-pencil"></i>
+                          </span>
+                          <span class="menu-title"> Editar despacho</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
                           class="menu-link"
                           data-modal-toggle="#adicionar-visita-pendiente"
                           (click)="abrirModalAdicionar(despacho.id)"
@@ -196,7 +208,9 @@
                           <span class="menu-icon">
                             <i class="ki-filled ki-parcel"></i>
                           </span>
-                          <span class="menu-title">Adicionar visita pendiente</span>
+                          <span class="menu-title"
+                            >Adicionar visita pendiente</span
+                          >
                         </button>
                       </div>
                     </div>
@@ -469,14 +483,19 @@
 </app-modal-default>
 
 <app-modal-default
-  size="large"
-  [id]="'adicionar-visita-pendiente'"
-  titulo="Adicionar visita pendiente"
+  size="small"
+  [id]="'editar-despacho'"
+  titulo="Editar despacho"
   (emitirModalCerrado)="cerrarModalAdicionar()"
   #importarPorExcelModal
 >
   <section *ngIf="toggleModal$ | async" modal-body>
-    <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
+    <app-despacho-formulario
+      [isModal]="true"
+      [isEditando]="true"
+      [despacho]="despachoSeleccionado"
+      (emitirFormulario)="actualizarDespacho($event)"
+    ></app-despacho-formulario>
   </section>
 </app-modal-default>
 

@@ -17,7 +17,9 @@ export interface Despacho {
   fecha_salida: string;
   latitud: string;
   longitud: string;
+  fecha_ubicacion: string;
   entrega_id: number;
+  estado_terminado: boolean;
 }
 
 export interface DespachoDetalle {
