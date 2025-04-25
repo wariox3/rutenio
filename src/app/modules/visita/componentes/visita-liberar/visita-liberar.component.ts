@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, AfterViewInit, ViewChild } from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { of, switchMap } from 'rxjs';
   styleUrl: './visita-liberar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VisitaLiberarComponent extends General implements OnInit { 
+export class VisitaLiberarComponent extends General implements AfterViewInit { 
   private _visitaService = inject(VisitaService);
   selectedOption: string = 'id';
   inputValue: string = '';
@@ -21,14 +21,15 @@ export class VisitaLiberarComponent extends General implements OnInit {
   @Input() despachoId: number;
   @ViewChild('inputLiberar') inputLiberar!: ElementRef;
 
-  ngOnInit(): void {
-    
+  ngAfterViewInit(): void {
+    this.establecerFoco();
   }
 
   selectOption(option: string): void {
     this.selectedOption = option;
     this.searchByDocument = option === 'numero';
     this.inputValue = '';
+    this.establecerFoco();
   }
 
   liberar(): void {
@@ -62,7 +63,7 @@ export class VisitaLiberarComponent extends General implements OnInit {
   }
 
   private establecerFoco(): void {
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       this.inputLiberar.nativeElement.focus();
     });
   }
