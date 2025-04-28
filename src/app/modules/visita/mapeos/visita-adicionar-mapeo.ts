@@ -20,6 +20,14 @@ export const visitaAdicionarMapeo: any = {
       ordenable: true,
     },
     {
+      nombre: 'despacho_id',
+      campoNombre: 'Despacho',
+      campoTipo: 'IntegerField',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: true,
+    },
+    {
       nombre: 'destinatario',
       campoNombre: 'Destinatario',
       campoTipo: 'CharField',

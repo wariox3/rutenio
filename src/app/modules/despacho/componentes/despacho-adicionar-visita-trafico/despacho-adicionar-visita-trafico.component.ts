@@ -50,6 +50,7 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
   public formularioFiltros = new FormGroup({
     id: new FormControl(''),
     numero: new FormControl(''),
+    despacho_id: new FormControl(''),
     destinatario: new FormControl(''),
     documento: new FormControl(''),
   });
@@ -97,9 +98,14 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
         valor1: this.formularioFiltros.get('id')?.value || ''
       },
       {
-        operador: 'numero',
+        operador: '',
         propiedad: 'numero',
         valor1: this.formularioFiltros.get('numero')?.value || ''
+      },
+      {
+        operador: '',
+        propiedad: 'despacho_id',
+        valor1: this.formularioFiltros.get('despacho_id')?.value || ''
       },
       {
         operador: 'icontains',

@@ -9,6 +9,7 @@
     <thead>
       <tr class="bg-gray-100">
         <th class="bg-gray-100" style="width: 50px">Id</th>
+        <th class="bg-gray-100">Despacho</th>
         <th class="bg-gray-100">Número</th>
         <th class="bg-gray-100">Documento</th>
         <th class="bg-gray-100">Destinatario</th>
@@ -19,6 +20,7 @@
       @for (visitaPendiente of visitasPendientes$ |async; track $index) {
         <tr>
           <td class="w-40px">{{ visitaPendiente.id }}</td>
+          <td>{{ visitaPendiente.despacho_id }}</td>
           <td>{{ visitaPendiente.numero }}</td>
           <td>{{ visitaPendiente.documento }}</td>
           <td>{{ visitaPendiente.destinatario }}</td>
