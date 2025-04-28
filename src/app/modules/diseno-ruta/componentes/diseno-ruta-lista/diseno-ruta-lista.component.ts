@@ -17,7 +17,10 @@ import { BehaviorSubject } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
-import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
+import {
+  Despacho,
+  DespachoDetalle,
+} from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
@@ -25,7 +28,9 @@ import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { GeneralService } from '../../../../common/services/general.service';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
+import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
+import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
+import { KTModal } from '../../../../../metronic/core';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -38,8 +43,9 @@ import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho
     VisitaRutearDetalleComponent,
     DragDropModule,
     RedondearPipe,
-    VisitaAdicionarComponent
-],
+    VisitaAdicionarComponent,
+    DespachoFormularioComponent,
+  ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +64,7 @@ export default class DisenoRutaListaComponent
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
   public despachoSeleccionadoAdicionar: number;
+  public toggleModal$ = new BehaviorSubject(false);
 
   customMarkers: {
     position: google.maps.LatLngLiteral;
@@ -313,7 +320,7 @@ export default class DisenoRutaListaComponent
         titulo: '¿Estas seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, retirar',
-        colorConfirmar: '#4287f5'
+        colorConfirmar: '#4287f5',
       })
       .then((respuesta) => {
         if (respuesta.isConfirmed) {
@@ -386,7 +393,7 @@ export default class DisenoRutaListaComponent
   }
 
   abrirModalAdicionarVisita(id) {
-    this.despachoSeleccionadoAdicionar = id
+    this.despachoSeleccionadoAdicionar = id;
     this.mostarModalAdicionarVisita$.next(true);
   }
 
@@ -422,4 +429,30 @@ export default class DisenoRutaListaComponent
       id,
     });
   }
+
+  abrirModalCrearDespacho() {
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  guardarDespacho(despacho: DespachoDetalle) {
+    this.despachoService.guardar(despacho).subscribe((respuesta) => {
+      this.alerta.mensajaExitoso('Se ha guardado el despacho exitosamente.');
+      this.dismissModal('#crear-despacho');
+      this.consultarLista();
+    });
+  }
+
+  dismissModal(selector: string) {
+    const modalEl: HTMLElement = document.querySelector(selector);
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.toggle();
+  }
+
+  cerrarModalAdicionar(){
+    this.toggleModal$.next(true);
+    this.consultarLista();
+  }
+    
 }

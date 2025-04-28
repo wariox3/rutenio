@@ -4,6 +4,16 @@
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header">
           <h3 class="card-title">Despachos</h3>
+          <div class="flex items-center">
+            <button
+            class="btn btn-primary ms-2"
+            (click)="abrirModalCrearDespacho()"
+            data-modal-toggle="#crear-despacho"
+          >
+          <i class="ki-filled ki-abstract-10"></i>
+            Nuevo despacho
+          </button>
+          </div>
         </div>
         <div
           class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
@@ -350,5 +360,21 @@
     <app-despacho-adicionar-visita
       [despachoId]="despachoSeleccionadoAdicionar"
     ></app-despacho-adicionar-visita>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="small"
+  [id]="'crear-despacho'"
+  titulo="Crear despacho"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+  #crearDespachoModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-despacho-formulario
+      [isModal]="true"
+      [despacho]="despachoSeleccionado"
+      (emitirFormulario)="guardarDespacho($event)"
+    ></app-despacho-formulario>
   </section>
 </app-modal-default>
