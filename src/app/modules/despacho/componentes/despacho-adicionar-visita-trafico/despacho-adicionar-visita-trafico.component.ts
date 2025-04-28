@@ -121,7 +121,7 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
 
     let parametrosConsulta: ParametrosConsulta = {
       ...this.arrParametrosConsulta,
-      filtros: [...filtrosBase, ...filtrosFormulario], // Corregido: array plano
+      filtros: [...filtrosBase, ...filtrosFormulario],
       exclusiones: [
         { propiedad: 'despacho_id', valor1: this.despachoId.toString() }
       ]
@@ -138,7 +138,7 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
     ];
 
     if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = [...filtrosBase, ...filtros]; // Corregido: array plano
+      this.arrParametrosConsulta.filtros = [...filtrosBase, ...filtros];
     } else {
       this.arrParametrosConsulta.filtros = [...filtrosBase];
     }
@@ -162,7 +162,7 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
   seleccionarVisita(visitaId: number) {
     this.procesando = visitaId;
 
-    this._despachoService.adicionarVisita(this.despachoId, visitaId).subscribe({
+    this._despachoService.adicionarVisita(this.despachoId, visitaId, true).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response.mensaje);
         this.procesando = null;
