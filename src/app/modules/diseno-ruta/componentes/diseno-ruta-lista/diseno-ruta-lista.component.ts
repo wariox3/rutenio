@@ -307,6 +307,21 @@ export default class DisenoRutaListaComponent
     });
   }
 
+  confirmarRetirarVisita(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, retirar',
+        colorConfirmar: '#4287f5'
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.retirarVisita(id);
+        }
+      });
+  }
+
   confirmarEliminarVisita(id: number) {
     this.alerta
       .confirmar({
