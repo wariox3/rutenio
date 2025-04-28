@@ -33,6 +33,7 @@ import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { KTModal } from '../../../../../metronic/core';
+import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -47,7 +48,8 @@ import { KTModal } from '../../../../../metronic/core';
     DespachoTabUbicacionComponent,
     VisitaLiberarComponent,
     DespachoFormularioComponent,
-  ],
+    VisitaAdicionarComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

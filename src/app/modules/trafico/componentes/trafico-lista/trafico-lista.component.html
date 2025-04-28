@@ -531,3 +531,16 @@
     ></app-despacho-formulario>
   </section>
 </app-modal-default>
+
+
+<app-modal-default
+size="large"
+[id]="'adicionar-visita-pendiente'"
+titulo="Adicionar visita pendiente"
+(emitirModalCerrado)="cerrarModalAdicionar()"
+#importarPorExcelModal
+>
+<section *ngIf="toggleModal$ | async" modal-body>
+  <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
+</section>
+</app-modal-default>
