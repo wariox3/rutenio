@@ -109,4 +109,14 @@ export class DespachoService {
       }
     );
   }
+
+  trasbordar(id: number, despacho_origen_id) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/trasbordar/`,
+      {
+        id,
+        despacho_origen_id
+      }
+    );
+  }
 }
