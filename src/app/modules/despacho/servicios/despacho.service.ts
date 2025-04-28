@@ -89,12 +89,13 @@ export class DespachoService {
     );
   }
 
-  adicionarVisita(id: number, visita_id) {
+  adicionarVisita(id: number, visita_id, trafico?) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/despacho/visita-adicionar/`,
       {
         id,
         visita_id,
+        trafico
       }
     );
   }
