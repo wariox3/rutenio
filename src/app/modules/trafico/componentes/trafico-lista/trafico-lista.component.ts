@@ -542,7 +542,7 @@ export default class TraficoListaComponent
       .guardar(despacho)
       .subscribe((respuesta) => {
         this.alerta.mensajaExitoso(
-          'Se ha actualizado el despacho exitosamente.'
+          'Se ha guardado el despacho exitosamente.'
         );
         this.dismissModal('#crear-despacho');
         this.consultarLista();

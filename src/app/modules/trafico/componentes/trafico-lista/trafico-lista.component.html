@@ -3,16 +3,17 @@
     <div class="card-header flex justify-between items-center">
       <h3 class="card-title my-[8px]">Despachos</h3>
       <div class="flex items-center">
+        <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
+          <i class="ki-filled ki-arrows-circle"></i>
+          Actualizar
+        </button>
         <button
-          class="btn btn-primary"
+          class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
           data-modal-toggle="#trafico-ubicacion-actual"
         >
           <i class="ki-filled ki-delivery-time"></i>
           Ubicación actual
-        </button>
-        <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
-          Actualizar
         </button>
         <button
           class="btn btn-primary ms-2"
