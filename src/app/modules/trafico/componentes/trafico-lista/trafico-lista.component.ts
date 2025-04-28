@@ -520,10 +520,10 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  abrirModalCrearDespacho() {
-    this.toggleModal$.next(true);
-    this.changeDetectorRef.detectChanges();
-  }
+  // abrirModalCrearDespacho() {
+  //   this.toggleModal$.next(true);
+  //   this.changeDetectorRef.detectChanges();
+  // }
 
   actualizarDespacho(despacho: DespachoDetalle) {
     this.despachoService
@@ -537,17 +537,17 @@ export default class TraficoListaComponent
       });
   }
 
-  guardarDespacho(despacho: DespachoDetalle) {
-    this.despachoService
-      .guardar(despacho)
-      .subscribe((respuesta) => {
-        this.alerta.mensajaExitoso(
-          'Se ha guardado el despacho exitosamente.'
-        );
-        this.dismissModal('#crear-despacho');
-        this.consultarLista();
-      });
-  }
+  // guardarDespacho(despacho: DespachoDetalle) {
+  //   this.despachoService
+  //     .guardar(despacho)
+  //     .subscribe((respuesta) => {
+  //       this.alerta.mensajaExitoso(
+  //         'Se ha guardado el despacho exitosamente.'
+  //       );
+  //       this.dismissModal('#crear-despacho');
+  //       this.consultarLista();
+  //     });
+  // }
 
   dismissModal(selector: string) {
     const modalEl: HTMLElement = document.querySelector(selector);

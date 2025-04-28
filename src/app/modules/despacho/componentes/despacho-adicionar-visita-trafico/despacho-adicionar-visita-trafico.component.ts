@@ -34,7 +34,12 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
   public procesando: number | null = null;
 
   arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despacho', valor1: true }, { propiedad: 'estado_entregado', valor1: false }],
+    filtros: [
+      { propiedad: 'estado_despacho', valor1: true },
+      { propiedad: 'estado_entregado', valor1: false },
+    ],
+    exclusiones: [
+    ],
     limite: 20,
     desplazar: 0,
     ordenamientos: ['id'],
@@ -50,6 +55,9 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
+    this.arrParametrosConsulta.exclusiones = [
+      { propiedad: 'despacho_id', valor1: this.despachoId.toString() }
+    ];
     this._construirFiltros();
     this.consultaLista(this.arrParametrosConsulta);
     this.changeDetectorRef.detectChanges();
@@ -58,57 +66,81 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
   private _construirFiltros() {
     this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
     const filtroGuardado = localStorage.getItem(this.nombreFiltro);
+    
+    // Filtros base permanentes
+    const filtrosBase = [
+      { propiedad: 'estado_despacho', valor1: true },
+      { propiedad: 'estado_entregado', valor1: false }
+    ];
+
     if (filtroGuardado !== null) {
       const filtros = JSON.parse(filtroGuardado);
-      this.arrParametrosConsulta.filtros = [...filtros];
+      // Combinar filtros base con los del localStorage
+      this.arrParametrosConsulta.filtros = [...filtrosBase, ...filtros];
+    } else {
+      this.arrParametrosConsulta.filtros = [...filtrosBase];
     }
   }
 
   aplicarFiltros() {
-    // Filtro base que siempre debe aplicarse
-    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
+    // Filtros base permanentes
+    const filtrosBase = [
+      { propiedad: 'estado_despacho', valor1: true },
+      { propiedad: 'estado_entregado', valor1: false }
+    ];
 
-    // Filtros del formulario
+    // Filtros del formulario con validación de valores
     const filtrosFormulario = [
       {
         operador: '',
         propiedad: 'id',
-        valor1: this.formularioFiltros.get('id').value,
+        valor1: this.formularioFiltros.get('id')?.value || ''
       },
       {
         operador: 'numero',
         propiedad: 'numero',
-        valor1: this.formularioFiltros.get('numero').value,
+        valor1: this.formularioFiltros.get('numero')?.value || ''
       },
       {
         operador: 'icontains',
         propiedad: 'destinatario',
-        valor1: this.formularioFiltros.get('destinatario').value,
+        valor1: this.formularioFiltros.get('destinatario')?.value || ''
       },
       {
         operador: 'icontains',
         propiedad: 'documento',
-        valor1: this.formularioFiltros.get('documento').value,
+        valor1: this.formularioFiltros.get('documento')?.value || ''
       },
-    ].filter((filtro) => filtro.valor1 !== '' && filtro.valor1 !== null); // Filtrar los vacíos
+    ].filter((filtro) => filtro.valor1 !== '' && filtro.valor1 !== null);
 
     let parametrosConsulta: ParametrosConsulta = {
       ...this.arrParametrosConsulta,
-      filtros: [filtroBase, ...filtrosFormulario],
+      filtros: [...filtrosBase, ...filtrosFormulario], // Corregido: array plano
+      exclusiones: [
+        { propiedad: 'despacho_id', valor1: this.despachoId.toString() }
+      ]
     };
 
     this.consultaLista(parametrosConsulta);
   }
 
   filtrosPersonalizados(filtros: any) {
-    // Filtro base que siempre debe aplicarse
-    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
+    // Filtros base permanentes
+    const filtrosBase = [
+      { propiedad: 'estado_despacho', valor1: true },
+      { propiedad: 'estado_entregado', valor1: false }
+    ];
 
     if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = [filtroBase, ...filtros];
+      this.arrParametrosConsulta.filtros = [...filtrosBase, ...filtros]; // Corregido: array plano
     } else {
-      this.arrParametrosConsulta.filtros = [filtroBase];
+      this.arrParametrosConsulta.filtros = [...filtrosBase];
     }
+
+    // Mantener exclusiones
+    this.arrParametrosConsulta.exclusiones = [
+      { propiedad: 'despacho_id', valor1: this.despachoId.toString() }
+    ];
 
     this.consultaLista(this.arrParametrosConsulta);
   }

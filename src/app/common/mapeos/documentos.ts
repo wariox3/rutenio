@@ -85,6 +85,14 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Despacho',
+        campoNombre: 'despacho_id',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'D',
         campoNombre: 'estado_despacho',
         campoTipo: 'Boolean',
