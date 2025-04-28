@@ -26,6 +26,7 @@ import {
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Vehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { RouterLink } from '@angular/router';
+import { FechasService } from '../../../../common/services/fechas.service';
 
 @Component({
   selector: 'app-despacho-formulario',
@@ -44,54 +45,37 @@ import { RouterLink } from '@angular/router';
 })
 export default class DespachoFormularioComponent extends General {
   private _generalService = inject(GeneralService);
+  private _fechaService = inject(FechasService);
 
   public vehiculos = signal<Vehiculo[]>([]);
 
   @Input() isEditando: boolean;
   @Input() isModal: boolean;
+  @Input() isAprobado: boolean = false;
   @Input() despacho: DespachoDetalle | Despacho;
 
   @Output() emitirFormulario: EventEmitter<any> = new EventEmitter();
 
   public despachoForm = new FormGroup({
-    fecha: new FormControl<string>('', [Validators.required]),
+    fecha: new FormControl<string>(
+      this._fechaService.getFechaVencimientoInicial(),
+      []
+    ),
     fecha_ubicacion: new FormControl<any>(null),
-    peso: new FormControl<number>(0, [Validators.required, Validators.min(0)]),
-    volumen: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    tiempo: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    tiempo_servicio: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    tiempo_trayecto: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    visitas: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    visitas_entregadas: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
-    visitas_liberadas: new FormControl<number>(0, [
-      Validators.required,
-      Validators.min(0),
-    ]),
+    peso: new FormControl<number>(0, [Validators.min(0)]),
+    volumen: new FormControl<number>(0, [Validators.min(0)]),
+    tiempo: new FormControl<number>(0, [Validators.min(0)]),
+    tiempo_servicio: new FormControl<number>(0, [Validators.min(0)]),
+    tiempo_trayecto: new FormControl<number>(0, [Validators.min(0)]),
+    visitas: new FormControl<number>(0, [Validators.min(0)]),
+    visitas_entregadas: new FormControl<number>(0, [Validators.min(0)]),
+    visitas_liberadas: new FormControl<number>(0, [Validators.min(0)]),
     vehiculo: new FormControl<number>(0, [Validators.required]),
     vehiculo_placa: new FormControl<string>('', [
-      Validators.required,
       Validators.minLength(3),
       Validators.maxLength(10),
     ]),
-    estado_aprobado: new FormControl<boolean>(false),
+    estado_aprobado: new FormControl<boolean>(false), 
     estado_terminado: new FormControl<boolean>(false),
   });
 
@@ -99,6 +83,11 @@ export default class DespachoFormularioComponent extends General {
     if (this.isEditando) {
       this._initValoresFormulario();
       this.getVehiculoByPlaca(this.despachoForm.get('vehiculo_placa').value);
+    } else {
+      this.despachoForm.patchValue({
+        estado_aprobado: this.isAprobado
+      });
+      this.getVehiculoByPlaca('');
     }
   }
 

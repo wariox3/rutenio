@@ -526,8 +526,9 @@
   <section *ngIf="toggleModal$ | async" modal-body>
     <app-despacho-formulario
       [isModal]="true"
+      [isAprobado]="true"
       [despacho]="despachoSeleccionado"
-      (emitirFormulario)="actualizarDespacho($event)"
+      (emitirFormulario)="guardarDespacho($event)"
     ></app-despacho-formulario>
   </section>
 </app-modal-default>

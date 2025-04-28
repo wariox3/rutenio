@@ -501,13 +501,25 @@ export default class TraficoListaComponent
         this.alerta.mensajaExitoso(
           'Se ha actualizado el despacho exitosamente.'
         );
-        this.dismissModal();
+        this.dismissModal('#editar-despacho');
         this.consultarLista();
       });
   }
 
-  dismissModal() {
-    const modalEl: HTMLElement = document.querySelector('#editar-despacho');
+  guardarDespacho(despacho: DespachoDetalle) {
+    this.despachoService
+      .guardar(despacho)
+      .subscribe((respuesta) => {
+        this.alerta.mensajaExitoso(
+          'Se ha actualizado el despacho exitosamente.'
+        );
+        this.dismissModal('#crear-despacho');
+        this.consultarLista();
+      });
+  }
+
+  dismissModal(selector: string) {
+    const modalEl: HTMLElement = document.querySelector(selector);
     const modal = KTModal.getInstance(modalEl);
 
     modal.toggle();
