@@ -141,6 +141,18 @@
                                 <span class="menu-title">Adicionar visita pendiente</span>
                               </button>
                             </div>
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                class="menu-link"
+                                data-modal-toggle="#trasbordar-despacho"
+                                (click)="abrirModalTrasbordar(despacho.id)"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-arrow-right-left"></i>
+                                </span>
+                                <span class="menu-title">Trasbordar</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -376,5 +388,16 @@
       [despacho]="despachoSeleccionado"
       (emitirFormulario)="guardarDespacho($event)"
     ></app-despacho-formulario>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'trasbordar-despacho'"
+  titulo="Trasbordar"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+>
+  <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
+    <app-despacho-trasbordar [despachoId]="despachoSeleccionado"></app-despacho-trasbordar>
   </section>
 </app-modal-default>

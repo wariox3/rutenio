@@ -31,6 +31,7 @@ import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { KTModal } from '../../../../../metronic/core';
+import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -45,7 +46,8 @@ import { KTModal } from '../../../../../metronic/core';
     RedondearPipe,
     VisitaAdicionarComponent,
     DespachoFormularioComponent,
-  ],
+    DespachoTrasbordarComponent
+],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +67,8 @@ export default class DisenoRutaListaComponent
   public visitaSeleccionada: Visita;
   public despachoSeleccionadoAdicionar: number;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalTrasbordar$ = new BehaviorSubject(false);
+  private ultimoDespachoSeleccionadoId: number | null = null;
 
   customMarkers: {
     position: google.maps.LatLngLiteral;
@@ -125,6 +129,7 @@ export default class DisenoRutaListaComponent
     this.arrVisitasPorDespacho = [];
     this.customMarkers = [];
     this.totalRegistrosVisitas = 0;
+    this.ultimoDespachoSeleccionadoId = null;
     this.changeDetectorRef.detectChanges();
   }
 
@@ -157,6 +162,10 @@ export default class DisenoRutaListaComponent
   }
 
   seleccionarDespacho(despacho: any) {
+    if (this.ultimoDespachoSeleccionadoId === despacho.id) {
+      return;
+    }
+    this.ultimoDespachoSeleccionadoId = despacho.id;
     this.despachoSeleccionado = despacho;
     this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
@@ -453,6 +462,12 @@ export default class DisenoRutaListaComponent
   cerrarModalAdicionar(){
     this.toggleModal$.next(true);
     this.consultarLista();
+    this._limpiarVisitasPorDespacho();
+  }
+
+  abrirModalTrasbordar(id) {
+    this.despachoSeleccionadoAdicionar = id;
+    this.toggleModalTrasbordar$.next(true);
   }
     
 }
