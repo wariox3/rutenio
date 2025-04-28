@@ -124,6 +124,14 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Hora',
+        campoNombre: 'fecha_salida',
+        campoTipo: 'Hour',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'Vehículo',
         campoNombre: 'vehiculo_placa',
         campoTipo: 'CharField',
