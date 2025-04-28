@@ -34,6 +34,7 @@ import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liber
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { KTModal } from '../../../../../metronic/core';
 import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
+import { VisitaAdicionarTraficoComponent } from "../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -48,7 +49,8 @@ import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho
     DespachoTabUbicacionComponent,
     VisitaLiberarComponent,
     DespachoFormularioComponent,
-    VisitaAdicionarComponent
+    VisitaAdicionarComponent,
+    VisitaAdicionarTraficoComponent
 ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
@@ -70,6 +72,9 @@ export default class TraficoListaComponent
   public despachoSeleccionado: Despacho;
   public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalAdicionarVisita$ = new BehaviorSubject(false);
+  public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
+  public toggleModalLiberar$ = new BehaviorSubject(false);
   public toggleModalUbicacion$ = new BehaviorSubject(false);
 
   customMarkers: any[] = [];
@@ -244,9 +249,21 @@ export default class TraficoListaComponent
     });
   }
 
+  abrirModalLiberar(despacho_id) {
+    this.despachoIdActual = despacho_id;
+    this.toggleModalLiberar$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
   abrirModalAdicionar(despacho_id) {
     this.despachoIdActual = despacho_id;
-    this.toggleModal$.next(true);
+    this.toggleModalAdicionarVisita$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalAdicionarVistaTrafico(despacho_id) {
+    this.despachoIdActual = despacho_id;
+    this.toggleModalAdicionarVisitaTrafico$.next(true);
     this.changeDetectorRef.detectChanges();
   }
 
@@ -261,8 +278,20 @@ export default class TraficoListaComponent
     this.limpiarInformacionAdicional();
   }
 
+  cerrarModalLiberar() {
+    this.toggleModalLiberar$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
+  }
+
   cerrarModalAdicionar() {
-    this.toggleModal$.next(false);
+    this.toggleModalAdicionarVisita$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
+  }
+
+  cerrarModalAdicionarVisitaTrafico() {
+    this.toggleModalAdicionarVisitaTrafico$.next(false);
     this.limpiarInformacionAdicional();
     this.consultarLista();
   }

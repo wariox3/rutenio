@@ -178,7 +178,7 @@
                         <button
                           class="menu-link"
                           data-modal-toggle="#visita-liberar-modal"
-                          (click)="abrirModal(despacho.id)"
+                          (click)="abrirModalLiberar(despacho.id)"
                         >
                           <span class="menu-icon">
                             <i class="ki-filled ki-delivery-2"></i>
@@ -220,6 +220,20 @@
                           </span>
                           <span class="menu-title"
                             >Adicionar visita pendiente</span
+                          >
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#adicionar-visita-trafico"
+                          (click)="abrirModalAdicionarVistaTrafico(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery"></i>
+                          </span>
+                          <span class="menu-title"
+                            >Adicionar visita en trafico</span
                           >
                         </button>
                       </div>
@@ -484,10 +498,10 @@
   size="medium"
   [id]="'visita-liberar-modal'"
   titulo="Liberar visita"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalLiberar()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalLiberar$ | async" modal-body>
     <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
   </section>
 </app-modal-default>
@@ -540,7 +554,19 @@ titulo="Adicionar visita pendiente"
 (emitirModalCerrado)="cerrarModalAdicionar()"
 #importarPorExcelModal
 >
-<section *ngIf="toggleModal$ | async" modal-body>
+<section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
   <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
+</section>
+</app-modal-default>
+
+<app-modal-default
+size="large"
+[id]="'adicionar-visita-trafico'"
+titulo="Adicionar visita en trafico"
+(emitirModalCerrado)="cerrarModalAdicionarVisitaTrafico()"
+#importarPorExcelModal
+>
+<section *ngIf="toggleModalAdicionarVisitaTrafico$ | async" modal-body>
+  <app-despacho-adicionar-visita-trafico [despachoId]="despachoIdActual"></app-despacho-adicionar-visita-trafico>
 </section>
 </app-modal-default>
