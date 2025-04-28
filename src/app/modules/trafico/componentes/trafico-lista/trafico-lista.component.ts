@@ -182,6 +182,10 @@ export default class TraficoListaComponent
       .pipe(takeUntil(this.destroy$));
   }
 
+  recargarDespachos() {
+    this.consultarLista();
+  }
+
   descargarPlanoSemantica(id: number) {
     this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,
@@ -481,6 +485,11 @@ export default class TraficoListaComponent
 
   abrirModalEditarDespacho(id: number) {
     this.despachoSeleccionado = this.arrDespachos[id];
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalCrearDespacho() {
     this.toggleModal$.next(true);
     this.changeDetectorRef.detectChanges();
   }
