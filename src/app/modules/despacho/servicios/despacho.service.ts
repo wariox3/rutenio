@@ -13,14 +13,13 @@ import { Subject } from 'rxjs';
 export class DespachoService {
   private _httpService = inject(HttpService);
 
-    private actualizarListaSubject = new Subject<void>();
-  
-    actualizarLista$ = this.actualizarListaSubject.asObservable();
-  
-  
-    notificarActualizacionLista() {
-      this.actualizarListaSubject.next();
-    }
+  private actualizarListaSubject = new Subject<void>();
+
+  actualizarLista$ = this.actualizarListaSubject.asObservable();
+
+  notificarActualizacionLista() {
+    this.actualizarListaSubject.next();
+  }
 
   lista(parametros: any) {
     return this._httpService.post<RespuestaGeneralLista<Despacho>>(
@@ -48,6 +47,10 @@ export class DespachoService {
       `ruteo/despacho/${id}/`,
       data
     );
+  }
+
+  guardar(data: any) {
+    return this._httpService.post<DespachoDetalle>(`ruteo/despacho/`, data);
   }
 
   terminarDespacho(id: number) {
@@ -97,7 +100,7 @@ export class DespachoService {
   }
 
   consultarDocumento(despacho_id: any, numero: any) {
-    return this._httpService.post<{ mensaje: string }>( 
+    return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/consulta-documento/`,
       {
         despacho_id,
@@ -105,5 +108,4 @@ export class DespachoService {
       }
     );
   }
-
 }
