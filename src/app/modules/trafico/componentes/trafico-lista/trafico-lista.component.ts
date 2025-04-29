@@ -3,30 +3,38 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   ViewChild,
-  OnDestroy,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
-import { Visita } from '../../../../interfaces/visita/visita.interface';
-import { GeneralService } from '../../../../common/services/general.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
-import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
-import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import {
   GoogleMapsModule,
   MapDirectionsService,
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { GeneralService } from '../../../../common/services/general.service';
+import {
+  Despacho,
+  DespachoDetalle,
+} from '../../../../interfaces/despacho/despacho.interface';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Visita } from '../../../../interfaces/visita/visita.interface';
+import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
+import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
+import { DespachoService } from '../../../despacho/servicios/despacho.service';
 import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
+import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
+import { VisitaService } from '../../../visita/servicios/visita.service';
+import { KTModal } from '../../../../../metronic/core';
+import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
+import { VisitaAdicionarTraficoComponent } from "../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -39,7 +47,11 @@ import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service
     RedondearPipe,
     DespachoTabVisitaComponent,
     DespachoTabUbicacionComponent,
-  ],
+    VisitaLiberarComponent,
+    DespachoFormularioComponent,
+    VisitaAdicionarComponent,
+    VisitaAdicionarTraficoComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +72,9 @@ export default class TraficoListaComponent
   public despachoSeleccionado: Despacho;
   public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalAdicionarVisita$ = new BehaviorSubject(false);
+  public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
+  public toggleModalLiberar$ = new BehaviorSubject(false);
   public toggleModalUbicacion$ = new BehaviorSubject(false);
 
   customMarkers: any[] = [];
@@ -83,6 +98,7 @@ export default class TraficoListaComponent
     filtros: [
       { propiedad: 'estado_aprobado', valor1: true },
       { propiedad: 'estado_terminado', valor1: false },
+      { propiedad: 'estado_anulado', valor1: false },
     ],
     limite: 50,
     desplazar: 0,
@@ -103,6 +119,13 @@ export default class TraficoListaComponent
   directionsResultsVisitas: google.maps.DirectionsResult;
   directionsResultsUbicaciones: google.maps.DirectionsResult;
   despachoIdActual: number | null = null;
+  lineasConectoras: google.maps.LatLng[][] = [];
+  private MAX_WAYPOINTS = 23;
+  directionsResultsUbicacionesArray;
+  customUbicacionMarkers: {
+    position: google.maps.LatLngLiteral;
+    label: string;
+  }[] = [];
 
   constructor() {
     super();
@@ -154,16 +177,20 @@ export default class TraficoListaComponent
   private consultarUbicacion(despachoId: number) {
     const parametrosConsultaUbicacion: ParametrosConsulta = {
       filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
-      limite: 50,
+      limite: 25,
       desplazar: 0,
       ordenamientos: ['-fecha'],
-      limite_conteo: 10000,
+      limite_conteo: 25,
       modelo: 'RutUbicacion',
     };
 
     return this.ubicacionService
       .generalLista(parametrosConsultaUbicacion)
       .pipe(takeUntil(this.destroy$));
+  }
+
+  recargarDespachos() {
+    this.consultarLista();
   }
 
   descargarPlanoSemantica(id: number) {
@@ -222,6 +249,24 @@ export default class TraficoListaComponent
     });
   }
 
+  abrirModalLiberar(despacho_id) {
+    this.despachoIdActual = despacho_id;
+    this.toggleModalLiberar$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalAdicionar(despacho_id) {
+    this.despachoIdActual = despacho_id;
+    this.toggleModalAdicionarVisita$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalAdicionarVistaTrafico(despacho_id) {
+    this.despachoIdActual = despacho_id;
+    this.toggleModalAdicionarVisitaTrafico$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
   abrirModalUbicacion() {
     this.mostrarMapa(this.arrDespachos, false, true);
     this.toggleModalUbicacion$.next(true);
@@ -231,6 +276,24 @@ export default class TraficoListaComponent
   cerrarModal() {
     this.toggleModal$.next(false);
     this.limpiarInformacionAdicional();
+  }
+
+  cerrarModalLiberar() {
+    this.toggleModalLiberar$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
+  }
+
+  cerrarModalAdicionar() {
+    this.toggleModalAdicionarVisita$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
+  }
+
+  cerrarModalAdicionarVisitaTrafico() {
+    this.toggleModalAdicionarVisitaTrafico$.next(false);
+    this.limpiarInformacionAdicional();
+    this.consultarLista();
   }
 
   obtenerColorBarra(
@@ -299,17 +362,6 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  // Opciones para la segunda ruta (con color diferente)
-  directionsRendererOptionsUbicaciones: google.maps.DirectionsRendererOptions =
-    {
-      polylineOptions: {
-        strokeColor: '#FF0000', // Rojo para diferenciar
-        strokeOpacity: 0.8,
-        strokeWeight: 6,
-      },
-      suppressMarkers: true,
-    };
-
   calcularRuta() {
     const origin = this.marcarPosicionesVisitasOrdenadas[0];
     const destination =
@@ -346,43 +398,24 @@ export default class TraficoListaComponent
       });
   }
 
-  // Método para calcular la ruta de ubicaciones
   calcularRutaUbicaciones() {
-    if (this.marcarPosicionesUbicacionesOrdenadas.length < 2) return;
+    this.directionsResultsUbicacionesArray = [];
+    this.lineasConectoras = [];
 
-    const origin = this.marcarPosicionesUbicacionesOrdenadas[0];
-    const destination =
-      this.marcarPosicionesUbicacionesOrdenadas[
-        this.marcarPosicionesUbicacionesOrdenadas.length - 1
-      ];
-    const waypoints = this.marcarPosicionesUbicacionesOrdenadas
-      .slice(1, -1)
-      .map((position) => ({
-        location: new google.maps.LatLng(position.lat, position.lng),
-        stopover: true,
+    this.customUbicacionMarkers = [...this.marcarPosicionesUbicacionesOrdenadas]
+      .reverse()
+      .map((pos, index) => ({
+        position: pos,
+        label: (index + 1).toString(),
       }));
 
-    const request: google.maps.DirectionsRequest = {
-      origin: new google.maps.LatLng(origin.lat, origin.lng),
-      destination: new google.maps.LatLng(destination.lat, destination.lng),
-      waypoints,
-      travelMode: google.maps.TravelMode.DRIVING,
-      optimizeWaypoints: false,
-    };
+    if (this.customUbicacionMarkers.length > 0) {
+      const primerMarcador = this.customUbicacionMarkers[0];
+      this.map.panTo(primerMarcador.position);
+      this.map.setZoom(24);
+    }
 
-    this.directionsService
-      .route(request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.directionsResultsUbicaciones = response.result;
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (e) => {
-          console.error('Error al calcular la ruta de ubicaciones:', e);
-          this.changeDetectorRef.detectChanges();
-        },
-      });
+    this.changeDetectorRef.detectChanges();
   }
 
   addMarker(
@@ -425,7 +458,6 @@ export default class TraficoListaComponent
     this.consultarUbicacion(despacho_id).subscribe((respuesta) => {
       this.arrUbicaciones = respuesta.registros;
       this.marcarPosicionesUbicacionesOrdenadas = [
-        { lat: 6.200713725811437, lng: -75.58609508555918 },
         ...this.arrUbicaciones.map((ubicacion) => ({
           lat: parseFloat(ubicacion.latitud),
           lng: parseFloat(ubicacion.longitud),
@@ -449,8 +481,78 @@ export default class TraficoListaComponent
       this.directionsResultsUbicaciones = null;
       this.arrUbicaciones = [];
       this.marcarPosicionesUbicacionesOrdenadas = [];
+      this.customUbicacionMarkers = [];
       this.mostrarUbicaciones = false;
       this.changeDetectorRef.detectChanges();
     }
+  }
+
+  confirmarAnularDespacho(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estas seguro?',
+        texto: 'Esta operación no se puede revertir',
+        textoBotonCofirmacion: 'Si, anular',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.anular(id);
+        }
+      });
+  }
+
+  anular(id: number) {
+    this.despachoService
+      .anular(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => {
+          this.alerta.mensajaExitoso(respuesta.mensaje);
+          this.consultarLista();
+          this.limpiarInformacionAdicional();
+        },
+      });
+  }
+
+  abrirModalEditarDespacho(id: number) {
+    this.despachoSeleccionado = this.arrDespachos[id];
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  // abrirModalCrearDespacho() {
+  //   this.toggleModal$.next(true);
+  //   this.changeDetectorRef.detectChanges();
+  // }
+
+  actualizarDespacho(despacho: DespachoDetalle) {
+    this.despachoService
+      .actualizar(this.despachoSeleccionado.id, despacho)
+      .subscribe((respuesta) => {
+        this.alerta.mensajaExitoso(
+          'Se ha actualizado el despacho exitosamente.'
+        );
+        this.dismissModal('#editar-despacho');
+        this.consultarLista();
+      });
+  }
+
+  // guardarDespacho(despacho: DespachoDetalle) {
+  //   this.despachoService
+  //     .guardar(despacho)
+  //     .subscribe((respuesta) => {
+  //       this.alerta.mensajaExitoso(
+  //         'Se ha guardado el despacho exitosamente.'
+  //       );
+  //       this.dismissModal('#crear-despacho');
+  //       this.consultarLista();
+  //     });
+  // }
+
+  dismissModal(selector: string) {
+    const modalEl: HTMLElement = document.querySelector(selector);
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.toggle();
   }
 }

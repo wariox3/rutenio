@@ -1,16 +1,21 @@
+<div class="card mb-5">
+  <div class="card-header">
+    <h3 class="card-title">Filtros</h3>
+  </div>
+  <div class="card-body">
+    <app-filtro-base (emitirFiltros)="filtrosPersonalizados($event)" [mapeoCampos]="mapeoFiltros"></app-filtro-base>
+  </div>
+</div>
+
 <div class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Despachos</h3>
-    <!-- <app-button
-      routerLink="/admin/vehiculo/nuevo"
-      type="button"
-      texto="Nuevo"
-    ></app-button> -->
   </div>
   <app-tabla-comun
     campoMapeo="Despacho"
     [mapeo]="mapeoDocumento"
     [datos]="despachos$ | async"
     (emitirDetalleItem)="detalleDespacho($event)"
+    (emitirEditarItem)="navegarDespachoEditar($event)"
   ></app-tabla-comun>
 </div>

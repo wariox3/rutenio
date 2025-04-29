@@ -1,0 +1,37 @@
+<!-- input-textarea.component.html -->
+<div class="w-full">
+  <textarea
+    [formControl]="control"
+    class="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[calc(1.5rem*var(--rows))]"
+    [style.--rows]="rows"
+    [placeholder]="placeholder"
+    [attr.rows]="rows"
+    [attr.minlength]="minLength"
+    [attr.maxlength]="maxLength"
+    [ngClass]="{
+      'border-red-500': control.touched && control.invalid,
+      'border-green-500': control.touched && control.valid
+    }"
+  ></textarea>
+
+  <ng-container *ngIf="control.invalid && control.touched">
+    <span *ngIf="control.hasError('required')" class="text-red-600 text-xs block mt-1">
+      El campo es requerido.
+    </span>
+    <span *ngIf="control.hasError('minlength')" class="text-red-600 text-xs block mt-1">
+      El campo debe tener un mínimo de {{ minLength }} caracteres.
+    </span>
+    <span *ngIf="control.hasError('maxlength')" class="text-red-600 text-xs block mt-1">
+      El campo debe tener un máximo de {{ maxLength }} caracteres.
+    </span>
+    <span *ngIf="control.hasError('pattern')" class="text-red-600 text-xs block mt-1">
+      Formato inválido.
+    </span>
+  </ng-container>
+
+  <ng-container *ngIf="errorTemplate">
+    <ng-container
+      *ngTemplateOutlet="errorTemplate; context: { $implicit: control }"
+    ></ng-container>
+  </ng-container>
+</div>

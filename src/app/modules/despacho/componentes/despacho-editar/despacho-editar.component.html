@@ -1,0 +1,9 @@
+@if (!cargando()) {
+<div class="card-body">
+  <app-despacho-formulario
+    [isEditando]="true"
+    [despacho]="despacho()"
+    (emitirFormulario)="submitFormulario($event)"
+  ></app-despacho-formulario>
+</div>
+}

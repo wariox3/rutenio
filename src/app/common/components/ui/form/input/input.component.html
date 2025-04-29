@@ -4,7 +4,7 @@
   class="input"
   [placeholder]="placeholder"
   [min]="minLength"
-  [max]="maxLenght"
+  [max]="maxLength"
   [type]="type"
   [ngClass]="{
     'border-danger': control.touched && control.invalid,
@@ -20,10 +20,13 @@
     El campo debe tener un mínimo de caracteres de {{ minLength }}.
   </span>
   <span *ngIf="control.hasError('maxlength')" class="text-danger text-xs block">
-    El campo debe tener un máximo de caracteres de {{ maxLenght }}.
+    El campo debe tener un máximo de caracteres de {{ maxLength }}.
   </span>
   <span *ngIf="control.hasError('pattern')" class="text-danger text-xs block">
     Formato inválido.
+  </span>
+  <span *ngIf="control.hasError('min')" class="text-danger text-xs block">
+    El valor debe ser mayor a cero.
   </span>
 </ng-container>
 <ng-container *ngIf="errorTemplate">

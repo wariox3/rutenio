@@ -154,18 +154,24 @@ export class AlertaService {
     });
   }
 
-  async confirmar(configuracion: {
+  async confirmar({
+    colorConfirmar = '#d33',
+    texto,
+    textoBotonCofirmacion,
+    titulo,
+  }: {
     titulo: string;
     texto: string;
     textoBotonCofirmacion: string;
+    colorConfirmar?: string;
   }) {
     return await Swal.fire({
-      title: configuracion.titulo,
+      title: titulo,
       icon: 'warning',
-      text: configuracion.texto,
+      text: texto,
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      confirmButtonText: configuracion.textoBotonCofirmacion,
+      confirmButtonColor: colorConfirmar,
+      confirmButtonText: textoBotonCofirmacion,
       cancelButtonText: 'Cancelar',
     });
   }

@@ -20,16 +20,13 @@ export default class VisitaNuevoComponent extends General implements OnInit {
   private guiaService = inject(VisitaService);
 
   informacionVisita: any = {
-    fecha: '',
+    numero: '',
     documento: '',
     destinatario: '',
     destinatario_direccion: '',
-    destinatario_correo: '',
     peso: '',
     volumen: '',
-    latitud: '',
-    longitud: '',
-    decodificado: ''
+    tiempo_servicio: '',
   };
 
   ngOnInit() {}
@@ -37,7 +34,7 @@ export default class VisitaNuevoComponent extends General implements OnInit {
   enviarFormulario(formulario: any) {
     this.guiaService.guardarGuias(formulario).subscribe((respuesta: any) => {
       this.alerta.mensajaExitoso('Se ha creado el contacto exitosamente.')
-      this.router.navigate(['/admin/visita/lista']);
+      this.router.navigate(['/movimiento/visita/lista']);
     });
   }
 

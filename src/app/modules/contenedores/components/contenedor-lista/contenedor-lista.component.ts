@@ -113,7 +113,7 @@ export default class ContenedorListaComponent extends General implements OnInit 
         };
         this.store.dispatch(ContenedorActionInit({ contenedor }));
         this.arrConectando[indexContenedor] = false;
-        this.router.navigateByUrl('/admin/dashboard');
+        this.router.navigateByUrl('/dashboard');
       });
   }
 
