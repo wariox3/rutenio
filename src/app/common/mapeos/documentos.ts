@@ -5,7 +5,7 @@ export const mapeo: any = {
     tipo: 'Documento',
     datos: [
       {
-        encabezado: 'ID',
+        encabezado: 'Id',
         campoNombre: 'id',
         campoTipo: 'IntegerField',
         visibleTabla: true,
@@ -103,6 +103,22 @@ export const mapeo: any = {
       {
         encabezado: 'E',
         campoNombre: 'estado_entregado',
+        campoTipo: 'Boolean',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
+        encabezado: 'N',
+        campoNombre: 'estado_novedad',
+        campoTipo: 'Boolean',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
+        encabezado: 'DEV',
+        campoNombre: 'estado_devolucion',
         campoTipo: 'Boolean',
         visibleTabla: true,
         visibleFiltro: true,
