@@ -17,7 +17,10 @@ import { BehaviorSubject } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
-import { Despacho } from '../../../../interfaces/despacho/despacho.interface';
+import {
+  Despacho,
+  DespachoDetalle,
+} from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { DespachoService } from '../../../despacho/servicios/despacho.service';
@@ -25,6 +28,10 @@ import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { GeneralService } from '../../../../common/services/general.service';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
+import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
+import { KTModal } from '../../../../../metronic/core';
+import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -37,7 +44,10 @@ import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
     VisitaRutearDetalleComponent,
     DragDropModule,
     RedondearPipe,
-  ],
+    VisitaAdicionarComponent,
+    DespachoFormularioComponent,
+    DespachoTrasbordarComponent
+],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,6 +65,10 @@ export default class DisenoRutaListaComponent
 
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
+  public despachoSeleccionadoAdicionar: number;
+  public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalTrasbordar$ = new BehaviorSubject(false);
+  private ultimoDespachoSeleccionadoId: number | null = null;
 
   customMarkers: {
     position: google.maps.LatLngLiteral;
@@ -76,6 +90,7 @@ export default class DisenoRutaListaComponent
   directionsResults: google.maps.DirectionsResult | undefined;
   public totalRegistrosVisitas: number = 0;
   public mostarModalDetalleVisita$: BehaviorSubject<boolean>;
+  public mostarModalAdicionarVisita$: BehaviorSubject<boolean>;
   public parametrosConsultaVisitas: ParametrosConsulta = {
     filtros: [],
     limite: 50,
@@ -104,6 +119,7 @@ export default class DisenoRutaListaComponent
   ngOnInit(): void {
     this.consultarLista();
     this.mostarModalDetalleVisita$ = new BehaviorSubject(false);
+    this.mostarModalAdicionarVisita$ = new BehaviorSubject(false);
   }
 
   private _limpiarVisitasPorDespacho() {
@@ -113,6 +129,7 @@ export default class DisenoRutaListaComponent
     this.arrVisitasPorDespacho = [];
     this.customMarkers = [];
     this.totalRegistrosVisitas = 0;
+    this.ultimoDespachoSeleccionadoId = null;
     this.changeDetectorRef.detectChanges();
   }
 
@@ -145,6 +162,10 @@ export default class DisenoRutaListaComponent
   }
 
   seleccionarDespacho(despacho: any) {
+    if (this.ultimoDespachoSeleccionadoId === despacho.id) {
+      return;
+    }
+    this.ultimoDespachoSeleccionadoId = despacho.id;
     this.despachoSeleccionado = despacho;
     this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
@@ -195,10 +216,6 @@ export default class DisenoRutaListaComponent
     this.visitaSeleccionada = visita;
     this.center = { lat: visita.latitud, lng: visita.longitud };
     this.changeDetectorRef.detectChanges();
-    // const marker = this.markerMap.get(visita.id);
-    // if (marker) {
-    //   this.infoWindow.open(marker);
-    // }
   }
 
   mostrarMapa() {
@@ -306,16 +323,17 @@ export default class DisenoRutaListaComponent
     });
   }
 
-  confirmarEliminarVisita(id: number) {
+  confirmarRetirarVisita(id: number) {
     this.alerta
       .confirmar({
         titulo: '¿Estas seguro?',
         texto: 'Esta operación no se puede revertir',
-        textoBotonCofirmacion: 'Si, eliminar',
+        textoBotonCofirmacion: 'Si, retirar',
+        colorConfirmar: '#4287f5',
       })
       .then((respuesta) => {
         if (respuesta.isConfirmed) {
-          this.eliminarVisita(id);
+          this.retirarVisita(id);
         }
       });
   }
@@ -354,7 +372,6 @@ export default class DisenoRutaListaComponent
 
   private initializeConnectedLists(): void {
     this.connectedLists = this.arrDespachos.map((_, index) => `listB-${index}`);
-    console.log(this.connectedLists);
   }
 
   cerrarModalDetalleVisita() {
@@ -363,6 +380,16 @@ export default class DisenoRutaListaComponent
 
   abrirModalDetalleVisita() {
     this.mostarModalDetalleVisita$.next(true);
+  }
+
+  cerrarModalAdicionarVisita() {
+    this.mostarModalAdicionarVisita$.next(true);
+    this.consultarLista();
+  }
+
+  abrirModalAdicionarVisita(id) {
+    this.despachoSeleccionadoAdicionar = id;
+    this.mostarModalAdicionarVisita$.next(true);
   }
 
   onDropToB(event: CdkDragDrop<any[]>, index: number) {
@@ -397,4 +424,36 @@ export default class DisenoRutaListaComponent
       id,
     });
   }
+
+  abrirModalCrearDespacho() {
+    this.toggleModal$.next(true);
+    this.changeDetectorRef.detectChanges();
+  }
+
+  guardarDespacho(despacho: DespachoDetalle) {
+    this.despachoService.guardar(despacho).subscribe((respuesta) => {
+      this.alerta.mensajaExitoso('Se ha guardado el despacho exitosamente.');
+      this.dismissModal('#crear-despacho');
+      this.consultarLista();
+    });
+  }
+
+  dismissModal(selector: string) {
+    const modalEl: HTMLElement = document.querySelector(selector);
+    const modal = KTModal.getInstance(modalEl);
+
+    modal.toggle();
+  }
+
+  cerrarModalAdicionar(){
+    this.toggleModal$.next(true);
+    this.consultarLista();
+    this._limpiarVisitasPorDespacho();
+  }
+
+  abrirModalTrasbordar(id) {
+    this.despachoSeleccionadoAdicionar = id;
+    this.toggleModalTrasbordar$.next(true);
+  }
+    
 }

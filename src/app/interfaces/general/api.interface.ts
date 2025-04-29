@@ -5,6 +5,7 @@ export interface RespuestaGeneralLista<T> {
   
   export interface ParametrosConsulta {
       filtros: FiltrosAplicados[],
+      exclusiones?: ExclusionesAplicados[],
       limite: number;
       desplazar: number;
       ordenamientos: any,
@@ -21,6 +22,15 @@ export interface RespuestaGeneralLista<T> {
   }
   
   export interface FiltrosAplicados {
+    id?: string;
+    propiedad: string;
+    operador?: string;
+    valor1: string | boolean;
+    valor2?: string | boolean;
+    visualizarBtnAgregarFiltro?: boolean;
+  }
+
+  export interface ExclusionesAplicados {
     id?: string;
     propiedad: string;
     operador?: string;

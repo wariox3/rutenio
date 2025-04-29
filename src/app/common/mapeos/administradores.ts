@@ -61,14 +61,6 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
-        encabezado: 'Usuario_app',
-        campoNombre: 'usuario_app',
-        campoTipo: 'CharField',
-        visibleTabla: true,
-        visibleFiltro: false,
-        ordenable: false,
-      },
-      {
         encabezado: 'Activo',
         campoNombre: 'estado_activo',
         campoTipo: 'Boolean',

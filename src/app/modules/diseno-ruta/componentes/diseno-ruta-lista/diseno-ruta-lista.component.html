@@ -4,6 +4,16 @@
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header">
           <h3 class="card-title">Despachos</h3>
+          <div class="flex items-center">
+            <button
+            class="btn btn-primary ms-2"
+            (click)="abrirModalCrearDespacho()"
+            data-modal-toggle="#crear-despacho"
+          >
+          <i class="ki-filled ki-abstract-10"></i>
+            Nuevo despacho
+          </button>
+          </div>
         </div>
         <div
           class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
@@ -82,7 +92,6 @@
                               <button
                                 (click)="
                                   confirmarAprobarDespacho(despacho.id);
-                                  $event.stopPropagation()
                                 "
                                 class="menu-link"
                               >
@@ -109,7 +118,6 @@
                               <button
                                 (click)="
                                   eliminarDespacho(despacho.id);
-                                  $event.stopPropagation()
                                 "
                                 class="menu-link"
                               >
@@ -119,6 +127,30 @@
                                   ></i>
                                 </span>
                                 <span class="menu-title"> Eliminar </span>
+                              </button>
+                            </div>
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                class="menu-link"
+                                data-modal-toggle="#adicionar-visita-pendiente"
+                                (click)="abrirModalAdicionarVisita(despacho.id)"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-parcel"></i>
+                                </span>
+                                <span class="menu-title">Adicionar visita pendiente</span>
+                              </button>
+                            </div>
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                class="menu-link"
+                                data-modal-toggle="#trasbordar-despacho"
+                                (click)="abrirModalTrasbordar(despacho.id)"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-arrow-right-left"></i>
+                                </span>
+                                <span class="menu-title">Trasbordar</span>
                               </button>
                             </div>
                           </div>
@@ -219,25 +251,12 @@
                               <div class="menu-item" data-menu-dismiss="true">
                                 <button
                                   class="menu-link"
-                                  (click)="retirarVisita(visita.id)"
+                                  (click)="confirmarRetirarVisita(visita.id)"
                                 >
                                   <span class="menu-icon">
                                     <i class="ki-filled ki-exit-left"></i>
                                   </span>
                                   <span class="menu-title"> Retirar </span>
-                                </button>
-                              </div>
-                              <div class="menu-item" data-menu-dismiss="true">
-                                <button
-                                  class="menu-link"
-                                  (click)="confirmarEliminarVisita(visita.id)"
-                                >
-                                  <span class="menu-icon">
-                                    <i
-                                      class="ki-filled ki-trash text-lg trash-icon"
-                                    ></i>
-                                  </span>
-                                  <span class="menu-title"> Eliminar </span>
                                 </button>
                               </div>
                             </div>
@@ -327,5 +346,45 @@
     <app-visita-rutear-detalle
       [visita]="visitaSeleccionada"
     ></app-visita-rutear-detalle>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'adicionar-visita-pendiente'"
+  titulo="Adicionar visita pendiente"
+  (emitirModalCerrado)="cerrarModalAdicionarVisita()"
+>
+  <section *ngIf="mostarModalAdicionarVisita$ | async" modal-body>
+    <app-despacho-adicionar-visita
+      [despachoId]="despachoSeleccionadoAdicionar"
+    ></app-despacho-adicionar-visita>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="small"
+  [id]="'crear-despacho'"
+  titulo="Crear despacho"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+  #crearDespachoModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-despacho-formulario
+      [isModal]="true"
+      [despacho]="despachoSeleccionado"
+      (emitirFormulario)="guardarDespacho($event)"
+    ></app-despacho-formulario>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'trasbordar-despacho'"
+  titulo="Trasbordar"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+>
+  <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
+    <app-despacho-trasbordar [despachoId]="despachoSeleccionado"></app-despacho-trasbordar>
   </section>
 </app-modal-default>

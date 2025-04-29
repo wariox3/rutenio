@@ -1,0 +1,109 @@
+@if (!isModal) {
+<div class="flex gap-2 mb-4">
+  <button
+    class="btn btn-secondary flex items-center"
+    routerLink="/movimiento/despacho/lista"
+  >
+    <i class="ki-filled ki-arrow-left mr-1"></i>
+    Atrás
+  </button>
+  <app-button
+    texto="Guardar"
+    [estaDeshabilitado]="!despachoForm.valid"
+    (emitirBotonClicked)="onSubmit()"
+  ></app-button>
+</div>
+} @if (isModal) {
+<form [formGroup]="despachoForm">
+  <div class="grid grid-cols-1 gap-4 mb-5">
+    <div>
+      <div>
+        <app-label [required]="true">Placa</app-label>
+        <ng-select
+          [items]="vehiculos()"
+          formControlName="vehiculo"
+          bindLabel="placa"
+          bindValue="id"
+          notFoundText="Sin elementos"
+          placeholder="Selecciona un elemento"
+          loadingText="Buscando..."
+          class="select2Custom"
+          (change)="seleccionarCiudad($event)"
+          (keyup)="buscarCiudadPorNombre($event)"
+        >
+        </ng-select>
+        <ng-container
+          class="flex flex-col"
+          *ngIf="
+            despachoForm.controls.vehiculo.invalid &&
+            despachoForm.controls.vehiculo.touched
+          "
+        >
+          <span
+            *ngIf="despachoForm.controls.vehiculo.hasError('required')"
+            class="text-danger text-xs block"
+          >
+            El campo es requerido.
+          </span>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end gap-2 mb-4">
+    <app-button
+      texto="Guardar"
+      [estaDeshabilitado]="!despachoForm.valid"
+      (click)="onSubmit()"
+    ></app-button>
+  </div>
+
+  <div class="mb-5"></div>
+</form>
+} @else {
+<div class="card min-w-full">
+  <div class="card-header">
+    <h3 class="card-title">Despacho</h3>
+  </div>
+  <div class="card-body">
+    <form [formGroup]="despachoForm">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <div>
+            <app-label [required]="true">Placa</app-label>
+            <ng-select
+              [items]="vehiculos()"
+              formControlName="vehiculo"
+              bindLabel="placa"
+              bindValue="id"
+              notFoundText="Sin elementos"
+              placeholder="Selecciona un elemento"
+              loadingText="Buscando..."
+              class="select2Custom"
+              (change)="seleccionarCiudad($event)"
+              (keyup)="buscarCiudadPorNombre($event)"
+            >
+            </ng-select>
+            <ng-container
+              class="flex flex-col"
+              *ngIf="
+                despachoForm.controls.vehiculo.invalid &&
+                despachoForm.controls.vehiculo.touched
+              "
+            >
+              <span
+                *ngIf="despachoForm.controls.vehiculo.hasError('required')"
+                class="text-danger text-xs block"
+              >
+                El campo es requerido.
+              </span>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-5"></div>
+    </form>
+  </div>
+</div>
+
+}

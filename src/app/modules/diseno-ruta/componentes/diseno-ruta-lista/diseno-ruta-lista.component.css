@@ -63,3 +63,21 @@
 tr:hover {
     background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
   }
+
+  .menu-dropdown {
+    width: auto !important;  /* Ancho automático */
+    min-width: 48px;        /* Ancho mínimo por si acaso */
+    white-space: nowrap;    /* Evita que el texto se parta en varias líneas */
+    padding-right: 1rem;    /* Espaciado derecho adicional */
+    padding-left: 1rem;     /* Espaciado izquierdo adicional */
+  }
+  
+  .menu-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;           /* Espacio entre icono y texto */
+  }
+  
+  .menu-title {
+    flex-grow: 1;          /* Permite que el título ocupe el espacio necesario */
+  }

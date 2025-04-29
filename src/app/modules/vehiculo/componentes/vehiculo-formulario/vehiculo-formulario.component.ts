@@ -8,24 +8,23 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { map } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { GeneralService } from '../../../../common/services/general.service';
 import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
-import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
-import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
 
 @Component({
   selector: 'app-vehiculo-formulario',

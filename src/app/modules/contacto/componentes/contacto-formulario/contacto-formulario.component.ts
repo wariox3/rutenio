@@ -9,17 +9,18 @@ import {
   Output,
 } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import {
-  asyncScheduler,
-  debounceTime,
-  distinctUntilChanged,
   tap,
-  throttleTime,
-  zip,
+  zip
 } from 'rxjs';
 import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { RespuestaContacto } from '../../../../interfaces/contacto/contacto.interface';
 import {
   AutocompletarCiudades,
   AutocompletarIdentificacion,
@@ -28,11 +29,6 @@ import {
   AutocompletarTipoPersona,
 } from '../../../../interfaces/general/autocompletar.interface';
 import { ContactoService } from '../../servicios/contacto.service';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { RouterLink } from '@angular/router';
-import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { RespuestaContacto } from '../../../../interfaces/contacto/contacto.interface';
-import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-contacto-formulario',

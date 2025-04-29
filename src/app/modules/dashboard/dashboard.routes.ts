@@ -7,7 +7,7 @@ export default [
     pathMatch: 'full',
   },
   {
-    path: 'dashboard',
+    path: '',
     loadComponent: () => import('./dashboard.component'),
   },
 ] as Routes;

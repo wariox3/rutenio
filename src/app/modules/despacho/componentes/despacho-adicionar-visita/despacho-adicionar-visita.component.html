@@ -1,0 +1,38 @@
+<div class="card mb-3">
+  <div class="card-header">
+    <h3 class="card-title">Filtros</h3>
+  </div>
+  <div class="card-body">
+    <app-filtro-base (emitirFiltros)="filtrosPersonalizados($event)" [mapeoCampos]="mapeoFiltros"></app-filtro-base>
+  </div>
+  <table id="tableDetalles" class="table table-bordered table-sm">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="bg-gray-100" style="width: 50px">Id</th>
+        <th class="bg-gray-100">Número</th>
+        <th class="bg-gray-100">Documento</th>
+        <th class="bg-gray-100">Destinatario</th>
+        <th class="bg-gray-100" style="width: 50px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (visitaPendiente of visitasPendientes$ |async; track $index) {
+        <tr>
+          <td class="w-40px">{{ visitaPendiente.id }}</td>
+          <td>{{ visitaPendiente.numero }}</td>
+          <td>{{ visitaPendiente.documento }}</td>
+          <td>{{ visitaPendiente.destinatario }}</td>
+          <td>
+            <button class="btn btn-sm btn-link" (click)="seleccionarVisita(visitaPendiente.id)" [disabled]="procesando === visitaPendiente.id">
+              @if (procesando === visitaPendiente.id) {
+                <i class="ki-duotone ki-spinner spinner"></i>
+              } @else {
+                <i class="ki-filled ki-check-circle"></i>
+              }
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

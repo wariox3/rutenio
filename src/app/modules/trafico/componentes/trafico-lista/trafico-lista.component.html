@@ -1,10 +1,14 @@
 <div class="h-[70vh] flex flex-col p-1">
   <div class="card flex-1 flex flex-col min-h-0">
-    <div class="card-header flex justify-between">
-      <h3 class="card-title my-[8px]">Despachos</h3>
-      <div>
+    <div class="card-header flex justify-between items-center">
+      <h3 class="card-title my-[8px]">Trafico</h3>
+      <div class="flex items-center">
+        <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
+          <i class="ki-filled ki-arrows-circle"></i>
+          Actualizar
+        </button>
         <button
-          class="btn btn-primary"
+          class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
           data-modal-toggle="#trafico-ubicacion-actual"
         >
@@ -30,6 +34,9 @@
             <th>Placa</th>
             <th>Fecha</th>
             <th>Hora</th>
+            <th>Tiempo</th>
+            <th>Peso</th>
+            <th>Volumen</th>
             <th>Progreso</th>
             <th></th>
           </tr>
@@ -42,20 +49,28 @@
             <td>{{ despacho.vehiculo_placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
+            <td>{{ despacho.tiempo }}</td>
+            <td>{{ despacho.peso }}</td>
+            <td>{{ despacho.volumen }}</td>
             <td>
               <div class="flex flex-col space-y-1">
                 <div
                   class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
                 >
-                  <!-- Fondo difuminado (todo el ancho) -->
+                  <!-- Fondo difuminado -->
                   <div
                     class="absolute h-4 rounded-full w-full"
                     [ngClass]="{
-                      'bg-red-500/20': (despacho.estado === 'retrazado' || despacho.visitas_entregadas === 0) && despacho.estado !== 'tiempo',
-                      'bg-green-500/20': despacho.estado !== 'retrazado' && despacho.visitas_entregadas >= 0,
+                      'bg-red-500/20':
+                        (despacho.estado === 'retrazado' ||
+                          despacho.visitas_entregadas === 0) &&
+                        despacho.estado !== 'tiempo',
+                      'bg-green-500/20':
+                        despacho.estado !== 'retrazado' &&
+                        despacho.visitas_entregadas >= 0
                     }"
                   ></div>
-                  <!-- Barra de progreso (sólida) -->
+                  <!-- Barra de progreso -->
                   <div
                     class="progress-bar h-4 rounded-full absolute"
                     [ngClass]="
@@ -76,29 +91,31 @@
                 </div>
                 <div class="text-xs text-gray-500 text-right">
                   <ng-container
-                    *ngIf="
-                      despacho.estado !== 'retrazado';
-                      else retrasadoTemplate
-                    "
+                    *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
                   >
-                    Entregadas {{ despacho.visitas_entregadas }} /
-                    {{ despacho.visitas }} ({{
-                      obtenerPorcentajeVisual(
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    }}%)
-                  </ng-container>
-                  <ng-template #retrasadoTemplate>
                     Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
-                    Entregadas: {{ despacho.visitas_entregadas }} /
-                    {{ despacho.visitas }} ({{
-                      obtenerPorcentajeVisual(
-                        despacho.visitas_entregadas,
-                        despacho.visitas
-                      )
-                    }}%)
+                  </ng-container>
+                  <ng-template #normalTemplate>
+                    <ng-container *ngIf="despacho.visitas_entregadas_esperadas">
+                      Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
+                    </ng-container>
                   </ng-template>
+
+                  Entregadas: {{ despacho.visitas_entregadas }}/{{
+                    despacho.visitas
+                  }}
+                  |
+
+                  <!-- <span *ngIf="despacho.visitas_liberadas !== undefined">
+                    Liberadas: {{ despacho.visitas_liberadas }} |
+                  </span> -->
+
+                  {{
+                    obtenerPorcentajeVisual(
+                      despacho.visitas_entregadas,
+                      despacho.visitas
+                    )
+                  }}%
                 </div>
               </div>
             </td>
@@ -119,10 +136,7 @@
                     <div class="menu-dropdown w-48 py-2">
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                          (click)="
-                            confirmarTerminarDespacho(despacho.id);
-                            $event.stopPropagation()
-                          "
+                          (click)="confirmarTerminarDespacho(despacho.id)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
@@ -151,7 +165,70 @@
                           <span class="menu-icon">
                             <i class="ki-filled ki-delivery-geolocation"></i>
                           </span>
-                          <span class="menu-title"> Ruta</span>
+                          <span class="menu-title">Ruta</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#visita-liberar-modal"
+                          (click)="abrirModalLiberar(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery-2"></i>
+                          </span>
+                          <span class="menu-title">Liberar visita</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="confirmarAnularDespacho(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-information-4"></i>
+                          </span>
+                          <span class="menu-title"> Anular</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="abrirModalEditarDespacho($index)"
+                          data-modal-toggle="#editar-despacho"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-pencil"></i>
+                          </span>
+                          <span class="menu-title"> Editar despacho</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#adicionar-visita-pendiente"
+                          (click)="abrirModalAdicionar(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-parcel"></i>
+                          </span>
+                          <span class="menu-title"
+                            >Adicionar visita pendiente</span
+                          >
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#adicionar-visita-trafico"
+                          (click)="abrirModalAdicionarVistaTrafico(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-delivery"></i>
+                          </span>
+                          <span class="menu-title"
+                            >Adicionar visita en trafico</span
+                          >
                         </button>
                       </div>
                     </div>
@@ -186,11 +263,11 @@
     <div class="h-full" style="height: 600px; position: relative">
       <div class="flex justify-end mb-2">
         <button
-          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow "
+          class="right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
           (click)="toggleUbicaciones(despachoIdActual)"
         >
           {{
-            mostrarUbicaciones ? "Ocultar Ubicaciones" : "Mostrar Ubicaciones"
+            mostrarUbicaciones ? "Ocultar ubicaciones" : "Mostrar ubicaciones"
           }}
         </button>
       </div>
@@ -255,19 +332,22 @@
             </div>
           </section>
         </map-info-window>
+        <map-marker
+          *ngFor="let marker of customUbicacionMarkers"
+          [position]="marker.position"
+          [label]="{
+            text: marker.label,
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: 'bold'
+          }"
+        ></map-marker>
 
         <!-- Primera ruta (visitas) -->
         <map-directions-renderer
           *ngIf="directionsResultsVisitas"
           [directions]="directionsResultsVisitas"
           [options]="directionsRendererOptions"
-        ></map-directions-renderer>
-
-        <!-- Segunda ruta (ubicaciones) -->
-        <map-directions-renderer
-          *ngIf="mostrarUbicaciones && directionsResultsUbicaciones"
-          [directions]="directionsResultsUbicaciones"
-          [options]="directionsRendererOptionsUbicaciones"
         ></map-directions-renderer>
       </google-map>
     </div>
@@ -408,9 +488,62 @@
   </section>
 </app-modal-default>
 
+<app-modal-default
+  size="medium"
+  [id]="'visita-liberar-modal'"
+  titulo="Liberar visita"
+  (emitirModalCerrado)="cerrarModalLiberar()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModalLiberar$ | async" modal-body>
+    <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="small"
+  [id]="'editar-despacho'"
+  titulo="Editar despacho"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+  #importarPorExcelModal
+>
+  <section *ngIf="toggleModal$ | async" modal-body>
+    <app-despacho-formulario
+      [isModal]="true"
+      [isEditando]="true"
+      [despacho]="despachoSeleccionado"
+      (emitirFormulario)="actualizarDespacho($event)"
+    ></app-despacho-formulario>
+  </section>
+</app-modal-default>
+
 <div
   class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_orden_entrega"
 >
   Orden de entrega
 </div>
+
+<app-modal-default
+size="large"
+[id]="'adicionar-visita-pendiente'"
+titulo="Adicionar visita pendiente"
+(emitirModalCerrado)="cerrarModalAdicionar()"
+#importarPorExcelModal
+>
+<section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
+  <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
+</section>
+</app-modal-default>
+
+<app-modal-default
+size="large"
+[id]="'adicionar-visita-trafico'"
+titulo="Adicionar visita en trafico"
+(emitirModalCerrado)="cerrarModalAdicionarVisitaTrafico()"
+#importarPorExcelModal
+>
+<section *ngIf="toggleModalAdicionarVisitaTrafico$ | async" modal-body>
+  <app-despacho-adicionar-visita-trafico [despachoId]="despachoIdActual"></app-despacho-adicionar-visita-trafico>
+</section>
+</app-modal-default>

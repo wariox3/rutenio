@@ -50,15 +50,5 @@ export const guiaMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
-
-    // {
-    //   nombre: "ciudad",
-    //   campoTipo: "Fk",
-    //   visibleTabla: true,
-    //   visibleFiltro: true,
-    //   ordenable: true,
-    //   esFk: true,
-    //   modeloFk: 'GenCiudad'
-    // }
   ],
 };

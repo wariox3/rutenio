@@ -1,12 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { DespachoService } from '../../servicios/despacho.service';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Despacho } from '../../interfaces/despacho.interface';
-import { DespachoTabVisitaComponent } from "../despacho-tab-visita/despacho-tab-visita.component";
+import { BehaviorSubject } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
-import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despacho-tab-ubicacion.component";
+import {
+  DespachoDetalle,
+  despachoDetalleEmpty,
+} from '../../../../interfaces/despacho/despacho.interface';
+import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
+import { DespachoService } from '../../servicios/despacho.service';
+import { DespachoTabUbicacionComponent } from '../despacho-tab-ubicacion/despacho-tab-ubicacion.component';
+import { DespachoTabVisitaComponent } from '../despacho-tab-visita/despacho-tab-visita.component';
 
 @Component({
   selector: 'app-despacho-detalle',
@@ -16,35 +28,24 @@ import { DespachoTabUbicacionComponent } from "../despacho-tab-ubicacion/despach
     RouterLink,
     DespachoTabVisitaComponent,
     FormatFechaPipe,
-    DespachoTabUbicacionComponent
-],
+    DespachoTabUbicacionComponent,
+    ModalDefaultComponent,
+    VisitaLiberarComponent,
+  ],
   templateUrl: './despacho-detalle.component.html',
   styleUrl: './despacho-detalle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class DespachoDetalleComponent extends General implements OnInit {
-  private despachoService = inject(DespachoService)
+export default class DespachoDetalleComponent
+  extends General
+  implements OnInit
+{
+  private despachoService = inject(DespachoService);
+  public toggleModal$ = new BehaviorSubject(false);
 
-  despachoId : number
+  despachoId: number;
 
-
-  despacho = signal<Despacho>({
-    id: 0,
-    fecha: '',
-    estado: '',
-    peso: 0,
-    volumen: 0,
-    visitas: 0,
-    visitas_entregadas: 0,
-    visitas_entregadas_esperadas: 0,
-    vehiculo_id: 0,
-    vehiculo_placa: '',
-    estado_aprobado: false,
-    tiempo: 0,
-    tiempo_trayecto: 0,
-    tiempo_servicio: 0,
-    fecha_salida: '' 
-  })
+  despacho = signal<DespachoDetalle>(despachoDetalleEmpty);
 
   activeTab: string = 'visitas';
 
@@ -53,16 +54,25 @@ export default class DespachoDetalleComponent extends General implements OnInit 
     this.consultarDespacho();
   }
 
-  consultarDespacho(){
-    this.despachoService.consultarDetalle(this.despachoId).subscribe(respuesta => {
-      this.despacho.set(respuesta)
-    })
+  consultarDespacho() {
+    this.despachoService
+      .consultarDetalle(this.despachoId)
+      .subscribe((respuesta) => {
+        this.despacho.set(respuesta);
+      });
   }
 
-  obtenerParametroRuta(){
-    this.activatedRoute.params.subscribe(
-      (params:any) => {this.despachoId = params.id}
-    );
+  obtenerParametroRuta() {
+    this.activatedRoute.params.subscribe((params: any) => {
+      this.despachoId = params.id;
+    });
   }
 
- }
+  abrirModal() {
+    this.toggleModal$.next(true);
+  }
+
+  cerrarModal() {
+    this.toggleModal$.next(false);
+  }
+}

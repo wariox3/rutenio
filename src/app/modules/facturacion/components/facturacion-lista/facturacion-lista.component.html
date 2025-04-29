@@ -52,73 +52,8 @@
       * La factura electrónica se envía al correo o podrá descargarla en la
       pestaña historial después de realizar el pago.
     </p>
-  </div>
-
-  <!-- Sección Valor estimado -->
-  <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
-    <div class="flex items-center">
-      <h5 class="d-inline-block">Valor estimado</h5>
-      <span
-        class="badge badge-sm badge-success badge-outline d-inline-block ms-2"
-      >
-        Mes actual
-      </span>
-    </div>
-    <b style="font-size: 24px">{{ consumoTotal | convertir_valor_moneda }}</b>
-    <p class="mb-4 text-gray-600 text-sm">
-      Esta es una estimación de la cantidad que debe pagar de este usuario en el
-      mes hasta la fecha después de créditos y pagos por adelantado.
-    </p>
-    <div class="mb-0">
-      <div class="flex flex-wrap">
-        <!-- Columna 1 -->
-        <div class="w-full sm:w-full md:w-1/4 p-2">
-          <div class="font-bold">
-            {{
-              fechaServices.obtenerPrimerDiaDelMesSiguiente()
-                | formatFecha : "Y-m-d"
-            }}
-          </div>
-          <p>Fecha de pago</p>
-        </div>
-
-        <!-- Columna 2 -->
-        <div class="w-full sm:w-full md:w-1/4 p-2">
-          <div class="font-bold">{{ 0 | convertir_valor_moneda }}</div>
-          <p>
-            Pagos anticipados
-            <i class="ki-outline ki-information-2 ml-2"></i>
-          </p>
-        </div>
-
-        <!-- Columna 3 -->
-        <div class="w-full sm:w-full md:w-1/4 p-2">
-          <div class="font-bold">
-            {{ consumoTotal | convertir_valor_moneda }}
-          </div>
-          <p>
-            Uso total
-            <i class="ki-outline ki-information-2 ml-2"></i>
-          </p>
-        </div>
-
-        <!-- Columna 4 -->
-        <div class="w-full sm:w-full md:w-1/4 p-2">
-          <div class="font-bold">
-            {{ consumoTotal | convertir_valor_moneda }}
-          </div>
-          <p>
-            Valor estimado
-            <i class="ki-outline ki-information-2 ml-2"></i>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-    <div class="mb-6">
-      <h5 class="text-lg font-semibold text-gray-800">
+    <div class="mb-6 mt-8">
+      <h5>
         Información facturación
       </h5>
     </div>
@@ -242,6 +177,68 @@
         >
           <i class="ki-outline ki-plus-circle text-2xl mb-2"></i>
           <span class="font-medium">Agregar nueva información</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sección Valor estimado -->
+  <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+    <div class="flex items-center">
+      <h5 class="d-inline-block">Valor estimado</h5>
+      <span
+        class="badge badge-sm badge-success badge-outline d-inline-block ms-2"
+      >
+        Mes actual
+      </span>
+    </div>
+    <b style="font-size: 24px">{{ consumoTotal | convertir_valor_moneda }}</b>
+    <p class="mb-4 text-gray-600 text-sm">
+      Esta es una estimación de la cantidad que debe pagar de este usuario en el
+      mes hasta la fecha después de créditos y pagos por adelantado.
+    </p>
+    <div class="mb-0">
+      <div class="flex flex-wrap">
+        <!-- Columna 1 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{
+              fechaServices.obtenerPrimerDiaDelMesSiguiente()
+                | formatFecha : "Y-m-d"
+            }}
+          </div>
+          <p>Fecha de pago</p>
+        </div>
+
+        <!-- Columna 2 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">{{ 0 | convertir_valor_moneda }}</div>
+          <p>
+            Pagos anticipados
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
+        </div>
+
+        <!-- Columna 3 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{ consumoTotal | convertir_valor_moneda }}
+          </div>
+          <p>
+            Uso total
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
+        </div>
+
+        <!-- Columna 4 -->
+        <div class="w-full sm:w-full md:w-1/4 p-2">
+          <div class="font-bold">
+            {{ consumoTotal | convertir_valor_moneda }}
+          </div>
+          <p>
+            Valor estimado
+            <i class="ki-outline ki-information-2 ml-2"></i>
+          </p>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ export interface Despacho {
   visitas: number;
   visitas_entregadas: number;
   visitas_entregadas_esperadas : number;
+  visitas_liberadas: number;
   vehiculo_id: number;
   vehiculo_placa: string;
   estado_aprobado: boolean;

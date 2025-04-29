@@ -20,8 +20,9 @@ export class InputComponent {
   @Input() placeholder = '';
   @Input() soloNumeros = false;
   @Input() type = 'text';
-  @Input() maxLenght: number = 0;
+  @Input() maxLength: number = 0;
   @Input() minLength: number = 0;
+  @Input() mayorACero = false;
   @Input({ required: true }) control = new FormControl();
   @Input() errorTemplate?: TemplateRef<any>;
 
