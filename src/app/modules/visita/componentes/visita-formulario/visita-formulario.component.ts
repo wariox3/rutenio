@@ -17,7 +17,8 @@ import {
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
+import { InputEmailComponent } from "../../../../common/components/ui/form/input-email/input-email.component";
+import { LabelComponent } from "../../../../common/components/ui/form/label/label.component";
 
 @Component({
   selector: 'app-visita-formulario',
@@ -28,9 +29,10 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
     ReactiveFormsModule,
     RouterLink,
     InputComponent,
-    SwitchComponent,
-  ],
-  template: `<p>visita-formulario works!</p>`,
+    InputEmailComponent,
+    LabelComponent
+],
+  templateUrl: 'visita-formulario.component.html',
   styleUrl: './visita-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -43,27 +45,25 @@ export default class VisitaFormularioComponent
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
 
   public formularioVisita = new FormGroup({
-    fecha: new FormControl(''),
-    documento: new FormControl(''),
-    destinatario: new FormControl(''),
-    destinatario_direccion: new FormControl(''),
-    destinatario_telefono: new FormControl(''),
-    destinatario_correo: new FormControl(''),
-    peso: new FormControl(''),
-    volumen: new FormControl(''),
-    latitud: new FormControl(''),
-    longitud: new FormControl(''),
-    decodificado: new FormControl(false),
+    numero: new FormControl('', [Validators.required]),
+    documento: new FormControl(null),
+    destinatario: new FormControl('', [Validators.required]),
+    destinatario_direccion: new FormControl('', [Validators.required]),
+    destinatario_telefono: new FormControl(null),
+    destinatario_correo: new FormControl(null),
+    peso: new FormControl('', [Validators.required]),
+    volumen: new FormControl('', [Validators.required]),
   });
 
   ngOnInit(): void {
     if (this.formularioTipo === 'editar') {
       this.formularioVisita.patchValue({
-        fecha: this.informacionVisita.fecha,
+        numero: this.informacionVisita.numero,
         documento: this.informacionVisita.documento,
         destinatario: this.informacionVisita.destinatario,
         destinatario_direccion: this.informacionVisita.destinatario_direccion,
         destinatario_telefono: this.informacionVisita.destinatario_telefono,
+        destinatario_correo: this.informacionVisita.destinatario_correo,
       });
     }
   }

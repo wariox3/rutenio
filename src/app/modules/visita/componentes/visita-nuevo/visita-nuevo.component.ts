@@ -20,16 +20,13 @@ export default class VisitaNuevoComponent extends General implements OnInit {
   private guiaService = inject(VisitaService);
 
   informacionVisita: any = {
-    fecha: '',
+    numero: '',
     documento: '',
     destinatario: '',
     destinatario_direccion: '',
-    destinatario_correo: '',
     peso: '',
     volumen: '',
-    latitud: '',
-    longitud: '',
-    decodificado: ''
+    tiempo_servicio: '',
   };
 
   ngOnInit() {}
