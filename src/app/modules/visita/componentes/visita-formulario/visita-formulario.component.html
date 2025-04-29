@@ -59,6 +59,8 @@
           <app-label [required]="true">Peso</app-label>
           <app-input
             [control]="formularioVisita.controls.peso"
+            [soloNumeros]="true"
+            [mayorACero]="true"
           ></app-input>
         </div>
       </div>
@@ -67,6 +69,8 @@
           <app-label [required]="true">Volumen</app-label>
           <app-input
             [control]="formularioVisita.controls.volumen"
+            [soloNumeros]="true"
+            [mayorACero]="true"
             ></app-input>
         </div>
       </div>
