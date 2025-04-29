@@ -1,13 +1,6 @@
-<div class="card min-w-full">
-    <div class="card-header">
-      <h3 class="card-title">Visita</h3>
-    </div>
-    <div class="card-body">
-      <app-visita-formulario
-        formularioTipo="crear"
-        [informacionVisita]="informacionVisita"
-        (dataFormulario)="enviarFormulario($event)"
-      ></app-visita-formulario>
-    </div>
-  </div>
-  
+<app-visita-formulario
+  [isModal]="false"
+  formularioTipo="crear"
+  [informacionVisita]="informacionVisita"
+  (dataFormulario)="enviarFormulario($event)"
+></app-visita-formulario>

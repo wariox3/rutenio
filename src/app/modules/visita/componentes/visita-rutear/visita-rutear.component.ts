@@ -41,6 +41,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import VisitaFormularioComponent from "../visita-formulario/visita-formulario.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -61,7 +62,8 @@ import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
     FullLoaderDefaultComponent,
     VisitaResumenPedienteComponent,
     RedondearPipe,
-  ],
+    VisitaFormularioComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,6 +134,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModal$ = new BehaviorSubject(false);
   public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
+  public toggleModalVisitaNuevo$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -420,9 +423,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalFiltros$.next(true);
   }
 
+  abrirModalVisitaNuevo() {
+    this.toggleModalVisitaNuevo$.next(true);
+  }
+
   cerrarModal() {
     this.toggleModal$.next(false);
   }
+
+  cerrarModalVisitaNuevo() {
+    this.toggleModalVisitaNuevo$.next(false);
+  }
+
 
   eliminarFlota(id: number) {
     this._flotaService.eliminarFlota(id).subscribe((response) => {
@@ -494,6 +506,15 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModal$.next(false);
 
     modal.toggle();
+  }
+
+  cerrarModalVisitaNuevoEmitir() {
+    const modalEl: HTMLElement = document.querySelector('#nuevo-visita');
+    const modal = KTModal.getInstance(modalEl);
+    this.toggleModalVisitaNuevo$.next(false);
+
+    modal.toggle();
+    this.consultarVisitas();
   }
 
   habilitadoParaRutear() {
@@ -634,11 +655,4 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._filtroBaseService.myEvent.next();
   }
 
-  // cerrarMenuVisita() {
-  //   const menuEl: HTMLElement = document.querySelector('#my_menu');
-  //   const menuEle: HTMLElement = document.querySelector('#submenu');
-  //   const menu = KTMenu.getInstance(menuEl);
-
-  //   menu.hide(menuEl);
-  // }
 }
