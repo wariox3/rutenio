@@ -123,6 +123,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public errorCapacidad: boolean = false;
   public cantidadErrores: number = 0;
   public cantidadAlertas: number = 0;
+  public cantidadNovedades: number = 0;
   public visitasTotales: number = 0;
   public totalRegistrosVisitas: number = 0;
   public mapeo = visitaRutearMapeo;
