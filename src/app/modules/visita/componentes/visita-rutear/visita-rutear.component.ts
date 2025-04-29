@@ -94,7 +94,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despacho', valor1: false }],
+    filtros: [{ propiedad: 'estado_despacho', valor1: false }, { propiedad: 'estado_devolucion', valor1: false }],
     limite: 50,
     desplazar: 0,
     ordenamientos: [
@@ -130,6 +130,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
@@ -415,6 +416,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModal$.next(true);
   }
 
+  abrirModalFiltros() {
+    this.toggleModalFiltros$.next(true);
+  }
+
   cerrarModal() {
     this.toggleModal$.next(false);
   }
@@ -534,11 +539,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
     if (filtros.length >= 1) {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
       ];
     }
 
@@ -607,11 +614,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
     if (filtros.length >= 1) {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
       ];
     }
 

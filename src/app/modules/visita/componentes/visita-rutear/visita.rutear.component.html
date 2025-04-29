@@ -132,7 +132,7 @@
                       class="menu-link"
                       id="submenu"
                       data-modal-toggle="#filtros-visita"
-                      (click)="abrirModal()"
+                      (click)="abrirModalFiltros()"
                     >
                       <span class="menu-icon">
                         <i class="ki-filled ki-filter-search"></i>
@@ -257,27 +257,54 @@
                       <section class="flex gap-2">
                         <button
                           class="text-gray-500 hover:text-blue-500 transition-all"
-                          data-modal-toggle="#editar-visita"
-                          (click)="editarModal(visita)"
-                        >
-                          <span class="menu-icon">
-                            <i class="ki-filled ki-notepad-edit text-xl"></i>
-                          </span>
-                        </button>
-
-                        <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
                           data-modal-toggle="#detalle-visita"
                           (click)="abrirModal()"
                         >
                           <i class="ki-filled ki-eye text-xl"></i>
                         </button>
-                        <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
-                          (click)="confirmarEliminarVisita(visita.id)"
-                        >
-                          <i class="ki-filled ki-trash text-xl"></i>
-                        </button>
+                        <div class="menu menu-default" data-menu="true">
+                          <div
+                            class="menu-item"
+                            data-menu-item-placement="bottom-start"
+                            data-menu-item-toggle="dropdown"
+                            data-menu-item-trigger="click"
+                          >
+                            <button class="menu-toggle">
+                              <span class="menu-title">
+                                <i
+                                  class="ki-filled ki-dots-vertical text-xl"
+                                ></i>
+                              </span>
+                            </button>
+                            <div class="menu-dropdown w-48 py-2">
+                              <div class="menu-item" data-menu-dismiss="true">
+                                <button
+                                  class="menu-link"
+                                  data-modal-toggle="#editar-visita"
+                                  (click)="editarModal(visita)"
+                                >
+                                  <span class="menu-icon">
+                                    <i class="ki-filled ki-notepad-edit"></i>
+                                  </span>
+                                  <span class="menu-title"> Editar </span>
+                                </button>
+                              </div>
+                              <div class="menu-item" data-menu-dismiss="true">
+                                <button
+                                  class="menu-link"
+                                  (click)="confirmarEliminarVisita(visita.id)"
+                                >
+                                  <span class="menu-icon">
+                                    <i
+                                    class="ki-filled ki-trash text-lg trash-icon"
+                                  ></i>
+                                  </span>
+                                  <span class="menu-title"> Eliminar </span>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </section>
                     </div>
                   </div>
@@ -415,7 +442,8 @@
                   <span class="ml-1"
                     >{{ selectedVisita?.tiempo_servicio }}+{{
                       selectedVisita?.tiempo_trayecto | redondear : 1
-                    }} min</span
+                    }}
+                    min</span
                   >
                 </div>
               </div>
