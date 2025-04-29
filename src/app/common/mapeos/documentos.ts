@@ -117,7 +117,7 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
-        encabezado: 'DEV',
+        encabezado: 'Dev',
         campoNombre: 'estado_devolucion',
         campoTipo: 'Boolean',
         visibleTabla: true,
