@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnInit,
   Output,
@@ -19,6 +20,7 @@ import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { InputEmailComponent } from "../../../../common/components/ui/form/input-email/input-email.component";
 import { LabelComponent } from "../../../../common/components/ui/form/label/label.component";
+import { VisitaService } from '../../servicios/visita.service';
 
 @Component({
   selector: 'app-visita-formulario',
@@ -40,8 +42,12 @@ export default class VisitaFormularioComponent
   extends General
   implements OnInit
 {
+
+  private _visitaService = inject(VisitaService);
+
   @Input() informacionVisita: any;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
+  @Input() isModal: boolean;
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
 
   public formularioVisita = new FormGroup({
@@ -75,4 +81,12 @@ export default class VisitaFormularioComponent
       this.formularioVisita.markAllAsTouched();
     }
   }
+
+  enviarModal(formulario: any){
+    this._visitaService.guardarGuias(formulario).subscribe((respuesta: any) => {
+      this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.')
+      return this.dataFormulario.emit(this.formularioVisita.value);
+    });
+  }
+
 }

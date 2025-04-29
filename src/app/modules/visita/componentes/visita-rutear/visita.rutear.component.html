@@ -157,6 +157,19 @@
                   <div class="menu-item">
                     <button
                       class="menu-link"
+                      data-modal-toggle="#nuevo-visita"
+                      (click)="abrirModalVisitaNuevo()"
+                    >
+                      <span class="menu-icon">
+                        <i class="ki-filled ki-abstract-10"></i>
+                      </span>
+                      <span class="menu-title"> Nuevo </span>
+                    </button>
+                  </div>
+
+                  <div class="menu-item">
+                    <button
+                      class="menu-link"
                       [ngClass]="{ 'cursor-not-allowed': cantidadErrores > 0 }"
                       (click)="ordenar()"
                       [disabled]="cantidadErrores > 0"
@@ -567,5 +580,21 @@
   <section *ngIf="toggleModalVisitaResumen$ | async" modal-body>
     <app-visita-resumen-pediente [resumen]="visitaResumen">
     </app-visita-resumen-pediente>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'nuevo-visita'"
+  titulo="Nuevo visita"
+  (emitirModalCerrado)="cerrarModalVisitaNuevo()"
+  #visitaNuevo
+>
+  <section *ngIf="toggleModalVisitaNuevo$ | async" modal-body>
+    <app-visita-formulario
+    formularioTipo="crear"
+    [isModal]="true"
+    (dataFormulario)="cerrarModalVisitaNuevoEmitir()"
+    ></app-visita-formulario>
   </section>
 </app-modal-default>
