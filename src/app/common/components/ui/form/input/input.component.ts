@@ -22,6 +22,7 @@ export class InputComponent {
   @Input() type = 'text';
   @Input() maxLength: number = 0;
   @Input() minLength: number = 0;
+  @Input() mayorACero = false;
   @Input({ required: true }) control = new FormControl();
   @Input() errorTemplate?: TemplateRef<any>;
 

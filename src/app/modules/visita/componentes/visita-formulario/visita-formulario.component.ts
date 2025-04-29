@@ -51,8 +51,8 @@ export default class VisitaFormularioComponent
     destinatario_direccion: new FormControl('', [Validators.required]),
     destinatario_telefono: new FormControl(null),
     destinatario_correo: new FormControl(null),
-    peso: new FormControl('', [Validators.required]),
-    volumen: new FormControl('', [Validators.required]),
+    peso:  new FormControl('', [Validators.required, Validators.min(1)]),
+    volumen:  new FormControl('', [Validators.required, Validators.min(1)]),
   });
 
   ngOnInit(): void {

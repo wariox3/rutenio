@@ -25,6 +25,9 @@
   <span *ngIf="control.hasError('pattern')" class="text-danger text-xs block">
     Formato inválido.
   </span>
+  <span *ngIf="control.hasError('min')" class="text-danger text-xs block">
+    El valor debe ser mayor a cero.
+  </span>
 </ng-container>
 <ng-container *ngIf="errorTemplate">
   <ng-container
