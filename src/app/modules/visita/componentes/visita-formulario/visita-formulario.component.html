@@ -1,35 +1,74 @@
 <form [formGroup]="formularioVisita" (submit)="enviar()">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
       <div class="mb-5">
         <div>
-          <label class="form-label flex items-center gap-1 text-gray-900">
-            Placa
-            <span class="text-danger"> * </span>
-          </label>
+          <app-label [required]="false">Número</app-label>
           <app-input
-            [control]="formularioVehiculo.controls.placa"
-            [maxLength]="6"
+            [control]="formularioVisita.controls.numero"
           ></app-input>
         </div>
       </div>
       <div class="mb-5">
         <div>
-          <label class="form-label flex items-center gap-1 text-gray-900">
-            Capacidad
-            <span class="text-danger"> * </span>
-          </label>
+          <app-label [required]="false">Documento cliente</app-label>
           <app-input
-            [control]="formularioVehiculo.controls.capacidad"
+            [control]="formularioVisita.controls.documento"
           ></app-input>
         </div>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
       <div class="mb-5">
-        <app-switch
-          titulo="Activo"
-          [control]="formularioVehiculo.controls.estado_activo"
-        ></app-switch>
+        <div>
+          <app-label [required]="false">Destinatario</app-label>
+          <app-input
+            [control]="formularioVisita.controls.destinatario"
+          ></app-input>
+        </div>
+      </div>
+      <div class="mb-5">
+        <div>
+          <app-label [required]="true">Dirección</app-label>
+          <app-input
+            [control]="formularioVisita.controls.destinatario_direccion"
+          ></app-input>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+      <div class="mb-5">
+        <div>
+          <app-label [required]="false">Teléfono</app-label>
+          <app-input
+            [control]="formularioVisita.controls.destinatario_telefono"
+          ></app-input>
+        </div>
+      </div>
+      <div class="mb-5">
+        <div>
+          <app-label [required]="false">Correo</app-label>
+          <app-input-email
+            [control]="formularioVisita.controls.destinatario_correo"
+          ></app-input-email>
+        </div>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+      <div class="mb-5">
+        <div>
+          <app-label [required]="true">Peso</app-label>
+          <app-input
+            [control]="formularioVisita.controls.peso"
+          ></app-input>
+        </div>
+      </div>
+      <div class="mb-5">
+        <div>
+          <app-label [required]="true">Volumen</app-label>
+          <app-input
+            [control]="formularioVisita.controls.volumen"
+            ></app-input>
+        </div>
       </div>
     </div>
     <div class="flex justify-between">
@@ -38,7 +77,7 @@
       </button>
       <app-button
         texto="Guardar"
-        [estaDeshabilitado]="!formularioVehiculo.valid"
+        [estaDeshabilitado]="!formularioVisita.valid"
       ></app-button>
     </div>
   </form>

@@ -25,6 +25,7 @@ import { PaginacionAvanzadaComponent } from '../../../../common/components/pagin
 import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-visita-lista',
@@ -41,6 +42,7 @@ import { guiaMapeo } from '../../mapeos/guia-mapeo';
     ReactiveFormsModule,
     PaginacionAvanzadaComponent,
     FiltroBaseComponent,
+    RouterLink
   ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
@@ -69,7 +71,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     filtros: [],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['-id'],
     limite_conteo: 10000,
     modelo: 'RutVisita',
   };
