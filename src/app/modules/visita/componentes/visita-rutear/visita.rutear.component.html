@@ -225,8 +225,8 @@
                 *ngFor="let visita of arrVisitas; let i = index"
                 class="cursor-pointer"
                 [ngClass]="{
-                  '!bg-[#ffdcdc]': !visita.estado_decodificado,
-                  '!bg-[#ffddab]': visita.estado_novedad,
+                  'bg-red-50': !visita.estado_decodificado,
+                  '!bg-[#ffe5be]': visita.estado_novedad,
                   '!bg-[#fefce8]': visita.estado_decodificado_alerta,                  
                   '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]': selectedVisita === visita
                 }"
@@ -239,10 +239,10 @@
                       <span class="font-semibold text-gray-800 text-sm">
                         {{ visita.destinatario }}
                       </span>
-                      <span class="text-gray-600 text-xs font-medium">
+                      <span class="text-xs font-medium">
                         Número: {{ visita.numero }} ·
                         <span class="font-semibold text-sm text-gray-800">
-                          {{ visita.orden }}
+                          {{ visita.orden }} - {{visita.id}}
                         </span>
                       </span>
                     </div>
@@ -251,7 +251,7 @@
                       {{ visita.destinatario_direccion }}
                     </div>
                     <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
+                      class="flex justify-between text-xs mt-1"
                     >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
@@ -269,7 +269,7 @@
 
                       <section class="flex gap-2">
                         <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          class="hover:text-blue-500 transition-all"
                           data-modal-toggle="#detalle-visita"
                           (click)="abrirModal()"
                         >
