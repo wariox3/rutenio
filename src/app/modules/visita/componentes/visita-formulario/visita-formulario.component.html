@@ -16,87 +16,116 @@
   } @if (isModal){
 
 <form [formGroup]="formularioVisita" (submit)="enviar()">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-      <div class="mb-5">
-        <div>
-          <app-label [required]="false">Número</app-label>
-          <app-input
-            [control]="formularioVisita.controls.numero"
-          ></app-input>
-        </div>
-      </div>
-      <div class="mb-5">
-        <div>
-          <app-label [required]="false">Documento cliente</app-label>
-          <app-input
-            [control]="formularioVisita.controls.documento"
-          ></app-input>
-        </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Número</app-label>
+        <app-input
+          [control]="formularioVisita.controls.numero"
+        ></app-input>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-      <div class="mb-5">
-        <div>
-          <app-label [required]="false">Destinatario</app-label>
-          <app-input
-            [control]="formularioVisita.controls.destinatario"
-          ></app-input>
-        </div>
-      </div>
-      <div class="mb-5">
-        <div>
-          <app-label [required]="true">Dirección</app-label>
-          <app-input
-            [control]="formularioVisita.controls.destinatario_direccion"
-          ></app-input>
-        </div>
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Documento cliente</app-label>
+        <app-input
+          [control]="formularioVisita.controls.documento"
+        ></app-input>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-      <div class="mb-5">
-        <div>
-          <app-label [required]="false">Teléfono</app-label>
-          <app-input
-            [control]="formularioVisita.controls.destinatario_telefono"
-          ></app-input>
-        </div>
-      </div>
-      <div class="mb-5">
-        <div>
-          <app-label [required]="false">Correo</app-label>
-          <app-input-email
-            [control]="formularioVisita.controls.destinatario_correo"
-          ></app-input-email>
-        </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Destinatario</app-label>
+        <app-input
+          [control]="formularioVisita.controls.destinatario"
+        ></app-input>
       </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-      <div class="mb-5">
-        <div>
-          <app-label [required]="true">Peso</app-label>
-          <app-input
-            [control]="formularioVisita.controls.peso"
-            [soloNumeros]="true"
-            [mayorACero]="true"
-          ></app-input>
-        </div>
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Teléfono</app-label>
+        <app-input
+          [control]="formularioVisita.controls.destinatario_telefono"
+        ></app-input>
       </div>
-      <div class="mb-5">
-        <div>
-          <app-label [required]="true">Volumen</app-label>
-          <app-input
-            [control]="formularioVisita.controls.volumen"
-            [soloNumeros]="true"
-            [mayorACero]="true"
-            ></app-input>
-        </div>
-      </div>
-      <app-button
-      texto="Guardar"
-      [estaDeshabilitado]="!formularioVisita.valid"
-      (emitirBotonClicked)="enviarModal(formularioVisita.value)"
-    ></app-button>
     </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Dirección</app-label>
+        <app-input
+          [control]="formularioVisita.controls.destinatario_direccion"
+        ></app-input>
+      </div>
+    </div>
+    <div>
+      <app-label [required]="false">Ciudad</app-label>
+      <ng-select
+      [items]="arrCiudades"
+      formControlName="ciudad"
+      bindLabel="nombre"
+      bindValue="id"
+      [(ngModel)]="ciudadSeleccionada"
+      notFoundText="Sin elementos"
+      placeholder="Selecciona un elemento"
+      loadingText="Buscando..."
+      class="select2Custom"
+      (change)="seleccionarCiudad($event)"
+      (keyup)="buscarCiudadPorNombre($event)"
+    >
+    </ng-select>
+      <ng-container
+        class="flex flex-col"
+        *ngIf="
+          formularioVisita.controls.ciudad.invalid &&
+          formularioVisita.controls.ciudad.touched
+        "
+      >
+        <span
+          *ngIf="formularioVisita.controls.ciudad.hasError('required')"
+          class="text-danger text-xs block"
+        >
+          El campo es requerido.
+        </span>
+      </ng-container>
+    </div>
+
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Correo</app-label>
+        <app-input-email
+          [control]="formularioVisita.controls.destinatario_correo"
+        ></app-input-email>
+      </div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="true">Peso</app-label>
+        <app-input
+          [control]="formularioVisita.controls.peso"
+          [soloNumeros]="true"
+          [mayorACero]="true"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <app-label [required]="true">Volumen</app-label>
+        <app-input
+          [control]="formularioVisita.controls.volumen"
+          [soloNumeros]="true"
+          [mayorACero]="true"
+          ></app-input>
+      </div>
+    </div>
+  </div>
   </form>
 } @else {
   <div class="card min-w-full">
@@ -134,9 +163,9 @@
           </div>
           <div class="mb-5">
             <div>
-              <app-label [required]="true">Dirección</app-label>
+              <app-label [required]="false">Teléfono</app-label>
               <app-input
-                [control]="formularioVisita.controls.destinatario_direccion"
+                [control]="formularioVisita.controls.destinatario_telefono"
               ></app-input>
             </div>
           </div>
@@ -144,12 +173,46 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
           <div class="mb-5">
             <div>
-              <app-label [required]="false">Teléfono</app-label>
+              <app-label [required]="false">Dirección</app-label>
               <app-input
-                [control]="formularioVisita.controls.destinatario_telefono"
+                [control]="formularioVisita.controls.destinatario_direccion"
               ></app-input>
             </div>
           </div>
+          <div>
+            <app-label [required]="false">Ciudad</app-label>
+            <ng-select
+            [items]="arrCiudades"
+            formControlName="ciudad"
+            bindLabel="nombre"
+            bindValue="id"
+            [(ngModel)]="ciudadSeleccionada"
+            notFoundText="Sin elementos"
+            placeholder="Selecciona un elemento"
+            loadingText="Buscando..."
+            class="select2Custom"
+            (change)="seleccionarCiudad($event)"
+            (keyup)="buscarCiudadPorNombre($event)"
+          >
+          </ng-select>
+            <ng-container
+              class="flex flex-col"
+              *ngIf="
+                formularioVisita.controls.ciudad.invalid &&
+                formularioVisita.controls.ciudad.touched
+              "
+            >
+              <span
+                *ngIf="formularioVisita.controls.ciudad.hasError('required')"
+                class="text-danger text-xs block"
+              >
+                El campo es requerido.
+              </span>
+            </ng-container>
+          </div>
+
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
           <div class="mb-5">
             <div>
               <app-label [required]="false">Correo</app-label>

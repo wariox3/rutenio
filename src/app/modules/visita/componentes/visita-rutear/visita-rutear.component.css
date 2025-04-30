@@ -19,3 +19,7 @@
   left: .7rem;
   font-size: 1rem;
 }
+
+.compact-row tr {
+  height: 48px; /* o el valor que necesites */
+}
