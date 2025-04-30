@@ -226,7 +226,7 @@
                 class="cursor-pointer"
                 [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
-                  '!bg-[#ffe5be]': visita.estado_novedad,
+                  '!bg-[#fff1dd]': visita.estado_novedad,
                   '!bg-[#fefce8]': visita.estado_decodificado_alerta,                  
                   '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]': selectedVisita === visita
                 }"
@@ -240,19 +240,32 @@
                         <span class="font-semibold text-gray-800 text-sm">
                           {{ visita.destinatario }}
                         </span>
+                        <!-- Badge para Error -->
                         <span 
-                          *ngIf="!visita.estado_decodificado || visita.estado_novedad || visita.estado_decodificado_alerta"
-                          class="inline-block w-2 h-2 rounded-full"
-                          [ngClass]="{
-                            'bg-[#ffb1c5]': !visita.estado_decodificado || visita.estado_novedad,
-                            'bg-[#fefce8]': visita.estado_decodificado_alerta
-                          }"
-                        ></span>
+                          *ngIf="!visita.estado_decodificado"
+                          class="text-xs px-2 py-0.5 rounded-full bg-red-200 text-red-800 font-medium"
+                        >
+                          Error
+                        </span>
+                        <!-- Badge para Novedad -->
+                        <span 
+                          *ngIf="visita.estado_novedad"
+                          class="text-xs px-2 py-0.5 rounded-full bg-[#ffd89e] text-[#8a4d00] font-medium"
+                        >
+                          Novedad
+                        </span>
+                        <!-- Badge para Alerta -->
+                        <span 
+                          *ngIf="visita.estado_decodificado_alerta"
+                          class="text-xs px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] font-medium"
+                        >
+                          Alerta
+                        </span>
                       </div>
                       <span class="text-xs font-medium">
                         Número: {{ visita.numero }} ·
                         <span class="font-semibold text-sm text-gray-800">
-                          {{ visita.orden }} - {{visita.id}}
+                          {{ visita.orden }}
                         </span>
                       </span>
                     </div>
