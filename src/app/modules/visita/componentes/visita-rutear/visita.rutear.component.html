@@ -227,8 +227,9 @@
                 [ngClass]="{
                   'bg-red-50': !visita.estado_decodificado,
                   '!bg-[#fff1dd]': visita.estado_novedad,
-                  '!bg-[#fefce8]': visita.estado_decodificado_alerta,                  
-                  '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]': selectedVisita === visita
+                  '!bg-[#fefce8]': visita.estado_decodificado_alerta,
+                  '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]':
+                    selectedVisita === visita
                 }"
                 (click)="evento(visita)"
                 [id]="'fila-' + visita.id"
@@ -239,27 +240,6 @@
                       <div class="flex items-center gap-2">
                         <span class="font-semibold text-gray-800 text-sm">
                           {{ visita.destinatario }}
-                        </span>
-                        <!-- Badge para Error -->
-                        <span 
-                          *ngIf="!visita.estado_decodificado"
-                          class="text-xs px-2 py-0.5 rounded-full bg-red-200 text-red-800 font-medium"
-                        >
-                          Error
-                        </span>
-                        <!-- Badge para Novedad -->
-                        <span 
-                          *ngIf="visita.estado_novedad"
-                          class="text-xs px-2 py-0.5 rounded-full bg-[#ffd89e] text-[#8a4d00] font-medium"
-                        >
-                          Novedad
-                        </span>
-                        <!-- Badge para Alerta -->
-                        <span 
-                          *ngIf="visita.estado_decodificado_alerta"
-                          class="text-xs px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] font-medium"
-                        >
-                          Alerta
                         </span>
                       </div>
                       <span class="text-xs font-medium">
@@ -273,9 +253,7 @@
                       <i class="ki-filled ki-geolocation-home"></i>
                       {{ visita.destinatario_direccion }}
                     </div>
-                    <div
-                      class="flex justify-between text-xs mt-1"
-                    >
+                    <div class="flex justify-between text-xs mt-1">
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-parcel"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
@@ -290,7 +268,28 @@
                         <span>Franja: {{ visita.franja_codigo }}</span>
                       </div>
 
-                      <section class="flex gap-2">
+                      <section class="flex gap-2 items-center">
+                        <!-- Badges con tamaño mejorado -->
+                        <div class="flex gap-1.5 items-center">
+                          <span 
+                            *ngIf="!visita.estado_decodificado"
+                            class="text-xs px-2 py-0.5 rounded-full bg-red-200 text-red-800 font-medium leading-tight align-middle"
+                          >
+                            Error
+                          </span>
+                          <span 
+                            *ngIf="visita.estado_novedad"
+                            class="text-xs px-2 py-0.5 rounded-full bg-[#ffd89e] text-[#8a4d00] font-medium leading-tight align-middle"
+                          >
+                            Novedad
+                          </span>
+                          <span 
+                            *ngIf="visita.estado_decodificado_alerta"
+                            class="text-xs px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] font-medium leading-tight align-middle"
+                          >
+                            Alerta
+                          </span>
+                        </div>
                         <button
                           class="hover:text-blue-500 transition-all"
                           data-modal-toggle="#detalle-visita"
@@ -332,8 +331,8 @@
                                 >
                                   <span class="menu-icon">
                                     <i
-                                    class="ki-filled ki-trash text-lg trash-icon"
-                                  ></i>
+                                      class="ki-filled ki-trash text-lg trash-icon"
+                                    ></i>
                                   </span>
                                   <span class="menu-title"> Eliminar </span>
                                 </button>
@@ -615,9 +614,9 @@
 >
   <section *ngIf="toggleModalVisitaNuevo$ | async" modal-body>
     <app-visita-formulario
-    formularioTipo="crear"
-    [isModal]="true"
-    (dataFormulario)="cerrarModalVisitaNuevoEmitir()"
+      formularioTipo="crear"
+      [isModal]="true"
+      (dataFormulario)="cerrarModalVisitaNuevoEmitir()"
     ></app-visita-formulario>
   </section>
 </app-modal-default>
