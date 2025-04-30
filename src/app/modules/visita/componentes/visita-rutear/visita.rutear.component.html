@@ -225,10 +225,10 @@
                 *ngFor="let visita of arrVisitas; let i = index"
                 class="cursor-pointer"
                 [ngClass]="{
-                  'bg-red-50': !visita.estado_decodificado || visita.estado_novedad,
-                  'bg-yellow-50': visita.estado_decodificado_alerta,
-                  'bg-blue-50 border-l-4 border-blue-500':
-                    selectedVisita === visita
+                  '!bg-[#ffdcdc]': !visita.estado_decodificado,
+                  '!bg-[#ffddab]': visita.estado_novedad,
+                  '!bg-[#fefce8]': visita.estado_decodificado_alerta,                  
+                  '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]': selectedVisita === visita
                 }"
                 (click)="evento(visita)"
                 [id]="'fila-' + visita.id"
