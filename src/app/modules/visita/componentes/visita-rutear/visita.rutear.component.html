@@ -222,18 +222,17 @@
           <table class="table w-full border-collapse">
             <tbody>
               <tr
-                *ngFor="let visita of arrVisitas; let i = index"
-                class="cursor-pointer"
-                [ngClass]="{
-                  'bg-red-50': !visita.estado_decodificado,
-                  '!bg-[#fff1dd]': visita.estado_novedad,
-                  '!bg-[#fefce8]': visita.estado_decodificado_alerta,
-                  '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]':
-                    selectedVisita === visita
-                }"
-                (click)="evento(visita)"
-                [id]="'fila-' + visita.id"
-              >
+              *ngFor="let visita of arrVisitas; let i = index"
+              class="cursor-pointer"
+              [ngClass]="{
+                '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]': selectedVisita === visita,
+                'bg-red-50': !visita.estado_decodificado && selectedVisita !== visita,
+                '!bg-[#fff1dd]': visita.estado_novedad && selectedVisita !== visita,
+                '!bg-[#fefce8]': visita.estado_decodificado_alerta && selectedVisita !== visita
+              }"
+              (click)="evento(visita)"
+              [id]="'fila-' + visita.id"
+            >
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
                     <div class="flex justify-between items-center">
