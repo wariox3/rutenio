@@ -18,9 +18,12 @@ import {
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { InputEmailComponent } from "../../../../common/components/ui/form/input-email/input-email.component";
-import { LabelComponent } from "../../../../common/components/ui/form/label/label.component";
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { VisitaService } from '../../servicios/visita.service';
+import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
+import { tap } from 'rxjs';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-visita-formulario',
@@ -32,8 +35,9 @@ import { VisitaService } from '../../servicios/visita.service';
     RouterLink,
     InputComponent,
     InputEmailComponent,
-    LabelComponent
-],
+    LabelComponent,
+    NgSelectModule,
+  ],
   templateUrl: 'visita-formulario.component.html',
   styleUrl: './visita-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,13 +46,14 @@ export default class VisitaFormularioComponent
   extends General
   implements OnInit
 {
-
   private _visitaService = inject(VisitaService);
 
   @Input() informacionVisita: any;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
   @Input() isModal: boolean;
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
+  public arrCiudades: AutocompletarCiudades[] = [];
+  public ciudadSeleccionada: any;
 
   public formularioVisita = new FormGroup({
     numero: new FormControl('', [Validators.required]),
@@ -57,8 +62,10 @@ export default class VisitaFormularioComponent
     destinatario_direccion: new FormControl('', [Validators.required]),
     destinatario_telefono: new FormControl(null),
     destinatario_correo: new FormControl(null),
-    peso:  new FormControl('', [Validators.required, Validators.min(1)]),
-    volumen:  new FormControl('', [Validators.required, Validators.min(1)]),
+    peso: new FormControl('', [Validators.required, Validators.min(1)]),
+    volumen: new FormControl('', [Validators.required, Validators.min(1)]),
+    ciudad_nombre: new FormControl(''),
+    ciudad: new FormControl(null),
   });
 
   ngOnInit(): void {
@@ -70,23 +77,98 @@ export default class VisitaFormularioComponent
         destinatario_direccion: this.informacionVisita.destinatario_direccion,
         destinatario_telefono: this.informacionVisita.destinatario_telefono,
         destinatario_correo: this.informacionVisita.destinatario_correo,
+        ciudad: this.informacionVisita.ciudad_id,
+        ciudad_nombre: this.informacionVisita.ciudad_nombre,
       });
+      this.ciudadSeleccionada = {
+        id: this.informacionVisita.ciudad_id,
+        nombre: this.informacionVisita.ciudad_nombre,
+      };
     }
+
+    this.consultarCiudad(this.formularioVisita.get('ciudad_nombre').value);
   }
 
   enviar() {
     if (this.formularioVisita.valid) {
-      return this.dataFormulario.emit(this.formularioVisita.value);
+      return this.dataFormulario.emit(
+        this.prepararDatosEnvio(this.formularioVisita.value)
+      );
     } else {
       this.formularioVisita.markAllAsTouched();
     }
   }
 
-  enviarModal(formulario: any){
-    this._visitaService.guardarGuias(formulario).subscribe((respuesta: any) => {
-      this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.')
-      return this.dataFormulario.emit(this.formularioVisita.value);
+  enviarModal(formulario: any) {
+    const datos = this.prepararDatosEnvio(formulario);
+    this._visitaService.guardarGuias(datos).subscribe((respuesta: any) => {
+      this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
+      return this.dataFormulario.emit(datos);
     });
   }
 
+  buscarCiudadPorNombre(event?: any) {
+    const excludedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+    if (excludedKeys.includes(event?.key)) {
+      return;
+    }
+
+    const ciudadNombre = event?.target.value || '';
+    this.consultarCiudad(ciudadNombre);
+  }
+
+  consultarCiudad(nombre?: string) {
+    let arrFiltros = {
+      filtros: [
+        {
+          operador: 'icontains',
+          propiedad: 'nombre',
+          valor1: nombre,
+          valor2: '',
+        },
+      ],
+      limite: 10,
+      desplazar: 0,
+      ordenamientos: [],
+      limite_conteo: 10000,
+      modelo: 'GenCiudad',
+      serializador: 'ListaAutocompletar',
+    };
+
+    this._visitaService
+      .listaCiudades(arrFiltros)
+      .pipe(
+        tap((respuesta) => {
+          this.arrCiudades = respuesta.registros;
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe();
+  }
+
+  seleccionarCiudad(ciudad: any) {
+    if (!ciudad) {
+      this.consultarCiudad('');
+      return;
+    }
+
+    this.formularioVisita.patchValue({
+      ciudad: ciudad.id,
+      ciudad_nombre: ciudad.nombre,
+    });
+  }
+
+  private prepararDatosEnvio(formData: any): any {
+    const direccionCompleta =
+      `${formData.destinatario_direccion}, ${formData.ciudad_nombre}`
+        .toUpperCase()
+        .trim()
+        .replace(/\s+/g, ' ');
+
+    return {
+      ...formData,
+      destinatario_direccion: direccionCompleta,
+    };
+  }
 }
