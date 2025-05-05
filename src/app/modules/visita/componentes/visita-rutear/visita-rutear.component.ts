@@ -133,9 +133,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalAgregarFlota$ = new BehaviorSubject(false);
   public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
   public toggleModalVisitaNuevo$ = new BehaviorSubject(false);
+  public toggleModalFlotas$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -420,6 +422,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModal$.next(true);
   }
 
+  abrirModalAgregarFlota() {
+    this.toggleModal$.next(true);
+  }
+
   abrirModalFiltros() {
     this.toggleModalFiltros$.next(true);
   }
@@ -428,12 +434,21 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaNuevo$.next(true);
   }
 
+  abrirModalFlotas() {
+    this.toggleModalFlotas$.next(true);
+  }
+
   cerrarModal() {
     this.toggleModal$.next(false);
   }
 
   cerrarModalVisitaNuevo() {
     this.toggleModalVisitaNuevo$.next(false);
+  }
+
+
+  cerrarModalFlotas() {
+    this.toggleModalFlotas$.next(false);
   }
 
 
