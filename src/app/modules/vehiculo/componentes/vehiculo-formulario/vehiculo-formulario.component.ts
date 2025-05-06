@@ -66,7 +66,7 @@ export default class VehiculoFormularioComponent
       Validators.compose([Validators.required, Validators.pattern('^[0-9]*$')])
     ),
     estado_activo: new FormControl(true),
-    tiempo: new FormControl(0),
+    tiempo: new FormControl(0, [Validators.required]),
     estado_asignado: new FormControl(false),
     usuario_app: new FormControl(null),
   });
@@ -88,7 +88,7 @@ export default class VehiculoFormularioComponent
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
-      usuario_app: this.informacionVehiculo.usuario_app
+      usuario_app: this.informacionVehiculo.usuario_app,
     });
   }
 
@@ -121,8 +121,8 @@ export default class VehiculoFormularioComponent
       const formValue = this.formularioVehiculo.value;
       const cleanedValue = Object.fromEntries(
         Object.entries(formValue).map(([key, value]) => [
-          key, 
-          typeof value === 'string' && value.trim() === '' ? null : value
+          key,
+          typeof value === 'string' && value.trim() === '' ? null : value,
         ])
       );
       return this.dataFormulario.emit(cleanedValue);
