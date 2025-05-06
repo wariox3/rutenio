@@ -41,7 +41,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import VisitaFormularioComponent from "../visita-formulario/visita-formulario.component";
+import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -62,8 +62,8 @@ import VisitaFormularioComponent from "../visita-formulario/visita-formulario.co
     FullLoaderDefaultComponent,
     VisitaResumenPedienteComponent,
     RedondearPipe,
-    VisitaFormularioComponent
-],
+    VisitaFormularioComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -96,7 +96,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despacho', valor1: false }, { propiedad: 'estado_devolucion', valor1: false }],
+    filtros: [
+      { propiedad: 'estado_despacho', valor1: false },
+      { propiedad: 'estado_devolucion', valor1: false },
+    ],
     limite: 50,
     desplazar: 0,
     ordenamientos: [
@@ -302,6 +305,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       desplazar: evento.desplazar,
     };
 
+    this.arrParametrosConsultaVisita = parametrosConsulta;
+
     this._consultarVisitas(parametrosConsulta);
   }
 
@@ -446,11 +451,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaNuevo$.next(false);
   }
 
-
   cerrarModalFlotas() {
     this.toggleModalFlotas$.next(false);
   }
-
 
   eliminarFlota(id: number) {
     this._flotaService.eliminarFlota(id).subscribe((response) => {
@@ -670,5 +673,4 @@ export default class VisitaRutearComponent extends General implements OnInit {
     event.stopPropagation();
     this._filtroBaseService.myEvent.next();
   }
-
 }

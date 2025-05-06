@@ -5,6 +5,7 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -22,7 +23,7 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { VisitaService } from '../../servicios/visita.service';
 import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
-import { tap } from 'rxjs';
+import { Subject, take, takeUntil, tap } from 'rxjs';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
@@ -44,7 +45,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export default class VisitaFormularioComponent
   extends General
-  implements OnInit
+  implements OnInit, OnDestroy
 {
   private _visitaService = inject(VisitaService);
 
@@ -54,6 +55,7 @@ export default class VisitaFormularioComponent
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
   public arrCiudades: AutocompletarCiudades[] = [];
   public ciudadSeleccionada: any;
+  private destroy$ = new Subject<void>();
 
   public formularioVisita = new FormGroup({
     numero: new FormControl('', [Validators.required]),
@@ -89,22 +91,29 @@ export default class VisitaFormularioComponent
     this.consultarCiudad(this.formularioVisita.get('ciudad_nombre').value);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   enviar() {
     if (this.formularioVisita.valid) {
-      return this.dataFormulario.emit(
-        this.prepararDatosEnvio(this.formularioVisita.value)
-      );
+      const formularioPreparado = this.prepararDatosEnvio(this.formularioVisita.value)
+      this.dataFormulario.emit(formularioPreparado)
     } else {
       this.formularioVisita.markAllAsTouched();
     }
   }
 
-  enviarModal(formulario: any) {
-    const datos = this.prepararDatosEnvio(formulario);
-    this._visitaService.guardarGuias(datos).subscribe((respuesta: any) => {
-      this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
-      return this.dataFormulario.emit(datos);
-    });
+  enviarModal() {
+    const datos = this.prepararDatosEnvio(this.formularioVisita.value);
+    this._visitaService
+      .guardarGuias(datos)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((respuesta: any) => {
+        this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
+        this.dataFormulario.emit();
+      });
   }
 
   buscarCiudadPorNombre(event?: any) {
