@@ -9,15 +9,11 @@ import {
   Output,
 } from '@angular/core';
 import {
-  FormArray,
   FormControl,
   FormGroup,
-  ReactiveFormsModule,
+  ReactiveFormsModule
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { LabelComponent } from '../../../../../../common/components/ui/form/label/label.component';
-import { VehiculoService } from '../../../../../vehiculo/servicios/vehiculo.service';
-import { General } from '../../../../../../common/clases/general';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -26,23 +22,20 @@ import {
   map,
   Observable,
   of,
-  switchMap,
+  switchMap
 } from 'rxjs';
-import { ListaVehiculo } from '../../../../../../interfaces/vehiculo/vehiculo.interface';
-import { ParametrosConsulta } from '../../../../../../interfaces/general/api.interface';
-import { ButtonComponent } from '../../../../../../common/components/ui/button/button.component';
-import { FlotaService } from '../../../../../flota/servicios/flota.service';
 import { KTModal } from '../../../../../../../metronic/core';
+import { General } from '../../../../../../common/clases/general';
+import { ButtonComponent } from '../../../../../../common/components/ui/button/button.component';
+import { ParametrosConsulta } from '../../../../../../interfaces/general/api.interface';
+import { ListaVehiculo } from '../../../../../../interfaces/vehiculo/vehiculo.interface';
+import { FlotaService } from '../../../../../flota/servicios/flota.service';
+import { VehiculoService } from '../../../../../vehiculo/servicios/vehiculo.service';
 
 @Component({
   selector: 'app-agregar-flota',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    NgSelectModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, ButtonComponent],
   templateUrl: './agregar-flota.component.html',
   styleUrl: './agregar-flota.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -134,8 +127,6 @@ export class AgregarFlotaComponent extends General implements OnInit {
     } else {
       this._removerItemDeListaEliminar(id);
     }
-
-    console.log(this._vehiculosIds);
   }
 
   private _agregarItemAListaEliminar(id: number) {
@@ -151,17 +142,21 @@ export class AgregarFlotaComponent extends General implements OnInit {
     this._vehiculosIds = [];
   }
 
+  isVehiculoAsignadoFlota(vehiculoId: number) {
+    return this.itemsSeleccionados.some((itemId) => itemId === vehiculoId);
+  }
+
   private _agregarTodosLosItemsAListaEliminar() {
     this.vehiculosDisponibles$.subscribe((response) => {
       response.forEach((item) => {
         const indexItem = this._vehiculosIds.indexOf(item.id);
+        const isVehiculoAsignado = this.isVehiculoAsignadoFlota(item.id);
 
-        if (indexItem === -1) {
+        if (indexItem === -1 && !isVehiculoAsignado) {
           this._vehiculosIds.push(item.id);
         }
       });
 
-      console.log(this._vehiculosIds);
       this.changeDetectorRef.detectChanges();
     });
   }
@@ -169,7 +164,11 @@ export class AgregarFlotaComponent extends General implements OnInit {
   private _consultarVehiculos() {
     this.vehiculosDisponibles$ = this._vehiculoService
       .lista(this._parametrosConsulta)
-      .pipe(map((response) => response.registros));
+      .pipe(
+        map((response) => {
+          return response.registros;
+        })
+      );
   }
 
   get flota() {

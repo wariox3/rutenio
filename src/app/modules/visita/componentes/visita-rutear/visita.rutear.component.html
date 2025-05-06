@@ -36,19 +36,6 @@
                   <div class="menu-item">
                     <button
                       class="menu-link"
-                      data-modal-toggle="#flotas"
-                      (click)="abrirModalFlotas()"
-                    >
-                      <span class="menu-icon">
-                        <i class="ki-filled ki-delivery"></i>
-                      </span>
-                      <span class="menu-title">Ver flota</span>
-                    </button>
-                  </div>
-
-                  <div class="menu-item">
-                    <button
-                      class="menu-link"
                       data-modal-toggle="#agregar-flota"
                       (click)="abrirModal()"
                     >
@@ -56,6 +43,19 @@
                         <i class="ki-filled ki-abstract-10"></i>
                       </span>
                       <span class="menu-title">Asignar flota</span>
+                    </button>
+                  </div>
+
+                  <div class="menu-item">
+                    <button
+                      class="menu-link"
+                      data-modal-toggle="#flotas"
+                      (click)="abrirModalFlotas()"
+                    >
+                      <span class="menu-icon">
+                        <i class="ki-filled ki-delivery"></i>
+                      </span>
+                      <span class="menu-title">Ver flota</span>
                     </button>
                   </div>
                 </div>
@@ -128,257 +128,252 @@
     </div>
   </div>
   <div class="card flex flex-1 xl:row-start-1 xl:row-span-2 h-[51.5rem]">
-      <div class="card-header flex justify-between items-center">
-        <section class="flex gap-2 items-center">
-          <h3 class="card-title">Visita</h3>
-          <span
-            class="text-sm text-slate-500"
-            *ngIf="valoresFiltrados.length > 0"
-            >[ {{ valoresFiltrados }} ]</span
-          >
-        </section>
-        <section class="flex items-center">
-          @if (valoresFiltrados) {
-          <button class="btn" (click)="limpiarFiltros($event)">
-            <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
-              <i
-                class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"
-              ></i>
-            </i>
+    <div class="card-header flex justify-between items-center">
+      <section class="flex gap-2 items-center">
+        <h3 class="card-title">Visita</h3>
+        <span class="text-sm text-slate-500" *ngIf="valoresFiltrados.length > 0"
+          >[ {{ valoresFiltrados }} ]</span
+        >
+      </section>
+      <section class="flex items-center">
+        @if (valoresFiltrados) {
+        <button class="btn" (click)="limpiarFiltros($event)">
+          <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
+            <i
+              class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"
+            ></i>
+          </i>
+        </button>
+        }
+        <div
+          class="dropdown"
+          data-dropdown="true"
+          data-dropdown-trigger="click"
+          data-dropdown-dismiss="true"
+        >
+          <button class="dropdown-toggle btn btn-light">
+            <i class="ki-filled ki-dots-vertical"></i>
           </button>
-          }
-          <div
-            class="dropdown"
-            data-dropdown="true"
-            data-dropdown-trigger="click"
-            data-dropdown-dismiss="true"
-          >
-            <button class="dropdown-toggle btn btn-light">
-              <i class="ki-filled ki-dots-vertical"></i>
-            </button>
-            <div class="dropdown-content w-full max-w-56 py-2">
-              <div class="menu menu-default flex flex-col w-full" id="my_menu">
-                <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    id="submenu"
-                    data-modal-toggle="#filtros-visita"
-                    (click)="abrirModalFiltros()"
-                  >
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-filter-search"></i>
-                    </span>
-                    <span class="menu-title"> Filtros </span>
-                  </button>
-                </div>
+          <div class="dropdown-content w-full max-w-56 py-2">
+            <div class="menu menu-default flex flex-col w-full" id="my_menu">
+              <div class="menu-item">
+                <button
+                  class="menu-link"
+                  id="submenu"
+                  data-modal-toggle="#filtros-visita"
+                  (click)="abrirModalFiltros()"
+                >
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-filter-search"></i>
+                  </span>
+                  <span class="menu-title"> Filtros </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    data-modal-toggle="#importar-por-excel-modal"
-                    (click)="abrirModal()"
-                  >
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-file-up"></i>
-                    </span>
-                    <span class="menu-title"> Importar excel </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button
+                  class="menu-link"
+                  data-modal-toggle="#importar-por-excel-modal"
+                  (click)="abrirModal()"
+                >
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-file-up"></i>
+                  </span>
+                  <span class="menu-title"> Importar excel </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    data-modal-toggle="#nuevo-visita"
-                    (click)="abrirModalVisitaNuevo()"
-                  >
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-abstract-10"></i>
-                    </span>
-                    <span class="menu-title"> Nuevo </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button
+                  class="menu-link"
+                  data-modal-toggle="#nuevo-visita"
+                  (click)="abrirModalVisitaNuevo()"
+                >
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-abstract-10"></i>
+                  </span>
+                  <span class="menu-title"> Nuevo </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    [ngClass]="{
-                      'cursor-not-allowed': cantidadErrores > 0
-                    }"
-                    (click)="ordenar()"
-                    [disabled]="cantidadErrores > 0"
-                  >
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-arrow-up-down"></i>
-                    </span>
-                    <span class="menu-title"> Ordenar </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button
+                  class="menu-link"
+                  [ngClass]="{
+                    'cursor-not-allowed': cantidadErrores > 0
+                  }"
+                  (click)="ordenar()"
+                  [disabled]="cantidadErrores > 0"
+                >
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-arrow-up-down"></i>
+                  </span>
+                  <span class="menu-title"> Ordenar </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button class="menu-link" (click)="ubicarFranja()">
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-geolocation"></i>
-                    </span>
-                    <span class="menu-title"> Ubicar franja </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button class="menu-link" (click)="ubicarFranja()">
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-geolocation"></i>
+                  </span>
+                  <span class="menu-title"> Ubicar franja </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button
-                    class="menu-link"
-                    (click)="confirmarEliminarErrores()"
-                  >
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-delete-files"></i>
-                    </span>
-                    <span class="menu-title"> Eliminar errores </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button class="menu-link" (click)="confirmarEliminarErrores()">
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-delete-files"></i>
+                  </span>
+                  <span class="menu-title"> Eliminar errores </span>
+                </button>
+              </div>
 
-                <div class="menu-item">
-                  <button class="menu-link" (click)="confirmarEliminarTodos()">
-                    <span class="menu-icon">
-                      <i class="ki-filled ki-trash trash-icon"></i>
-                    </span>
-                    <span class="menu-title"> Eliminar todas </span>
-                  </button>
-                </div>
+              <div class="menu-item">
+                <button class="menu-link" (click)="confirmarEliminarTodos()">
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-trash trash-icon"></i>
+                  </span>
+                  <span class="menu-title"> Eliminar todas </span>
+                </button>
               </div>
             </div>
           </div>
-        </section>
-      </div>
-      <div class="card-table h-100 overflow-y-auto scrollable">
-        <table class="table w-full border-collapse compact-row">
-          <tbody>
-            <tr
-              *ngFor="let visita of arrVisitas; let i = index"
-              class="cursor-pointer"
-              [ngClass]="{
-                '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]':
-                  selectedVisita === visita,
-                'bg-red-50':
-                  !visita.estado_decodificado && selectedVisita !== visita,
-                '!bg-[#fff1dd]':
-                  visita.estado_novedad && selectedVisita !== visita,
-                '!bg-[#fefce8]':
-                  visita.estado_decodificado_alerta && selectedVisita !== visita
-              }"
-              (click)="evento(visita)"
-              [id]="'fila-' + visita.id"
-            >
-              <td class="py-1 px-2 w-full">
-                <div class="flex flex-col space-y-0.5">
-                  <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                      <span class="font-semibold text-gray-800 text-sm">
-                        {{ visita.destinatario }}
-                      </span>
-                    </div>
-                    <span class="text-xs font-medium">
-                      Número: {{ visita.numero }} ·
-                      <span class="font-semibold text-sm text-gray-800">
-                        {{ visita.orden }}
-                      </span>
+        </div>
+      </section>
+    </div>
+    <div class="card-table h-100 overflow-y-auto scrollable">
+      <table class="table w-full border-collapse compact-row">
+        <tbody>
+          <tr
+            *ngFor="let visita of arrVisitas; let i = index"
+            class="cursor-pointer"
+            [ngClass]="{
+              '!bg-[#eff6ff] !border-l-4 !border-[#3b82f6]':
+                selectedVisita === visita,
+              'bg-red-50':
+                !visita.estado_decodificado && selectedVisita !== visita,
+              '!bg-[#fff1dd]':
+                visita.estado_novedad && selectedVisita !== visita,
+              '!bg-[#fefce8]':
+                visita.estado_decodificado_alerta && selectedVisita !== visita
+            }"
+            (click)="evento(visita)"
+            [id]="'fila-' + visita.id"
+          >
+            <td class="py-1 px-2 w-full">
+              <div class="flex flex-col space-y-0.5">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-2">
+                    <span class="font-semibold text-gray-800 text-sm">
+                      {{ visita.destinatario }}
                     </span>
                   </div>
-                  <div class="text-gray-700 text-xs max-w-[24rem]">
-                    <i class="ki-filled ki-geolocation-home"></i>
-                    {{ visita.destinatario_direccion }}
+                  <span class="text-xs font-medium">
+                    Número: {{ visita.numero }} ·
+                    <span class="font-semibold text-sm text-gray-800">
+                      {{ visita.orden }}
+                    </span>
+                  </span>
+                </div>
+                <div class="text-gray-700 text-xs max-w-[24rem]">
+                  <i class="ki-filled ki-geolocation-home"></i>
+                  {{ visita.destinatario_direccion }}
+                </div>
+                <div class="flex justify-between text-xs mt-1">
+                  <div class="flex items-center space-x-1">
+                    <i class="ki-filled ki-parcel"></i>
+                    <span>Peso: {{ visita.peso }} kg</span>
+                    <i class="ki-filled ki-time"></i>
+                    <span
+                      >Servicio: {{ visita.tiempo_servicio }}+{{
+                        visita.tiempo_trayecto | redondear : 1
+                      }}
+                      min</span
+                    >
+                    <i class="ki-filled ki-geolocation mr-1"></i>
+                    <span>Franja: {{ visita.franja_codigo }}</span>
                   </div>
-                  <div class="flex justify-between text-xs mt-1">
-                    <div class="flex items-center space-x-1">
-                      <i class="ki-filled ki-parcel"></i>
-                      <span>Peso: {{ visita.peso }} kg</span>
-                      <i class="ki-filled ki-time"></i>
-                      <span
-                        >Servicio: {{ visita.tiempo_servicio }}+{{
-                          visita.tiempo_trayecto | redondear : 1
-                        }}
-                        min</span
-                      >
-                      <i class="ki-filled ki-geolocation mr-1"></i>
-                      <span>Franja: {{ visita.franja_codigo }}</span>
-                    </div>
 
-                    <section class="flex gap-1 items-center">
-                      <!-- Badges con tamaño mejorado -->
-                      <div class="flex gap-1 items-center">
-                        <span
-                          *ngIf="!visita.estado_decodificado"
-                          class="text-xs px-2 py-0.5 rounded-full bg-red-200 text-red-800 font-medium leading-tight align-middle"
-                        >
-                          Error
-                        </span>
-                        <span
-                          *ngIf="visita.estado_novedad"
-                          class="text-xs px-2 py-0.5 rounded-full bg-[#ffd89e] text-[#8a4d00] font-medium leading-tight align-middle"
-                        >
-                          Novedad
-                        </span>
-                        <span
-                          *ngIf="visita.estado_decodificado_alerta"
-                          class="text-xs px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] font-medium leading-tight align-middle"
-                        >
-                          Alerta
-                        </span>
-                      </div>
-                      <button
-                        class="hover:text-blue-500 transition-all"
-                        data-modal-toggle="#detalle-visita"
-                        (click)="abrirModal()"
+                  <section class="flex gap-1 items-center">
+                    <!-- Badges con tamaño mejorado -->
+                    <div class="flex gap-1 items-center">
+                      <span
+                        *ngIf="!visita.estado_decodificado"
+                        class="text-xs px-2 py-0.5 rounded-full bg-red-200 text-red-800 font-medium leading-tight align-middle"
                       >
-                        <i class="ki-filled ki-eye text-xl"></i>
-                      </button>
-                      <div class="menu menu-default" data-menu="true">
-                        <div
-                          class="menu-item"
-                          data-menu-item-placement="bottom-start"
-                          data-menu-item-toggle="dropdown"
-                          data-menu-item-trigger="click"
-                        >
-                          <button class="menu-toggle">
-                            <span class="menu-title">
-                              <i class="ki-filled ki-dots-vertical text-xl"></i>
-                            </span>
-                          </button>
-                          <div class="menu-dropdown w-48 py-2">
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                class="menu-link"
-                                data-modal-toggle="#editar-visita"
-                                (click)="editarModal(visita)"
-                              >
-                                <span class="menu-icon">
-                                  <i class="ki-filled ki-notepad-edit"></i>
-                                </span>
-                                <span class="menu-title"> Editar </span>
-                              </button>
-                            </div>
-                            <div class="menu-item" data-menu-dismiss="true">
-                              <button
-                                class="menu-link"
-                                (click)="confirmarEliminarVisita(visita.id)"
-                              >
-                                <span class="menu-icon">
-                                  <i
-                                    class="ki-filled ki-trash text-lg trash-icon"
-                                  ></i>
-                                </span>
-                                <span class="menu-title"> Eliminar </span>
-                              </button>
-                            </div>
+                        Error
+                      </span>
+                      <span
+                        *ngIf="visita.estado_novedad"
+                        class="text-xs px-2 py-0.5 rounded-full bg-[#ffd89e] text-[#8a4d00] font-medium leading-tight align-middle"
+                      >
+                        Novedad
+                      </span>
+                      <span
+                        *ngIf="visita.estado_decodificado_alerta"
+                        class="text-xs px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e] font-medium leading-tight align-middle"
+                      >
+                        Alerta
+                      </span>
+                    </div>
+                    <button
+                      class="hover:text-blue-500 transition-all"
+                      data-modal-toggle="#detalle-visita"
+                      (click)="abrirModal()"
+                    >
+                      <i class="ki-filled ki-eye text-xl"></i>
+                    </button>
+                    <div class="menu menu-default" data-menu="true">
+                      <div
+                        class="menu-item"
+                        data-menu-item-placement="bottom-start"
+                        data-menu-item-toggle="dropdown"
+                        data-menu-item-trigger="click"
+                      >
+                        <button class="menu-toggle">
+                          <span class="menu-title">
+                            <i class="ki-filled ki-dots-vertical text-xl"></i>
+                          </span>
+                        </button>
+                        <div class="menu-dropdown w-48 py-2">
+                          <div class="menu-item" data-menu-dismiss="true">
+                            <button
+                              class="menu-link"
+                              data-modal-toggle="#editar-visita"
+                              (click)="editarModal(visita)"
+                            >
+                              <span class="menu-icon">
+                                <i class="ki-filled ki-notepad-edit"></i>
+                              </span>
+                              <span class="menu-title"> Editar </span>
+                            </button>
+                          </div>
+                          <div class="menu-item" data-menu-dismiss="true">
+                            <button
+                              class="menu-link"
+                              (click)="confirmarEliminarVisita(visita.id)"
+                            >
+                              <span class="menu-icon">
+                                <i
+                                  class="ki-filled ki-trash text-lg trash-icon"
+                                ></i>
+                              </span>
+                              <span class="menu-title"> Eliminar </span>
+                            </button>
                           </div>
                         </div>
                       </div>
-                    </section>
-                  </div>
+                    </div>
+                  </section>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div class="card-footer flex justify-center">
       <app-paginacion-default
@@ -597,34 +592,6 @@
   #visitaNuevo
 >
   <section *ngIf="toggleModalFlotas$ | async" modal-body>
-    <section class="flex justify-end">
-      <!-- <div
-        class="dropdown"
-        data-dropdown="true"
-        data-dropdown-trigger="click"
-        data-dropdown-dismiss="true"
-      >
-        <button class="dropdown-toggle btn btn-light">
-          <i class="ki-filled ki-dots-vertical"></i>
-        </button>
-        <div class="dropdown-content w-full max-w-56 py-2">
-          <div class="menu menu-default flex flex-col w-full">
-            <div class="menu-item">
-              <button
-                class="menu-link"
-                data-modal-toggle="#agregar-flota"
-                (click)="abrirModal()"
-              >
-                <span class="menu-icon">
-                  <i class="ki-filled ki-plus-squared"></i>
-                </span>
-                <span class="menu-title"> Agregar </span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div> -->
-    </section>
     <div class="card mt-2">
       <div
         class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"

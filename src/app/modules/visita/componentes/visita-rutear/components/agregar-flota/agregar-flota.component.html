@@ -20,7 +20,7 @@
           texto="Guardar"
           clases="btn-sm"
           [estaDeshabilitado]="vehiculosIds.length <= 0"
-          (click)="enviar()"
+          (emitirBotonClicked)="enviar()"
         ></app-button>
       </div>
     </div>
@@ -109,13 +109,15 @@
                 </span>
               </td>
               <td>
-                <input
-                  class="checkbox checkbox-sm"
-                  data-datatable-row-check="true"
-                  type="checkbox"
-                  (change)="manejarCheckItem($event, vehiculo.id)"
-                  [checked]="estoyEnListaEliminar(vehiculo.id)"
-                />
+                @if(!isVehiculoAsignadoFlota(vehiculo.id)){
+                  <input
+                    class="checkbox checkbox-sm"
+                    data-datatable-row-check="true"
+                    type="checkbox"
+                    (change)="manejarCheckItem($event, vehiculo.id)"
+                    [checked]="estoyEnListaEliminar(vehiculo.id)"
+                  />
+                }
               </td>
             </tr>
             }
