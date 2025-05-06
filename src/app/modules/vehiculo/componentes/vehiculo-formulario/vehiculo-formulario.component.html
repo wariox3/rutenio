@@ -43,15 +43,16 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div>
           <div>
-            <app-label [required]="true">Capacidad</app-label>
+            <app-label [required]="true">Capacidad (kg)</app-label>
             <app-input
               [control]="formularioVehiculo.controls.capacidad"
-            ></app-input>
+              placeholder="1000"
+              ></app-input>
           </div>
         </div>
         <div>
-          <app-label [required]="true">Tiempo</app-label>
-          <app-input [control]="formularioVehiculo.controls.tiempo"></app-input>
+          <app-label [required]="true">Tiempo (min)</app-label>
+          <app-input [control]="formularioVehiculo.controls.tiempo" placeholder="480"></app-input>
         </div>
       </div>
 
