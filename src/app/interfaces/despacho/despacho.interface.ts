@@ -10,6 +10,7 @@ export interface Despacho {
   visitas_liberadas: number;
   vehiculo_id: number;
   vehiculo_placa: string;
+  vehiculo_capacidad: number;
   estado_aprobado: boolean;
   tiempo: number;
   tiempo_trayecto: number;

@@ -31,7 +31,7 @@ import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { KTModal } from '../../../../../metronic/core';
-import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
+import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -46,8 +46,8 @@ import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despa
     RedondearPipe,
     VisitaAdicionarComponent,
     DespachoFormularioComponent,
-    DespachoTrasbordarComponent
-],
+    DespachoTrasbordarComponent,
+  ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -396,6 +396,15 @@ export default class DisenoRutaListaComponent
     if (event.previousContainer.id !== event.container.id) {
       const draggedItem = event.previousContainer.data[event.previousIndex];
       const despacho = this.arrDespachos.find((_, i) => i === index);
+      const pesoActualizado = despacho?.peso + draggedItem?.peso;
+
+      if (pesoActualizado > despacho.vehiculo_capacidad) {
+        this.alerta.mensajeError(
+          'La operación no es posible',
+          `El vehiculo tiene una capacidad maxima de ${despacho.vehiculo_capacidad} kg`
+        );
+        return null;
+      }
 
       if (draggedItem.despacho_id === despacho.id) {
         this.alerta.mensajeError(
@@ -445,7 +454,7 @@ export default class DisenoRutaListaComponent
     modal.toggle();
   }
 
-  cerrarModalAdicionar(){
+  cerrarModalAdicionar() {
     this.toggleModal$.next(true);
     this.consultarLista();
     this._limpiarVisitasPorDespacho();
@@ -455,5 +464,4 @@ export default class DisenoRutaListaComponent
     this.despachoSeleccionadoAdicionar = id;
     this.toggleModalTrasbordar$.next(true);
   }
-    
 }
