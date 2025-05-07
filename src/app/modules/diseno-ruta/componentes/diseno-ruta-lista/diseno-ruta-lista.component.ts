@@ -460,6 +460,14 @@ export default class DisenoRutaListaComponent
     this._limpiarVisitasPorDespacho();
   }
 
+
+  cerrarModalTrasbordar(selector: string) {
+    this.toggleModalTrasbordar$.next(false);
+    this.dismissModal(selector)
+    this.consultarLista();
+    this._limpiarVisitasPorDespacho();
+  }
+
   abrirModalTrasbordar(id) {
     this.despachoSeleccionadoAdicionar = id;
     this.toggleModalTrasbordar$.next(true);
