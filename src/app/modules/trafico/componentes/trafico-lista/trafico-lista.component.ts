@@ -5,6 +5,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import {
@@ -13,7 +14,7 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, finalize, Subject, takeUntil } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
@@ -33,8 +34,9 @@ import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { KTModal } from '../../../../../metronic/core';
-import { VisitaAdicionarComponent } from "../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component";
-import { VisitaAdicionarTraficoComponent } from "../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component";
+import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
+import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -50,8 +52,9 @@ import { VisitaAdicionarTraficoComponent } from "../../../despacho/componentes/d
     VisitaLiberarComponent,
     DespachoFormularioComponent,
     VisitaAdicionarComponent,
-    VisitaAdicionarTraficoComponent
-],
+    VisitaAdicionarTraficoComponent,
+    ButtonComponent,
+  ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +79,7 @@ export default class TraficoListaComponent
   public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
   public toggleModalLiberar$ = new BehaviorSubject(false);
   public toggleModalUbicacion$ = new BehaviorSubject(false);
+  public actualizandoLista = signal<boolean>(false);
 
   customMarkers: any[] = [];
   directionsRendererOptions = { suppressMarkers: true };
@@ -190,7 +194,20 @@ export default class TraficoListaComponent
   }
 
   recargarDespachos() {
-    this.consultarLista();
+    this.actualizandoLista.set(true);
+    this.despachoService
+      .lista(this.arrParametrosConsulta)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.actualizandoLista.set(false);
+        })
+      )
+      .subscribe((respuesta) => {
+        this.arrDespachos = respuesta.registros;
+        this.alerta.mensajaExitoso('Lista actualizada.', 'Operación exitosa');
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   descargarPlanoSemantica(id: number) {
