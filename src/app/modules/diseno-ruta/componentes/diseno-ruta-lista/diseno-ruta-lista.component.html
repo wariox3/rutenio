@@ -379,9 +379,9 @@
 </app-modal-default>
 
 <app-modal-default
-  size="medium"
+  size="small"
   [id]="'trasbordar-despacho'"
-  titulo="Trasbordar"
+  [titulo]="'Trasbordar a despacho '+ despachoSeleccionadoAdicionar"
   (emitirModalCerrado)="cerrarModalAdicionar()"
 >
   <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
