@@ -51,14 +51,14 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
     <div class="mb-5">
       <div>
-        <app-label [required]="false">Dirección</app-label>
+        <app-label [required]="true">Dirección</app-label>
         <app-input
           [control]="formularioVisita.controls.destinatario_direccion"
         ></app-input>
       </div>
     </div>
     <div>
-      <app-label [required]="false">Ciudad</app-label>
+      <app-label [required]="true">Ciudad</app-label>
       <ng-select
         [items]="arrCiudades"
         formControlName="ciudad"
@@ -173,14 +173,14 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
         <div class="mb-5">
           <div>
-            <app-label [required]="false">Dirección</app-label>
+            <app-label [required]="true">Dirección</app-label>
             <app-input
               [control]="formularioVisita.controls.destinatario_direccion"
             ></app-input>
           </div>
         </div>
         <div>
-          <app-label [required]="false">Ciudad</app-label>
+          <app-label [required]="true">Ciudad</app-label>
           <ng-select
             [items]="arrCiudades"
             formControlName="ciudad"

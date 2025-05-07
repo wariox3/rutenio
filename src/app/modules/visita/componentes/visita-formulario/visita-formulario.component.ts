@@ -58,7 +58,7 @@ export default class VisitaFormularioComponent
   private destroy$ = new Subject<void>();
 
   public formularioVisita = new FormGroup({
-    numero: new FormControl('', [Validators.required]),
+    numero: new FormControl(''),
     documento: new FormControl(null),
     destinatario: new FormControl('', [Validators.required]),
     destinatario_direccion: new FormControl('', [Validators.required]),
@@ -67,7 +67,7 @@ export default class VisitaFormularioComponent
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
     ciudad_nombre: new FormControl(''),
-    ciudad: new FormControl(null),
+    ciudad: new FormControl(null, [Validators.required]),
   });
 
   ngOnInit(): void {
