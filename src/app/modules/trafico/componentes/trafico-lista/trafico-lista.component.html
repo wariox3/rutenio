@@ -64,9 +64,7 @@
             <td>{{ despacho.volumen }}</td>
             <td>
               <div class="flex flex-col space-y-1">
-                <div
-                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
-                >
+                <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
                   <!-- Fondo difuminado -->
                   <div
                     class="absolute h-4 rounded-full w-full"
@@ -80,6 +78,7 @@
                         despacho.visitas_entregadas >= 0
                     }"
                   ></div>
+                  
                   <!-- Barra de progreso -->
                   <div
                     class="progress-bar h-4 rounded-full absolute"
@@ -98,11 +97,23 @@
                       )
                     "
                   ></div>
+                  
+                  <!-- Texto del porcentaje centrado en el contenedor -->
+                  <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-xs font-medium text-black-700">
+                      {{
+                        obtenerPorcentajeVisual(
+                          despacho.visitas_entregadas,
+                          despacho.visitas
+                        )
+                      }}%
+                    </span>
+                  </div>
                 </div>
+                
+                <!-- El resto de tu texto informativo (opcional si aún lo quieres) -->
                 <div class="text-xs text-gray-500 text-right">
-                  <ng-container
-                    *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
-                  >
+                  <ng-container *ngIf="despacho.estado === 'retrazado'; else normalTemplate">
                     Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                   </ng-container>
                   <ng-template #normalTemplate>
@@ -110,22 +121,8 @@
                       Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                     </ng-container>
                   </ng-template>
-
-                  Entregadas: {{ despacho.visitas_entregadas }}/{{
-                    despacho.visitas
-                  }}
-                  |
-
-                  <!-- <span *ngIf="despacho.visitas_liberadas !== undefined">
-                    Liberadas: {{ despacho.visitas_liberadas }} |
-                  </span> -->
-
-                  {{
-                    obtenerPorcentajeVisual(
-                      despacho.visitas_entregadas,
-                      despacho.visitas
-                    )
-                  }}%
+                
+                  Entregadas: {{ despacho.visitas_entregadas }}/{{ despacho.visitas }} | Novedades: {{ despacho.visitas_novedad }}
                 </div>
               </div>
             </td>
