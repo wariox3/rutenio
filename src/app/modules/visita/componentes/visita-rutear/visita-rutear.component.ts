@@ -97,9 +97,22 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
     filtros: [
-      // { propiedad: 'estado_despacho', valor1: false },
-      // { propiedad: 'estado_devolucion', valor1: false },
+      { propiedad: 'estado_despacho', valor1: false },
+      { propiedad: 'estado_devolucion', valor1: false },
     ],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: [
+      'estado_decodificado',
+      '-estado_decodificado_alerta',
+      'orden',
+    ],
+    limite_conteo: 10000,
+    modelo: 'RutVisita',
+  };
+
+  arrParametrosConsultaResumen: ParametrosConsulta = {
+    filtros: [],
     limite: 50,
     desplazar: 0,
     ordenamientos: [
@@ -222,7 +235,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _consultarResumen() {
     return this.visitaService
-      .visitaResumen(this.arrParametrosConsultaVisita)
+      .visitaResumen(this.arrParametrosConsultaResumen)
       .pipe(
         switchMap((response) => {
           this.visitasTotales = response?.resumen?.cantidad;
@@ -578,15 +591,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
   filtrosPersonalizados(filtros: any[], modalId: string) {
     if (filtros.length >= 1) {
       this.arrParametrosConsultaVisita.filtros = [
-        // { propiedad: 'estado_despacho', valor1: false },
-        // { propiedad: 'estado_devolucion', valor1: false },
+        { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
+      this.arrParametrosConsultaResumen.filtros = [...filtros];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
-        // { propiedad: 'estado_despacho', valor1: false },
-        // { propiedad: 'estado_devolucion', valor1: false },
+        { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
       ];
+      this.arrParametrosConsultaResumen.filtros = [];
     }
 
     this._actualizarFiltrosParaMostrar(filtros);
@@ -653,15 +668,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
   recibirFiltrosVacios(filtros: any[]) {
     if (filtros.length >= 1) {
       this.arrParametrosConsultaVisita.filtros = [
-        // { propiedad: 'estado_despacho', valor1: false },
-        // { propiedad: 'estado_devolucion', valor1: false },
+        { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
+      this.arrParametrosConsultaResumen.filtros = [...filtros];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
-        // { propiedad: 'estado_despacho', valor1: false },
-        // { propiedad: 'estado_devolucion', valor1: false },
+        { propiedad: 'estado_despacho', valor1: false },
+        { propiedad: 'estado_devolucion', valor1: false },
       ];
+      this.arrParametrosConsultaResumen.filtros = [];
     }
 
     this._actualizarFiltrosParaMostrar(filtros);
