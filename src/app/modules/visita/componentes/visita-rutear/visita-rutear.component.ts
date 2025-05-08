@@ -394,7 +394,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   rutear() {
     this.visitaService
-      .rutear(this.arrParametrosConsultaVisita)
+      .rutear(this.arrParametrosConsultaResumen)
       .subscribe(() => {
         this.consultarLista();
         this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
