@@ -64,7 +64,9 @@
             <td>{{ despacho.volumen }}</td>
             <td>
               <div class="flex flex-col space-y-1">
-                <div class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden">
+                <div
+                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
+                >
                   <!-- Fondo difuminado -->
                   <div
                     class="absolute h-4 rounded-full w-full"
@@ -78,7 +80,7 @@
                         despacho.visitas_entregadas >= 0
                     }"
                   ></div>
-                  
+
                   <!-- Barra de progreso -->
                   <div
                     class="progress-bar h-4 rounded-full absolute"
@@ -97,9 +99,11 @@
                       )
                     "
                   ></div>
-                  
+
                   <!-- Texto del porcentaje centrado en el contenedor -->
-                  <div class="absolute inset-0 flex items-center justify-center">
+                  <div
+                    class="absolute inset-0 flex items-center justify-center"
+                  >
                     <span class="text-xs font-medium text-black-700">
                       {{
                         obtenerPorcentajeVisual(
@@ -110,10 +114,12 @@
                     </span>
                   </div>
                 </div>
-                
+
                 <!-- El resto de tu texto informativo (opcional si aún lo quieres) -->
                 <div class="text-xs text-gray-500 text-right">
-                  <ng-container *ngIf="despacho.estado === 'retrazado'; else normalTemplate">
+                  <ng-container
+                    *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
+                  >
                     Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                   </ng-container>
                   <ng-template #normalTemplate>
@@ -121,8 +127,11 @@
                       Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
                     </ng-container>
                   </ng-template>
-                
-                  Entregadas: {{ despacho.visitas_entregadas }}/{{ despacho.visitas }} | Novedades: {{ despacho.visitas_novedad }}
+
+                  Entregadas: {{ despacho.visitas_entregadas }}/{{
+                    despacho.visitas
+                  }}
+                  | Novedades: {{ despacho.visitas_novedad }}
                 </div>
               </div>
             </td>
@@ -278,7 +287,9 @@
           }}
         </button>
       </div>
-
+      <!-- [label]="{
+        text: markerPosition.infoContent.datosVisita.destinatario
+      }" -->
       <google-map
         height="90%"
         width="100%"
@@ -291,6 +302,13 @@
           [position]="markerPosition.position"
           #marker="mapMarker"
           [label]="markerPosition.label"
+          [icon]="
+            markerPosition.infoContent.datosVisita.estado_novedad
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/yellow-dut.png'
+              : markerPosition.infoContent.datosVisita.estado_entregado
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/gree-dot.png'
+              : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/red-dot.png'
+          "
           (mapClick)="openInfoWindow(marker, $index)"
         ></map-marker>
         }
@@ -345,8 +363,8 @@
           [label]="{
             text: marker.label,
             color: 'white',
-            fontSize: '12px',
-            fontWeight: 'bold'
+            fontSize: '15px',
+            fontWeight: 'bold',
           }"
         ></map-marker>
 
