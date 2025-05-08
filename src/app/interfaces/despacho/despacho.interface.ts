@@ -6,6 +6,7 @@ export interface Despacho {
   volumen: number;
   visitas: number;
   visitas_entregadas: number;
+  visitas_novedad: number;
   visitas_entregadas_esperadas: number;
   visitas_liberadas: number;
   vehiculo_id: number;
