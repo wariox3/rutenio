@@ -201,6 +201,14 @@ export default class VisitaRutearComponent extends General implements OnInit {
       ],
     };
 
+    this.arrParametrosConsultaResumen = {
+      ...this.arrParametrosConsultaResumen,
+      filtros: [
+        ...this.arrParametrosConsultaResumen.filtros,
+        ...parametrosConsulta,
+      ],
+    };
+
     this._actualizarFiltrosParaMostrar(parametrosConsulta);
   }
 
