@@ -77,7 +77,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     lng: -75.58609508555918,
   };
   zoom = 11;
-  markerPositions: google.maps.LatLngLiteral[] = [];
+  markerPositions: any[] = [];
   polylineOptions: google.maps.PolylineOptions = {
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
@@ -278,9 +278,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this._limpiarBarraTiempo();
       this.totalRegistrosVisitas = respuesta.cantidad_registros;
 
-      respuesta.registros.forEach((punto) => {
-        const position = { lat: punto.latitud, lng: punto.longitud };
-        this.addMarker(position, punto.id); // Agrega el ID de la visita
+      respuesta.registros.forEach((visita) => {
+        const position = { lat: visita.latitud, lng: visita.longitud };
+        this.addMarker(position, visita); // Agrega el ID de la visita
       });
 
       // this._consultarErrores();
@@ -410,8 +410,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
-  addMarker(position: google.maps.LatLngLiteral, visitaId: number) {
-    this.markerPositions.push(position);
+  addMarker(position: google.maps.LatLngLiteral, visita: any) {
+    this.markerPositions.push({
+      position,
+      infoContent: {
+        datosVisita: visita,
+      },
+    });
   }
 
   ngAfterViewInit() {

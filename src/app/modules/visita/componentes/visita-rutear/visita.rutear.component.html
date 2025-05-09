@@ -414,8 +414,15 @@
 
         } @for (markerPosition of markerPositions; track $index) {
         <map-marker
-          [position]="markerPosition"
+          [position]="markerPosition.position"
           #marker="mapMarker"
+          [icon]="
+          markerPosition.infoContent.datosVisita.estado_decodificado_alerta
+            ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
+            : !markerPosition.infoContent.datosVisita.estado_decodificado
+            ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
+            : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+        "
           (mapClick)="openInfoWindow(marker, $index)"
         >
         </map-marker>
