@@ -142,5 +142,14 @@ export default [
         loadChildren: () => import('../modules/despacho/despacho.routes'),
       },
     ]
+  },
+  {
+    path: 'politicas_privacidad',
+    loadComponent: () => import('../modules/politicas-privacidad/componentes/politicas-privacidad/politicas-privacidad')
+
+  },
+  {
+    path: 'terminos_de_uso',
+    loadComponent: () => import('../modules/termininos-uso/componentes/terminos-uso/terminos-uso.component')
   }
 ] as Routes;
