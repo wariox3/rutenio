@@ -342,6 +342,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
     if (this.porcentajeCapacidad > 100) {
       this.barraCapacidad = 100;
       this.errorCapacidad = true;
+    } else if (this.porcentajeCapacidad === 0) {
+      this.barraCapacidad = 0;
+      this.errorCapacidad = true;
     } else {
       this.barraCapacidad = this.porcentajeCapacidad;
       this.errorCapacidad = false;
@@ -358,6 +361,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
+      this.errorTiempo = true;
+    } else if (this.porcentajeTiempo === 0) {
+      this.barraTiempo = 0;
       this.errorTiempo = true;
     } else {
       this.barraTiempo = this.porcentajeTiempo;

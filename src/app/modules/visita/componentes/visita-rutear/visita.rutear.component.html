@@ -58,7 +58,7 @@
   </div>
   <div
     class="card xl:col-start-2"
-    [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 }"
+    [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 || habilitadoParaRutear() }"
   >
     <div class="card-body">
       <div class="flex justify-between items-center">
