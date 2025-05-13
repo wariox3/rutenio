@@ -8,11 +8,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import {
   debounceTime,
@@ -22,7 +18,7 @@ import {
   map,
   Observable,
   of,
-  switchMap
+  switchMap,
 } from 'rxjs';
 import { KTModal } from '../../../../../../../metronic/core';
 import { General } from '../../../../../../common/clases/general';
@@ -49,7 +45,9 @@ export class AgregarFlotaComponent extends General implements OnInit {
   public textoBusqueda = new FormControl();
   private _vehiculosIds: number[] = [];
   private _parametrosConsulta: ParametrosConsulta = {
-    filtros: [],
+    filtros: [
+      { propiedad: 'estado_activo', operador: 'exact', valor1: true },
+    ],
     limite: 50,
     desplazar: 0,
     ordenamientos: [],
@@ -89,6 +87,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
           const parametrosConsulta = {
             ...this._parametrosConsulta,
             filtros: [
+              ...this._parametrosConsulta.filtros,
               {
                 operador: 'icontains',
                 propiedad: 'placa',
