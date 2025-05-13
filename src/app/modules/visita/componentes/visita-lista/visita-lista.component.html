@@ -11,7 +11,22 @@
   <div class="card-header">
     <h3 class="card-title">Visita</h3>
     <div class="flex">
+      @if (actualizandoLista()) {
+        <app-button
+          textoCargando="Actualizando..."
+          [estaCargando]="true"
+          class="ms-2"
+        >
+        </app-button>
+        } @else {
+        <button class="btn btn-primary ms-2" (click)="recargarConsulta()">
+          <i class="ki-filled ki-arrows-circle"></i>
+          Actualizar
+        </button>
+
+        }
       <app-button
+        class="ms-2"
         routerLink="/movimiento/visita/nuevo"
         type="button"
         texto="Nuevo"

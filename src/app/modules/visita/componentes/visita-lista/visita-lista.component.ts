@@ -4,28 +4,27 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
-import { mapeo } from '../../../../common/mapeos/documentos';
-import { VisitaService } from '../../servicios/visita.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { General } from '../../../../common/clases/general';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MapDirectionsService } from '@angular/google-maps';
-import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
-import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import VisitaImportarPorExcelComponent from '../visita-importar-por-excel/visita-importar-por-excel.component';
+import { RouterLink } from '@angular/router';
 import { BehaviorSubject, finalize, forkJoin } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
-import { ImportarComponent } from '../../../../common/components/importar/importar.component';
-import { GeneralService } from '../../../../common/services/general.service';
-import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PaginacionAvanzadaComponent } from '../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component';
+import { General } from '../../../../common/clases/general';
 import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { PaginacionAvanzadaComponent } from '../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/documentos';
+import { GeneralService } from '../../../../common/services/general.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
-import { RouterLink } from '@angular/router';
+import { VisitaService } from '../../servicios/visita.service';
+import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 
 @Component({
   selector: 'app-visita-lista',
@@ -35,10 +34,8 @@ import { RouterLink } from '@angular/router';
     ButtonComponent,
     TablaComunComponent,
     VisitaImportarPorComplementoComponent,
-    VisitaImportarPorExcelComponent,
     ModalDefaultComponent,
     ImportarComponent,
-    LabelComponent,
     ReactiveFormsModule,
     PaginacionAvanzadaComponent,
     FiltroBaseComponent,
@@ -55,6 +52,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _generalService = inject(GeneralService);
   private _filtroBaseService = inject(FiltroBaseService);
 
+  public actualizandoLista = signal<boolean>(false);
   public guiaMapeo = guiaMapeo
   public toggleModal$ = new BehaviorSubject(false);
   public nombreFiltro = '';
@@ -96,6 +94,35 @@ export default class VisitaListaComponent extends General implements OnInit {
     if (filtroGuardado !== null) {
       const filtros = JSON.parse(filtroGuardado);
       this.arrParametrosConsulta.filtros = [...filtros];
+    }
+  }
+
+  recargarConsulta() {
+    this.actualizandoLista.set(true);
+    this._visitaService.generalLista(this.arrParametrosConsulta)
+    .pipe(
+      finalize(() => {
+        this.actualizandoLista.set(false);
+      })
+    )
+    .subscribe((respuesta) => {
+      this.arrGuia = respuesta.registros?.map((guia) => ({
+        ...guia,
+        selected: false,
+      }));
+      this.cantidadRegistros = respuesta?.registros?.length;
+      respuesta?.registros?.forEach((punto) => {
+        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+      });
+      this.alerta.mensajaExitoso('Se ha actualizado correctamente','Actualizado');
+      this.changeDetectorRef.detectChanges();
+    });
+    if (this.arrGuiasOrdenadas?.length >= 1) {
+      this.arrGuiasOrdenadas.forEach((punto) => {
+        this.addMarkerOrdenadas({ lat: punto.latitud, lng: punto.longitud });
+      });
+      this.calculateRoute();
+      this.changeDetectorRef.detectChanges();
     }
   }
 
