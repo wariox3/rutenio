@@ -9,11 +9,12 @@ import {
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';
 import { ContenedorFormularioComponent } from '../contenedor-formulario/contenedor-formulario.component';
+import { SecuencialLoaderComponent } from "../../../../common/components/secuencial-loader/secuencial-loader.component";
 
 @Component({
   selector: 'app-contenedor-nuevo',
   standalone: true,
-  imports: [CommonModule, ContenedorFormularioComponent],
+  imports: [CommonModule, ContenedorFormularioComponent, SecuencialLoaderComponent],
   templateUrl: './contenedor-nuevo.component.html',
   styleUrl: './contenedor-nuevo.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
