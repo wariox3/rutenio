@@ -12,6 +12,7 @@ import {
   AutocompletarCiudades,
   RespuestaAutocompletar,
 } from '../../../interfaces/general/autocompletar.interface';
+import { forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -65,5 +66,17 @@ export class VehiculoService {
 
   consultarDetalle(id: number) {
     return this.http.getDetalle<any>(`ruteo/vehiculo/${id}/`);
+  }
+
+  eliminarVehiculo(id: number) {
+    return this.http.delete(`ruteo/vehiculo/${id}/`, {});
+  }
+
+  eliminarVehiculos(listaIds: number[]) {
+    const eliminarRegistros = listaIds.map((id) => {
+      return this.eliminarVehiculo(id);
+    });
+
+    return forkJoin(eliminarRegistros)
   }
 }

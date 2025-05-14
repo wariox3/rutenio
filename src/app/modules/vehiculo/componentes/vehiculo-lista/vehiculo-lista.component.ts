@@ -13,6 +13,7 @@ import { mapeo } from '../../../../common/mapeos/administradores';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { VehiculoService } from '../../servicios/vehiculo.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-vehiculo-lista',
@@ -35,7 +36,7 @@ export default class VehiculoListaComponent extends General implements OnInit {
   arrVehiculos: ListaVehiculo[];
   encabezados: any[];
   public mapeoAdministrador = mapeo;
-
+  private _listaItemsEliminar: number[] = [];
   private vehiculoService = inject(VehiculoService);
 
   ngOnInit(): void {
@@ -61,5 +62,36 @@ export default class VehiculoListaComponent extends General implements OnInit {
 
   detalleVehiculo(id: number) {
     this.router.navigateByUrl(`/administracion/vehiculo/detalle/${id}`);
+  }
+
+  actualizarItemsSeleccionados(items: any[]) {
+    this._listaItemsEliminar = items;
+  }
+
+  eliminarItemsSeleccionados() {
+    if (this._listaItemsEliminar.length === 0) {
+      return;
+    }
+
+    this.vehiculoService
+      .eliminarVehiculos(this._listaItemsEliminar)
+      .pipe(
+        finalize(() => {
+          this._listaItemsEliminar = [];
+          this.consultarLista();
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Se han eliminado los registros');
+        },
+        error: (error) => {
+          this.alerta.mensajeError(
+            'Error al eliminar',
+            'No se han eliminado algunos de los registros'
+          );
+        },
+      });
   }
 }
