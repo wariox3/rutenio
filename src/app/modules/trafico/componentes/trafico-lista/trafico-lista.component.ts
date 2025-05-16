@@ -37,6 +37,7 @@ import { KTModal } from '../../../../../metronic/core';
 import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
 import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { NovedadService } from '../../../novedad/servicios/novedad.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -70,9 +71,11 @@ export default class TraficoListaComponent
   private visitaService = inject(VisitaService);
   private ubicacionService = inject(UbicacionService);
   private destroy$ = new Subject<void>();
+  private novedadService = inject(NovedadService);
 
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
+  public novedades = signal<string[]>([]);
   public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
   public toggleModal$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisita$ = new BehaviorSubject(false);
@@ -340,8 +343,31 @@ export default class TraficoListaComponent
   }
 
   openInfoWindow(marker: MapMarker, index: number) {
+    this.novedades.set([]);
     this.visitaSeleccionada = this.arrVisitasPorDespacho[index];
+    this._consultarNovedadesPorId(this.visitaSeleccionada.id);
     this.infoWindow.open(marker);
+  }
+
+  private _consultarNovedadesPorId(id: number) {
+    const parametros = {
+      filtros: [{ propiedad: 'visita_id', valor1: id.toString() }],
+      limite: 50,
+      desplazar: 0,
+      ordenamientos: ['fecha'],
+      limite_conteo: 50,
+      modelo: 'RutNovedad',
+    };
+    this.novedadService.lista(parametros).subscribe({
+      next: (respuesta) => {
+        this.novedades.set(
+          respuesta.registros.map((novedad) => novedad.novedad_tipo_nombre)
+        );
+      },
+      error: (error) => {
+        console.error('Error al cargar visitas:', error);
+      },
+    });
   }
 
   openInfoWindowUbicacion(marker: MapMarker, index: number) {
@@ -580,7 +606,7 @@ export default class TraficoListaComponent
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
       `)}`,
-      scaledSize: new google.maps.Size(30, 30) // Ajusta el tamaño
+      scaledSize: new google.maps.Size(30, 30), // Ajusta el tamaño
     };
   }
 }
