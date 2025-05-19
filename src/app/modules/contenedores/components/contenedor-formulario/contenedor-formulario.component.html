@@ -8,12 +8,12 @@
         </label>
         <app-input (keyup)="modificarCampoFormulario('subdominio', $event)"
             [control]="formularioContenedor.controls.nombre" [minLength]='3' [maxLength]="100"></app-input>
-        <span *ngIf="nombreEmpresa !== ''" class="form-hint cursor-pointer hover:text-blue-300"
+        <!-- <span *ngIf="nombreEmpresa !== ''" class="form-hint cursor-pointer hover:text-blue-300"
             (click)="editarSubdominio()">
             {{
             nombreEmpresa.toLocaleLowerCase() }}{{ dominioApp }}
             <i class="ki-filled ki-pencil"></i>
-        </span>
+        </span> -->
     </div>
     <div *ngIf="visualizarCampoSubdominio" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div>

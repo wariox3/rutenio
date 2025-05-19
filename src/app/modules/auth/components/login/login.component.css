@@ -4,3 +4,15 @@
 .dark .branded-bg {
   background-image: url("../../../../../assets/media/images/2600x1600/1-dark.png");
 }
+
+.login-container {
+  background-image: url('/assets/media/images/2600x1600/horizontal.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}

@@ -41,7 +41,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import VisitaFormularioComponent from "../visita-formulario/visita-formulario.component";
+import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -62,8 +62,8 @@ import VisitaFormularioComponent from "../visita-formulario/visita-formulario.co
     FullLoaderDefaultComponent,
     VisitaResumenPedienteComponent,
     RedondearPipe,
-    VisitaFormularioComponent
-],
+    VisitaFormularioComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -77,7 +77,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     lng: -75.58609508555918,
   };
   zoom = 11;
-  markerPositions: google.maps.LatLngLiteral[] = [];
+  markerPositions: any[] = [];
   polylineOptions: google.maps.PolylineOptions = {
     strokeColor: '#FF0000',
     strokeOpacity: 1.0,
@@ -96,7 +96,23 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrParametrosConsultaVisita: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despacho', valor1: false }, { propiedad: 'estado_devolucion', valor1: false }],
+    filtros: [
+      { propiedad: 'estado_despacho', valor1: false },
+      { propiedad: 'estado_devolucion', valor1: false },
+    ],
+    limite: 50,
+    desplazar: 0,
+    ordenamientos: [
+      'estado_decodificado',
+      '-estado_decodificado_alerta',
+      'orden',
+    ],
+    limite_conteo: 10000,
+    modelo: 'RutVisita',
+  };
+
+  arrParametrosConsultaResumen: ParametrosConsulta = {
+    filtros: [],
     limite: 50,
     desplazar: 0,
     ordenamientos: [
@@ -133,9 +149,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalAgregarFlota$ = new BehaviorSubject(false);
   public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
   public toggleModalVisitaNuevo$ = new BehaviorSubject(false);
+  public toggleModalFlotas$ = new BehaviorSubject(false);
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -183,6 +201,14 @@ export default class VisitaRutearComponent extends General implements OnInit {
       ],
     };
 
+    this.arrParametrosConsultaResumen = {
+      ...this.arrParametrosConsultaResumen,
+      filtros: [
+        ...this.arrParametrosConsultaResumen.filtros,
+        ...parametrosConsulta,
+      ],
+    };
+
     this._actualizarFiltrosParaMostrar(parametrosConsulta);
   }
 
@@ -217,7 +243,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _consultarResumen() {
     return this.visitaService
-      .visitaResumen(this.arrParametrosConsultaVisita)
+      .visitaResumen(this.arrParametrosConsultaResumen)
       .pipe(
         switchMap((response) => {
           this.visitasTotales = response?.resumen?.cantidad;
@@ -252,9 +278,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this._limpiarBarraTiempo();
       this.totalRegistrosVisitas = respuesta.cantidad_registros;
 
-      respuesta.registros.forEach((punto) => {
-        const position = { lat: punto.latitud, lng: punto.longitud };
-        this.addMarker(position, punto.id); // Agrega el ID de la visita
+      respuesta.registros.forEach((visita) => {
+        const position = { lat: visita.latitud, lng: visita.longitud };
+        this.addMarker(position, visita); // Agrega el ID de la visita
       });
 
       // this._consultarErrores();
@@ -300,6 +326,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       desplazar: evento.desplazar,
     };
 
+    this.arrParametrosConsultaVisita = parametrosConsulta;
+
     this._consultarVisitas(parametrosConsulta);
   }
 
@@ -313,6 +341,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     if (this.porcentajeCapacidad > 100) {
       this.barraCapacidad = 100;
+      this.errorCapacidad = true;
+    } else if (this.porcentajeCapacidad === 0) {
+      this.barraCapacidad = 0;
       this.errorCapacidad = true;
     } else {
       this.barraCapacidad = this.porcentajeCapacidad;
@@ -330,6 +361,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
+      this.errorTiempo = true;
+    } else if (this.porcentajeTiempo === 0) {
+      this.barraTiempo = 0;
       this.errorTiempo = true;
     } else {
       this.barraTiempo = this.porcentajeTiempo;
@@ -374,7 +408,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   rutear() {
     this.visitaService
-      .rutear(this.arrParametrosConsultaVisita)
+      .rutear(this.arrParametrosConsultaResumen)
       .subscribe(() => {
         this.consultarLista();
         this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
@@ -382,8 +416,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
       });
   }
 
-  addMarker(position: google.maps.LatLngLiteral, visitaId: number) {
-    this.markerPositions.push(position);
+  addMarker(position: google.maps.LatLngLiteral, visita: any) {
+    this.markerPositions.push({
+      position,
+      infoContent: {
+        datosVisita: visita,
+      },
+    });
   }
 
   ngAfterViewInit() {
@@ -420,12 +459,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModal$.next(true);
   }
 
+  abrirModalAgregarFlota() {
+    this.toggleModal$.next(true);
+  }
+
   abrirModalFiltros() {
     this.toggleModalFiltros$.next(true);
   }
 
   abrirModalVisitaNuevo() {
     this.toggleModalVisitaNuevo$.next(true);
+  }
+
+  abrirModalFlotas() {
+    this.toggleModalFlotas$.next(true);
   }
 
   cerrarModal() {
@@ -436,6 +483,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaNuevo$.next(false);
   }
 
+  cerrarModalFlotas() {
+    this.toggleModalFlotas$.next(false);
+  }
 
   eliminarFlota(id: number) {
     this._flotaService.eliminarFlota(id).subscribe((response) => {
@@ -564,11 +614,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
         { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
+      this.arrParametrosConsultaResumen.filtros = [...filtros];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
         { propiedad: 'estado_devolucion', valor1: false },
       ];
+      this.arrParametrosConsultaResumen.filtros = [];
     }
 
     this._actualizarFiltrosParaMostrar(filtros);
@@ -639,11 +691,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
         { propiedad: 'estado_devolucion', valor1: false },
         ...filtros,
       ];
+      this.arrParametrosConsultaResumen.filtros = [...filtros];
     } else {
       this.arrParametrosConsultaVisita.filtros = [
         { propiedad: 'estado_despacho', valor1: false },
         { propiedad: 'estado_devolucion', valor1: false },
       ];
+      this.arrParametrosConsultaResumen.filtros = [];
     }
 
     this._actualizarFiltrosParaMostrar(filtros);
@@ -655,5 +709,4 @@ export default class VisitaRutearComponent extends General implements OnInit {
     event.stopPropagation();
     this._filtroBaseService.myEvent.next();
   }
-
 }

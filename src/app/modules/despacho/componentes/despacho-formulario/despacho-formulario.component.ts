@@ -95,6 +95,11 @@ export default class DespachoFormularioComponent extends General {
     let filtros = {
       filtros: [
         {
+          propiedad: 'estado_activo',
+          operador: 'exact',
+          valor1: true,
+        },
+        {
           operador: 'icontains',
           propiedad: 'placa',
           valor1: placa,

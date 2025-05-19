@@ -5,12 +5,12 @@
       [(ngModel)]="codigoTrasbordo"
       (keyup.enter)="trasbordar()"
       placeholder="Ingrese código del despacho"
-      class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      class="px-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
     >
     <button
       (click)="trasbordar()"
       [disabled]="!codigoTrasbordo"
-      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+      class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-sm"
     >
       Trasbordar
     </button>

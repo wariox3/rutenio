@@ -7,6 +7,10 @@ import {
   RespuestaGeneralLista,
 } from '../../../interfaces/general/api.interface';
 import { Subject } from 'rxjs';
+import {
+  AutocompletarCiudades,
+  RespuestaAutocompletar,
+} from '../../../interfaces/general/autocompletar.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +21,6 @@ export class VisitaService {
   private actualizarListaSubject = new Subject<void>();
 
   actualizarLista$ = this.actualizarListaSubject.asObservable();
-
 
   notificarActualizacionLista() {
     this.actualizarListaSubject.next();
@@ -30,11 +33,21 @@ export class VisitaService {
     );
   }
 
+  listaCiudades(arrFiltros: ParametrosConsulta) {
+    return this.http.post<RespuestaAutocompletar<AutocompletarCiudades>>(
+      'general/funcionalidad/lista/',
+      arrFiltros
+    );
+  }
+
   cambiarDespachoVisita(visitaId: number, despachoId: number) {
-    return this.http.post<{ mensaje: string }>(`ruteo/visita/despacho-cambiar/`, {
-      id: visitaId,
-      despacho_id: despachoId,
-    });
+    return this.http.post<{ mensaje: string }>(
+      `ruteo/visita/despacho-cambiar/`,
+      {
+        id: visitaId,
+        despacho_id: despachoId,
+      }
+    );
   }
 
   listarVisitas(data: any) {
@@ -61,6 +74,10 @@ export class VisitaService {
     return this.http.post<any[]>(`ruteo/visita/decodificar/`, '');
   }
 
+  decodificarExterno(data) {
+    return this.http.post<any[]>(`ruteo/visita/decodificar-externo/`, data);
+  }
+
   ordenar(parametros?: ParametrosConsulta) {
     return this.http.post<any[]>(`ruteo/visita/ordenar/`, parametros);
   }
@@ -83,22 +100,16 @@ export class VisitaService {
   }
 
   consultarDocumento(despacho_id: any, numero: any) {
-    return this.http.post<{id: string}>( 
-      `ruteo/visita/consulta-documento/`,
-      {
-        despacho_id,
-        numero,
-      }
-    );
+    return this.http.post<{ id: string }>(`ruteo/visita/consulta-documento/`, {
+      despacho_id,
+      numero,
+    });
   }
 
   liberar(id: string) {
-    return this.http.post<{ mensaje: string }>(
-      `ruteo/visita/liberar/`,
-      {
-        id,
-      }
-    );
+    return this.http.post<{ mensaje: string }>(`ruteo/visita/liberar/`, {
+      id,
+    });
   }
 
   eliminarMultiples(data: number[]) {
@@ -140,5 +151,10 @@ export class VisitaService {
     });
   }
 
-  
+  actualizarDireccion(parametros: any){
+    return this.http.post<{ mensaje: string }>(
+      `ruteo/visita/actualizar-direccion/`,
+      parametros
+    );
+  }
 }

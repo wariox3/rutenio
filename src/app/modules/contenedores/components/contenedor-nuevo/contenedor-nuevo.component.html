@@ -9,5 +9,15 @@
     </div>
 </div>
 <div *ngIf="procesando" class="fake-loading">
-    <span>Creando contenedor espere un momento...</span>
+    <app-secuencial-loader
+    [texts]="[
+      'Estamos creando su contenedor...',
+      'Creando bases de datos...',
+      'Configurando datos iniciales...',
+      'Configurando dominio...',
+      'Ya estamos terminando...',
+    ]"
+    [interval]="8000"
+  >
+  </app-secuencial-loader>
 </div>
