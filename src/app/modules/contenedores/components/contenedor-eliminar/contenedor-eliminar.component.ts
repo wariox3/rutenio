@@ -30,7 +30,6 @@ import { ContenedorService } from '../../services/contenedor.service';
     ReactiveFormsModule,
     InputComponent,
     ButtonComponent,
-    ModalDefaultComponent,
   ],
   templateUrl: './contenedor-eliminar.component.html',
   styleUrl: './contenedor-eliminar.component.css',
