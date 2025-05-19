@@ -43,7 +43,7 @@ export class ModalStandardComponent {
       this.isOpen.set(isOpen);
       if (!isOpen) {
         this.closed.emit();
-      }
+      } 
     });
   }
 

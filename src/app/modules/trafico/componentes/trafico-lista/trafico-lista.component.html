@@ -564,9 +564,9 @@
   #importarPorExcelModal
 >
   <section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
-    <app-despacho-adicionar-visita
+    <app-despacho-adicionar-visita-pendiente
       [despachoId]="despachoIdActual"
-    ></app-despacho-adicionar-visita>
+    ></app-despacho-adicionar-visita-pendiente>
   </section>
 </app-modal-default>
 
