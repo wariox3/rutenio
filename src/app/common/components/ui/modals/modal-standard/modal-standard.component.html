@@ -20,28 +20,19 @@
       [class]="modalSize"
     >
       <!-- Close button -->
-      <button
-        *ngIf="showCloseButton"
-        (click)="closeModal()"
-        class="absolute right-2 top-2 rounded-md p-1 text-gray-400 hover:text-gray-500 focus:outline-none"
-        aria-label="Close modal"
-      >
-        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </button>
-
+       <div class="modal-header">
+        <h3 *ngIf="title" class="modal-title" id="modal-title">
+          {{ title }}
+        </h3>
+        <button class="btn btn-xs btn-icon btn-light" (click)="closeModal()" *ngIf="showCloseButton">
+          <i class="ki-outline ki-cross"> </i>
+        </button>
+       </div>
+       
       <!-- Modal content -->
       <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
         <!-- Title -->
-        <h3 *ngIf="title" class="text-lg font-medium leading-6 text-gray-900" id="modal-title">
-          {{ title }}
-        </h3>
+        
 
         <!-- Content slot -->
         <div *ngIf="isOpen()" class="mt-2">

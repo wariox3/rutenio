@@ -58,7 +58,10 @@
   </div>
   <div
     class="card xl:col-start-2"
-    [ngClass]="{ 'bg-red-50': errorCapacidad || cantidadErrores > 0 || habilitadoParaRutear() }"
+    [ngClass]="{
+      'bg-red-50':
+        errorCapacidad || cantidadErrores > 0 || habilitadoParaRutear()
+    }"
   >
     <div class="card-body">
       <div class="flex justify-between items-center">
@@ -181,6 +184,19 @@
                     <i class="ki-filled ki-file-up"></i>
                   </span>
                   <span class="menu-title"> Importar excel </span>
+                </button>
+              </div>
+
+              <div class="menu-item">
+                <button
+                  class="menu-link"
+                  data-modal-toggle="#importar-por-complemento-modal"
+                  (click)="abrirModalImportarPorComplemento()"
+                >
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-file-up"></i>
+                  </span>
+                  <span class="menu-title"> Importar complemento </span>
                 </button>
               </div>
 
@@ -417,12 +433,12 @@
           [position]="markerPosition.position"
           #marker="mapMarker"
           [icon]="
-          markerPosition.infoContent.datosVisita.estado_decodificado_alerta
-            ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
-            : !markerPosition.infoContent.datosVisita.estado_decodificado
-            ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
-            : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
-        "
+            markerPosition.infoContent.datosVisita.estado_decodificado_alerta
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
+              : !markerPosition.infoContent.datosVisita.estado_decodificado
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
+              : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+          "
           (mapClick)="openInfoWindow(marker, $index)"
         >
         </map-marker>
@@ -635,4 +651,17 @@
       </div>
     </div>
   </section>
+</app-modal-default>
+
+<app-modal-default
+  [id]="'importar-por-complemento-modal'"
+  titulo="Importar por complemento"
+  size="small"
+  (emitirModalCerrado)="cerrarModalImportarPorComplemento()"
+>
+  <div *ngIf="toggleModalImportarPorComplemento$ | async" modal-body>
+    <app-visita-importar-por-complemento
+      (emitirCerrarModal)="cerrarModalImportarPorComplemento()"
+    ></app-visita-importar-por-complemento>
+  </div>
 </app-modal-default>
