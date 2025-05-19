@@ -34,7 +34,7 @@ import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { KTModal } from '../../../../../metronic/core';
-import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
+import {  VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
 import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
@@ -52,10 +52,10 @@ import { NovedadService } from '../../../novedad/servicios/novedad.service';
     DespachoTabUbicacionComponent,
     VisitaLiberarComponent,
     DespachoFormularioComponent,
-    VisitaAdicionarComponent,
     VisitaAdicionarTraficoComponent,
     ButtonComponent,
-  ],
+    VisitaAdicionarPendienteComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
