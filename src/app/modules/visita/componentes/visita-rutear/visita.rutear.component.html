@@ -662,6 +662,7 @@
   <div *ngIf="toggleModalImportarPorComplemento$ | async" modal-body>
     <app-visita-importar-por-complemento
       (emitirCerrarModal)="cerrarModalImportarPorComplemento()"
+      (emitirConsultarLista)="consultarVisitas()"
     ></app-visita-importar-por-complemento>
   </div>
 </app-modal-default>
