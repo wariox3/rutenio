@@ -1,39 +1,41 @@
 @if (resumen){
 <div class="card min-w-full">
   <div class="card-table">
-    <table
-      class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"
-    >
-      <thead>
-        <tr class="bg-gray-100 text-center">
-          <th class="px-2 py-1">Franja código</th>
-          <th class="px-2 py-1 text-center">Cantidad</th>
-          <th class="px-2 py-1 text-center">Peso</th>
-          <th class="px-2 py-1 text-center">Tiempo</th>
-          <th class="px-2 py-1 text-center">Tiempo servicio</th>
-          <th class="px-2 py-1 text-center">Tiempo trayecto</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let item of resumen; let i = index"
-          class="hover:bg-gray-50"
-        >
-          <td class="px-2 py-1 text-left">{{ item.franja_codigo }}</td>
-          <td class="px-2 py-1 text-right">{{ item.cantidad }}</td>
-          <td class="px-2 py-1 text-right">{{ item.peso }}</td>
-          <td class="px-2 py-1 text-right">
-            {{ item.tiempo | redondear : 1 }}
-          </td>
-          <td class="px-2 py-1 text-right">
-            {{ item.tiempo_servicio | redondear : 1 }}
-          </td>
-          <td class="px-2 py-1 text-right">
-            {{ item.tiempo_trayecto | redondear : 1 }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="h-[500px] overflow-y-auto">
+      <table
+        class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"
+      >
+        <thead>
+          <tr class="bg-gray-100 text-center">
+            <th class="px-2 py-1">Franja código</th>
+            <th class="px-2 py-1 text-center">Cantidad</th>
+            <th class="px-2 py-1 text-center">Peso</th>
+            <th class="px-2 py-1 text-center">Tiempo</th>
+            <th class="px-2 py-1 text-center">Tiempo servicio</th>
+            <th class="px-2 py-1 text-center">Tiempo trayecto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of resumen; let i = index"
+            class="hover:bg-gray-50"
+          >
+            <td class="px-2 py-1 text-left">{{ item.franja_codigo }}</td>
+            <td class="px-2 py-1 text-right">{{ item.cantidad }}</td>
+            <td class="px-2 py-1 text-right">{{ item.peso }}</td>
+            <td class="px-2 py-1 text-right">
+              {{ item.tiempo | redondear : 1 }}
+            </td>
+            <td class="px-2 py-1 text-right">
+              {{ item.tiempo_servicio | redondear : 1 }}
+            </td>
+            <td class="px-2 py-1 text-right">
+              {{ item.tiempo_trayecto | redondear : 1 }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 }
