@@ -292,6 +292,7 @@
           <map-marker
             [position]="markerPosition.position"
             #marker="mapMarker"
+            [icon]="'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'"
             [label]="markerPosition.label"
             (mapClick)="openInfoWindow(marker, $index - 1)"
           ></map-marker>
@@ -379,12 +380,12 @@
 </app-modal-default>
 
 <app-modal-default
-  size="medium"
+  size="small"
   [id]="'trasbordar-despacho'"
-  titulo="Trasbordar"
+  [titulo]="'Trasbordar a despacho '+ despachoSeleccionadoAdicionar"
   (emitirModalCerrado)="cerrarModalAdicionar()"
 >
   <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
-    <app-despacho-trasbordar [despachoId]="despachoSeleccionado"></app-despacho-trasbordar>
+    <app-despacho-trasbordar [despachoId]="despachoSeleccionado" (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho')"></app-despacho-trasbordar>
   </section>
 </app-modal-default>

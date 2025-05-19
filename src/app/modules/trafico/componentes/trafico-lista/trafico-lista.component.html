@@ -3,10 +3,20 @@
     <div class="card-header flex justify-between items-center">
       <h3 class="card-title my-[8px]">Trafico</h3>
       <div class="flex items-center">
+        @if (actualizandoLista()) {
+        <app-button
+          textoCargando="Actualizando..."
+          [estaCargando]="true"
+          class="ms-2"
+        >
+        </app-button>
+        } @else {
         <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
           <i class="ki-filled ki-arrows-circle"></i>
           Actualizar
         </button>
+
+        }
         <button
           class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
@@ -34,8 +44,8 @@
             <th>Placa</th>
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Tiempo</th>
-            <th>Peso</th>
+            <th>Tiempo (min)</th>
+            <th>Peso (kg)</th>
             <th>Volumen</th>
             <th>Progreso</th>
             <th></th>
@@ -70,6 +80,7 @@
                         despacho.visitas_entregadas >= 0
                     }"
                   ></div>
+
                   <!-- Barra de progreso -->
                   <div
                     class="progress-bar h-4 rounded-full absolute"
@@ -88,7 +99,23 @@
                       )
                     "
                   ></div>
+
+                  <!-- Texto del porcentaje centrado en el contenedor -->
+                  <div
+                    class="absolute inset-0 flex items-center justify-center"
+                  >
+                    <span class="text-xs font-medium text-black-700">
+                      {{
+                        obtenerPorcentajeVisual(
+                          despacho.visitas_entregadas,
+                          despacho.visitas
+                        )
+                      }}%
+                    </span>
+                  </div>
                 </div>
+
+                <!-- El resto de tu texto informativo (opcional si aún lo quieres) -->
                 <div class="text-xs text-gray-500 text-right">
                   <ng-container
                     *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
@@ -104,18 +131,7 @@
                   Entregadas: {{ despacho.visitas_entregadas }}/{{
                     despacho.visitas
                   }}
-                  |
-
-                  <!-- <span *ngIf="despacho.visitas_liberadas !== undefined">
-                    Liberadas: {{ despacho.visitas_liberadas }} |
-                  </span> -->
-
-                  {{
-                    obtenerPorcentajeVisual(
-                      despacho.visitas_entregadas,
-                      despacho.visitas
-                    )
-                  }}%
+                  | Novedades: {{ despacho.visitas_novedad }}
                 </div>
               </div>
             </td>
@@ -271,7 +287,9 @@
           }}
         </button>
       </div>
-
+      <!-- [label]="{
+        text: markerPosition.infoContent.datosVisita.destinatario
+      }" -->
       <google-map
         height="90%"
         width="100%"
@@ -284,6 +302,13 @@
           [position]="markerPosition.position"
           #marker="mapMarker"
           [label]="markerPosition.label"
+          [icon]="
+            markerPosition.infoContent.datosVisita.estado_novedad
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
+              : markerPosition.infoContent.datosVisita.estado_entregado
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/verde1.png'
+              : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+          "
           (mapClick)="openInfoWindow(marker, $index)"
         ></map-marker>
         }
@@ -307,6 +332,13 @@
               #{{ visitaSeleccionada?.numero }}
             </div>
 
+            @for (novedad of novedades(); track $index) {
+            <div
+              class="inline-block bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium mt-1 ms-2"
+            >
+              {{ novedad }}
+            </div>
+            }
             <div class="border-t border-gray-100 my-2"></div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -338,8 +370,8 @@
           [label]="{
             text: marker.label,
             color: 'white',
-            fontSize: '12px',
-            fontWeight: 'bold'
+            fontSize: '15px',
+            fontWeight: 'bold',
           }"
         ></map-marker>
 
@@ -525,25 +557,29 @@
 </div>
 
 <app-modal-default
-size="large"
-[id]="'adicionar-visita-pendiente'"
-titulo="Adicionar visita pendiente"
-(emitirModalCerrado)="cerrarModalAdicionar()"
-#importarPorExcelModal
+  size="large"
+  [id]="'adicionar-visita-pendiente'"
+  titulo="Adicionar visita pendiente"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+  #importarPorExcelModal
 >
-<section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
-  <app-despacho-adicionar-visita [despachoId]="despachoIdActual"></app-despacho-adicionar-visita>
-</section>
+  <section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
+    <app-despacho-adicionar-visita
+      [despachoId]="despachoIdActual"
+    ></app-despacho-adicionar-visita>
+  </section>
 </app-modal-default>
 
 <app-modal-default
-size="large"
-[id]="'adicionar-visita-trafico'"
-titulo="Adicionar visita en trafico"
-(emitirModalCerrado)="cerrarModalAdicionarVisitaTrafico()"
-#importarPorExcelModal
+  size="large"
+  [id]="'adicionar-visita-trafico'"
+  titulo="Adicionar visita en trafico"
+  (emitirModalCerrado)="cerrarModalAdicionarVisitaTrafico()"
+  #importarPorExcelModal
 >
-<section *ngIf="toggleModalAdicionarVisitaTrafico$ | async" modal-body>
-  <app-despacho-adicionar-visita-trafico [despachoId]="despachoIdActual"></app-despacho-adicionar-visita-trafico>
-</section>
+  <section *ngIf="toggleModalAdicionarVisitaTrafico$ | async" modal-body>
+    <app-despacho-adicionar-visita-trafico
+      [despachoId]="despachoIdActual"
+    ></app-despacho-adicionar-visita-trafico>
+  </section>
 </app-modal-default>

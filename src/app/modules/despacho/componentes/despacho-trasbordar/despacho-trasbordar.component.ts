@@ -6,6 +6,8 @@ import {
   OnInit,
   ViewChild,
   ElementRef,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { General } from '../../../../common/clases/general';
 import { CommonModule } from '@angular/common';
@@ -22,6 +24,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class DespachoTrasbordarComponent extends General implements OnInit {
   @ViewChild('trasbordoInput') trasbordoInput!: ElementRef<HTMLInputElement>;
+  @Output() cerrarModal = new EventEmitter<void>();
 
   private _despachoService = inject(DespachoService);
 
@@ -40,6 +43,7 @@ export class DespachoTrasbordarComponent extends General implements OnInit {
       .subscribe((response) => {
         this._despachoService.notificarActualizacionLista();
         this.alerta.mensajaExitoso(response.mensaje);
+        this.cerrarModal.emit();
       });
   }
 }
