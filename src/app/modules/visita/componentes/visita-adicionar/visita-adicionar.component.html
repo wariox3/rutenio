@@ -1,0 +1,53 @@
+<div class="flex items-center mb-4 gap-2">
+  <!-- Dropdown Menu -->
+  <div class="btn-group gap-1">
+    <div class="menu menu-default p-0" data-menu="true">
+      <div
+        class="menu-item"
+        data-menu-item-placement="bottom-start"
+        data-menu-item-toggle="dropdown"
+        data-menu-item-trigger="click"
+      >
+        <button
+          class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg"
+        >
+          <span>{{ selectedOption === "id" ? "Id" : "Numero" }}</span>
+          <!-- Mostrar directamente Id o Numero -->
+          <span class="menu-arrow">
+            <i class="ki-outline ki-down"></i>
+          </span>
+        </button>
+        <div class="menu-dropdown w-48 py-2">
+          <div class="menu-item" data-menu-dismiss="true">
+            <button class="menu-link" (click)="selectOption('id')">
+              <span class="menu-title">Id</span>
+            </button>
+          </div>
+          <div class="menu-item" data-menu-dismiss="true">
+            <button class="menu-link" (click)="selectOption('numero')">
+              <span class="menu-title">Numero</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input y Botón -->
+  <input
+    #inputAdicionar
+    type="text"
+    [(ngModel)]="inputValue"
+    placeholder="Ingrese {{ selectedOption === 'id' ? 'id' : 'número' }}"
+    class="px-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    (keydown.enter)="adicionar()"
+  />
+
+  <button
+    (click)="adicionar()"
+    [disabled]="!inputValue"
+    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed"
+  >
+    Adicionar
+  </button>
+</div>

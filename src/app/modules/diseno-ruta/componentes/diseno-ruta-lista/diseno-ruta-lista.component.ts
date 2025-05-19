@@ -5,6 +5,7 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
   ViewChild,
 } from '@angular/core';
 import {
@@ -13,7 +14,7 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, finalize } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
@@ -28,10 +29,12 @@ import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { GeneralService } from '../../../../common/services/general.service';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import { VisitaAdicionarComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita.component';
+import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { KTModal } from '../../../../../metronic/core';
 import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
+import { VisitaAdicionarComponent } from "../../../visita/componentes/visita-adicionar/visita-adicionar.component";
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -44,10 +47,12 @@ import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despa
     VisitaRutearDetalleComponent,
     DragDropModule,
     RedondearPipe,
-    VisitaAdicionarComponent,
     DespachoFormularioComponent,
     DespachoTrasbordarComponent,
-  ],
+    VisitaAdicionarPendienteComponent,
+    VisitaAdicionarComponent,
+    ButtonComponent
+],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +73,7 @@ export default class DisenoRutaListaComponent
   public despachoSeleccionadoAdicionar: number;
   public toggleModal$ = new BehaviorSubject(false);
   public toggleModalTrasbordar$ = new BehaviorSubject(false);
+  public toggleModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
   private ultimoDespachoSeleccionadoId: number | null = null;
 
   customMarkers: {
@@ -91,6 +97,8 @@ export default class DisenoRutaListaComponent
   public totalRegistrosVisitas: number = 0;
   public mostarModalDetalleVisita$: BehaviorSubject<boolean>;
   public mostarModalAdicionarVisita$: BehaviorSubject<boolean>;
+  public mostrarModalAdicionarVisitaPendiente$: BehaviorSubject<boolean>;
+  public actualizandoLista = signal(false);
   public parametrosConsultaVisitas: ParametrosConsulta = {
     filtros: [],
     limite: 50,
@@ -120,6 +128,7 @@ export default class DisenoRutaListaComponent
     this.consultarLista();
     this.mostarModalDetalleVisita$ = new BehaviorSubject(false);
     this.mostarModalAdicionarVisita$ = new BehaviorSubject(false);
+    this.mostrarModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
   }
 
   private _limpiarVisitasPorDespacho() {
@@ -183,8 +192,14 @@ export default class DisenoRutaListaComponent
   }
 
   private _consultarVisitas(parametrosConsulta: ParametrosConsulta) {
+    this.actualizandoLista.set(true);
     this.visitaService
       .generalLista(parametrosConsulta)
+      .pipe(
+        finalize(() => {
+          this.actualizandoLista.set(false);
+        })
+      )
       .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta.registros;
         this.totalRegistrosVisitas = respuesta.cantidad_registros;
@@ -374,24 +389,6 @@ export default class DisenoRutaListaComponent
     this.connectedLists = this.arrDespachos.map((_, index) => `listB-${index}`);
   }
 
-  cerrarModalDetalleVisita() {
-    this.mostarModalDetalleVisita$.next(true);
-  }
-
-  abrirModalDetalleVisita() {
-    this.mostarModalDetalleVisita$.next(true);
-  }
-
-  cerrarModalAdicionarVisita() {
-    this.mostarModalAdicionarVisita$.next(true);
-    this.consultarLista();
-  }
-
-  abrirModalAdicionarVisita(id) {
-    this.despachoSeleccionadoAdicionar = id;
-    this.mostarModalAdicionarVisita$.next(true);
-  }
-
   onDropToB(event: CdkDragDrop<any[]>, index: number) {
     if (event.previousContainer.id !== event.container.id) {
       const draggedItem = event.previousContainer.data[event.previousIndex];
@@ -434,9 +431,36 @@ export default class DisenoRutaListaComponent
     });
   }
 
+  cerrarModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(true);
+  }
+
+  abrirModalDetalleVisita() {
+    this.mostarModalDetalleVisita$.next(true);
+  }
+
+  cerrarModalAdicionarVisita() {
+    this.mostarModalAdicionarVisita$.next(true);
+    this.consultarLista();
+  }
+
+  abrirModalAdicionarVisita(id: number) {
+    this.despachoSeleccionadoAdicionar = id;
+    this.mostarModalAdicionarVisita$.next(true);
+  }
+
   abrirModalCrearDespacho() {
     this.toggleModal$.next(true);
     this.changeDetectorRef.detectChanges();
+  }
+
+  abrirModalAdicionarVisitaPendiente(id: number) {
+    this.despachoSeleccionadoAdicionar = id;
+    this.mostrarModalAdicionarVisitaPendiente$.next(true);
+  }
+
+  cerrarModalAdicionarVisitaPendiente() {
+    this.mostrarModalAdicionarVisitaPendiente$.next(false);
   }
 
   guardarDespacho(despacho: DespachoDetalle) {
@@ -472,4 +496,8 @@ export default class DisenoRutaListaComponent
     this.despachoSeleccionadoAdicionar = id;
     this.toggleModalTrasbordar$.next(true);
   }
-}
+
+  recargarDespachos() {
+    this._consultarVisitas(this.parametrosConsultaVisitas);
+  }
+}   

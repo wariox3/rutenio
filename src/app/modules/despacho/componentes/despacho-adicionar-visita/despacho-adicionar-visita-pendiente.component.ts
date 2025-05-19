@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,28 +6,24 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { DespachoService } from '../../servicios/despacho.service';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
-import { guiaMapeo } from '../../../visita/mapeos/guia-mapeo';
 import { map, Observable, of, switchMap } from 'rxjs';
-import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { General } from '../../../../common/clases/general';
+import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { visitaAdicionarMapeo } from '../../../visita/mapeos/visita-adicionar-mapeo';
+import { DespachoService } from '../../servicios/despacho.service';
 
 @Component({
-  selector: 'app-despacho-adicionar-visita',
+  selector: 'app-despacho-adicionar-visita-pendiente',
   standalone: true,
   imports: [FormsModule, CommonModule, FiltroBaseComponent],
-  templateUrl: './despacho-adicionar-visita.component.html',
-  styleUrl: './despacho-adicionar-visita.component.css',
+  templateUrl: './despacho-adicionar-visita-pendiente.component.html',
+  styleUrl: './despacho-adicionar-visita-pendiente.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VisitaAdicionarComponent extends General implements OnInit {
+export class VisitaAdicionarPendienteComponent extends General implements OnInit {
   @Input() despachoId: number;
   private _despachoService = inject(DespachoService);
   private _filtroBaseService = inject(FiltroBaseService);
