@@ -16,32 +16,34 @@ import {
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BehaviorSubject, finalize, Observable, of, switchMap } from 'rxjs';
-import { KTMenu, KTModal } from '../../../../../metronic/core';
+import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
 import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
+import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
+import { FranjaService } from '../../../franja/servicios/franja.service';
 import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
+import { VisitaRutearService } from '../../servicios/visita-rutear.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
+import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
+import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
-import { VisitaRutearService } from '../../servicios/visita-rutear.service';
-import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
-import { FranjaService } from '../../../franja/servicios/franja.service';
-import { Franja } from '../../../../interfaces/franja/franja.interface';
-import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
-import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
-import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
-import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { VisitaImportarPorComplementoComponent } from "../visita-importar-por-complemento/visita-importar-por-complemento.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -63,7 +65,9 @@ import VisitaFormularioComponent from '../visita-formulario/visita-formulario.co
     VisitaResumenPedienteComponent,
     RedondearPipe,
     VisitaFormularioComponent,
-  ],
+    ModalStandardComponent,
+    VisitaImportarPorComplementoComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -149,6 +153,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalImportarPorComplemento$ = new BehaviorSubject(false);
   public toggleModalAgregarFlota$ = new BehaviorSubject(false);
   public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
@@ -459,6 +464,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModal$.next(true);
   }
 
+  abrirModalImportarPorComplemento() {
+    this.toggleModalImportarPorComplemento$.next(true);
+  }
+
   abrirModalAgregarFlota() {
     this.toggleModal$.next(true);
   }
@@ -477,6 +486,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   cerrarModal() {
     this.toggleModal$.next(false);
+  }
+
+  cerrarModalImportarPorComplemento() {
+    this.toggleModalImportarPorComplemento$.next(false);
   }
 
   cerrarModalVisitaNuevo() {

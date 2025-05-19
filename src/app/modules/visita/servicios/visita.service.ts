@@ -112,6 +112,20 @@ export class VisitaService {
     });
   }
 
+  consultarDocumentoVisita(numero: any) {
+    return this.http.post<{ id: string }>(`ruteo/visita/consulta-documento/`, {
+      estado_despacho: false,
+      numero,
+    });
+  }
+
+  adicionar(despacho_id: number, visita_id: number) {
+    return this.http.post<{ mensaje: string }>(`ruteo/despacho/visita-adicionar/`, {
+      id: despacho_id,
+      visita_id,
+    });
+  }
+
   eliminarMultiples(data: number[]) {
     return this.http.post(`ruteo/visita/eliminar/`, { documentos: data });
   }
@@ -142,12 +156,14 @@ export class VisitaService {
     desde: number | string;
     hasta: number | string;
     pendienteDespacho: boolean;
+    complemento: number;
   }) {
     return this.http.post(`ruteo/visita/importar-complemento/`, {
       limite: parametros.numeroRegistros,
       guia_desde: parametros.desde,
       guia_hasta: parametros.hasta,
       pendiente_despacho: parametros.pendienteDespacho,
+      complemento: parametros.complemento,
     });
   }
 

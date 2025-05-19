@@ -129,11 +129,25 @@
                                 <span class="menu-title"> Eliminar </span>
                               </button>
                             </div>
+                            
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
+                                class="menu-link"
+                                data-modal-toggle="#adicionar-visita"
+                                (click)="abrirModalAdicionarVisita(despacho.id)"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-abstract-10"></i>
+                                </span>
+                                <span class="menu-title">Adicionar visita</span>
+                              </button>
+                            </div>
+
                             <div class="menu-item" data-menu-dismiss="true">
                               <button
                                 class="menu-link"
                                 data-modal-toggle="#adicionar-visita-pendiente"
-                                (click)="abrirModalAdicionarVisita(despacho.id)"
+                                (click)="abrirModalAdicionarVisitaPendiente(despacho.id)"
                               >
                                 <span class="menu-icon">
                                   <i class="ki-filled ki-parcel"></i>
@@ -141,6 +155,7 @@
                                 <span class="menu-title">Adicionar visita pendiente</span>
                               </button>
                             </div>
+
                             <div class="menu-item" data-menu-dismiss="true">
                               <button
                                 class="menu-link"
@@ -169,6 +184,21 @@
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visitas por despacho</h3>
+          <div class="flex items-center">
+            @if (actualizandoLista()) {
+            <app-button
+              textoCargando="Actualizando..."
+              [estaCargando]="true"
+              class="ms-2"
+            >
+            </app-button>
+            } @else {
+            <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
+              <i class="ki-filled ki-arrows-circle" ></i>
+              Actualizar
+            </button>
+            }
+          </div>
         </div>
         <div
           class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
@@ -351,19 +381,6 @@
 </app-modal-default>
 
 <app-modal-default
-  size="medium"
-  [id]="'adicionar-visita-pendiente'"
-  titulo="Adicionar visita pendiente"
-  (emitirModalCerrado)="cerrarModalAdicionarVisita()"
->
-  <section *ngIf="mostarModalAdicionarVisita$ | async" modal-body>
-    <app-despacho-adicionar-visita
-      [despachoId]="despachoSeleccionadoAdicionar"
-    ></app-despacho-adicionar-visita>
-  </section>
-</app-modal-default>
-
-<app-modal-default
   size="small"
   [id]="'crear-despacho'"
   titulo="Crear despacho"
@@ -387,5 +404,29 @@
 >
   <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
     <app-despacho-trasbordar [despachoId]="despachoSeleccionado" (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho')"></app-despacho-trasbordar>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'adicionar-visita'"
+  titulo="Adicionar visita"
+  (emitirModalCerrado)="cerrarModalAdicionarVisita()"
+>
+  <section *ngIf="mostarModalAdicionarVisita$ | async" modal-body>
+    <app-visita-adicionar [despachoId]="despachoSeleccionadoAdicionar"></app-visita-adicionar>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'adicionar-visita-pendiente'"
+  titulo="Adicionar visita pendiente"
+  (emitirModalCerrado)="cerrarModalAdicionarVisitaPendiente()"
+>
+  <section *ngIf="mostrarModalAdicionarVisitaPendiente$ | async" modal-body>
+    <app-despacho-adicionar-visita-pendiente
+      [despachoId]="despachoSeleccionadoAdicionar"
+    ></app-despacho-adicionar-visita-pendiente>
   </section>
 </app-modal-default>
