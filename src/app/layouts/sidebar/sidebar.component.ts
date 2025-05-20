@@ -89,6 +89,19 @@ export class SidebarComponent extends General {
       ],
     },
     {
+      nombre: 'Proceso',
+      link: '',
+      iconoClase: 'ki-filled ki-abstract-22',
+      activo: false,
+      tipoAcordion: true,
+      children: [
+        {
+          nombre: 'Enviar entrega complemento',
+          link: '/proceso/enviar-entrega-complemento',
+        },
+      ],
+    },
+    {
       nombre: 'Complementos',
       link: '/complemento/lista',
       iconoClase: 'ki-filled ki-plus-squared',
