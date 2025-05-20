@@ -26,6 +26,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { VisitaService } from '../../servicios/visita.service';
 import { ComplementoService } from '../../../complementos/servicios/complemento.service';
 import { KTModal } from '../../../../../metronic/core';
+import { InputDateComponent } from "../../../../common/components/ui/form/input-date/input-date/input-date.component";
 
 @Component({
   selector: 'app-visita-importar-por-complemento',
@@ -38,7 +39,8 @@ import { KTModal } from '../../../../../metronic/core';
     SwitchComponent,
     ButtonComponent,
     NgSelectModule,
-  ],
+    InputDateComponent
+],
   templateUrl: './visita-importar-por-complemento.component.html',
   styleUrl: './visita-importar-por-complemento.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,8 +60,10 @@ export class VisitaImportarPorComplementoComponent extends General {
         100,
         Validators.compose([Validators.required])
       ),
-      desde: new FormControl(''),
-      hasta: new FormControl(''),
+      desde: new FormControl(null),
+      hasta: new FormControl(null),
+      fecha_desde: new FormControl(null),
+      fecha_hasta: new FormControl(null),
       pendienteDespacho: new FormControl(true),
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
@@ -108,6 +112,8 @@ export class VisitaImportarPorComplementoComponent extends General {
     const codigo_contacto = this.formularioComplementos.get('codigoContacto')?.value;
     const codigo_destino = this.formularioComplementos.get('codigoDestino')?.value;
     const complemento = this.formularioComplementos.get('complemento')?.value;
+    const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
+    const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
 
     this._visitaService
       .importarComplementos({
@@ -117,7 +123,9 @@ export class VisitaImportarPorComplementoComponent extends General {
         pendienteDespacho,
         complemento,
         codigo_contacto,
-        codigo_destino
+        codigo_destino,
+        fecha_desde,
+        fecha_hasta
       })
       .pipe(
         finalize(() => {
