@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { BehaviorSubject, catchError, of, Subject, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -16,6 +16,8 @@ import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';
 import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-eliminar.component';
 import { ContenedorInvitarComponent } from "../contenedor-invitar/contenedor-invitar.component";
+import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 
 @Component({
   selector: 'app-contenedor-lista',
@@ -26,7 +28,8 @@ import { ContenedorInvitarComponent } from "../contenedor-invitar/contenedor-inv
     RouterLink,
     ModalDefaultComponent,
     ContenedorEliminarComponent,
-    ContenedorInvitarComponent
+    ContenedorInvitarComponent,
+    ModalStandardComponent
 ],
   templateUrl: './contenedor-lista.component.html',
   styleUrl: './contenedor-lista.component.css',
@@ -35,6 +38,7 @@ import { ContenedorInvitarComponent } from "../contenedor-invitar/contenedor-inv
 export default class ContenedorListaComponent extends General implements OnInit {
   // @ViewChild("contentTemplate") contentTemplate: TemplateRef<any>;
   private contenedorService = inject(ContenedorService);
+  private _modalService = inject(ModalService);
   // private menuService = inject(NbMenuService);
   // private windowService = inject(NbWindowService);
   private destroy$ = new Subject<void>();
@@ -137,5 +141,23 @@ export default class ContenedorListaComponent extends General implements OnInit 
   seleccionarContenedorParaEliminar(contenedor: Contenedor) {
     this.contenedor = contenedor;
     this.changeDetectorRef.detectChanges();
+  }
+
+  handleEliminarClick(contenedor: Contenedor) {
+    this.contenedor = contenedor;
+    this.openModal('eliminarContenedor');
+  }
+
+  // new modal implementation
+  openModal(id: string) {
+    this._modalService.open(id);
+  }
+
+  closeModal(id: string) {
+    this._modalService.close(id);
+  }
+
+  getModalInstaceState(id: string): Observable<boolean> {
+    return this._modalService.isOpen$(id);
   }
 }

@@ -125,6 +125,17 @@ export default [
     ],
   },
   {
+    path: 'proceso',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () => import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('../modules/proceso/proceso.routes'),
+      },
+    ],
+  },
+  {
     path: 'movimiento',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

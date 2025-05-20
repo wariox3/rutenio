@@ -38,28 +38,17 @@ import { ContenedorService } from '../../services/contenedor.service';
 export class ContenedorEliminarComponent extends General {
   @Input({ required: true }) contenedor: Contenedor;
   @Output() emitirEliminarContenedor: EventEmitter<any> = new EventEmitter();
+  @Output() emitirModalCerrado: EventEmitter<any> = new EventEmitter();
 
   private contenedorService = inject(ContenedorService);
   public estaEliminandoContenedor$ = new BehaviorSubject<boolean>(false);
-  public toggleModal$ = new BehaviorSubject(false);
 
   formularioEliminar = new FormGroup({
     nombre: new FormControl('', Validators.compose([Validators.required])),
   });
 
-  modalDismiss() {
-    const modalEl: HTMLElement = document.querySelector('#eliminarContenedor');
-    const modal = KTModal.getInstance(modalEl);
-
-    modal.toggle();
-  }
-
-  abrirModal() {
-    this.toggleModal$.next(true);
-  }
-
   cerrarModal() {
-    this.toggleModal$.next(false);
+    this.emitirModalCerrado.emit(true);
   }
 
   eliminarContenedor() {
@@ -79,7 +68,7 @@ export class ContenedorEliminarComponent extends General {
           }),
           finalize(() => {
             this.estaEliminandoContenedor$.next(false);
-            this.modalDismiss();
+            this.cerrarModal();
           })
         )
         .subscribe((response) => {
