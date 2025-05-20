@@ -157,6 +157,8 @@ export class VisitaService {
     hasta: number | string;
     pendienteDespacho: boolean;
     complemento: number;
+    codigo_contacto: number;
+    codigo_destino: number;
   }) {
     return this.http.post(`ruteo/visita/importar-complemento/`, {
       limite: parametros.numeroRegistros,
@@ -164,6 +166,8 @@ export class VisitaService {
       guia_hasta: parametros.hasta,
       pendiente_despacho: parametros.pendienteDespacho,
       complemento: parametros.complemento,
+      codigo_contacto: parametros.codigo_contacto,
+      codigo_destino: parametros.codigo_destino
     });
   }
 

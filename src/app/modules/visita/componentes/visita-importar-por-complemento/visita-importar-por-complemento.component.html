@@ -28,29 +28,51 @@
         </span>
       </ng-container>
     </div>
-    <div>
-      <app-label>Desde</app-label>
-      <app-input
-        [soloNumeros]="true"
-        [control]="formularioComplementos.controls.desde"
-      ></app-input>
+    
+    <!-- Fila con dos columnas para Desde y Hasta -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <app-label>Número desde</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioComplementos.controls.desde"
+        ></app-input>
+      </div>
+      <div>
+        <app-label>Número hasta</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioComplementos.controls.hasta"
+          [errorTemplate]="erroresCustomHasta"
+        ></app-input>
+        <ng-template #erroresCustomHasta let-control>
+          <span
+            *ngIf="formularioComplementos.hasError('rangoInvalido')"
+            class="text-danger text-xs"
+          >
+            El campo "Hasta" debe ser mayor o igual que "Desde".
+          </span>
+        </ng-template>
+      </div>
     </div>
-    <div>
-      <app-label>Hasta</app-label>
-      <app-input
-        [soloNumeros]="true"
-        [control]="formularioComplementos.controls.hasta"
-        [errorTemplate]="erroresCustomHasta"
-      ></app-input>
-      <ng-template #erroresCustomHasta let-control>
-        <span
-          *ngIf="formularioComplementos.hasError('rangoInvalido')"
-          class="text-danger text-xs"
-        >
-          El campo "Hasta" debe ser mayor o igual que "Desde".
-        </span>
-      </ng-template>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <app-label>Código contacto</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioComplementos.controls.codigoContacto"
+        ></app-input>
+      </div>
+      <div>
+        <app-label>Código destino</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioComplementos.controls.codigoDestino"
+        ></app-input>
+      </div>
     </div>
+
     <div>
       <app-label [required]="true">Registros</app-label>
       <app-input
