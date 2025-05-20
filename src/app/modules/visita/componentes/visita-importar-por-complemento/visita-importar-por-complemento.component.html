@@ -73,6 +73,21 @@
       </div>
     </div>
 
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <app-label>Fecha desde</app-label>
+        <app-input-date
+          [control]="formularioComplementos.controls.fecha_desde"
+        ></app-input-date>
+      </div>
+      <div>
+        <app-label>Fecha hasta</app-label>
+        <app-input-date
+          [control]="formularioComplementos.controls.fecha_hasta"
+        ></app-input-date>
+      </div>
+    </div>
+
     <div>
       <app-label [required]="true">Registros</app-label>
       <app-input
