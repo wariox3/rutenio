@@ -112,10 +112,7 @@
                       </div>
                       <div class="menu-item">
                         <button
-                          (click)="
-                            seleccionarContenedorParaEliminar(contenedor);
-                            abrirModal()
-                          "
+                          (click)="handleEliminarClick(contenedor)"
                           class="menu-link"
                           data-modal-toggle="#eliminarContenedor"
                         >
@@ -131,7 +128,7 @@
               </div>
             </div>
           </td>
-      </tr>
+        </tr>
         }
       </tbody>
     </table>
@@ -140,19 +137,19 @@
 
 <!-- Eliminar contenedor -->
 
-<app-modal-default
-  titulo="Eliminar contenedor"
-  size="small"
-  [id]="'eliminarContenedor'"
-  (emitirModalCerrado)="cerrarModal()"
+<app-modal-standard
+  title="Eliminar contenedor"
+  size="md"
+  modalId="eliminarContenedor"
 >
-  <div *ngIf="toggleModal$ | async" modal-body>
-    <app-contenedor-eliminar
-      [contenedor]="contenedor"
-      (emitirEliminarContenedor)="eliminarContenedor()"
-    ></app-contenedor-eliminar>
-  </div>
-</app-modal-default>
+  @if (getModalInstaceState('eliminarContenedor') | async) {
+  <app-contenedor-eliminar
+    [contenedor]="contenedor"
+    (emitirEliminarContenedor)="eliminarContenedor()"
+    (emitirModalCerrado)="closeModal('eliminarContenedor')"
+  ></app-contenedor-eliminar>
+  }
+</app-modal-standard>
 
 <!-- Enviar invitacion -->
 
