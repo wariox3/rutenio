@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
-import { ParametrosActualizarDireccion, ParametrosDireccionAlternativa } from '../../../interfaces/visita/rutear.interface';
 import { ParametrosConsulta } from '../../../interfaces/general/api.interface';
+import { ParametrosDireccionAlternativa } from '../../../interfaces/visita/rutear.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -25,10 +25,17 @@ export class VisitaRutearService {
     );
   }
 
-  actualizarDireccion(parametros: any){
+  actualizarDireccion(parametros: any) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/actualizar-direccion/`,
       parametros
+    );
+  }
+
+  enviarEntregaComplemento() {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/entrega-complemento/`,
+      {}
     );
   }
 }
