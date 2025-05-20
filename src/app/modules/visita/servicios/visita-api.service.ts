@@ -1,0 +1,162 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpService } from '../../../common/services/http.service';
+import { ParametrosConsulta } from '../../../interfaces/general/api.interface';
+import {
+  ParametrosDireccionAlternativa,
+  VisitaResumen,
+} from '../../../interfaces/visita/rutear.interface';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class VisitaApiService {
+  private _httpService = inject(HttpService);
+
+  constularDocumento(payload: { despacho_id: number; numero: number }) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/consulta-documento/`,
+      payload
+    );
+  }
+
+  guardar(data: any) {
+    return this._httpService.post<any[]>(`ruteo/visita/`, data);
+  }
+
+  getDetalle(id: number) {
+    return this._httpService.getDetalle<any>(`ruteo/visita/${id}/`);
+  }
+
+  importarPorExcel(data: any) {
+    return this._httpService.post<any[]>(`ruteo/visita/importar-excel/`, data);
+  }
+
+  actualizar(id: number, data: any) {
+    return this._httpService.put<any>(`ruteo/visita/${id}/`, data);
+  }
+  actualizarDireccion(parametros: any) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/actualizar-direccion/`,
+      parametros
+    );
+  }
+
+  decodificar() {
+    return this._httpService.post<any[]>(`ruteo/visita/decodificar/`, '');
+  }
+
+  decodificarExterno(data: any) {
+    return this._httpService.post<any[]>(
+      `ruteo/visita/decodificar-externo/`,
+      data
+    );
+  }
+
+  ordenar(parametros?: ParametrosConsulta) {
+    return this._httpService.post<any[]>(`ruteo/visita/ordenar/`, parametros);
+  }
+
+  rutear(parametros?: ParametrosConsulta) {
+    return this._httpService.post<any[]>(`ruteo/visita/rutear/`, parametros);
+  }
+
+  retirar(id: number) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/despacho-retirar/`,
+      {
+        id,
+      }
+    );
+  }
+
+  eliminarPorId(id: number) {
+    return this._httpService.delete(`ruteo/visita/${id}/`, {});
+  }
+
+  liberar(id: string) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/liberar/`,
+      {
+        id,
+      }
+    );
+  }
+
+  eliminarPorIds(data: number[]) {
+    return this._httpService.post(`ruteo/visita/eliminar/`, {
+      documentos: data,
+    });
+  }
+
+  eliminarTodos() {
+    return this._httpService.post('ruteo/visita/eliminar-todos/', {});
+  }
+
+  eliminarTodosConErrores() {
+    return this._httpService.post('ruteo/visita/eliminar-todos/', {
+      estado_decodificado: false,
+    });
+  }
+
+  resumen(parametros?: ParametrosConsulta) {
+    return this._httpService.post<VisitaResumen>(
+      'ruteo/visita/resumen/',
+      parametros
+    );
+  }
+
+  resumenPendiente(parametros?: ParametrosConsulta) {
+    return this._httpService.post<VisitaResumen>(
+      'ruteo/visita/resumen-pendiente/',
+      parametros
+    );
+  }
+
+  importarPorComplemento(parametros: {
+    numeroRegistros: number;
+    desde: number | string;
+    hasta: number | string;
+    pendienteDespacho: boolean;
+    complemento: number;
+  }) {
+    return this._httpService.post(`ruteo/visita/importar-complemento/`, {
+      limite: parametros.numeroRegistros,
+      guia_desde: parametros.desde,
+      guia_hasta: parametros.hasta,
+      pendiente_despacho: parametros.pendienteDespacho,
+      complemento: parametros.complemento,
+    });
+  }
+
+  ubicarFranja(parametros?: ParametrosConsulta) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/ubicar/`,
+      parametros
+    );
+  }
+
+  seleccionarDireccionAlternativa(parametros: ParametrosDireccionAlternativa) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/seleccionar-direccion-alternativa/`,
+      parametros
+    );
+  }
+
+  enviarEntregaComplemento() {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/entrega-complemento/`,
+      {}
+    );
+  }
+
+  cambiarDespacho(visitaId: number, despachoId: number) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/visita/despacho-cambiar/`,
+      {
+        id: visitaId,
+        despacho_id: despachoId,
+      }
+    );
+  }
+
+}
