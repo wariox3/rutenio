@@ -44,7 +44,16 @@
             />
           </ng-container>
           @if (filtro.get('busquedaAvanzada')?.value === 'true') { @if
-          (filtro.get('operador')?.value !== 'isnull') {
+          (filtro.get('operador')?.value === 'in') {
+          <app-multi-select
+            [options]="listaOpciones"
+            [selectedOptions]="filtro.get('valor1')?.value"
+            [label]="'nombre'"
+            [value]="'id'"
+            (selectionChange)="seleccionarEntidadMultiSelect($event, i)"
+          ></app-multi-select>
+
+          } @else if (filtro.get('operador')?.value !== 'isnull') {
           <ng-select
             [items]="listaOpciones"
             bindLabel="nombre"
