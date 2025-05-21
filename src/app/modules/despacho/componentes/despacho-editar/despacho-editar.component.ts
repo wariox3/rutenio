@@ -6,14 +6,14 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import DespachoFormularioComponent from '../despacho-formulario/despacho-formulario.component';
-import { General } from '../../../../common/clases/general';
-import { DespachoService } from '../../servicios/despacho.service';
 import { finalize } from 'rxjs';
+import { General } from '../../../../common/clases/general';
 import {
   DespachoDetalle,
   despachoDetalleEmpty,
 } from '../../../../interfaces/despacho/despacho.interface';
+import { DespachoApiService } from '../../servicios/despacho-api.service';
+import DespachoFormularioComponent from '../despacho-formulario/despacho-formulario.component';
 
 @Component({
   selector: 'app-despacho-editar',
@@ -24,7 +24,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class DespachoEditarComponent extends General implements OnInit {
-  private _despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService);
 
   public cargando = signal<boolean>(false);
   public despacho = signal<DespachoDetalle>(despachoDetalleEmpty);
@@ -37,8 +37,8 @@ export default class DespachoEditarComponent extends General implements OnInit {
 
   private _getDespacho(id: number) {
     this.cargando.set(true);
-    this._despachoService
-      .consultarDetalle(id)
+    this._despachoApiService
+      .getDetalle(id)
       .pipe(finalize(() => this.cargando.set(false)))
       .subscribe((resultado) => {
         this.despacho.set(resultado);
@@ -46,7 +46,7 @@ export default class DespachoEditarComponent extends General implements OnInit {
   }
 
   submitFormulario(despacho: DespachoDetalle) {
-    this._despachoService
+    this._despachoApiService
       .actualizar(this.detalleId, despacho)
       .subscribe((respuesta) => {
         this.alerta.mensajaExitoso(
