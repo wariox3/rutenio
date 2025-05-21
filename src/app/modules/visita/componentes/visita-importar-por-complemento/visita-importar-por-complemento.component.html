@@ -29,7 +29,6 @@
       </ng-container>
     </div>
     
-    <!-- Fila con dos columnas para Desde y Hasta -->
     <div class="grid grid-cols-2 gap-4">
       <div>
         <app-label>Número desde</app-label>
@@ -69,6 +68,16 @@
         <app-input
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.codigoDestino"
+        ></app-input>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <app-label>Código zona</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioComplementos.controls.codigoZona"
         ></app-input>
       </div>
     </div>
