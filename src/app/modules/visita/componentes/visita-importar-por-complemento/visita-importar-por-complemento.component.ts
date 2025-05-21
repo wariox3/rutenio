@@ -67,6 +67,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       pendienteDespacho: new FormControl(true),
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
+      codigoZona: new FormControl(null),
       complemento: new FormControl(null, Validators.required),
     },
     { validators: this.validarRango() }
@@ -111,6 +112,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       this.formularioComplementos.get('numeroRegistros')?.value;
     const codigo_contacto = this.formularioComplementos.get('codigoContacto')?.value;
     const codigo_destino = this.formularioComplementos.get('codigoDestino')?.value;
+    const codigo_zona = this.formularioComplementos.get('codigoZona')?.value;
     const complemento = this.formularioComplementos.get('complemento')?.value;
     const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
     const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
@@ -124,6 +126,7 @@ export class VisitaImportarPorComplementoComponent extends General {
         complemento,
         codigo_contacto,
         codigo_destino,
+        codigo_zona,
         fecha_desde,
         fecha_hasta
       })
