@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
-import { DespachoDetalle } from '../../../interfaces/despacho/despacho.interface';
+import { Despacho, DespachoDetalle } from '../../../interfaces/despacho/despacho.interface';
 import { GeneralService } from '../../../common/services/general.service';
 import { GeneralApiService } from '../../../core';
-import { Despacho } from '../interfaces/despacho.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -87,7 +86,7 @@ export class DespachoApiService {
     );
   }
 
-  trasbordar(id: number, despacho_origen_id: number) {
+  trasbordar(id: number, despacho_origen_id: string) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/despacho/trasbordar/`,
       {

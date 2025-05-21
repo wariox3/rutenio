@@ -15,26 +15,26 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { BehaviorSubject, finalize } from 'rxjs';
+import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
+import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { GeneralService } from '../../../../common/services/general.service';
 import {
   Despacho,
   DespachoDetalle,
 } from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
-import { DespachoService } from '../../../despacho/servicios/despacho.service';
-import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { GeneralService } from '../../../../common/services/general.service';
-import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
-import { KTModal } from '../../../../../metronic/core';
 import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
+import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { VisitaAdicionarComponent } from "../../../visita/componentes/visita-adicionar/visita-adicionar.component";
-import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
+import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
+import { VisitaService } from '../../../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -63,7 +63,7 @@ export default class DisenoRutaListaComponent
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
 
-  private despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService)
   private visitaService = inject(VisitaService);
   private directionsService = inject(MapDirectionsService);
   private _generalService = inject(GeneralService);
@@ -152,7 +152,7 @@ export default class DisenoRutaListaComponent
   }
 
   consultarLista() {
-    this.despachoService
+    this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .subscribe((respuesta) => {
         this.arrDespachos = respuesta.registros;
@@ -214,7 +214,7 @@ export default class DisenoRutaListaComponent
   }
 
   eliminarDespacho(despachoId: number) {
-    this.despachoService.eliminarDespacho(despachoId).subscribe((respuesta) => {
+    this._despachoApiService.eliminar(despachoId).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho eliminado con exito');
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
@@ -364,7 +364,7 @@ export default class DisenoRutaListaComponent
   }
 
   aprobarDespacho(id: number) {
-    this.despachoService.aprobar(id).subscribe((respuesta) => {
+    this._despachoApiService.aprobar(id).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Despacho aprobado con exito');
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
@@ -464,7 +464,7 @@ export default class DisenoRutaListaComponent
   }
 
   guardarDespacho(despacho: DespachoDetalle) {
-    this.despachoService.guardar(despacho).subscribe((respuesta) => {
+    this._despachoApiService.guardar(despacho).subscribe((respuesta) => {
       this.alerta.mensajaExitoso('Se ha guardado el despacho exitosamente.');
       this.dismissModal('#crear-despacho');
       this.consultarLista();

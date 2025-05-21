@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,14 +6,12 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { DespachoService } from '../../servicios/despacho.service';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { map, Observable, of, switchMap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { visitaAdicionarMapeo } from '../../../visita/mapeos/visita-adicionar-mapeo';
 import { DespachoApiService } from '../../servicios/despacho-api.service';
 

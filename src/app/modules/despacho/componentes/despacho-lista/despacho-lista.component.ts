@@ -5,16 +5,16 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Observable, of, switchMap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
+import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
-import { DespachoService } from '../../servicios/despacho.service';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
-import { FormControl, FormGroup } from '@angular/forms';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
+import { DespachoApiService } from '../../servicios/despacho-api.service';
 
 @Component({
   selector: 'app-despacho-lista',
@@ -25,7 +25,7 @@ import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class DespachoListaComponent extends General implements OnInit {
-  private _despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService);
   private _filtroBaseService = inject(FiltroBaseService);
 
   public mapeoDocumento = mapeo;
@@ -62,7 +62,7 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    this.despachos$ = this._despachoService.lista(filtros).pipe(
+    this.despachos$ = this._despachoApiService.lista(filtros).pipe(
       switchMap((response) => {
         return of(response.registros);
       })
