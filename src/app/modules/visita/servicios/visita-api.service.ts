@@ -12,10 +12,16 @@ import {
 export class VisitaApiService {
   private _httpService = inject(HttpService);
 
-  constularDocumento(payload: { despacho_id: number; numero: number }) {
-    return this._httpService.post<{ mensaje: string }>(
+  consultarDocumento(payload: {
+    despacho_id?: number;
+    numero: number;
+    estado_despacho?: boolean;
+  }) {
+    return this._httpService.post<{ id: number }>(
       `ruteo/visita/consulta-documento/`,
-      payload
+      {
+        ...payload,
+      }
     );
   }
 
@@ -118,6 +124,11 @@ export class VisitaApiService {
     hasta: number | string;
     pendienteDespacho: boolean;
     complemento: number;
+    codigo_contacto: number;
+    codigo_destino: number;
+    codigo_zona: number;
+    fecha_desde: Date;
+    fecha_hasta: Date;
   }) {
     return this._httpService.post(`ruteo/visita/importar-complemento/`, {
       limite: parametros.numeroRegistros,
@@ -125,6 +136,11 @@ export class VisitaApiService {
       guia_hasta: parametros.hasta,
       pendiente_despacho: parametros.pendienteDespacho,
       complemento: parametros.complemento,
+      codigo_contacto: parametros.codigo_contacto,
+      codigo_destino: parametros.codigo_destino,
+      codigo_zona: parametros.codigo_zona,
+      fecha_desde: parametros.fecha_desde,
+      fecha_hasta: parametros.fecha_hasta,
     });
   }
 
@@ -158,5 +174,4 @@ export class VisitaApiService {
       }
     );
   }
-
 }
