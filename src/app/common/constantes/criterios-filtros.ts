@@ -110,6 +110,11 @@ export const  criteriosFiltros: BaseCriteriosFiltro = {
       texto: "Sin asignar",
       defecto: false,
     },
+    {
+      valor: "in",
+      texto: "En",
+      defecto: false,
+    }
   ],
 };
 

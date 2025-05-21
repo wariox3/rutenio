@@ -29,6 +29,7 @@ import { KeysPipe } from '../../../pipes/keys.pipe';
 import { GeneralService } from '../../../services/general.service';
 import { HttpService } from '../../../services/http.service';
 import { FiltroBaseService } from './services/filtro-base.service';
+import { MultiSelectComponent } from '../../ui/form/multi-select/multi-select.component';
 
 interface FiltroPropiedades {
   nombre: string;
@@ -50,6 +51,7 @@ interface FiltroPropiedades {
     KeysPipe,
     SoloNumerosDirective,
     NgSelectModule,
+    MultiSelectComponent,
   ],
   templateUrl: './filtro-base.component.html',
   styleUrl: './filtro-base.component.css',
@@ -356,9 +358,9 @@ export class FiltroBaseComponent extends General {
       this.criteriosBusqueda[index] = resultadoCriterioFiltro;
     }
 
-    if (modeloBusquedaAvanzada) {
-      this.consultarEntidad(null, valor1);
-    }
+    // if (modeloBusquedaAvanzada) {
+    //   this.consultarEntidad(null, valor1);
+    // }
 
     return this.formBuilder.group({
       propiedad: [campo],
@@ -657,5 +659,11 @@ export class FiltroBaseComponent extends General {
 
     const ciudadNombre = event?.target.value || '';
     this.consultarEntidad(ciudadNombre);
+  }
+
+  seleccionarEntidadMultiSelect(event: any, index: number) {
+    this.filtros.controls[index].patchValue({
+      valor1: event,
+    });
   }
 }
