@@ -28,11 +28,6 @@ export class ComplementoService {
     });
   }
 
-  instalarComplemento(complemento: any) {
-    const complementoActualizado = { ...complemento, instalado: true };
-    return this.actualizarComplemento(complemento.id, complementoActualizado);
-  }
-
   desinstalarComplemento(complemento: any) {
     const complementoActualizado = { ...complemento, instalado: false };
     return this.actualizarComplemento(complemento.id, complementoActualizado);
@@ -41,4 +36,16 @@ export class ComplementoService {
   actualizarComplemento(id: any, data: any) {
     return this.http.put<any>(`general/complemento/${id}/`, data);
   }
+
+  validarComplemento(id){
+    return this.http.post<any>(`general/complemento/validar/`, {
+      "id": id
+    })
+  }
+
+  marcarComoInstalado(complemento: any) {
+    const complementoActualizado = { ...complemento, instalado: true };
+    return this.actualizarComplemento(complemento.id, complementoActualizado);
+  }
+
 }
