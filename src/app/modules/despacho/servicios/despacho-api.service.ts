@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { DespachoDetalle } from '../../../interfaces/despacho/despacho.interface';
 import { GeneralService } from '../../../common/services/general.service';
+import { GeneralApiService } from '../../../core';
+import { Despacho } from '../interfaces/despacho.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +11,11 @@ import { GeneralService } from '../../../common/services/general.service';
 export class DespachoApiService {
   private _httpService = inject(HttpService);
   private _generalService = inject(GeneralService);
+  private _generalApiService = inject(GeneralApiService);
+
+  lista(parametros: any) {
+    return this._generalApiService.getLista<Despacho[]>(parametros);
+  }
 
   guardar(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/`, data);
@@ -67,12 +74,15 @@ export class DespachoApiService {
     );
   }
 
-  adicionarVisita(despacho_id: number, visita_id: number) {
+  adicionarVisita(payload: {
+    id: number;
+    visita_id: number;
+    trafico?: boolean;
+  }) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/despacho/visita-adicionar/`,
       {
-        id: despacho_id,
-        visita_id,
+        ...payload,
       }
     );
   }
@@ -82,7 +92,7 @@ export class DespachoApiService {
       `ruteo/despacho/trasbordar/`,
       {
         id,
-        despacho_origen_id
+        despacho_origen_id,
       }
     );
   }
