@@ -15,7 +15,9 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { BehaviorSubject, finalize, Subject, takeUntil } from 'rxjs';
+import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
@@ -26,18 +28,16 @@ import {
 } from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
+import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
+import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
-import { DespachoService } from '../../../despacho/servicios/despacho.service';
+import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
+import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { VisitaService } from '../../../visita/servicios/visita.service';
-import { KTModal } from '../../../../../metronic/core';
-import {  VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
-import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { NovedadService } from '../../../novedad/servicios/novedad.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -54,8 +54,8 @@ import { NovedadService } from '../../../novedad/servicios/novedad.service';
     DespachoFormularioComponent,
     VisitaAdicionarTraficoComponent,
     ButtonComponent,
-    VisitaAdicionarPendienteComponent
-],
+    VisitaAdicionarPendienteComponent,
+  ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,7 +65,7 @@ export default class TraficoListaComponent
   implements OnInit, OnDestroy
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
-  private despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
   private directionsService = inject(MapDirectionsService);
   private visitaService = inject(VisitaService);
@@ -157,7 +157,7 @@ export default class TraficoListaComponent
   }
 
   consultarLista() {
-    this.despachoService
+    this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
@@ -198,7 +198,7 @@ export default class TraficoListaComponent
 
   recargarDespachos() {
     this.actualizandoLista.set(true);
-    this.despachoService
+    this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .pipe(
         takeUntil(this.destroy$),
@@ -234,8 +234,8 @@ export default class TraficoListaComponent
   }
 
   terminarDespacho(id: number) {
-    this.despachoService
-      .terminarDespacho(id)
+    this._despachoApiService
+      .terminar(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respuesta) => {
@@ -545,7 +545,7 @@ export default class TraficoListaComponent
   }
 
   anular(id: number) {
-    this.despachoService
+    this._despachoApiService
       .anular(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -563,13 +563,8 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  // abrirModalCrearDespacho() {
-  //   this.toggleModal$.next(true);
-  //   this.changeDetectorRef.detectChanges();
-  // }
-
   actualizarDespacho(despacho: DespachoDetalle) {
-    this.despachoService
+    this._despachoApiService
       .actualizar(this.despachoSeleccionado.id, despacho)
       .subscribe((respuesta) => {
         this.alerta.mensajaExitoso(
@@ -579,18 +574,6 @@ export default class TraficoListaComponent
         this.consultarLista();
       });
   }
-
-  // guardarDespacho(despacho: DespachoDetalle) {
-  //   this.despachoService
-  //     .guardar(despacho)
-  //     .subscribe((respuesta) => {
-  //       this.alerta.mensajaExitoso(
-  //         'Se ha guardado el despacho exitosamente.'
-  //       );
-  //       this.dismissModal('#crear-despacho');
-  //       this.consultarLista();
-  //     });
-  // }
 
   dismissModal(selector: string) {
     const modalEl: HTMLElement = document.querySelector(selector);

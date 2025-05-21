@@ -13,7 +13,7 @@ import { FiltroBaseComponent } from '../../../../common/components/filtros/filtr
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { visitaAdicionarMapeo } from '../../../visita/mapeos/visita-adicionar-mapeo';
-import { DespachoService } from '../../servicios/despacho.service';
+import { DespachoApiService } from '../../servicios/despacho-api.service';
 
 @Component({
   selector: 'app-despacho-adicionar-visita-pendiente',
@@ -25,7 +25,7 @@ import { DespachoService } from '../../servicios/despacho.service';
 })
 export class VisitaAdicionarPendienteComponent extends General implements OnInit {
   @Input() despachoId: number;
-  private _despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService);
   private _filtroBaseService = inject(FiltroBaseService);
 
   public nombreFiltro = '';
@@ -114,7 +114,7 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
   }
 
   consultaLista(filtros: any) {
-    this.visitasPendientes$ = this._despachoService.lista(filtros).pipe(
+    this.visitasPendientes$ = this._despachoApiService.lista(filtros).pipe(
       switchMap((response) => {
         return of(response.registros);
       })
@@ -124,7 +124,10 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
   seleccionarVisita(visitaId: number) {
     this.procesando = visitaId;
 
-    this._despachoService.adicionarVisita(this.despachoId, visitaId).subscribe({
+    this._despachoApiService.adicionarVisita({
+      id: this.despachoId,
+      visita_id: visitaId,
+    }).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response.mensaje);
         this.procesando = null;
