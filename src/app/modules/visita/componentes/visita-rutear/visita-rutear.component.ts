@@ -38,12 +38,10 @@ import { VisitaRutearService } from '../../servicios/visita-rutear.service';
 import { VisitaService } from '../../servicios/visita.service';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
 import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
+import { VisitaImportarPorComplementoComponent } from "../visita-importar-por-complemento/visita-importar-por-complemento.component";
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
-import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
-import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
-import { VisitaImportarPorComplementoComponent } from "../visita-importar-por-complemento/visita-importar-por-complemento.component";
 
 @Component({
   selector: 'app-visita-rutear',
@@ -65,7 +63,6 @@ import { VisitaImportarPorComplementoComponent } from "../visita-importar-por-co
     VisitaResumenPedienteComponent,
     RedondearPipe,
     VisitaFormularioComponent,
-    ModalStandardComponent,
     VisitaImportarPorComplementoComponent
 ],
   templateUrl: './visita.rutear.component.html',

@@ -1,0 +1,12 @@
+<ng-select
+  [items]="options"
+  [multiple]="true"
+  [closeOnSelect]="false"
+  [searchable]="false"
+  [bindLabel]="label"
+  [bindValue]="value"
+  (change)="emitirSeleccion()"
+  [(ngModel)]="selectedOptions"
+  class="border border-gray-300 rounded-lg focus:border-primary hover:border-gray-400 transition-colors"
+>
+</ng-select>

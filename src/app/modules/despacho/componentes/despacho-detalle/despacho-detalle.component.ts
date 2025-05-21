@@ -16,7 +16,7 @@ import {
   despachoDetalleEmpty,
 } from '../../../../interfaces/despacho/despacho.interface';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
-import { DespachoService } from '../../servicios/despacho.service';
+import { DespachoApiService } from '../../servicios/despacho-api.service';
 import { DespachoTabUbicacionComponent } from '../despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../despacho-tab-visita/despacho-tab-visita.component';
 
@@ -40,7 +40,7 @@ export default class DespachoDetalleComponent
   extends General
   implements OnInit
 {
-  private despachoService = inject(DespachoService);
+  private _despachoApiService = inject(DespachoApiService);
   public toggleModal$ = new BehaviorSubject(false);
 
   despachoId: number;
@@ -55,8 +55,8 @@ export default class DespachoDetalleComponent
   }
 
   consultarDespacho() {
-    this.despachoService
-      .consultarDetalle(this.despachoId)
+    this._despachoApiService
+      .getDetalle(this.despachoId)
       .subscribe((respuesta) => {
         this.despacho.set(respuesta);
       });

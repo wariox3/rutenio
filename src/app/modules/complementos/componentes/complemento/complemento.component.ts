@@ -142,10 +142,35 @@ export default class ComplementoComponent extends General implements OnInit {
   }
 
   instalar(complemento: any) {
-    this.complementoService.instalarComplemento(complemento).subscribe(() => {
-      this.consultarLista();
-      this.changeDetectorRef.detectChanges();
-    });
+    this.complementoService.validarComplemento(complemento.id)
+      .subscribe({
+        next: (respuesta) => {
+          if (respuesta.validado === true) {
+            this.complementoService.marcarComoInstalado(complemento)
+              .subscribe(() => {
+                this.consultarLista();
+                this.changeDetectorRef.detectChanges();
+                this.alerta.mensajaExitoso(
+                  'Complemento instalado correctamente',
+                  'Instalación exitosa'
+                );
+              });
+          } else {
+            this.alerta.mensajeError(
+              'El complemento no pasó la validación requerida',
+              'Error de validación'
+            );
+          }
+        },
+        error: (error) => {
+          const mensajeError = error?.error?.mensaje || 'Error al validar el complemento';
+          
+          this.alerta.mensajeError(
+            'Error al validar el complemento',
+            mensajeError 
+          );
+        }
+      });
   }
 
   private _desinstalar(complemento: any) {
