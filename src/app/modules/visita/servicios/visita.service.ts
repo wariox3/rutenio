@@ -159,6 +159,7 @@ export class VisitaService {
     complemento: number;
     codigo_contacto: number;
     codigo_destino: number;
+    codigo_zona: number;
     fecha_desde: Date;
     fecha_hasta: Date;
   }) {
@@ -170,6 +171,7 @@ export class VisitaService {
       complemento: parametros.complemento,
       codigo_contacto: parametros.codigo_contacto,
       codigo_destino: parametros.codigo_destino,
+      codigo_zona: parametros.codigo_zona,
       fecha_desde: parametros.fecha_desde,
       fecha_hasta: parametros.fecha_hasta
     });
