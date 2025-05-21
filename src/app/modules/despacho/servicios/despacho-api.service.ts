@@ -67,13 +67,12 @@ export class DespachoApiService {
     );
   }
 
-  adicionarVisita(id: number, visita_id: number, trafico?: boolean) {
+  adicionarVisita(despacho_id: number, visita_id: number) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/despacho/visita-adicionar/`,
       {
-        id,
+        id: despacho_id,
         visita_id,
-        trafico
       }
     );
   }
