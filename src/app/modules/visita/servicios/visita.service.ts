@@ -159,7 +159,7 @@ export class VisitaService {
     complemento: number;
     codigo_contacto: number;
     codigo_destino: number;
-    codigo_zona: number;
+    codigo_zona: string;
     fecha_desde: Date;
     fecha_hasta: Date;
   }) {
