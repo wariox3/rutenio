@@ -1,0 +1,90 @@
+<div class="mb-10">
+  <div>
+    <div class="relative group">
+      @if (recibirImagen) {
+      <img
+        [src]="base64 !== '' ? base64 : recibirImagen"
+        alt=""
+        class="w-32 h-32 cursor-pointer rounded-lg object-cover select-none"
+        (click)="fileInput.click()"
+      />
+      }
+
+      <label
+        class="absolute bottom-0 right-0 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors cursor-pointer"
+        data-kt-image-input-action="change"
+        data-bs-toggle="tooltip"
+        aria-label="Change avatar"
+        data-bs-original-title="Change avatar"
+        data-kt-initialized="1"
+      >
+        <i class="ki-duotone ki-pencil text-xl text-primary">
+          <i class="path1"></i>
+          <i class="path2"></i>
+          <i class="path3"></i>
+        </i>
+
+        <input
+          type="file"
+          name="avatar"
+          accept="image/png, image/jpeg"
+          (change)="archivoSeleccionado($event)"
+          #fileInput
+          class="hidden"
+        />
+      </label>
+
+      <span
+        *ngIf="visualizarRemoverImagen"
+        class="absolute top-0 right-0 flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md hover:bg-gray-100 transition-colors cursor-pointer"
+        data-kt-image-input-action="remove"
+        data-bs-toggle="tooltip"
+        aria-label="Remove avatar"
+        data-bs-original-title="Remove avatar"
+        data-kt-initialized="1"
+        (click)="removerArchivoSeleccionado()"
+      >
+        <i class="ki-duotone ki-cross text-danger text-xl">
+          <span class="path1"></span>
+          <span class="path2"></span>
+        </i>
+      </span>
+    </div>
+  </div>
+</div>
+
+<app-modal-standard
+  title="Cargar imagen"
+  size="md"
+  modalId="modal-cargar-imagen"
+  [showCloseButton]="false"
+  [closeOnEsc]="false"
+  [closeOnOutsideClick]="false"
+>
+  @if (getModalInstaceState('modal-cargar-imagen') | async) {
+  <image-cropper
+    [imageChangedEvent]="imageChangedEvent"
+    [maintainAspectRatio]="true"
+    [aspectRatio]="4 / 4"
+    format="jpeg"
+    (imageCropped)="imageCropped($event)"
+    (imageLoaded)="imageLoaded($event)"
+    (cropperReady)="cropperReady()"
+    (loadImageFailed)="loadImageFailed()"
+  ></image-cropper>
+  <div class="fv-plugins-message-container" *ngIf="imagenMuyGrande">
+    <div class="fv-help-block">
+      <span role="alert"> imagen muy grande </span>
+    </div>
+  </div>
+
+  <div class="flex justify-end mt-3 w-full gap-2">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+      Cancelar
+    </button>
+    <button type="submit" class="btn btn-primary" (click)="emitirBase64()">
+      Guardar
+    </button>
+  </div>
+  }
+</app-modal-standard>
