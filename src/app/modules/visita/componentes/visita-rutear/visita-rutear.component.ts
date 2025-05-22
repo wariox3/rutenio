@@ -687,8 +687,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.visitaService.resumenPendiente().subscribe({
       next: (response) => {
         this.visitaResumen = response.resumen;
-        console.log(this.visitaResumen);
-
         this.changeDetectorRef.detectChanges();
       },
     });

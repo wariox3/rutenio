@@ -1,11 +1,11 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { MenuComponent } from '../menu/menu.component';
-import { General } from '../../common/clases/general';
-import { obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
-import { Observable, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
+import { Component, HostBinding, OnInit, signal } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { General } from '../../common/clases/general';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
+import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
+import { obtenerUsuario } from '../../redux/selectors/usuario.selector';
+import { MenuComponent } from '../menu/menu.component';
 
 @Component({
   selector: 'app-header',
@@ -22,10 +22,16 @@ export class HeaderComponent extends General implements OnInit {
   @HostBinding('attr.data-sticky-name') dataStickyName = 'header';
   @HostBinding('id') hostId = 'header';
 
-  public usuarioNombre$: Observable<string>;
+  public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
+  public image$ = this.usuario$.pipe(map(usuario => usuario.imagen))
 
   public menuItems: MenuItems[] = [
+    {
+      titulo: 'Perfil',
+      icono: 'ki-filled ki-user',
+      link: '/perfil',
+    },
     {
       titulo: 'Mis contenedores',
       icono: 'ki-filled ki-abstract-26',
@@ -36,15 +42,19 @@ export class HeaderComponent extends General implements OnInit {
       icono: 'ki-cheque ki-abstract-26',
       link: '/facturacion/lista',
     },
+    {
+      titulo: 'Configuración',
+      icono: 'ki-filled ki-setting-2',
+      link: '/configuracion',
+    },
   ];
 
   constructor() {
     super();
-    this.usuarioNombre$ = new Observable();
   }
 
   ngOnInit(): void {
-    this.usuarioNombre$ = this.store.select(obtenerUsuarioNombreCorto);
+    this.image$.subscribe(image => console.log(image))
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
   }
 }

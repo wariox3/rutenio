@@ -26,7 +26,7 @@ export class ModalStandardComponent {
   @Input() modalId!: string;
   @Input() title = '';
   @Input() showCloseButton = true;
-  @Input() size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
+  @Input() size: 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md';
   @Input() closeOnOutsideClick = true;
   @Input() closeOnEsc = true;
 
@@ -61,6 +61,7 @@ export class ModalStandardComponent {
       md: 'sm:max-w-md',
       lg: 'sm:max-w-lg',
       xl: 'sm:max-w-xl',
+      '2xl': 'sm:max-w-2xl',
     };
     return `${sizes[this.size]} w-full`;
   }

@@ -2,7 +2,7 @@ import { Component, HostBinding, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { General } from '../../common/clases/general';
-import { obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
+import { obtenerUsuario, obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
 import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
 import { MenuComponent } from '../menu/menu.component';
 import { CommonModule } from '@angular/common';
@@ -22,7 +22,7 @@ export class HeaderBasicComponent extends General implements OnInit {
   @HostBinding('attr.data-sticky-name') dataStickyName = 'header';
   @HostBinding('id') hostId = 'header';
 
-  public usuarioNombre$: Observable<string>;
+  public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
 
   public menuItems: MenuItems[] = [
@@ -40,11 +40,9 @@ export class HeaderBasicComponent extends General implements OnInit {
 
   constructor() {
     super();
-    this.usuarioNombre$ = new Observable();
   }
 
   ngOnInit(): void {
-    this.usuarioNombre$ = this.store.select(obtenerUsuarioNombreCorto);
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
   }
 }
