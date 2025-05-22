@@ -239,7 +239,11 @@ export default class DisenoRutaListaComponent
       this.marcarPosicionesVisitasOrdenadas = [
         { lat: 6.200713725811437, lng: -75.58609508555918 },
       ];
-      this.arrVisitasPorDespacho.forEach((punto) => {
+      
+      // Tomar solo las últimas 25 visitas
+      const visitasLimitadas = this.arrVisitasPorDespacho.slice(-25);
+      
+      visitasLimitadas.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
       });
 
@@ -275,8 +279,6 @@ export default class DisenoRutaListaComponent
       this.directionsService.route(request).subscribe({
         next: (response) => {
           this.directionsResults = response.result;
-
-          // Generar los marcadores personalizados
           this._generarMarcadoresPersonalizados(response.result);
           this.changeDetectorRef.detectChanges();
         },
@@ -441,6 +443,7 @@ export default class DisenoRutaListaComponent
 
   cerrarModalAdicionarVisita() {
     this.mostarModalAdicionarVisita$.next(true);
+    this.consultarLista();
     this.recargarDespachos();
   }
 
