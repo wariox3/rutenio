@@ -441,7 +441,7 @@ export default class DisenoRutaListaComponent
 
   cerrarModalAdicionarVisita() {
     this.mostarModalAdicionarVisita$.next(true);
-    this.consultarLista();
+    this.recargarDespachos();
   }
 
   abrirModalAdicionarVisita(id: number) {
@@ -480,8 +480,6 @@ export default class DisenoRutaListaComponent
 
   cerrarModalAdicionar() {
     this.toggleModal$.next(true);
-    this.consultarLista();
-    this._limpiarVisitasPorDespacho();
   }
 
 

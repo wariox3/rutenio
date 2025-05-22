@@ -184,21 +184,6 @@
       <div class="card flex-1 min-h-[16rem]">
         <div class="card-header flex justify-between items-center">
           <h3 class="card-title">Visitas por despacho</h3>
-          <div class="flex items-center">
-            @if (actualizandoLista()) {
-            <app-button
-              textoCargando="Actualizando..."
-              [estaCargando]="true"
-              class="ms-2"
-            >
-            </app-button>
-            } @else {
-            <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
-              <i class="ki-filled ki-arrows-circle" ></i>
-              Actualizar
-            </button>
-            }
-          </div>
         </div>
         <div
           class="card-table h-[16rem] overflow-y-auto overflow-x-hidden scrollable"
