@@ -4,10 +4,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { VisitaRutearService } from '../../../visita/servicios/visita-rutear.service';
-import { AlertaService } from '../../../../common/services/alerta.service';
 import { finalize } from 'rxjs';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { AlertaService } from '../../../../common/services/alerta.service';
+import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 
 @Component({
   selector: 'app-enviar-entrega-complemento',
@@ -18,7 +18,7 @@ import { finalize } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class EnviarEntregaComplementoComponent {
-  private readonly _visitaRutearService = inject(VisitaRutearService);
+  private readonly _visitaApiService = inject(VisitaApiService);
   private readonly _alertaService = inject(AlertaService);
 
   public estaCargando$ = signal<boolean>(false);
@@ -27,7 +27,7 @@ export default class EnviarEntregaComplementoComponent {
 
   enviarEntregaComplemento() {
     this.estaCargando$.set(true);
-    this._visitaRutearService
+    this._visitaApiService
       .enviarEntregaComplemento()
       .pipe(
         finalize(() => {

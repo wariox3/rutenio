@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,12 +7,10 @@ import {
   Input,
   Output,
 } from '@angular/core';
-import { Visita } from '../../../../../../interfaces/visita/visita.interface';
-import { CommonModule } from '@angular/common';
-import { VisitaRutearService } from '../../../../servicios/visita-rutear.service';
-import { ParametrosDireccionAlternativa } from '../../../../../../interfaces/visita/rutear.interface';
 import { General } from '../../../../../../common/clases/general';
-import { KTModal } from '../../../../../../../metronic/core';
+import { ParametrosDireccionAlternativa } from '../../../../../../interfaces/visita/rutear.interface';
+import { Visita } from '../../../../../../interfaces/visita/visita.interface';
+import { VisitaApiService } from '../../../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-rutear-detalle',
@@ -26,7 +25,7 @@ export class VisitaRutearDetalleComponent extends General {
   @Input({ required: true }) visita: Visita;
   @Output() emitirRecargarLista: EventEmitter<void>;
 
-  private readonly _visitaRutearService = inject(VisitaRutearService);
+  private readonly _visitaApiService = inject(VisitaApiService);
 
   constructor() {
     super();
@@ -41,7 +40,7 @@ export class VisitaRutearDetalleComponent extends General {
       destinatario_direccion_formato: direccionAlternativa.formatted_address,
     };
 
-    this._visitaRutearService
+    this._visitaApiService
       .seleccionarDireccionAlternativa(parametros)
       .subscribe((respuesta) => {
         this.alerta.mensajaExitoso(respuesta.mensaje);
