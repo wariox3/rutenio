@@ -9,22 +9,23 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
-import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { VisitaService } from '../../servicios/visita.service';
-import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
-import { Subject, take, takeUntil, tap } from 'rxjs';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { Subject, takeUntil, tap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
+import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { GeneralApiService } from '../../../../core';
+import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
+import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-formulario',
@@ -47,7 +48,8 @@ export default class VisitaFormularioComponent
   extends General
   implements OnInit, OnDestroy
 {
-  private _visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
+  private _generalApiService = inject(GeneralApiService);
 
   @Input() informacionVisita: any;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
@@ -107,8 +109,8 @@ export default class VisitaFormularioComponent
 
   enviarModal() {
     const datos = this.prepararDatosEnvio(this.formularioVisita.value);
-    this._visitaService
-      .guardarGuias(datos)
+    this._visitaApiService
+      .guardar(datos)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta: any) => {
         this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
@@ -145,8 +147,8 @@ export default class VisitaFormularioComponent
       serializador: 'ListaAutocompletar',
     };
 
-    this._visitaService
-      .listaCiudades(arrFiltros)
+    this._generalApiService
+      .getLista<AutocompletarCiudades[]>(arrFiltros)
       .pipe(
         tap((respuesta) => {
           this.arrCiudades = respuesta.registros;
