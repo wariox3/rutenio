@@ -21,13 +21,12 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { GeneralService } from '../../../../common/services/general.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { guiaMapeo } from '../../mapeos/guia-mapeo';
-import { VisitaService } from '../../servicios/visita.service';
-import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
-import { VisitaApiService } from '../../servicios/visita-api.service';
 import { GeneralApiService } from '../../../../core';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../interfaces/visita.interface';
+import { guiaMapeo } from '../../mapeos/guia-mapeo';
+import { VisitaApiService } from '../../servicios/visita-api.service';
+import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 
 @Component({
   selector: 'app-visita-lista',
