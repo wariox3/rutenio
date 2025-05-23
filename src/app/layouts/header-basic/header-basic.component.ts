@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { General } from '../../common/clases/general';
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, MenuComponent],
   templateUrl: './header-basic.component.html',
   styleUrl: './header-basic.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderBasicComponent extends General implements OnInit {
   @HostBinding('class') hostClass =
@@ -47,6 +48,8 @@ export class HeaderBasicComponent extends General implements OnInit {
     super();
   }
 
+  private imageTimestamp = Date.now();
+
   getUserImageUrl() {
     return this.usuario$?.pipe(map((usuario) => {
       if(usuario?.imagen.includes('defecto')){
@@ -56,6 +59,7 @@ export class HeaderBasicComponent extends General implements OnInit {
       }
     }));
   }
+
 
   ngOnInit(): void {
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
