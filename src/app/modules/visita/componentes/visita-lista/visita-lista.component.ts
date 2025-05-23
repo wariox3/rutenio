@@ -25,6 +25,9 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
 import { VisitaService } from '../../servicios/visita.service';
 import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
+import { VisitaApiService } from '../../servicios/visita-api.service';
+import { GeneralApiService } from '../../../../core';
+import { Visita } from '../../interfaces/visita.interface';
 
 @Component({
   selector: 'app-visita-lista',
@@ -46,7 +49,8 @@ import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-co
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaListaComponent extends General implements OnInit {
-  private _visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
+  private _generalApiService = inject(GeneralApiService);
   private _directionsService = inject(MapDirectionsService);
   private _listaItemsEliminar: number[] = [];
   private _generalService = inject(GeneralService);
@@ -99,7 +103,7 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   recargarConsulta() {
     this.actualizandoLista.set(true);
-    this._visitaService.generalLista(this.arrParametrosConsulta)
+    this._generalApiService.getLista<Visita[]>(this.arrParametrosConsulta)
     .pipe(
       finalize(() => {
         this.actualizandoLista.set(false);
@@ -127,7 +131,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    this._visitaService.generalLista(filtros).subscribe((respuesta) => {
+    this._generalApiService.getLista<Visita[]>(filtros).subscribe((respuesta) => {
       this.arrGuia = respuesta.registros?.map((guia) => ({
         ...guia,
         selected: false,
@@ -165,14 +169,14 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   decodificar() {
-    this._visitaService.decodificar().subscribe(() => {
+    this._visitaApiService.decodificar().subscribe(() => {
       this.consultaLista(this.arrParametrosConsulta);
       this.alerta.mensajaExitoso('Se ha decodificado correctamente');
     });
   }
 
   ordenar() {
-    this._visitaService.ordenar().subscribe((respuesta: any) => {
+    this._visitaApiService.ordenar().subscribe((respuesta: any) => {
       this.arrGuiasOrdenadas = respuesta.visitas_ordenadas;
       this.consultaLista(this.arrParametrosConsulta);
       this.alerta.mensajaExitoso('Se ha ordenado correctamente');
@@ -196,8 +200,8 @@ export default class VisitaListaComponent extends General implements OnInit {
   eliminarTodosLosRegistros() {
     if (this.arrGuia.length > 0) {
       // this.eliminandoRegistros = true;
-      this._visitaService
-        .eliminarTodosLasGuias()
+      this._visitaApiService
+        .eliminarTodos()
         .pipe(
           finalize(() => {
             // this.eliminandoRegistros = false;
@@ -276,7 +280,7 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   eliminarItemsSeleccionados() {
     const eliminarRegistros = this._listaItemsEliminar.map((id) => {
-      return this._visitaService.eliminarVisita(id);
+      return this._visitaApiService.eliminarPorId(id);
     });
 
     forkJoin(eliminarRegistros)
