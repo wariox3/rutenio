@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { forkJoin, tap } from 'rxjs';
 import { General } from '../../common/clases/general';
 import { ListaVehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
 import { Visita } from '../../interfaces/visita/visita.interface';
@@ -9,7 +8,6 @@ import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
 import { VehiculoService } from '../vehiculo/servicios/vehiculo.service';
-import { VisitaService } from '../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-root',
@@ -48,23 +46,7 @@ export default class DashboardComponent extends General {
 
   constructor(
     private vehiculoService: VehiculoService,
-    private visitaService: VisitaService
   ) {
     super();
   }
-
-  // ngOnInit(): void {
-  //   forkJoin({
-  //     vehiculos: this.vehiculoService.lista(this.arrParametrosConsulta),
-  //     visitas: this.visitaService.lista(this.arrParametrosConsultaVisita),
-  //   })
-  //     .pipe(
-  //       tap(({ vehiculos, visitas }) => {
-  //         this.arrVehiculos = vehiculos.registros;
-  //         this.arrVisitas = visitas;
-  //         this.changeDetectorRef.detectChanges();
-  //       })
-  //     )
-  //     .subscribe();
-  // }
 }
