@@ -38,7 +38,6 @@ import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despac
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
-import { VisitaService } from '../../../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -69,7 +68,6 @@ export default class TraficoListaComponent
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
   private directionsService = inject(MapDirectionsService);
-  private visitaService = inject(VisitaService);
   private _generalApiService = inject(GeneralApiService)
   private destroy$ = new Subject<void>();
   private novedadService = inject(NovedadService);
@@ -177,8 +175,8 @@ export default class TraficoListaComponent
       modelo: 'RutVisita',
     };
 
-    return this.visitaService
-      .generalLista(parametrosConsultaVisitas)
+    return this._generalApiService
+      .getLista<Visita[]>(parametrosConsultaVisitas)
       .pipe(takeUntil(this.destroy$));
   }
 
