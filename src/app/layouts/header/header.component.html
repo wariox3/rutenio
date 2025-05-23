@@ -50,7 +50,7 @@
         [nombre]="(usuario$ | async)?.nombre"
         [contenedorNombre]="contenedorNombre$ | async"
         [menuItems]="menuItems"
-        [imagen]="image$ | async"
+        [imagen]="getUserImageUrl() | async"
       ></app-menu>
     </div>
   </div>
