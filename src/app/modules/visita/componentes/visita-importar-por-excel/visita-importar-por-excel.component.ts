@@ -6,11 +6,11 @@ import {
   inject,
   Output,
 } from '@angular/core';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { VisitaService } from '../../servicios/visita.service';
 import { BehaviorSubject, catchError, finalize } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-importar-por-excel',
@@ -24,8 +24,8 @@ export default class VisitaImportarPorExcelComponent extends General {
   @Output() emitirCerrarModal: EventEmitter<boolean>;
   @Output() emitirConsultarLista: EventEmitter<void>;
 
-  private _visitaService = inject(VisitaService);
-
+  private _visitaApiService = inject(VisitaApiService);
+  
   public erroresImportar: any[] = [];
   public selectedFile: File | null = null;
   public base64File: string | null = null;
@@ -64,8 +64,8 @@ export default class VisitaImportarPorExcelComponent extends General {
     if (this.base64File) {
       this.estaImportando$.next(true);
 
-      this._visitaService
-        .importarVisitas({ archivo_base64: this.base64File })
+      this._visitaApiService
+        .importarPorExcel({ archivo_base64: this.base64File })
         .pipe(
           catchError((err) => {
             if (err.errores_validador) {
