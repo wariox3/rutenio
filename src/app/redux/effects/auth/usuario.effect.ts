@@ -56,15 +56,7 @@ export class UsuarioEffects {
           if (usuarioCookie) {
             let usuarioParsed = JSON.parse(usuarioCookie);
             usuario = { ...usuarioParsed, ...usuario };
-
-            if (environment.production) {
-              setCookie('usuario', JSON.stringify(usuario), {
-                path: '/',
-                domain: environment.dominioApp,
-              });
-            } else {
-              setCookie('usuario', JSON.stringify(usuario), { path: '/' });
-            }
+            setCookie('usuario', JSON.stringify(usuario), { path: '/' });
           }
         })
       ),
