@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostBinding, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostBinding, OnInit, signal } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { General } from '../../common/clases/general';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
@@ -13,6 +13,7 @@ import { MenuComponent } from '../menu/menu.component';
   imports: [CommonModule, MenuComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent extends General implements OnInit {
   @HostBinding('class') hostClass =
