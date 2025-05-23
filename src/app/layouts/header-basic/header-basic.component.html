@@ -48,7 +48,7 @@
     <app-menu
       [menuItems]="menuItems"
       [nombre]="(usuario$ | async)?.nombre"
-      [imagen]="(usuario$ | async)?.imagen"
+      [imagen]="getUserImageUrl() | async"
     ></app-menu>
   </div>
   <!-- end: container -->

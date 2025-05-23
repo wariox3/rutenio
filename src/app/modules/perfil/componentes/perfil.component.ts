@@ -34,14 +34,17 @@ export default class PerfilComponent extends General {
   ngOnInit(): void {
   }
 
+  getUserImageUrl() {
+    return this.usuario$?.pipe(map((usuario) => {
+      if(usuario?.imagen.includes('defecto')){
+        return usuario?.imagen;
+      } else {
+        return `${usuario?.imagen}?${new Date().getTime()}`;
+      }
+    }));
+  }
+
   recuperarBase64(base64: string) {
-    this.store.dispatch(
-      usuarioActionActualizar({
-        usuario: {
-          imagen: '',
-        },
-      })
-    );
     this._store
       .select(obtenerUsuarioId)
       .pipe(
