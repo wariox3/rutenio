@@ -44,7 +44,7 @@ export class VisitaApiService {
   actualizar(id: number, data: any) {
     return this._httpService.put<any>(`ruteo/visita/${id}/`, data);
   }
-  
+
   actualizarDireccion(parametros: any) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/actualizar-direccion/`,
@@ -89,6 +89,16 @@ export class VisitaApiService {
       `ruteo/visita/liberar/`,
       {
         id,
+      }
+    );
+  }
+
+  adicionar(despacho_id: number, visita_id: number) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/visita-adicionar/`,
+      {
+        id: despacho_id,
+        visita_id,
       }
     );
   }
