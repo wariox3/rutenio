@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { CargarImagenComponent } from '../../../common/components/cargar-imagen/cargar-imagen.component';
 import { map, Observable, switchMap, tap } from 'rxjs';
@@ -25,10 +26,15 @@ export default class PerfilComponent extends General {
   private _store = inject(Store);
   private _authService = inject(AuthService);
   private _modalService = inject(ModalService);
+  private _location = inject(Location);
   public usuario$ = this._store.select(obtenerUsuario);
 
   constructor() {
     super();
+  }
+
+  goBack(): void {
+    this._location.back();
   }
 
   ngOnInit(): void {
