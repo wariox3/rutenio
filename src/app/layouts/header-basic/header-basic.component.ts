@@ -1,5 +1,5 @@
 import { Component, HostBinding, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { General } from '../../common/clases/general';
 import { obtenerUsuario, obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
@@ -27,6 +27,11 @@ export class HeaderBasicComponent extends General implements OnInit {
 
   public menuItems: MenuItems[] = [
     {
+      titulo: 'Perfil',
+      icono: 'ki-filled ki-user',
+      link: '/perfil',
+    },
+    {
       titulo: 'Mis contenedores',
       icono: 'ki-filled ki-abstract-26',
       link: '/contenedor/lista',
@@ -40,6 +45,16 @@ export class HeaderBasicComponent extends General implements OnInit {
 
   constructor() {
     super();
+  }
+
+  getUserImageUrl() {
+    return this.usuario$?.pipe(map((usuario) => {
+      if(usuario?.imagen.includes('defecto')){
+        return usuario?.imagen;
+      } else {
+        return `${usuario?.imagen}?${new Date().getTime()}`;
+      }
+    }));
   }
 
   ngOnInit(): void {

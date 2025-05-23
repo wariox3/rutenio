@@ -4,7 +4,7 @@
       <div class="mr-12 mb-4">
         <div class="relative w-[100px] lg:w-[160px] h-[100px] lg:h-[160px]">
           <app-cargar-imagen
-            [recibirImagen]="(usuario$ | async)?.imagen"
+            [recibirImagen]="getUserImageUrl() | async"
             (dataFormulario)="recuperarBase64($event)"
             (eliminarLogo)="eliminarImagen($event)"
           ></app-cargar-imagen>
