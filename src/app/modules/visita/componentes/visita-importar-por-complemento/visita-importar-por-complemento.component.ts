@@ -18,15 +18,15 @@ import {
 } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BehaviorSubject, finalize } from 'rxjs';
+import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputDateComponent } from "../../../../common/components/ui/form/input-date/input-date/input-date.component";
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
-import { VisitaService } from '../../servicios/visita.service';
 import { ComplementoService } from '../../../complementos/servicios/complemento.service';
-import { KTModal } from '../../../../../metronic/core';
-import { InputDateComponent } from "../../../../common/components/ui/form/input-date/input-date/input-date.component";
+import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-importar-por-complemento',
@@ -51,7 +51,7 @@ export class VisitaImportarPorComplementoComponent extends General {
 
   public estaImportandoComplementos$: BehaviorSubject<boolean>;
   public complementos = signal<any[]>([]);
-  private _visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
   private _complementoService = inject(ComplementoService);
   public numeroDeRegistrosAImportar: number = 1;
   public formularioComplementos = new FormGroup(
@@ -117,8 +117,8 @@ export class VisitaImportarPorComplementoComponent extends General {
     const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
     const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
 
-    this._visitaService
-      .importarComplementos({
+    this._visitaApiService
+      .importarPorComplemento({
         numeroRegistros,
         desde,
         hasta,
