@@ -24,7 +24,6 @@ export class HeaderComponent extends General implements OnInit {
 
   public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
-  public image$ = this.usuario$.pipe(map(usuario => usuario.imagen))
 
   public menuItems: MenuItems[] = [
     {
@@ -53,8 +52,17 @@ export class HeaderComponent extends General implements OnInit {
     super();
   }
 
+  getUserImageUrl() {
+    return this.usuario$?.pipe(map((usuario) => {
+      if(usuario?.imagen.includes('defecto')){
+        return usuario?.imagen;
+      } else {
+        return `${usuario?.imagen}?${new Date().getTime()}`;
+      }
+    }));
+  }
+
   ngOnInit(): void {
-    this.image$.subscribe(image => console.log(image))
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
   }
 }
