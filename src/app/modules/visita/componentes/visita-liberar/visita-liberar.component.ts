@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, AfterViewInit, ViewChild } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { VisitaService } from '../../servicios/visita.service';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { of, switchMap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { VisitaApiService } from '../../servicios/visita-api.service';
+import { VisitaService } from '../../servicios/visita.service';
 
 @Component({
   selector: 'app-visita-liberar',
@@ -14,6 +15,7 @@ import { of, switchMap } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisitaLiberarComponent extends General implements AfterViewInit { 
+  private _visitaApiService = inject(VisitaApiService);
   private _visitaService = inject(VisitaService);
   selectedOption: string = 'id';
   inputValue: string = '';
@@ -39,13 +41,13 @@ export class VisitaLiberarComponent extends General implements AfterViewInit {
     this.inputValue = '';
     
     const liberar$ = this.searchByDocument 
-      ? this._visitaService.consultarDocumento(this.despachoId, valorActual).pipe(
+      ? this._visitaApiService.consultarDocumento({ despacho_id: this.despachoId, numero: Number(valorActual) }).pipe(
           switchMap(response => response?.id 
-            ? this._visitaService.liberar(response.id) 
+            ? this._visitaApiService.liberar(String(response.id)) 
             : of(null)
           )
         )
-      : this._visitaService.liberar(valorActual);
+      : this._visitaApiService.liberar(valorActual);
 
     liberar$.subscribe({
       next: (response) => {
