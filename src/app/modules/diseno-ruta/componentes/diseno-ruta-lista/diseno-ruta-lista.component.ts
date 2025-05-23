@@ -17,11 +17,11 @@ import {
 import { BehaviorSubject, finalize } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
-import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
+import { GeneralApiService } from '../../../../core';
 import {
   Despacho,
   DespachoDetalle,
@@ -32,9 +32,9 @@ import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
-import { VisitaAdicionarComponent } from "../../../visita/componentes/visita-adicionar/visita-adicionar.component";
+import { VisitaAdicionarComponent } from '../../../visita/componentes/visita-adicionar/visita-adicionar.component';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
-import { VisitaService } from '../../../visita/servicios/visita.service';
+import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -51,8 +51,7 @@ import { VisitaService } from '../../../visita/servicios/visita.service';
     DespachoTrasbordarComponent,
     VisitaAdicionarPendienteComponent,
     VisitaAdicionarComponent,
-    ButtonComponent
-],
+  ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,8 +62,9 @@ export default class DisenoRutaListaComponent
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
 
-  private _despachoApiService = inject(DespachoApiService)
-  private visitaService = inject(VisitaService);
+  private _despachoApiService = inject(DespachoApiService);
+  private _visitaApiService = inject(VisitaApiService);
+  private _generalApiService = inject(GeneralApiService);
   private directionsService = inject(MapDirectionsService);
   private _generalService = inject(GeneralService);
 
@@ -193,8 +193,8 @@ export default class DisenoRutaListaComponent
 
   private _consultarVisitas(parametrosConsulta: ParametrosConsulta) {
     this.actualizandoLista.set(true);
-    this.visitaService
-      .generalLista(parametrosConsulta)
+    this._generalApiService
+      .getLista<Visita[]>(parametrosConsulta)
       .pipe(
         finalize(() => {
           this.actualizandoLista.set(false);
@@ -239,10 +239,10 @@ export default class DisenoRutaListaComponent
       this.marcarPosicionesVisitasOrdenadas = [
         { lat: 6.200713725811437, lng: -75.58609508555918 },
       ];
-      
+
       // Tomar solo las últimas 25 visitas
       const visitasLimitadas = this.arrVisitasPorDespacho.slice(-25);
-      
+
       visitasLimitadas.forEach((punto) => {
         this.addMarker({ lat: punto.latitud, lng: punto.longitud });
       });
@@ -331,7 +331,7 @@ export default class DisenoRutaListaComponent
   }
 
   retirarVisita(id: number) {
-    this.visitaService.retirarVisita(id).subscribe({
+    this._visitaApiService.retirar(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response?.mensaje);
         this.consultarLista();
@@ -356,7 +356,7 @@ export default class DisenoRutaListaComponent
   }
 
   eliminarVisita(id: number) {
-    this.visitaService.eliminarVisita(id).subscribe({
+    this._visitaApiService.eliminarPorId(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
         this.consultarLista();
@@ -415,8 +415,8 @@ export default class DisenoRutaListaComponent
 
       this.arrVisitasPorDespacho.splice(event.previousIndex, 1);
 
-      this.visitaService
-        .cambiarDespachoVisita(draggedItem.id, despacho.id)
+      this._visitaApiService
+        .cambiarDespacho(draggedItem.id, despacho.id)
         .subscribe({
           next: (response) => {
             this.consultarLista();
@@ -485,10 +485,9 @@ export default class DisenoRutaListaComponent
     this.toggleModal$.next(true);
   }
 
-
   cerrarModalTrasbordar(selector: string) {
     this.toggleModalTrasbordar$.next(false);
-    this.dismissModal(selector)
+    this.dismissModal(selector);
     this.consultarLista();
     this._limpiarVisitasPorDespacho();
   }
@@ -501,4 +500,4 @@ export default class DisenoRutaListaComponent
   recargarDespachos() {
     this._consultarVisitas(this.parametrosConsultaVisitas);
   }
-}   
+}
