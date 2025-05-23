@@ -39,6 +39,17 @@ export default [
     ]
   },
   {
+    path: 'configuracion',
+    canActivate: [authGuard],
+    loadComponent: () => import('./facturacion-layout/facturacion-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('../modules/configuracion/components/configuracion/configuracion.component')
+      }
+    ]
+  },
+  {
     path: 'estado',
     canActivate: [authGuard],
     loadComponent: () =>
