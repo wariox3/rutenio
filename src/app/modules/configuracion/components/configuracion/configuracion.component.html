@@ -1,0 +1,16 @@
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title">Configuración</h1>
+  </div>
+  <div class="card-body p-5">
+    <form [formGroup]="formularioConfiguracion">
+      <div class="flex justify-end w-full">
+        <button (click)="submit()" class="btn btn-primary">Guardar</button>
+      </div>
+      <app-switch
+        titulo="Sincronizar complemento"
+        [control]="formularioConfiguracion.controls.rut_sincronizar_complemento"
+      ></app-switch>
+    </form>
+  </div>
+</div>
