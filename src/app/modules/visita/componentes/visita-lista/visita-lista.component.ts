@@ -209,7 +209,7 @@ export default class VisitaListaComponent extends General implements OnInit {
         )
         .subscribe(() => {
           this.alerta.mensajaExitoso(
-            'Se han eliminado los regsitros correctamente.'
+            'Se han eliminado los registros correctamente.'
           );
           this.consultaLista(this.arrParametrosConsulta);
         });
