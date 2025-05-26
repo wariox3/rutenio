@@ -538,7 +538,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     if (this.arrVisitas.length > 0) {
       this._visitaApiService.eliminarTodosConErrores().subscribe((response) => {
         this.alerta.mensajaExitoso(
-          'Se han eliminado los regsitros correctamente.'
+          'Se han eliminado los registros correctamente.'
         );
         this.consultarVisitas();
       });
@@ -554,7 +554,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         .pipe(finalize(() => {}))
         .subscribe(() => {
           this.alerta.mensajaExitoso(
-            'Se han eliminado los regsitros correctamente.'
+            'Se han eliminado los registros correctamente.'
           );
           this.consultarVisitas();
         });
