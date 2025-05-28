@@ -10,9 +10,9 @@ export class AlertaService {
     private getBaseConfig() {
     return {
       customClass: {
-        container: '!font-sans',
+        container: '!font-sans !overflow-hidden',
         popup: '!rounded-lg !shadow-xl !py-2 !px-4',
-        title: '!text-xl !font-bold !text-gray-800',
+        title: '!text-lg !font-bold !text-gray-800 !overflow-hidden',
         closeButton: '!text-gray-400 hover:!text-gray-600',
         icon: '!mx-auto !mb-4',
         content: '!text-gray-600',

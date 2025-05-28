@@ -33,10 +33,13 @@
 
         <div class="">
           <app-label>Franja</app-label>
-          <app-input
-            [control]="formularioVehiculo.controls.franja_codigo"
-            [maxLength]="6"
-          ></app-input>
+          <app-multi-select
+          [options]="franjaOpciones()"
+          [selectedOptions]="[]"
+          [label]="'nombre'"
+          [value]="'id'"
+          (selectionChange)="seleccionarEntidadMultiSelect($event)"
+        ></app-multi-select>
         </div>
       </div>
 
