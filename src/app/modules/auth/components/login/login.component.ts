@@ -18,7 +18,7 @@ import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
-import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
+import { RespuestaLogin } from '../../types/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../services/token.service';
