@@ -19,7 +19,7 @@ import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { Contenedor } from '../../../../interfaces/contenedor/contenedor.interface';
+import { Contenedor } from '../../interfaces/contenedor.interface';
 import { ContenedorService } from '../../services/contenedor.service';
 
 @Component({

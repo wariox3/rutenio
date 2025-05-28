@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
 import { removeCookie, setCookie } from 'typescript-cookie';
-import { Contenedor } from '../../../interfaces/contenedor/contenedor.interface';
+import { Contenedor } from '../../../modules/contenedores/interfaces/contenedor.interface';
 import {
   ContenedorActionBorrarInformacion,
   ContenedorActionInit,
