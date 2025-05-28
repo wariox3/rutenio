@@ -1,20 +1,18 @@
+import { CommonModule, Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { Location } from '@angular/common';
-import { CommonModule } from '@angular/common';
-import { CargarImagenComponent } from '../../../common/components/cargar-imagen/cargar-imagen.component';
-import { map, Observable, switchMap, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { map, Observable, switchMap, tap } from 'rxjs';
+import { General } from '../../../common/clases/general';
+import { CargarImagenComponent } from '../../../common/components/cargar-imagen/cargar-imagen.component';
+import { ModalStandardComponent } from "../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { ModalService } from '../../../common/components/ui/modals/service/modal.service';
+import { usuarioActionActualizar } from '../../../redux/actions/auth/usuario.actions';
 import {
   obtenerUsuario,
   obtenerUsuarioId,
 } from '../../../redux/selectors/usuario.selector';
-import { Usuario } from '../../../interfaces/user/user.interface';
-import { AuthService } from '../../auth/components/services/auth.service';
-import { usuarioActionActualizar } from '../../../redux/actions/auth/usuario.actions';
-import { ModalService } from '../../../common/components/ui/modals/service/modal.service';
-import { ModalStandardComponent } from "../../../common/components/ui/modals/modal-standard/modal-standard.component";
 import { InformacionUsuarioComponent } from "../../auth/components/informacion-usuario/informacion-usuario.component";
-import { General } from '../../../common/clases/general';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-perfil',

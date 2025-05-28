@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
-import { AuthService } from '../../modules/auth/components/services/auth.service';
+import { AuthService } from '../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-menu',
