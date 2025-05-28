@@ -20,8 +20,8 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { RespuestaLogin } from '../../../../interfaces/auth/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
-import { AuthService } from '../services/auth.service';
-import { TokenService } from '../services/token.service';
+import { AuthService } from '../../services/auth.service';
+import { TokenService } from '../../services/token.service';
 import { NgxTurnstileModule } from 'ngx-turnstile';
 
 @Component({

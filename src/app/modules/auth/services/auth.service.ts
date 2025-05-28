@@ -1,10 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { removeCookie } from "typescript-cookie";
-import { environment } from "../../../../../environments/environment.development";
-import { noRequiereToken } from "../../../../common/interceptors/token.interceptor";
+import { environment } from "../../../../environments/environment.development";
+import { noRequiereToken } from "../../../common/interceptors/token.interceptor";
 import { TokenService } from "./token.service";
-import { enviarDatosUsuario, UsuarioInformacionPerfil } from "../../types/informacion-perfil.type";
+import { enviarDatosUsuario, UsuarioInformacionPerfil } from "../types/informacion-perfil.type";
 
 @Injectable({
   providedIn: "root",

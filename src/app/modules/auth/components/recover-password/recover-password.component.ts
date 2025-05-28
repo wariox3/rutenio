@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { BehaviorSubject, finalize } from 'rxjs';

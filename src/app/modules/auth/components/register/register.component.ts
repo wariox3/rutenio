@@ -18,7 +18,7 @@ import { Router, RouterLink } from '@angular/router';
 import { BehaviorSubject, finalize } from 'rxjs';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RespuestaRegistro } from '../../../../interfaces/auth/auth.interface';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { General } from '../../../../common/clases/general';

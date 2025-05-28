@@ -19,9 +19,7 @@ import { InputComponent } from '../../../../common/components/ui/form/input/inpu
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import {
-  usuarioActionActualizar,
-  usuarioActionActualizarIdioma,
-  usuarioActionActualizarInformacionUsuario,
+  usuarioActionActualizar
 } from '../../../../redux/actions/auth/usuario.actions';
 import {
   obtenerUsuario,
@@ -30,7 +28,7 @@ import {
 import { Usuario } from '../../../contenedores/interfaces/usuarios-contenedores.interface';
 import { paises } from '../../constants/paises';
 import { LanguageFlag } from '../../types/informacion-perfil.type';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-informacion-usuario',
