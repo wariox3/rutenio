@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { getCookie } from 'typescript-cookie';
-import { Contenedor } from '../../interfaces/contenedor/contenedor.interface';
+import { Contenedor } from '../../modules/contenedores/interfaces/contenedor.interface';
 import {
   ContenedorActionBorrarInformacion,
   ContenedorActionInit,

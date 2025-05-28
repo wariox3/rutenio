@@ -10,7 +10,7 @@ import {
   Contenedor,
   ContenedorDetalle,
   ListaContenedoresRespuesta,
-} from '../../../../interfaces/contenedor/contenedor.interface';
+} from '../../interfaces/contenedor.interface';
 import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';

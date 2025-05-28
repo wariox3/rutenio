@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { Contenedor } from '../../../../interfaces/contenedor/contenedor.interface';
+import { Contenedor } from '../../interfaces/contenedor.interface';
 import { Usuario } from '../../interfaces/usuarios-contenedores.interface';
 import { ContenedorService } from '../../services/contenedor.service';
 import { map, Observable, switchMap, tap } from 'rxjs';
