@@ -15,7 +15,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { General } from '../../../../common/clases/general';
-import { RespuestaComplemento } from '../../../../interfaces/complemento/complemento.interface';
+import { RespuestaComplemento } from '../../types/complemento.interface';
 import { ComplementoService } from '../../servicios/complemento.service';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
