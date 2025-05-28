@@ -11,8 +11,7 @@ export class AlertaService {
     return {
       customClass: {
         container: '!font-sans',
-        popup: '!rounded-lg !shadow-xl !p-6',
-        header: '!mb-4',
+        popup: '!rounded-lg !shadow-xl !py-2 !px-4',
         title: '!text-xl !font-bold !text-gray-800',
         closeButton: '!text-gray-400 hover:!text-gray-600',
         icon: '!mx-auto !mb-4',
