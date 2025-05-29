@@ -36,14 +36,14 @@ export const mapeo: any = {
         visibleFiltro: true,
         ordenable: true,
       },
-      // {
-      //   encabezado: 'Franja Código',
-      //   campoNombre: 'franja_codigo',
-      //   campoTipo: 'CharField',
-      //   visibleTabla: true,
-      //   visibleFiltro: true,
-      //   ordenable: true,
-      // },
+      {
+        encabezado: 'Franja Código',
+        campoNombre: 'franja_codigo',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
       {
         encabezado: 'Usuario app',
         campoNombre: 'usuario_app',
