@@ -35,7 +35,7 @@
           <app-label>Franja</app-label>
           <app-multi-select
           [options]="franjaOpciones()"
-          [selectedOptions]="[]"
+          [selectedOptions]="formularioVehiculo.controls.franja_id.value"
           [label]="'nombre'"
           [value]="'id'"
           (selectionChange)="seleccionarEntidadMultiSelect($event)"
