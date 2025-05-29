@@ -57,7 +57,6 @@ export default class VehiculoFormularioComponent
 
   public franjaOpciones = signal<AutocompletarFranja[]>([]);
   public formularioVehiculo = new FormGroup({
-    franja_codigo: new FormControl(null),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -70,6 +69,8 @@ export default class VehiculoFormularioComponent
     tiempo: new FormControl(0, [Validators.required]),
     estado_asignado: new FormControl(false),
     usuario_app: new FormControl(null),
+    franja_id: new FormControl([]),
+    franja_codigo: new FormControl([]),
   });
 
   ngOnInit(): void {
@@ -83,13 +84,14 @@ export default class VehiculoFormularioComponent
 
   private _poblarFormulario() {
     this.formularioVehiculo.patchValue({
-      franja_codigo: this.informacionVehiculo.franja_codigo,
       placa: this.informacionVehiculo.placa,
       tiempo: this.informacionVehiculo.tiempo,
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
       usuario_app: this.informacionVehiculo.usuario_app,
+      franja_id: this.informacionVehiculo.franja_id,
+      franja_codigo: this.informacionVehiculo.franja_codigo,
     });
   }
 
@@ -136,8 +138,5 @@ export default class VehiculoFormularioComponent
     this.formularioVehiculo.patchValue({
       franja_codigo: event,
     });
-    // this.filtros.controls[index].patchValue({
-    //   valor1: event,
-    // });
   }
 }
