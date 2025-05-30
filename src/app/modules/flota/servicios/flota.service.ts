@@ -19,9 +19,10 @@ export class FlotaService {
     );
   }
 
-  agregarFlota(flotaId: number) {
+  agregarFlota(flotaId: number, prioridad: number) {
     return this.http.post<RespuestaGeneralLista<any>>(`ruteo/flota/`, {
       vehiculo: flotaId,
+      prioridad
     });
   }
 
