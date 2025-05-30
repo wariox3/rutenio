@@ -629,6 +629,7 @@
               <th>Capacidad</th>
               <th>Tiempo</th>
               <th>Franja</th>
+              <th>Prioridad</th>
               <th></th>
             </tr>
           </thead>
@@ -639,6 +640,7 @@
               <td>{{ vehiculo.vehiculo_capacidad }}</td>
               <td>{{ vehiculo.vehiculo_tiempo }}</td>
               <td>{{ vehiculo.vehiculo_franja_codigo }}</td>
+              <td>{{ vehiculo.prioridad }}</td>
               <td>
                 <button (click)="eliminarFlota(vehiculo.id)">
                   <i class="ki-filled ki-trash text-lg"></i>
