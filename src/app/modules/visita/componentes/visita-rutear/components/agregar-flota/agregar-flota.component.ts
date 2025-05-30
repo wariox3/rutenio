@@ -67,9 +67,13 @@ export class AgregarFlotaComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this._consultarVehiculos();
-    console.log(this.itemsSeleccionados);
     this.formularioFlota.patchValue({
       flota: this.itemsSeleccionados,
+    });
+
+    // Inicializar los items ya seleccionados con sus prioridades
+    this.itemsSeleccionados.forEach((id, index) => {
+      this._vehiculosSeleccionados.push({ id, prioridad: index + 1 });
     });
 
     this._initBusqueda();
@@ -135,7 +139,12 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   private _agregarItemAListaEliminar(id: number) {
-    const prioridad = this._vehiculosSeleccionados.length + 1;
+    // La prioridad será el siguiente número después del último item
+    const ultimaPrioridad = this._vehiculosSeleccionados.reduce(
+      (max, item) => Math.max(max, item.prioridad),
+      0
+    );
+    const prioridad = ultimaPrioridad + 1;
     this._vehiculosSeleccionados.push({ id, prioridad });
   }
 
@@ -146,7 +155,9 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   private _removerTodosLosItemsAListaEliminar() {
-    this._vehiculosSeleccionados = [];
+    this._vehiculosSeleccionados = [
+      ...this.itemsSeleccionados.map((id, index) => ({ id, prioridad: index + 1 })),
+    ];
   }
 
   isVehiculoAsignadoFlota(vehiculoId: number) {
@@ -186,8 +197,17 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   enviar() {
-    const agregarFlotas = this.vehiculosIds.map((id) => {
-      return this._flotaService.agregarFlota(id, this.obtenerPrioridad(id));
+    // Filtrar solo los vehículos nuevos (los que no estaban en itemsSeleccionados)
+    const nuevosVehiculos = this._vehiculosSeleccionados
+      .filter(item => !this.itemsSeleccionados.includes(item.id));
+
+    if (nuevosVehiculos.length === 0) {
+      this._dismissModal();
+      return;
+    }
+
+    const agregarFlotas = nuevosVehiculos.map((item) => {
+      return this._flotaService.agregarFlota(item.id, item.prioridad);
     });
 
     forkJoin(agregarFlotas)
