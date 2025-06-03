@@ -69,27 +69,27 @@
           <div>
             <p class="text-xs text-slate-600">Vehiculos</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-delivery"></i>
-              {{ arrFlota?.length || 0 }}</span
+              <i class="ki-filled ki-delivery" data-tooltip="#tooltip_vehiculos_disponibles"></i>
+              {{ vehiculosDisponibles }}/{{ totalVehiculos }}</span
             >
           </div>
           <div>
             <p class="text-xs text-slate-600">Visitas</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-geolocation"></i>
+              <i class="ki-filled ki-geolocation" data-tooltip="#tooltip_visitas_pendientes"></i>
               {{ visitasTotales || 0 }}</span
             >
           </div>
           <div>
             <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-package"></i>
+              <i class="ki-filled ki-package" data-tooltip="#tooltip_capacidad"></i>
               {{ pesoTotal }}/{{ capacidadTotal }}</span
             >
           </div>
           <div>
             <app-progreso-circular
-              data-tooltip="#tooltip_left"
+              data-tooltip="#tooltip_capacidad"
               [progress]="porcentajeCapacidad"
               [error]="errorCapacidad"
               [barraProgreso]="barraCapacidad"
@@ -98,7 +98,7 @@
           <div>
             <p class="text-xs text-slate-600">Tiempo</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-timer"></i>
+              <i class="ki-filled ki-timer" data-tooltip="#tooltip_tiempo"></i>
               {{ servicio() }}/{{ tiempoTotal() }}
             </span>
           </div>
@@ -496,16 +496,30 @@
 
 <div
   class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
-  id="tooltip_left"
+  id="tooltip_capacidad"
 >
-  Porcentaje de capacidad
+  Capacidad disponible en kilos
 </div>
 
 <div
   class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_tiempo"
 >
-  Porcentaje de tiempo
+  Capacidad disponible en minutos
+</div>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_vehiculos_disponibles"
+>
+  Vehiculos disponibles
+</div>
+
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  id="tooltip_visitas_pendientes"
+>
+  Visitas pendientes
 </div>
 
 <app-modal-default
@@ -629,6 +643,7 @@
               <th>Capacidad</th>
               <th>Tiempo</th>
               <th>Franja</th>
+              <th>Asignado</th>
               <th>Prioridad</th>
               <th></th>
             </tr>
@@ -640,7 +655,21 @@
               <td>{{ vehiculo.vehiculo_capacidad }}</td>
               <td>{{ vehiculo.vehiculo_tiempo }}</td>
               <td>{{ vehiculo.vehiculo_franja_codigo }}</td>
-              <td>{{ vehiculo.prioridad }}</td>
+              <td>
+                <span
+                  *ngIf="!vehiculo.vehiculo_estado_asignado"
+                  class="badge badge-sm badge-outline badge-success"
+                >
+                  Sin asignar
+                </span>
+                <span
+                  *ngIf="vehiculo.vehiculo_estado_asignado"
+                  class="badge badge-sm badge-outline badge-danger"
+                >
+                  Asignado
+                </span>
+              </td>
+              <td>{{ vehiculo.vehiculo_prioridad }}</td>
               <td>
                 <button (click)="eliminarFlota(vehiculo.id)">
                   <i class="ki-filled ki-trash text-lg"></i>

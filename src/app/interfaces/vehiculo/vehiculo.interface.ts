@@ -8,6 +8,7 @@ export interface Vehiculo {
   estado_asignado: boolean;
   tiempo: number;
   usuario_app: string;
+  prioridad: number;
 }
 
 export interface ListaVehiculo {
@@ -20,6 +21,7 @@ export interface ListaVehiculo {
   estado_asignado: boolean;
   tiempo: number;
   usuario_app: string;
+  prioridad: number;
 }
 
 export const vehiculoEmpty: Vehiculo = {
@@ -32,4 +34,5 @@ export const vehiculoEmpty: Vehiculo = {
   estado_asignado: false,
   tiempo: 0,
   usuario_app: '',
+  prioridad: 0
 };

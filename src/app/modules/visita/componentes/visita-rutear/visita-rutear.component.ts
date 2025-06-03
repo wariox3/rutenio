@@ -376,14 +376,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _calcularCapacidadTotal(flotas: ListaFlota[]) {
-    this.capacidadTotal = flotas.reduce(
+    const flotasDisponibles = flotas.filter(
+      (f) => f.vehiculo_estado_asignado === false
+    );
+    this.capacidadTotal = flotasDisponibles.reduce(
       (acc, curVal) => acc + curVal.vehiculo_capacidad,
       0
     );
   }
 
   private _calcularTiempoTotal(flotas: ListaFlota[]) {
-    const tiempoTotal = flotas.reduce(
+    const flotasDisponibles = flotas.filter(
+      (f) => f.vehiculo_estado_asignado === false
+    );
+    const tiempoTotal = flotasDisponibles.reduce(
       (acc, curVal) => acc + curVal.vehiculo_tiempo,
       0
     );
@@ -718,5 +724,15 @@ export default class VisitaRutearComponent extends General implements OnInit {
   limpiarFiltros(event: Event) {
     event.stopPropagation();
     this._filtroBaseService.myEvent.next();
+  }
+
+  get vehiculosDisponibles(): number {
+    return (
+      this.arrFlota?.filter((v) => !v.vehiculo_estado_asignado).length || 0
+    );
+  }
+
+  get totalVehiculos(): number {
+    return this.arrFlota?.length || 0;
   }
 }
