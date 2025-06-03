@@ -43,7 +43,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   public vehiculosDisponibles$: Observable<ListaVehiculo[]>;
   public textoBusqueda = new FormControl();
-  private _vehiculosSeleccionados: { id: number; prioridad: number }[] = [];
+  private _vehiculosSeleccionados: { id: number }[] = [];
   private _parametrosConsulta: ParametrosConsulta = {
     filtros: [
       { propiedad: 'estado_activo', operador: 'exact', valor1: true },
@@ -72,8 +72,8 @@ export class AgregarFlotaComponent extends General implements OnInit {
     });
 
     // Inicializar los items ya seleccionados con sus prioridades
-    this.itemsSeleccionados.forEach((id, index) => {
-      this._vehiculosSeleccionados.push({ id, prioridad: index + 1 });
+    this.itemsSeleccionados.forEach((id) => {
+      this._vehiculosSeleccionados.push({ id });
     });
 
     this._initBusqueda();
@@ -117,11 +117,6 @@ export class AgregarFlotaComponent extends General implements OnInit {
     return this._vehiculosSeleccionados.some(v => v.id === id);
   }
 
-  obtenerPrioridad(id: number): number {
-    const vehiculo = this._vehiculosSeleccionados.find(v => v.id === id);
-    return vehiculo ? vehiculo.prioridad : 0;
-  }
-
   manejarCheckGlobal(event: any) {
     if (event.target.checked) {
       this._agregarTodosLosItemsAListaEliminar();
@@ -139,24 +134,18 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   private _agregarItemAListaEliminar(id: number) {
-    // La prioridad será el siguiente número después del último item
-    const ultimaPrioridad = this._vehiculosSeleccionados.reduce(
-      (max, item) => Math.max(max, item.prioridad),
-      0
-    );
-    const prioridad = ultimaPrioridad + 1;
-    this._vehiculosSeleccionados.push({ id, prioridad });
+    this._vehiculosSeleccionados.push({ id });
   }
 
   private _removerItemDeListaEliminar(id: number) {
     this._vehiculosSeleccionados = this._vehiculosSeleccionados
       .filter(item => item.id !== id)
-      .map((item, index) => ({ ...item, prioridad: index + 1 }));
+      .map((item) => ({ ...item }));
   }
 
   private _removerTodosLosItemsAListaEliminar() {
     this._vehiculosSeleccionados = [
-      ...this.itemsSeleccionados.map((id, index) => ({ id, prioridad: index + 1 })),
+      ...this.itemsSeleccionados.map((id) => ({ id })),
     ];
   }
 
@@ -169,7 +158,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
       response.forEach((item) => {
         const isVehiculoAsignado = this.isVehiculoAsignadoFlota(item.id);
 
-        if (!this.estoyEnListaEliminar(item.id) && !this.isVehiculoAsignadoFlota(item.id)) {
+        if (!this.estoyEnListaEliminar(item.id) && !isVehiculoAsignado) {
           this._agregarItemAListaEliminar(item.id);
         }
       });
@@ -207,7 +196,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
     }
 
     const agregarFlotas = nuevosVehiculos.map((item) => {
-      return this._flotaService.agregarFlota(item.id, item.prioridad);
+      return this._flotaService.agregarFlota(item.id);
     });
 
     forkJoin(agregarFlotas)
