@@ -682,6 +682,7 @@
                 <input
                   [value]="vehiculo.prioridad"
                   type="number"
+                  [disabled]="vehiculo.vehiculo_estado_asignado"
                   (blur)="actualizarPrioridad($event, vehiculo)"
                   formControlName="base"
                   class="input input-sm max-w-xs"

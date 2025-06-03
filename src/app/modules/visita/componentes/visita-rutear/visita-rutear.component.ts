@@ -738,8 +738,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   actualizarPrioridad(event: Event, flota: ListaFlota) {
     const prioridad = (event.target as HTMLInputElement).value;
+    if (flota.prioridad === Number(prioridad) || !prioridad) {
+      return;
+    }
+
     this._flotaService
-      .actualizarPrioridad(flota.vehiculo_id, Number(prioridad))
+      .actualizarPrioridad(flota.id, Number(prioridad))
       .subscribe({
         next: () => {
           this.alerta.mensajaExitoso('Prioridad actualizada exitosamente');
