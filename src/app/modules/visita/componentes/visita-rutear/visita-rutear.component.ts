@@ -91,7 +91,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['prioridad'],
     limite_conteo: 10000,
     modelo: 'RutFlota',
   };
