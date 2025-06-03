@@ -735,4 +735,16 @@ export default class VisitaRutearComponent extends General implements OnInit {
   get totalVehiculos(): number {
     return this.arrFlota?.length || 0;
   }
+
+  actualizarPrioridad(event: Event, flota: ListaFlota) {
+    const prioridad = (event.target as HTMLInputElement).value;
+    this._flotaService
+      .actualizarPrioridad(flota.vehiculo_id, Number(prioridad))
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Prioridad actualizada exitosamente');
+          this.consultarFlotas(this.arrParametrosConsulta);
+        },
+      });
+  }
 }
