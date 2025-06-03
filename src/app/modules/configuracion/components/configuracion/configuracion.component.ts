@@ -18,6 +18,7 @@ export default class ConfiguracionComponent extends General {
     id: new FormControl(0),
     empresa: new FormControl(0),
     rut_sincronizar_complemento: new FormControl(true),
+    rut_rutear_franja: new FormControl(false),
   });
 
   ngOnInit(): void {
@@ -27,6 +28,7 @@ export default class ConfiguracionComponent extends General {
           id: response.id,
           empresa: response.empresa,
           rut_sincronizar_complemento: response.rut_sincronizar_complemento,
+          rut_rutear_franja: response.rut_rutear_franja,
         })
       },
     });

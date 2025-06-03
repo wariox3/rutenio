@@ -11,5 +11,6 @@ export interface Configuracion {
     hum_entidad_riesgo: any
     pos_documento_tipo: number
     rut_sincronizar_complemento: boolean
+    rut_rutear_franja: boolean
 }
   

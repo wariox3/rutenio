@@ -7,5 +7,6 @@ export interface ListaFlota {
   vehiculo_id: number;
   vehiculo_franja_codigo: string;
   vehiculo_tiempo: number;
-  prioridad: number;
+  vehiculo_estado_asignado: boolean;
+  vehiculo_prioridad: number;
 }
