@@ -69,21 +69,30 @@
           <div>
             <p class="text-xs text-slate-600">Vehiculos</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-delivery" data-tooltip="#tooltip_vehiculos_disponibles"></i>
+              <i
+                class="ki-filled ki-delivery"
+                data-tooltip="#tooltip_vehiculos_disponibles"
+              ></i>
               {{ vehiculosDisponibles }}/{{ totalVehiculos }}</span
             >
           </div>
           <div>
             <p class="text-xs text-slate-600">Visitas</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-geolocation" data-tooltip="#tooltip_visitas_pendientes"></i>
+              <i
+                class="ki-filled ki-geolocation"
+                data-tooltip="#tooltip_visitas_pendientes"
+              ></i>
               {{ visitasTotales || 0 }}</span
             >
           </div>
           <div>
             <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-package" data-tooltip="#tooltip_capacidad"></i>
+              <i
+                class="ki-filled ki-package"
+                data-tooltip="#tooltip_capacidad"
+              ></i>
               {{ pesoTotal }}/{{ capacidadTotal }}</span
             >
           </div>
@@ -644,7 +653,7 @@
               <th>Tiempo</th>
               <th>Franja</th>
               <th>Asignado</th>
-              <th>Prioridad</th>
+              <th class="w-25">Prioridad</th>
               <th></th>
             </tr>
           </thead>
@@ -669,7 +678,16 @@
                   Asignado
                 </span>
               </td>
-              <td>{{ vehiculo.vehiculo_prioridad }}</td>
+              <td>
+                <input
+                  [value]="vehiculo.vehiculo_prioridad"
+                  type="number"
+                  (blur)="actualizarPrioridad($event, vehiculo)"
+                  formControlName="base"
+                  class="input input-sm max-w-xs"
+                  appSoloNumeros
+                />
+              </td>
               <td>
                 <button (click)="eliminarFlota(vehiculo.id)">
                   <i class="ki-filled ki-trash text-lg"></i>

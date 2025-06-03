@@ -22,11 +22,18 @@ export class FlotaService {
   agregarFlota(flotaId: number, prioridad: number) {
     return this.http.post<RespuestaGeneralLista<any>>(`ruteo/flota/`, {
       vehiculo: flotaId,
-      prioridad
+      prioridad,
     });
   }
 
   eliminarFlota(flotaId: number) {
     return this.http.delete(`ruteo/flota/${flotaId}`, {});
+  }
+
+  actualizarPrioridad(flotaId: number, prioridad: number) {
+    return this.http.post(`ruteo/flota/cambiar-prioridad/`, {
+      id: flotaId,
+      prioridad,
+    });
   }
 }
