@@ -4,10 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
+import BuscadorDireccionesComponent from "../../../../common/components/buscador-direcciones/buscador-direcciones.component";
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [SwitchComponent, ReactiveFormsModule],
+  imports: [SwitchComponent, ReactiveFormsModule, BuscadorDireccionesComponent],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.css',
 })

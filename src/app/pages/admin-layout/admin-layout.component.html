@@ -1,20 +1,20 @@
-<div class="h-100">
-	<app-sidebar></app-sidebar>
-	<div class="wrapper flex grow flex-col h-100">
-		<app-header></app-header>
-		<main class="grow content pt-5 h-100" id="content" role="content">
-			<!-- begin: container -->
-			<div class="container-fixed" id="content_container">
-				<app-alerta-suspension></app-alerta-suspension>
-			</div>
-			<!-- end: container -->
-			<!-- begin: container -->
-			<div class="container-fixed h-100">
-				<router-outlet></router-outlet>
-			</div>
-			<!-- end: container -->
-		</main>
-		<app-footer></app-footer>
-	</div>
-	<app-search-modal></app-search-modal>
+<div class="h-100 flex flex-col min-h-screen"> <!-- Cambio importante aquí -->
+  <app-sidebar></app-sidebar>
+  <div class="wrapper flex grow flex-col">
+    <app-header></app-header>
+    <main class="grow content pt-5" id="content" role="content">
+      <!-- begin: container -->
+      <div class="container-fixed" id="content_container">
+        <app-alerta-suspension></app-alerta-suspension>
+      </div>
+      <!-- end: container -->
+      <!-- begin: container -->
+      <div class="container-fixed">
+        <router-outlet></router-outlet>
+      </div>
+      <!-- end: container -->
+    </main>
+    <app-footer class="mt-auto"></app-footer> <!-- Agregado mt-auto -->
+  </div>
+  <app-search-modal></app-search-modal>
 </div>
