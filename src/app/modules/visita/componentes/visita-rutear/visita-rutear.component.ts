@@ -42,12 +42,14 @@ import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-co
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-visita-rutear',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ButtonComponent,
     GoogleMapsModule,
     ProgresoCircularComponent,
@@ -67,7 +69,6 @@ import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita
   ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
@@ -125,7 +126,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     modelo: 'RutVisita',
   };
 
-  arrFlota: ListaFlota[] = [];
+  arrFlota = signal<ListaFlota[]>([]);
   arrVisitas: Visita[];
   public flotasSeleccionadas: number[] = [];
   public capacidadTotal: number = 0;
@@ -318,7 +319,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this._calcularTiempoTotal(response.registros);
         this._calcularPorcentajeCapacidad();
         this._calcularPorcentajeTiempo();
-        this.arrFlota = response.registros;
+        this.arrFlota.set(response.registros);
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -589,7 +590,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   habilitadoParaRutear() {
     return (
       this.errorCapacidad ||
-      this.arrFlota?.length <= 0 ||
+      this.arrFlota()?.length <= 0 ||
       this.cantidadErrores > 0 ||
       this.visitasTotales <= 0 ||
       this.errorTiempo
@@ -728,12 +729,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   get vehiculosDisponibles(): number {
     return (
-      this.arrFlota?.filter((v) => !v.vehiculo_estado_asignado).length || 0
+      this.arrFlota()?.filter((v) => !v.vehiculo_estado_asignado).length || 0
     );
   }
 
   get totalVehiculos(): number {
-    return this.arrFlota?.length || 0;
+    return this.arrFlota()?.length || 0;
   }
 
   actualizarPrioridad(event: Event, flota: ListaFlota) {
