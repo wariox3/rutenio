@@ -1,0 +1,26 @@
+<div class="form-group">
+  <label for="address">Dirección</label>
+  <input 
+    #addressInput
+    type="text" 
+    class="form-control" 
+    id="address" 
+    placeholder="Ingresa una dirección"
+    [formControl]="addressControl"
+    (input)="onAddressChange()"
+  >
+  
+  <div *ngIf="loading" class="mt-2">
+    <span class="text-sm text-gray-500">Buscando direcciones...</span>
+  </div>
+  
+  <ul *ngIf="predictions.length > 0" class="mt-2 border rounded-md">
+    <li 
+      *ngFor="let prediction of predictions" 
+      class="p-2 hover:bg-gray-100 cursor-pointer"
+      (click)="selectPrediction(prediction)"
+    >
+      {{ prediction.description }}
+    </li>
+  </ul>
+</div>
