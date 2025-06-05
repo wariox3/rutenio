@@ -1,9 +1,17 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, Input, AfterViewInit, ViewChild } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { VisitaService } from '../../servicios/visita.service';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  inject,
+  Input,
+  ViewChild,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { finalize, of, switchMap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { VisitaApiService } from '../../servicios/visita-api.service';
+import { VisitaService } from '../../servicios/visita.service';
 
 @Component({
   selector: 'app-visita-adicionar',
@@ -12,8 +20,9 @@ import { finalize, of, switchMap } from 'rxjs';
   templateUrl: './visita-adicionar.component.html',
   styleUrl: './visita-adicionar.component.css',
 })
-export class VisitaAdicionarComponent extends General implements AfterViewInit { 
+export class VisitaAdicionarComponent extends General implements AfterViewInit {
   private _visitaService = inject(VisitaService);
+  private _vistiaApiService = inject(VisitaApiService);
   selectedOption: string = 'id';
   inputValue: string = '';
   searchByDocument: boolean = false;
@@ -33,38 +42,44 @@ export class VisitaAdicionarComponent extends General implements AfterViewInit {
 
   adicionar(): void {
     if (!this.selectedOption || !this.inputValue.trim()) return;
-    
-    const valorActual = Number(this.inputValue)
-    
-    const adicionar$ = this.searchByDocument 
-      ? this._visitaService.consultarDocumentoVisita(valorActual).pipe(
-          switchMap(response => response?.id 
-            ? this._visitaService.adicionar(this.despachoId, Number(response.id)) 
-            : of(null)
+
+    const valorActual = Number(this.inputValue);
+
+    const adicionar$ = this.searchByDocument
+      ? this._vistiaApiService
+          .consultarDocumento({ numero: valorActual, estado_despacho: false })
+          .pipe(
+            switchMap((response) =>
+              response?.id
+                ? this._vistiaApiService.adicionar(
+                    this.despachoId,
+                    response.id
+                  )
+                : of(null)
+            )
           )
-        )
-      : this._visitaService.adicionar(this.despachoId, valorActual);
+      : this._vistiaApiService.adicionar(this.despachoId, valorActual);
 
     adicionar$
-    .pipe(
-      finalize(() => {
-        this.establecerFoco();
-        this.changeDetectorRef.detectChanges()
-      })
-    )
-    .subscribe({
-      next: (response) => {
-        if (response) {
-          this.inputValue = '';
-          this._visitaService.notificarActualizacionLista();
-          this.alerta.mensajaExitoso(response.mensaje);
-        }
-      },
-      error: () => {
-        this.inputValue = valorActual.toString();
-        this.changeDetectorRef.detectChanges()
-      }
-    });
+      .pipe(
+        finalize(() => {
+          this.establecerFoco();
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (response) => {
+          if (response) {
+            this.inputValue = '';
+            this._visitaService.notificarActualizacionLista();
+            this.alerta.mensajaExitoso(response.mensaje);
+          }
+        },
+        error: () => {
+          this.inputValue = valorActual.toString();
+          this.changeDetectorRef.detectChanges();
+        },
+      });
   }
 
   private establecerFoco(): void {

@@ -1,4 +1,4 @@
-import { Usuario } from '../user/user.interface';
+import { Usuario } from '../../../interfaces/user/user.interface';
 
 export interface RespuestaLogin {
   token: string;

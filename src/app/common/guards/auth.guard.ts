@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, type CanMatchFn } from '@angular/router';
-import { TokenService } from '../../modules/auth/components/services/token.service';
+import { TokenService } from '../../modules/auth/services/token.service';
 
 export const authGuard: CanMatchFn = (route, segments) => {
   const tokenValido = inject(TokenService).validarToken();

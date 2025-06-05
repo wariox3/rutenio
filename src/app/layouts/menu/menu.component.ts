@@ -1,13 +1,12 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   inject,
-  Input,
+  Input
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
-import { AuthService } from '../../modules/auth/components/services/auth.service';
+import { AuthService } from '../../modules/auth/services/auth.service';
 
 @Component({
   selector: 'app-menu',
@@ -15,12 +14,12 @@ import { AuthService } from '../../modules/auth/components/services/auth.service
   imports: [CommonModule, RouterLink],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent {
   @Input({ required: true }) nombre: string;
   @Input() contenedorNombre: string;
   @Input({ required: true }) menuItems: MenuItems[];
+  @Input() imagen: string;
 
   private _authService = inject(AuthService);
 

@@ -1,10 +1,14 @@
-import { Injectable, inject } from "@angular/core";
-import { createEffect, Actions, ofType } from "@ngrx/effects";
-import { tap } from "rxjs/operators";
-import { getCookie, setCookie } from "typescript-cookie";
-import { usuarioActionActualizarVrSaldo, usuarioIniciar } from "../../actions/auth/usuario.actions";
-import { Usuario } from "../../../interfaces/user/user.interface";
-import { environment } from "../../../../environments/environment.development";
+import { Injectable, inject } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { tap } from 'rxjs/operators';
+import { getCookie, setCookie } from 'typescript-cookie';
+import { environment } from '../../../../environments/environment.development';
+import { Usuario } from '../../../interfaces/user/user.interface';
+import {
+  usuarioActionActualizar,
+  usuarioActionActualizarVrSaldo,
+  usuarioIniciar,
+} from '../../actions/auth/usuario.actions';
 
 @Injectable()
 export class UsuarioEffects {
@@ -18,9 +22,9 @@ export class UsuarioEffects {
           let calcularTiempo = new Date(
             new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
-          setCookie("usuario", JSON.stringify(action.usuario), {
+          setCookie('usuario', JSON.stringify(action.usuario), {
             expires: calcularTiempo,
-            path: "/",
+            path: '/',
           });
         })
       ),
@@ -37,6 +41,22 @@ export class UsuarioEffects {
             let jsonUsuario = JSON.parse(coockieUsuario);
             jsonUsuario.vr_saldo = action.vr_saldo;
             setCookie('usuario', JSON.stringify(jsonUsuario), { path: '/' });
+          }
+        })
+      ),
+    { dispatch: false }
+  );
+
+  updateCookie$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(usuarioActionActualizar),
+        tap(({ usuario }) => {
+          let usuarioCookie = getCookie('usuario');
+          if (usuarioCookie) {
+            let usuarioParsed = JSON.parse(usuarioCookie);
+            usuario = { ...usuarioParsed, ...usuario };
+            setCookie('usuario', JSON.stringify(usuario), { path: '/' });
           }
         })
       ),

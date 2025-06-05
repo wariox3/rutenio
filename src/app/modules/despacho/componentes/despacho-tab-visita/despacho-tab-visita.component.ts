@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, signal } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { VisitaService } from '../../../visita/servicios/visita.service';
-import { Visita } from '../../../visita/interfaces/visita.interface';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { CommonModule } from '@angular/common';
-import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
-import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { ChangeDetectionStrategy, Component, inject, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
+import { GeneralApiService } from '../../../../core';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Visita } from '../../../visita/interfaces/visita.interface';
+import { VisitaService } from '../../../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-despacho-tab-visita',
@@ -21,6 +22,7 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   @Input() despachoId: number;
   private _destroy$ = new Subject<void>()
   private visitaService = inject(VisitaService)
+  private _generalApiService = inject(GeneralApiService)
 
   visitas = signal<Visita[]>([])
 
@@ -51,7 +53,7 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
     
     const parametros = this.getParametrosConsulta();
     
-    this.visitaService.generalLista(parametros).subscribe({
+    this._generalApiService.getLista<Visita[]>(parametros).subscribe({
       next: (respuesta) => {
         this.visitas.set(respuesta.registros);
       },

@@ -43,7 +43,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   public vehiculosDisponibles$: Observable<ListaVehiculo[]>;
   public textoBusqueda = new FormControl();
-  private _vehiculosIds: number[] = [];
+  private _vehiculosSeleccionados: { id: number }[] = [];
   private _parametrosConsulta: ParametrosConsulta = {
     filtros: [
       { propiedad: 'estado_activo', operador: 'exact', valor1: true },
@@ -71,11 +71,16 @@ export class AgregarFlotaComponent extends General implements OnInit {
       flota: this.itemsSeleccionados,
     });
 
+    // Inicializar los items ya seleccionados con sus prioridades
+    this.itemsSeleccionados.forEach((id) => {
+      this._vehiculosSeleccionados.push({ id });
+    });
+
     this._initBusqueda();
   }
 
   private _limpiarVehiculosSeleccionados() {
-    this._vehiculosIds = [];
+    this._vehiculosSeleccionados = [];
   }
 
   private _initBusqueda() {
@@ -109,7 +114,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   estoyEnListaEliminar(id: number): boolean {
-    return this._vehiculosIds.indexOf(id) !== -1;
+    return this._vehiculosSeleccionados.some(v => v.id === id);
   }
 
   manejarCheckGlobal(event: any) {
@@ -129,16 +134,19 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   private _agregarItemAListaEliminar(id: number) {
-    this._vehiculosIds.push(id);
+    this._vehiculosSeleccionados.push({ id });
   }
 
   private _removerItemDeListaEliminar(id: number) {
-    const itemsFiltrados = this._vehiculosIds.filter((item) => item !== id);
-    this._vehiculosIds = itemsFiltrados;
+    this._vehiculosSeleccionados = this._vehiculosSeleccionados
+      .filter(item => item.id !== id)
+      .map((item) => ({ ...item }));
   }
 
   private _removerTodosLosItemsAListaEliminar() {
-    this._vehiculosIds = [];
+    this._vehiculosSeleccionados = [
+      ...this.itemsSeleccionados.map((id) => ({ id })),
+    ];
   }
 
   isVehiculoAsignadoFlota(vehiculoId: number) {
@@ -148,11 +156,10 @@ export class AgregarFlotaComponent extends General implements OnInit {
   private _agregarTodosLosItemsAListaEliminar() {
     this.vehiculosDisponibles$.subscribe((response) => {
       response.forEach((item) => {
-        const indexItem = this._vehiculosIds.indexOf(item.id);
         const isVehiculoAsignado = this.isVehiculoAsignadoFlota(item.id);
 
-        if (indexItem === -1 && !isVehiculoAsignado) {
-          this._vehiculosIds.push(item.id);
+        if (!this.estoyEnListaEliminar(item.id) && !isVehiculoAsignado) {
+          this._agregarItemAListaEliminar(item.id);
         }
       });
 
@@ -175,12 +182,21 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   get vehiculosIds() {
-    return this._vehiculosIds;
+    return this._vehiculosSeleccionados.map(v => v.id);
   }
 
   enviar() {
-    const agregarFlotas = this.vehiculosIds.map((id) => {
-      return this._flotaService.agregarFlota(id);
+    // Filtrar solo los vehículos nuevos (los que no estaban en itemsSeleccionados)
+    const nuevosVehiculos = this._vehiculosSeleccionados
+      .filter(item => !this.itemsSeleccionados.includes(item.id));
+
+    if (nuevosVehiculos.length === 0) {
+      this._dismissModal();
+      return;
+    }
+
+    const agregarFlotas = nuevosVehiculos.map((item) => {
+      return this._flotaService.agregarFlota(item.id);
     });
 
     forkJoin(agregarFlotas)

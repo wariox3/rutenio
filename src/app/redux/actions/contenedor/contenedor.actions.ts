@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Contenedor } from '../../../interfaces/contenedor/contenedor.interface';
+import { Contenedor } from '../../../modules/contenedores/interfaces/contenedor.interface';
 
 export const ContenedorActionInit = createAction(
   '[Contenedor] informacion',

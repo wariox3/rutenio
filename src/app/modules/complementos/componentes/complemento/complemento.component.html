@@ -62,35 +62,53 @@
         *ngIf="formularios[indexFormularioSeleccionado]"
         [formGroup]="formularios[indexFormularioSeleccionado]"
       >
-        <div formArrayName="datos_json">
-          <div
-            class="mb-2"
-            *ngFor="let control of arrayDatosJson?.controls; let j = index"
-            [formGroup]="control"
-          >
-            <app-label>{{ control.get("nombre")?.value }}:</app-label>
-            <input
-              type="text"
-              class="input"
-              formControlName="valor"
-              [ngClass]="{
-                'border-danger':
-                  control.get('valor').touched && control.get('valor').invalid,
-                'border-success':
-                  control.get('valor').touched && control.get('valor').valid
-              }"
-            />
+        <div class="grid grid-cols-1 gap-4 mb-5">
+          <div *ngFor="let control of arrayDatosJson?.controls; let j = index" [formGroup]="control">
+            <div class="mb-2">
+              <app-label>{{ control.get('nombre')?.value }}:</app-label>
+              
+              <div *ngIf="!esCampoClave(control.get('nombre')?.value)" class="relative">
+                <input
+                  type="text"
+                  class="input w-full"
+                  formControlName="valor"
+                  [ngClass]="{
+                    'border-danger': control.get('valor').touched && control.get('valor').invalid,
+                    'border-success': control.get('valor').touched && control.get('valor').valid
+                  }"
+                />
+              </div>
+              
 
-            <span
-              *ngIf="
-                control.get('valor')?.invalid && control.get('valor')?.touched
-              "
-              class="text-danger text-xs"
-            >
-              El campo es requerido.
-            </span>
+            <div *ngIf="esCampoClave(control.get('nombre')?.value)" class="relative">
+              <input
+                [type]="mostrarClave[j] ? 'text' : 'password'"
+                class="input w-full pr-10"
+                formControlName="valor"
+                [ngClass]="{
+                  'border-danger': control.get('valor').touched && control.get('valor').invalid,
+                  'border-success': control.get('valor').touched && control.get('valor').valid
+                }"
+              />
+              <button
+                type="button"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700"
+              >
+                <!-- <span *ngIf="mostrarClave[j]" class="ki-outline ki-eye-slash"></span>
+                <span *ngIf="!mostrarClave[j]" class="ki-outline ki-eye"></span> -->
+              </button>
+            </div>
+
+              <span
+                *ngIf="control.get('valor')?.invalid && control.get('valor')?.touched"
+                class="text-danger text-xs"
+              >
+                El campo es requerido.
+              </span>
+            </div>
           </div>
         </div>
+        
         <div class="w-full flex justify-end mt-2">
           <app-button
             [type]="'submit'"
@@ -98,9 +116,7 @@
             [textoCargando]="'Guardando...'"
             [estaCargando]="guardando$ | async"
             [clases]="'btn btn-primary text-center justify-center'"
-            [estaDeshabilitado]="
-              !formularios[indexFormularioSeleccionado].valid
-            "
+            [estaDeshabilitado]="!formularios[indexFormularioSeleccionado].valid"
             (click)="guardarInformacion(indexFormularioSeleccionado)"
           ></app-button>
         </div>

@@ -6,7 +6,7 @@ import { inject } from "@angular/core";
 import { throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 import { AlertaService } from "../services/alerta.service";
-import { AuthService } from "../../modules/auth/components/services/auth.service";
+import { AuthService } from "../../modules/auth/services/auth.service";
 
 export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   const alerta = inject(AlertaService);

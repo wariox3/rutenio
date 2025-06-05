@@ -47,9 +47,10 @@
     </div>
     <div class="flex items-center gap-2 lg:gap-3.5">
       <app-menu
-        [nombre]="usuarioNombre$ | async"
+        [nombre]="(usuario$ | async)?.nombre"
         [contenedorNombre]="contenedorNombre$ | async"
         [menuItems]="menuItems"
+        [imagen]="getUserImageUrl() | async"
       ></app-menu>
     </div>
   </div>

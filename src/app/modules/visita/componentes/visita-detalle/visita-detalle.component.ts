@@ -8,12 +8,11 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { General } from '../../../../common/clases/general';
-import { VisitaService } from '../../servicios/visita.service';
-import { Visita } from '../../interfaces/visita.interface';
-import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { BotoneraOpcionesComponent } from '../../../../common/components/botonera-opciones/botonera-opciones.component';
+import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { NovedadTabComponent } from "../../../novedad/componentes/novedad-tab/novedad-tab.component";
-import { KTModal } from '../../../../../metronic/core';
+import { Visita } from '../../interfaces/visita.interface';
+import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-detalle',
@@ -30,7 +29,7 @@ import { KTModal } from '../../../../../metronic/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaDetalleComponent extends General implements OnInit {
-  private visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
 
   visitaId: number;
 
@@ -74,8 +73,8 @@ export default class VisitaDetalleComponent extends General implements OnInit {
   }
 
   consultarVisita() {
-    this.visitaService
-      .consultarDetalle(this.visitaId)
+    this._visitaApiService
+      .getDetalle(this.visitaId)
       .subscribe((respuesta) => {
         this.visita.set(respuesta);
       });

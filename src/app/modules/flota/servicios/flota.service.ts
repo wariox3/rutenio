@@ -28,4 +28,11 @@ export class FlotaService {
   eliminarFlota(flotaId: number) {
     return this.http.delete(`ruteo/flota/${flotaId}`, {});
   }
+
+  actualizarPrioridad(flotaId: number, prioridad: number) {
+    return this.http.post(`ruteo/flota/cambiar-prioridad/`, {
+      id: flotaId,
+      prioridad,
+    });
+  }
 }

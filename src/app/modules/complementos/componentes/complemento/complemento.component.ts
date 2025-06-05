@@ -15,7 +15,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { General } from '../../../../common/clases/general';
-import { RespuestaComplemento } from '../../../../interfaces/complemento/complemento.interface';
+import { RespuestaComplemento } from '../../types/complemento.interface';
 import { ComplementoService } from '../../servicios/complemento.service';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
@@ -46,6 +46,7 @@ export default class ComplementoComponent extends General implements OnInit {
   formControls: any[] = [];
   arrComplementos: RespuestaComplemento[];
   public toggleModal$ = new BehaviorSubject(false);
+  mostrarClave: { [key: number]: boolean } = {};
 
   private complementoService = inject(ComplementoService);
 
@@ -81,6 +82,7 @@ export default class ComplementoComponent extends General implements OnInit {
 
   crearFormulario() {
     this.formularios = [];
+    this.mostrarClave = {};
     this.arrComplementos.forEach((complemento) => {
       const formGroup = new FormGroup({
         id: new FormControl(complemento.id),
@@ -88,27 +90,27 @@ export default class ComplementoComponent extends General implements OnInit {
         estructura_json: new FormControl(complemento.estructura_json),
         datos_json: new FormArray([]),
       });
-
+      
       const datosJSON = formGroup.get('datos_json') as FormArray;
 
-      if (
-        Array.isArray(complemento?.datos_json) ||
-        complemento?.datos_json === null
-      ) {
-        complemento.estructura_json?.forEach((estructuraDatos) => {
-          const campo = complemento?.datos_json?.filter(
-            (campoDatos) => campoDatos.nombre === estructuraDatos.nombre
-          );
-          const valor = campo?.[0]?.valor || '';
-          datosJSON.push(
-            new FormGroup({
-              valor: new FormControl(
-                valor,
-                Validators.compose([Validators.required])
-              ),
-              nombre: new FormControl(estructuraDatos.nombre),
-            })
-          );
+    if (Array.isArray(complemento?.datos_json) || complemento?.datos_json === null) {
+      complemento.estructura_json?.forEach((estructuraDatos, index) => {
+        const campo = complemento?.datos_json?.filter(
+          (campoDatos) => campoDatos.nombre === estructuraDatos.nombre
+        );
+        const valor = campo?.[0]?.valor || '';
+        datosJSON.push(
+          new FormGroup({
+            valor: new FormControl(
+              valor,
+              Validators.compose([Validators.required])
+            ),
+            nombre: new FormControl(estructuraDatos.nombre),
+          })
+        );
+          if (this.esCampoClave(estructuraDatos.nombre)) {
+          this.mostrarClave[index] = false;
+        }
         });
       } else {
         console.error('datos_json debe ser de tipo Array');
@@ -196,12 +198,21 @@ export default class ComplementoComponent extends General implements OnInit {
       });
   }
 
-  abrirModal(index: number) {
-    this.toggleModal$.next(true);
-    this.indexFormularioSeleccionado = index;
-    const formGroup = this.formularios[this.indexFormularioSeleccionado];
-    this.arrayDatosJson = (formGroup?.get('datos_json') as FormArray) || null;
+abrirModal(index: number) {
+  this.toggleModal$.next(true);
+  this.indexFormularioSeleccionado = index;
+  const formGroup = this.formularios[this.indexFormularioSeleccionado];
+  this.arrayDatosJson = (formGroup?.get('datos_json') as FormArray) || null;
+  
+  if (this.arrayDatosJson) {
+    this.arrayDatosJson.controls.forEach((control, i) => {
+      const nombreCampo = control.get('nombre')?.value;
+      if (this.esCampoClave(nombreCampo)) {
+        this.mostrarClave[i] = false;
+      }
+    });
   }
+}
 
   cerrarModal() {
     this.toggleModal$.next(false);
@@ -213,4 +224,17 @@ export default class ComplementoComponent extends General implements OnInit {
 
     modal.toggle();
   }
+
+  esCampoClave(nombreCampo: string): boolean {
+  if (!nombreCampo) return false;
+  const palabrasClave = ['clave', 'password', 'contraseña', 'secret', 'token', 'api_key', 'key'];
+  return palabrasClave.some(palabra => 
+    nombreCampo.toLowerCase().includes(palabra.toLowerCase())
+  );
+}
+
+toggleMostrarClave(index: number) {
+  this.mostrarClave[index] = !this.mostrarClave[index];
+}
+
 }

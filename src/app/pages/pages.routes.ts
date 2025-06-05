@@ -28,6 +28,28 @@ export default [
     ],
   },
   {
+    path: 'perfil',
+    canActivate: [authGuard],
+    loadComponent: () => import('./facturacion-layout/facturacion-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('../modules/perfil/componentes/perfil.component')
+      }
+    ]
+  },
+  {
+    path: 'configuracion',
+    canActivate: [authGuard],
+    loadComponent: () => import('./facturacion-layout/facturacion-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('../modules/configuracion/components/configuracion/configuracion.component')
+      }
+    ]
+  },
+  {
     path: 'estado',
     canActivate: [authGuard],
     loadComponent: () =>
@@ -162,5 +184,5 @@ export default [
   {
     path: 'terminos_de_uso',
     loadComponent: () => import('../modules/termininos-uso/componentes/terminos-uso/terminos-uso.component')
-  }
+  },
 ] as Routes;

@@ -1,0 +1,15 @@
+<ng-select
+  #ngSelect
+  [items]="predictions()"
+  [typeahead]="searchInput$"
+  [loading]="loading()"
+  bindLabel="description"
+  notFoundText="No se encontraron resultados"
+  placeholder="Buscar dirección..."
+  [typeToSearchText]="'Escribe para buscar...'"
+  loadingText="Buscando..."
+  [(ngModel)]="selectedAddressModel" 
+  (change)="selectAddress($event)" 
+  class="select2Custom"
+>
+</ng-select>
