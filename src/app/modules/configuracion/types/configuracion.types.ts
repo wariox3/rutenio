@@ -12,5 +12,8 @@ export interface Configuracion {
     pos_documento_tipo: number
     rut_sincronizar_complemento: boolean
     rut_rutear_franja: boolean
+    rut_direccion_origen: string
+    rut_longitud: string
+    rut_latitud: string
 }
   
