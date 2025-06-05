@@ -5,10 +5,11 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
 import BuscadorDireccionesComponent from "../../../../common/components/buscador-direcciones/buscador-direcciones.component";
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [SwitchComponent, ReactiveFormsModule, BuscadorDireccionesComponent],
+  imports: [SwitchComponent, ReactiveFormsModule, BuscadorDireccionesComponent, CommonModule],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.css',
 })
@@ -20,6 +21,9 @@ export default class ConfiguracionComponent extends General {
     empresa: new FormControl(0),
     rut_sincronizar_complemento: new FormControl(true),
     rut_rutear_franja: new FormControl(false),
+    rut_direccion_origen : new FormControl(''),
+    rut_latitud : new FormControl(''),
+    rut_longitud : new FormControl('')
   });
 
   ngOnInit(): void {
@@ -30,6 +34,9 @@ export default class ConfiguracionComponent extends General {
           empresa: response.empresa,
           rut_sincronizar_complemento: response.rut_sincronizar_complemento,
           rut_rutear_franja: response.rut_rutear_franja,
+          rut_direccion_origen: response.rut_direccion_origen,
+          rut_latitud: response.rut_latitud,
+          rut_longitud: response.rut_longitud
         })
       },
     });
@@ -45,4 +52,12 @@ export default class ConfiguracionComponent extends General {
         },
       });
   }
+
+  onAddressSelected(addressData: any) {
+  this.formularioConfiguracion.patchValue({
+    rut_direccion_origen: addressData.address,
+    rut_latitud: addressData.latitude,
+    rut_longitud: addressData.longitude
+  });
+}
 }

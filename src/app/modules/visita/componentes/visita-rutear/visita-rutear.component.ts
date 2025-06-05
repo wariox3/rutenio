@@ -297,7 +297,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   consultarFranjas() {
-    this.franjas$ = this._franjaService.consultarFranjas();
+    this.franjas$ = this._franjaService.consultarFranjas().pipe(switchMap((respuesta)=> {
+      return of (respuesta.results)
+    }));
   }
 
   toggleMostrarFranjas() {

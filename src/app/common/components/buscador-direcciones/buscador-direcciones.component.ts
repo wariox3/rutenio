@@ -1,7 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { General } from '../../clases/general';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ConfiguracionApiService } from '../../../modules/configuracion/servicios/configuracion-api.service';
 
 @Component({
   selector: 'app-buscador-direcciones',
@@ -11,71 +22,102 @@ import { General } from '../../clases/general';
   styleUrl: './buscador-direcciones.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class BuscadorDireccionesComponent extends General implements OnInit {
-
+export default class BuscadorDireccionesComponent
+  extends General
+  implements OnInit
+{
   @ViewChild('addressInput') addressInput!: ElementRef;
   @Output() addressSelected = new EventEmitter<any>();
-  
+
+  private _configuracionService = inject(ConfiguracionApiService);
+
   addressControl = new FormControl();
   loading = false;
   predictions: any[] = [];
-  
-  ngOnInit() {
-    this.initAutocomplete();
+
+  ngOnInit(): void {
+    this.setupAddressSearch();
   }
 
-  initAutocomplete() {
-    const autocomplete = new google.maps.places.Autocomplete(
-      this.addressInput.nativeElement,
-      {
-        types: ['address'],
-        componentRestrictions: { country: 'cl' } // Cambia según tu país
-      }
-    );
+  private setupAddressSearch(): void {
+    this.addressControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged()
+      )
+      .subscribe((value) => {
+        if (value && value.length > 2) {
+          this.searchAddress(value);
+        } else {
+          this.predictions = [];
+        }
+      });
+  }
 
-    autocomplete.addListener('place_changed', () => {
-      const place = autocomplete.getPlace();
-      if (!place.geometry) {
-        console.log("No details available for input: '" + place.name + "'");
-        return;
-      }
-      
-      const addressData = {
-        address: place.formatted_address,
-        latitude: place.geometry.location.lat(),
-        longitude: place.geometry.location.lng()
-      };
-      
-      this.addressSelected.emit(addressData);
+  searchAddress(input: string): void {
+    this.loading = true;
+    this.predictions = [];
+
+    const params = {
+      input: input,
+      country: 'CO',
+    };
+
+    this._configuracionService.autocompletar(params).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.predictions) {
+          this.predictions = response.predictions;
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error al buscar direcciones:', error);
+      },
     });
   }
 
-  // Opcional: Si quieres buscar mientras se escribe
-  onAddressChange() {
-    if (this.addressControl.value && this.addressControl.value.length > 3) {
-      // this.loading = true;
-      
-      // // Puedes llamar a tu backend Django que a su vez llame a Google Places API
-      // this.http.get('tu-backend-django/api/address-autocomplete/', {
-      //   params: { input: this.addressControl.value }
-      // }).subscribe(
-      //   (response: any) => {
-      //     this.predictions = response.predictions;
-      //     this.loading = false;
-      //   },
-      //   error => {
-      //     console.error(error);
-      //     this.loading = false;
-      //   }
-      // );
+  selectAddress(prediction: any): void {
+    this.addressControl.setValue(prediction.description);
+    this.predictions = [];
+    this.getPlaceDetails(prediction.place_id);
+  }
+
+  getPlaceDetails(placeId: string): void {
+    if (!placeId) return;
+    this.loading = true;
+    this._configuracionService.detalle({ place_id: placeId }).subscribe({
+      next: (response: any) => {
+        this.loading = false;
+        if (response.data) {
+          this.addressSelected.emit({
+            address: response.data.address || this.addressControl.value,
+            latitude: response.data.latitude,
+            longitude: response.data.longitude,
+            placeId: placeId,
+          });
+        }
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error al obtener detalles:', error);
+      },
+    });
+  }
+
+  onEnterPressed(): void {
+    if (this.predictions.length > 0) {
+      this.selectAddress(this.predictions[0]);
     }
   }
 
-    selectPrediction(prediction: any) {
-    // Implementa la lógica para manejar la selección de una predicción
-    // Esto es necesario porque lo usas en el template
-    console.log('Predicción seleccionada:', prediction);
-    // Aquí podrías emitir el evento o hacer algo con la predicción seleccionada
+  clearSearch(): void {
+    this.addressControl.setValue('');
+    this.predictions = [];
+    this.addressInput.nativeElement.focus();
   }
 
- }
+  focusInput(): void {
+    this.addressInput.nativeElement.focus();
+  }
+}
