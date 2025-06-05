@@ -1,35 +1,3 @@
-<!-- <div class="search-container">
-  <div class="search-box">
-    Dirección origen:
-    <input
-      #addressInput
-      type="text"
-      [formControl]="addressControl"
-      placeholder="Buscar dirección..."
-      class="search-input"
-      (keydown.enter)="onEnterPressed()"
-    />
-    <button class="clear-btn" (click)="clearSearch()" *ngIf="addressControl.value">
-      ×
-    </button>
-  </div>
-
-  <div class="predictions-container" *ngIf="predictions.length > 0">
-    <ul class="predictions-list">
-      <li
-        *ngFor="let prediction of predictions"
-        class="prediction-item"
-        (click)="selectAddress(prediction)"
-      >
-        {{ prediction.description }}a
-      </li>
-    </ul>
-  </div>
-
-  <div *ngIf="loading" class="loading-indicator">
-    Buscando direcciones...
-  </div>
-</div> -->
 <ng-select
   #ngSelect
   [items]="predictions()"
@@ -40,7 +8,8 @@
   placeholder="Buscar dirección..."
   [typeToSearchText]="'Escribe para buscar...'"
   loadingText="Buscando..."
-  (change)="selectAddress($event)"
+  [(ngModel)]="selectedAddressModel" 
+  (change)="selectAddress($event)" 
   class="select2Custom"
 >
 </ng-select>
