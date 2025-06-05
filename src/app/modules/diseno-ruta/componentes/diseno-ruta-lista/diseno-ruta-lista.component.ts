@@ -129,6 +129,8 @@ export default class DisenoRutaListaComponent
     this.mostarModalDetalleVisita$ = new BehaviorSubject(false);
     this.mostarModalAdicionarVisita$ = new BehaviorSubject(false);
     this.mostrarModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
+
+    this.obtenerPuntoOrigenYActualizarMapa();
   }
 
   private _limpiarVisitasPorDespacho() {
@@ -149,6 +151,24 @@ export default class DisenoRutaListaComponent
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
+  }
+
+  obtenerPuntoOrigenYActualizarMapa() {
+    this._generalService.puntoOrigen().subscribe({
+      next: (data) => {
+        const origen = data.configuracion?.[0];
+        if (origen && origen.rut_latitud && origen.rut_longitud) {
+          this.center = {
+            lat: origen.rut_latitud,
+            lng: origen.rut_longitud,
+          };
+          this.changeDetectorRef.detectChanges(); // Asegúrate de detectar cambios
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener punto de origen', error);
+      },
+    });
   }
 
   consultarLista() {
@@ -236,9 +256,7 @@ export default class DisenoRutaListaComponent
   mostrarMapa() {
     if (this.despachoSeleccionado) {
       this.customMarkers = [];
-      this.marcarPosicionesVisitasOrdenadas = [
-        { lat: 6.200713725811437, lng: -75.58609508555918 },
-      ];
+      this.marcarPosicionesVisitasOrdenadas = [this.center];
 
       // Tomar solo las últimas 25 visitas
       const visitasLimitadas = this.arrVisitasPorDespacho.slice(-25);
