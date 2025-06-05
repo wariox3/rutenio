@@ -48,7 +48,6 @@ export class GeneralService extends Subdomino {
     );
   }
 
-
   importar(url: string, data: any) {
     return this.http.post<{ mensaje: string }>(url, data);
   }
@@ -115,5 +114,15 @@ export class GeneralService extends Subdomino {
         }
       });
   }
-  
+
+  puntoOrigen() {
+    const body = {
+      campos: ['rut_latitud', 'rut_longitud'],
+    };
+
+    return this.http.post<any>(
+      'general/configuracion/consulta/',
+      body
+    );
+  }
 }
