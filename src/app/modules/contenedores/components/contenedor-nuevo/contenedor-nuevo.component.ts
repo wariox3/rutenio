@@ -5,7 +5,7 @@ import { General } from '../../../../common/clases/general';
 import {
   ContenedorFormulario,
   NuevoContenedorRespuesta,
-} from '../../../../interfaces/contenedor/contenedor.interface';
+} from '../../interfaces/contenedor.interface';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorService } from '../../services/contenedor.service';
 import { ContenedorFormularioComponent } from '../contenedor-formulario/contenedor-formulario.component';

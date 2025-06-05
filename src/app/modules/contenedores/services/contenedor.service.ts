@@ -4,7 +4,7 @@ import { environment } from '../../../../environments/environment';
 import {
   ContenedorDetalle,
   ListaContenedoresRespuesta,
-} from '../../../interfaces/contenedor/contenedor.interface';
+} from '../interfaces/contenedor.interface';
 import { RespuestaConsultaContenedor } from '../interfaces/usuarios-contenedores.interface';
 import {
   InvitarUsuario,

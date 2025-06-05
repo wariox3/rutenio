@@ -67,7 +67,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   public franjaClickeada: any = null
   public arrParametrosConsulta: any = {
     filtros: [],
-    limite: 50,
+    limite: 500,
     desplazar: 0,
     ordenamientos: ["-id"],
     limite_conteo: 10000,

@@ -7,6 +7,7 @@ import {
   Input,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import {
   FormControl,
@@ -19,12 +20,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { map } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { GeneralService } from '../../../../common/services/general.service';
 import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
+import { MultiSelectComponent } from "../../../../common/components/ui/form/multi-select/multi-select.component";
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -38,8 +39,8 @@ import { AutocompletarFranja } from '../../../../interfaces/general/autocompleta
     SwitchComponent,
     LabelComponent,
     NgSelectModule,
-    InputEmailComponent,
-  ],
+    MultiSelectComponent
+],
   templateUrl: './vehiculo-formulario.component.html',
   styleUrl: './vehiculo-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,9 +55,8 @@ export default class VehiculoFormularioComponent
 
   private readonly _generalService = inject(GeneralService);
 
-  public franjaOpciones: AutocompletarFranja[];
+  public franjaOpciones = signal<AutocompletarFranja[]>([]);
   public formularioVehiculo = new FormGroup({
-    franja_codigo: new FormControl(null),
     placa: new FormControl(
       '',
       Validators.compose([Validators.required, Validators.maxLength(6)])
@@ -69,6 +69,8 @@ export default class VehiculoFormularioComponent
     tiempo: new FormControl(0, [Validators.required]),
     estado_asignado: new FormControl(false),
     usuario_app: new FormControl(null),
+    franja_id: new FormControl([]),
+    franja_codigo: new FormControl([]),
   });
 
   ngOnInit(): void {
@@ -82,13 +84,14 @@ export default class VehiculoFormularioComponent
 
   private _poblarFormulario() {
     this.formularioVehiculo.patchValue({
-      franja_codigo: this.informacionVehiculo.franja_codigo,
       placa: this.informacionVehiculo.placa,
       tiempo: this.informacionVehiculo.tiempo,
       capacidad: this.informacionVehiculo.capacidad,
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
       usuario_app: this.informacionVehiculo.usuario_app,
+      franja_id: this.informacionVehiculo.franja_id,
+      franja_codigo: this.informacionVehiculo.franja_codigo,
     });
   }
 
@@ -111,7 +114,7 @@ export default class VehiculoFormularioComponent
     this._generalService
       .listaAutocompletar<AutocompletarFranja>('RutFranja')
       .subscribe((response) => {
-        this.franjaOpciones = response.registros;
+        this.franjaOpciones.set(response.registros);
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -129,5 +132,11 @@ export default class VehiculoFormularioComponent
     } else {
       this.formularioVehiculo.markAllAsTouched();
     }
+  }
+
+  seleccionarEntidadMultiSelect(event: number[]) {
+    this.formularioVehiculo.patchValue({
+      franja_codigo: event,
+    });
   }
 }

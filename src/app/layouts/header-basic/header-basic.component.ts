@@ -1,8 +1,8 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, HostBinding, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { General } from '../../common/clases/general';
-import { obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
+import { obtenerUsuario, obtenerUsuarioNombreCorto } from '../../redux/selectors/usuario.selector';
 import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
 import { MenuComponent } from '../menu/menu.component';
 import { CommonModule } from '@angular/common';
@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, MenuComponent],
   templateUrl: './header-basic.component.html',
   styleUrl: './header-basic.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderBasicComponent extends General implements OnInit {
   @HostBinding('class') hostClass =
@@ -22,10 +23,15 @@ export class HeaderBasicComponent extends General implements OnInit {
   @HostBinding('attr.data-sticky-name') dataStickyName = 'header';
   @HostBinding('id') hostId = 'header';
 
-  public usuarioNombre$: Observable<string>;
+  public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
 
   public menuItems: MenuItems[] = [
+    {
+      titulo: 'Perfil',
+      icono: 'ki-filled ki-user',
+      link: '/perfil',
+    },
     {
       titulo: 'Mis contenedores',
       icono: 'ki-filled ki-abstract-26',
@@ -40,11 +46,22 @@ export class HeaderBasicComponent extends General implements OnInit {
 
   constructor() {
     super();
-    this.usuarioNombre$ = new Observable();
   }
 
+  private imageTimestamp = Date.now();
+
+  getUserImageUrl() {
+    return this.usuario$?.pipe(map((usuario) => {
+      if(usuario?.imagen.includes('defecto')){
+        return usuario?.imagen;
+      } else {
+        return `${usuario?.imagen}?${new Date().getTime()}`;
+      }
+    }));
+  }
+
+
   ngOnInit(): void {
-    this.usuarioNombre$ = this.store.select(obtenerUsuarioNombreCorto);
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
   }
 }

@@ -1,7 +1,7 @@
 import { createReducer, on } from "@ngrx/store";
 import { getCookie } from "typescript-cookie";
 import { Usuario } from "../../interfaces/user/user.interface";
-import { usuarioIniciar } from "../actions/auth/usuario.actions";
+import { usuarioActionActualizar, usuarioIniciar } from "../actions/auth/usuario.actions";
 
 let usuarioData: string | undefined = getCookie("usuario");
 
@@ -13,6 +13,7 @@ let parsedState: Usuario = {
   nombre_corto: "",
   nombre: "",
   apellido: "",
+  numero_identificacion: "",
   telefono: "",
   correo: "",
   idioma: "",
@@ -31,6 +32,12 @@ export const initialState: Usuario = usuarioData
 export const usuarioReducer = createReducer(
   initialState,
   on(usuarioIniciar, (state, { usuario }) => {
+    return {
+      ...state,
+      ...usuario,
+    };
+  }),
+  on(usuarioActionActualizar, (state, { usuario }) => {
     return {
       ...state,
       ...usuario,

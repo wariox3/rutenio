@@ -7,18 +7,16 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { General } from '../../../../common/clases/general';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { VisitaService } from '../../servicios/visita.service';
-import { VisitaRutearService } from '../../servicios/visita-rutear.service';
-import { ParametrosActualizarDireccion } from '../../../../interfaces/visita/rutear.interface';
+import { General } from '../../../../common/clases/general';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
   selector: 'app-visita-editar-rutear',
@@ -29,8 +27,7 @@ import { ParametrosActualizarDireccion } from '../../../../interfaces/visita/rut
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VisitaEditarRutearComponent extends General implements OnInit {
-  private readonly _visitaRutearService = inject(VisitaRutearService);
-  private visitaService = inject(VisitaService);
+  private readonly _visitaApiService = inject(VisitaApiService)
 
   @Input() visita;
   @Output() emitirCerrarModal = new EventEmitter<void>();
@@ -62,7 +59,7 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
   }
 
   enviar() {
-    this._visitaRutearService
+    this._visitaApiService
       .actualizarDireccion(this.formularioVisitaRutear.value)
       .subscribe((response) => {
         this.alerta.mensajaExitoso(response.mensaje);

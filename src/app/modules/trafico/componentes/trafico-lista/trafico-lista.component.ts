@@ -22,11 +22,13 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
+import { GeneralApiService } from '../../../../core';
 import {
   Despacho,
   DespachoDetalle,
 } from '../../../../interfaces/despacho/despacho.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
 import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
@@ -35,9 +37,7 @@ import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/des
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
-import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
-import { VisitaService } from '../../../visita/servicios/visita.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -68,8 +68,7 @@ export default class TraficoListaComponent
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
   private directionsService = inject(MapDirectionsService);
-  private visitaService = inject(VisitaService);
-  private ubicacionService = inject(UbicacionService);
+  private _generalApiService = inject(GeneralApiService)
   private destroy$ = new Subject<void>();
   private novedadService = inject(NovedadService);
 
@@ -176,8 +175,8 @@ export default class TraficoListaComponent
       modelo: 'RutVisita',
     };
 
-    return this.visitaService
-      .generalLista(parametrosConsultaVisitas)
+    return this._generalApiService
+      .getLista<Visita[]>(parametrosConsultaVisitas)
       .pipe(takeUntil(this.destroy$));
   }
 
@@ -191,8 +190,8 @@ export default class TraficoListaComponent
       modelo: 'RutUbicacion',
     };
 
-    return this.ubicacionService
-      .generalLista(parametrosConsultaUbicacion)
+    return this._generalApiService
+      .getLista<Ubicacion[]>(parametrosConsultaUbicacion)
       .pipe(takeUntil(this.destroy$));
   }
 

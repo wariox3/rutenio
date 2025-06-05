@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
+import { RespuestaApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
@@ -55,11 +56,11 @@ export class FranjaService {
   }
 
   consultarDetalle(id: number) {
-    return this._httpService.getDetalle<any>(`ruteo/franja/${id}/`);
+    return this._httpService.getDetalle<RespuestaApi<any>>(`ruteo/franja/${id}/`);
   }
 
   consultarFranjas() {
-    return this._httpService.getDetalle<any>(`ruteo/franja/`);
+    return this._httpService.getDetalle<RespuestaApi<any>>(`ruteo/franja/`);
   }
 
   importarArchivoKML(archivoEnBase64: string) {

@@ -2,6 +2,16 @@ import { createFeatureSelector, createSelector } from '@ngrx/store';
 
 const Usuario = createFeatureSelector<any>('usuario');
 
+export const obtenerUsuario = createSelector(
+  Usuario,
+  (Usuario) => Usuario
+)
+
+export const obtenerUsuarioImagen = createSelector(
+  Usuario,
+  (Usuario) => Usuario.imagen
+)
+
 export const obtenerUsuarioNombreCorto = createSelector(
   Usuario,
   (Usuario) => `${Usuario.nombre_corto}`

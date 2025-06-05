@@ -27,6 +27,7 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { GeneralApiService } from '../../../../core';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
@@ -34,20 +35,21 @@ import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { FranjaService } from '../../../franja/servicios/franja.service';
 import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
-import { VisitaRutearService } from '../../servicios/visita-rutear.service';
-import { VisitaService } from '../../servicios/visita.service';
+import { VisitaApiService } from '../../servicios/visita-api.service';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
 import VisitaFormularioComponent from '../visita-formulario/visita-formulario.component';
-import { VisitaImportarPorComplementoComponent } from "../visita-importar-por-complemento/visita-importar-por-complemento.component";
+import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
+import { FormsModule, NgModel } from '@angular/forms';
 
 @Component({
   selector: 'app-visita-rutear',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ButtonComponent,
     GoogleMapsModule,
     ProgresoCircularComponent,
@@ -63,11 +65,10 @@ import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita
     VisitaResumenPedienteComponent,
     RedondearPipe,
     VisitaFormularioComponent,
-    VisitaImportarPorComplementoComponent
-],
+    VisitaImportarPorComplementoComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
@@ -91,7 +92,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     filtros: [],
     limite: 50,
     desplazar: 0,
-    ordenamientos: [],
+    ordenamientos: ['prioridad'],
     limite_conteo: 10000,
     modelo: 'RutFlota',
   };
@@ -125,7 +126,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     modelo: 'RutVisita',
   };
 
-  arrFlota: ListaFlota[] = [];
+  arrFlota = signal<ListaFlota[]>([]);
   arrVisitas: Visita[];
   public flotasSeleccionadas: number[] = [];
   public capacidadTotal: number = 0;
@@ -159,8 +160,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
-  private visitaService = inject(VisitaService);
-  private _visitaRutearService = inject(VisitaRutearService);
+  private _generalApiService = inject(GeneralApiService);
+  private _visitaApiService = inject(VisitaApiService);
   private _franjaService = inject(FranjaService);
   selectedVisita: any = null;
   visitarEditar: any;
@@ -244,8 +245,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _consultarResumen() {
-    return this.visitaService
-      .visitaResumen(this.arrParametrosConsultaResumen)
+    return this._visitaApiService
+      .resumen(this.arrParametrosConsultaResumen)
       .pipe(
         switchMap((response) => {
           this.visitasTotales = response?.resumen?.cantidad;
@@ -274,27 +275,31 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _consultarVisitas(parametros: ParametrosConsulta) {
-    this.visitaService.generalLista(parametros).subscribe((respuesta) => {
-      this.limpiarMarkers();
-      this._limpiarBarraCapacidad();
-      this._limpiarBarraTiempo();
-      this.totalRegistrosVisitas = respuesta.cantidad_registros;
+    this._generalApiService
+      .getLista<Visita[]>(parametros)
+      .subscribe((respuesta) => {
+        this.limpiarMarkers();
+        this._limpiarBarraCapacidad();
+        this._limpiarBarraTiempo();
+        this.totalRegistrosVisitas = respuesta.cantidad_registros;
 
-      respuesta.registros.forEach((visita) => {
-        const position = { lat: visita.latitud, lng: visita.longitud };
-        this.addMarker(position, visita); // Agrega el ID de la visita
+        respuesta.registros.forEach((visita) => {
+          const position = { lat: visita.latitud, lng: visita.longitud };
+          this.addMarker(position, visita); // Agrega el ID de la visita
+        });
+
+        // this._consultarErrores();
+        this._calcularPorcentajeCapacidad();
+        this._calcularPorcentajeTiempo();
+        this.arrVisitas = respuesta.registros;
+        this.changeDetectorRef.detectChanges();
       });
-
-      // this._consultarErrores();
-      this._calcularPorcentajeCapacidad();
-      this._calcularPorcentajeTiempo();
-      this.arrVisitas = respuesta.registros;
-      this.changeDetectorRef.detectChanges();
-    });
   }
 
   consultarFranjas() {
-    this.franjas$ = this._franjaService.consultarFranjas();
+    this.franjas$ = this._franjaService.consultarFranjas().pipe(switchMap((respuesta)=> {
+      return of (respuesta.results)
+    }));
   }
 
   toggleMostrarFranjas() {
@@ -316,7 +321,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
         this._calcularTiempoTotal(response.registros);
         this._calcularPorcentajeCapacidad();
         this._calcularPorcentajeTiempo();
-        this.arrFlota = response.registros;
+        this.arrFlota.set(response.registros);
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -374,14 +379,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _calcularCapacidadTotal(flotas: ListaFlota[]) {
-    this.capacidadTotal = flotas.reduce(
+    const flotasDisponibles = flotas.filter(
+      (f) => f.vehiculo_estado_asignado === false
+    );
+    this.capacidadTotal = flotasDisponibles.reduce(
       (acc, curVal) => acc + curVal.vehiculo_capacidad,
       0
     );
   }
 
   private _calcularTiempoTotal(flotas: ListaFlota[]) {
-    const tiempoTotal = flotas.reduce(
+    const flotasDisponibles = flotas.filter(
+      (f) => f.vehiculo_estado_asignado === false
+    );
+    const tiempoTotal = flotasDisponibles.reduce(
       (acc, curVal) => acc + curVal.vehiculo_tiempo,
       0
     );
@@ -395,7 +406,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   ordenar() {
     this.mostarVistaCargando$.next(true);
-    this.visitaService
+    this._visitaApiService
       .ordenar(this.arrParametrosConsultaVisita)
       .pipe(
         finalize(() => {
@@ -409,7 +420,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   rutear() {
-    this.visitaService
+    this._visitaApiService
       .rutear(this.arrParametrosConsultaResumen)
       .subscribe(() => {
         this.consultarLista();
@@ -534,9 +545,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _eliminarVisitasConErrores() {
     if (this.arrVisitas.length > 0) {
-      this.visitaService.eliminarVisitasConErrores().subscribe((response) => {
+      this._visitaApiService.eliminarTodosConErrores().subscribe((response) => {
         this.alerta.mensajaExitoso(
-          'Se han eliminado los regsitros correctamente.'
+          'Se han eliminado los registros correctamente.'
         );
         this.consultarVisitas();
       });
@@ -547,12 +558,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _eliminarTodosLosRegistros() {
     if (this.arrVisitas.length > 0) {
-      this.visitaService
-        .eliminarTodosLasGuias()
+      this._visitaApiService
+        .eliminarTodos()
         .pipe(finalize(() => {}))
         .subscribe(() => {
           this.alerta.mensajaExitoso(
-            'Se han eliminado los regsitros correctamente.'
+            'Se han eliminado los registros correctamente.'
           );
           this.consultarVisitas();
         });
@@ -581,7 +592,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   habilitadoParaRutear() {
     return (
       this.errorCapacidad ||
-      this.arrFlota?.length <= 0 ||
+      this.arrFlota()?.length <= 0 ||
       this.cantidadErrores > 0 ||
       this.visitasTotales <= 0 ||
       this.errorTiempo
@@ -642,7 +653,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   ubicarFranja() {
     this.mostarVistaCargando$.next(true);
-    this._visitaRutearService
+    this._visitaApiService
       .ubicarFranja(this.arrParametrosConsultaVisita)
       .pipe(
         finalize(() => {
@@ -670,7 +681,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   eliminarVisita(id: number) {
-    this.visitaService.eliminarVisita(id).subscribe({
+    this._visitaApiService.eliminarPorId(id).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso('Visita eliminada exitosamente');
         this.consultarVisitas();
@@ -684,11 +695,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   resumen() {
-    this.visitaService.resumenPendiente().subscribe({
+    this._visitaApiService.resumenPendiente().subscribe({
       next: (response) => {
         this.visitaResumen = response.resumen;
-        console.log(this.visitaResumen);
-
         this.changeDetectorRef.detectChanges();
       },
     });
@@ -718,5 +727,31 @@ export default class VisitaRutearComponent extends General implements OnInit {
   limpiarFiltros(event: Event) {
     event.stopPropagation();
     this._filtroBaseService.myEvent.next();
+  }
+
+  get vehiculosDisponibles(): number {
+    return (
+      this.arrFlota()?.filter((v) => !v.vehiculo_estado_asignado).length || 0
+    );
+  }
+
+  get totalVehiculos(): number {
+    return this.arrFlota()?.length || 0;
+  }
+
+  actualizarPrioridad(event: Event, flota: ListaFlota) {
+    const prioridad = (event.target as HTMLInputElement).value;
+    if (flota.prioridad === Number(prioridad) || !prioridad) {
+      return;
+    }
+
+    this._flotaService
+      .actualizarPrioridad(flota.id, Number(prioridad))
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Prioridad actualizada exitosamente');
+          this.consultarFlotas(this.arrParametrosConsulta);
+        },
+      });
   }
 }

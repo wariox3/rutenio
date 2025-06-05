@@ -42,6 +42,12 @@ export class HttpService extends Subdomino {
     return this.http.delete(url, data);
   }
 
+
+  public patch<T>(endpoint: string, data: any): Observable<T> {
+    const url = `${this.urlSubDominio}/${endpoint}`;
+    return this.http.patch<T>(url, data);
+  }
+
   public descargarArchivo(endpoint: string, data: any): void {
     const url = `${this.urlSubDominio}/${endpoint}`;
     this.alertaService.mensajaEspera('Cargando');

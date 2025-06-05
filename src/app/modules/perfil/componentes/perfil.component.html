@@ -1,0 +1,91 @@
+<button (click)="goBack()" class="btn btn-secondary mb-4 inline-flex items-center">
+  <i class="ki-duotone ki-left"></i>
+  Volver
+</button>
+
+<div class="card">
+  <div class="card-header"> 
+    <h1 class="card-title">Perfil</h1>
+  </div>
+  <div class="card-body p-5">
+    <div class="flex flex-wrap sm:flex-nowrap">
+      <div class="mr-12 mb-4">
+        <div class="relative w-[100px] lg:w-[160px] h-[100px] lg:h-[160px]">
+          <app-cargar-imagen
+            [recibirImagen]="getUserImageUrl() | async"
+            (dataFormulario)="recuperarBase64($event)"
+            (eliminarLogo)="eliminarImagen($event)"
+          ></app-cargar-imagen>
+        </div>
+      </div>
+      <div class="flex-grow">
+        <div class="flex justify-between items-start flex-wrap mb-1">
+          <div class="flex flex-col">
+            <div class="flex items-center mb-2">
+              <a
+                class="text-gray-800 hover:text-primary text-xl font-bold mr-1 cursor-pointer"
+              >
+                {{(usuario$ | async).nombre_corto }}
+              </a>
+              <a class="cursor-pointer">
+                <i class="ki-duotone ki-verify text-primary text-xl">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+              </a>
+            </div>
+            <div class="flex flex-wrap font-bold text-base pr-2">
+              <a
+                class="flex items-center text-gray-400 hover:text-primary mr-5 mb-2 cursor-pointer text-md"
+              >
+                <i class="ki-duotone ki-user text-md mr-2">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                {{(usuario$ | async).nombre }} {{(usuario$ | async).apellido }}
+              </a>
+            </div>
+
+            <div class="flex flex-wrap font-bold text-base mb-4 pr-2">
+              @if ((usuario$ | async).telefono) {
+              <a
+                class="flex items-center text-gray-400 hover:text-primary mr-5 mb-2 cursor-pointer text-md"
+              >
+                <i class="ki-duotone ki-phone text-md mr-2">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                {{(usuario$ | async).telefono }}
+              </a>
+              } @if ((usuario$ | async).correo) {
+              <a
+                class="flex items-center text-gray-400 hover:text-primary mb-2 cursor-pointer text-md"
+              >
+                <i class="ki-duotone ki-sms text-md mr-2">
+                  <span class="path1"></span>
+                  <span class="path2"></span>
+                </i>
+                {{(usuario$ | async).correo }}
+              </a>
+              }
+            </div>
+          </div>
+
+          <div class="flex">
+            <button class="btn btn-primary" (click)="openModal('editar-perfil')">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-modal-standard
+  title="Información personal"
+  size="2xl"
+  modalId="editar-perfil"
+>
+@if (getModalInstaceState('editar-perfil') | async) {
+ <app-informacion-usuario></app-informacion-usuario>
+}
+</app-modal-standard>

@@ -1,10 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
 import { General } from '../../../../common/clases/general';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { UbicacionService } from '../../../ubicacion/servicios/ubicacion.service';
-import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
-import { CommonModule } from '@angular/common';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
+import { GeneralApiService } from '../../../../core';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
 
 @Component({
   selector: 'app-despacho-tab-ubicacion',
@@ -18,7 +18,7 @@ export class DespachoTabUbicacionComponent extends General implements OnInit {
 
     @Input() despachoId: number;
   
-    private ubicacionService = inject(UbicacionService)
+    private _generalApiService = inject(GeneralApiService)
   
     ubicaciones = signal<Ubicacion[]>([])
   
@@ -46,7 +46,7 @@ export class DespachoTabUbicacionComponent extends General implements OnInit {
       
       const parametros = this.getParametrosConsulta();
       
-      this.ubicacionService.generalLista(parametros).subscribe({
+      this._generalApiService.getLista<Ubicacion[]>(parametros).subscribe({
         next: (respuesta) => {
           this.ubicaciones.set(respuesta.registros);
         },
