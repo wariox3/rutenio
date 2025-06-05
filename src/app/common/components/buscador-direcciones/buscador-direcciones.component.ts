@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -7,91 +8,107 @@ import {
   inject,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { General } from '../../clases/general';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { ConfiguracionApiService } from '../../../modules/configuracion/servicios/configuracion-api.service';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-buscador-direcciones',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule],
   templateUrl: './buscador-direcciones.component.html',
   styleUrl: './buscador-direcciones.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class BuscadorDireccionesComponent
   extends General
-  implements OnInit
+  implements OnInit, AfterViewInit
 {
-  @ViewChild('addressInput') addressInput!: ElementRef;
+  @ViewChild('ngSelect') ngSelect!: NgSelectComponent;
   @Output() addressSelected = new EventEmitter<any>();
 
   private _configuracionService = inject(ConfiguracionApiService);
 
-  addressControl = new FormControl();
-  loading = false;
-  predictions: any[] = [];
+  searchInput$ = new Subject<string>();
+  loading = signal(false);
+  predictions = signal<any[]>([]);
 
   ngOnInit(): void {
     this.setupAddressSearch();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.ngSelect.focus();
+    });
+  }
+
+
   private setupAddressSearch(): void {
-    this.addressControl.valueChanges
-      .pipe(
-        debounceTime(300),
-        distinctUntilChanged()
-      )
-      .subscribe((value) => {
+    this.searchInput$.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe((value) => {
         if (value && value.length > 2) {
           this.searchAddress(value);
         } else {
-          this.predictions = [];
+          this.predictions.set([]);
         }
       });
   }
 
   searchAddress(input: string): void {
-    this.loading = true;
-    this.predictions = [];
+    this.loading.set(true);  
+    this.predictions.set([]);
 
     const params = {
       input: input,
       country: 'CO',
     };
 
-    this._configuracionService.autocompletar(params).subscribe({
+    this._configuracionService.autocompletar(params)
+    .pipe(
+      finalize(() => {
+        this.loading.set(false);
+      })
+    )
+    .subscribe({
       next: (response: any) => {
-        this.loading = false;
         if (response.predictions) {
-          this.predictions = response.predictions;
+          this.predictions.set(response.predictions);
         }
       },
       error: (error) => {
-        this.loading = false;
         console.error('Error al buscar direcciones:', error);
       },
     });
   }
 
   selectAddress(prediction: any): void {
-    this.addressControl.setValue(prediction.description);
-    this.predictions = [];
+    this.searchInput$.next(prediction.description);
+    this.predictions.set([]);
     this.getPlaceDetails(prediction.place_id);
   }
 
   getPlaceDetails(placeId: string): void {
     if (!placeId) return;
-    this.loading = true;
-    this._configuracionService.detalle({ place_id: placeId }).subscribe({
+    this.loading.set(true);
+    this._configuracionService.detalle({ place_id: placeId })
+    .pipe(
+      finalize(() => {
+        this.loading.set(false);
+      })
+    )
+    .subscribe({
       next: (response: any) => {
-        this.loading = false;
         if (response.data) {
           this.addressSelected.emit({
-            address: response.data.address || this.addressControl.value,
+            address: response.data.address,
             latitude: response.data.latitude,
             longitude: response.data.longitude,
             placeId: placeId,
@@ -99,7 +116,6 @@ export default class BuscadorDireccionesComponent
         }
       },
       error: (error) => {
-        this.loading = false;
         console.error('Error al obtener detalles:', error);
       },
     });
@@ -112,12 +128,12 @@ export default class BuscadorDireccionesComponent
   }
 
   clearSearch(): void {
-    this.addressControl.setValue('');
-    this.predictions = [];
-    this.addressInput.nativeElement.focus();
+    this.searchInput$.next('');
+    this.predictions.set([]);
+    this.ngSelect.focus();
   }
 
   focusInput(): void {
-    this.addressInput.nativeElement.focus();
+    this.ngSelect.focus();
   }
 }

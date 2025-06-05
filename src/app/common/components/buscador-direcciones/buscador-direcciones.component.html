@@ -1,4 +1,4 @@
-<div class="search-container">
+<!-- <div class="search-container">
   <div class="search-box">
     Dirección origen:
     <input
@@ -29,4 +29,18 @@
   <div *ngIf="loading" class="loading-indicator">
     Buscando direcciones...
   </div>
-</div>
+</div> -->
+<ng-select
+  #ngSelect
+  [items]="predictions()"
+  [typeahead]="searchInput$"
+  [loading]="loading()"
+  bindLabel="description"
+  notFoundText="No se encontraron resultados"
+  placeholder="Buscar dirección..."
+  [typeToSearchText]="'Escribe para buscar...'"
+  loadingText="Buscando..."
+  (change)="selectAddress($event)"
+  class="select2Custom"
+>
+</ng-select>
