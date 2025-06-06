@@ -5,7 +5,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
 import BuscadorDireccionesComponent from "../../../../common/components/buscador-direcciones/buscador-direcciones.component";
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 @Component({
   selector: 'app-configuracion',
   standalone: true,
@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 })
 export default class ConfiguracionComponent extends General {
   private _generalApiService = inject(GeneralApiService);
+  private _location = inject(Location);
 
   formularioConfiguracion = new FormGroup({
     id: new FormControl(0),
@@ -25,6 +26,10 @@ export default class ConfiguracionComponent extends General {
     rut_latitud : new FormControl(''),
     rut_longitud : new FormControl('')
   });
+
+    goBack(): void {
+    this._location.back();
+  }
 
   ngOnInit(): void {
     this._generalApiService.getConfiguracion(1).subscribe({
