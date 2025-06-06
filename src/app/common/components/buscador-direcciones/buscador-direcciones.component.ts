@@ -18,11 +18,12 @@ import { General } from '../../clases/general';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { ConfiguracionApiService } from '../../../modules/configuracion/servicios/configuracion-api.service';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+import { LabelComponent } from "../ui/form/label/label.component";
 
 @Component({
   selector: 'app-buscador-direcciones',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, FormsModule], // Added FormsModule
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, FormsModule, LabelComponent], // Added FormsModule
   templateUrl: './buscador-direcciones.component.html',
   styleUrl: './buscador-direcciones.component.css',
 })
