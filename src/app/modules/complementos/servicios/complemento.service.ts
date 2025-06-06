@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
+import { RespuestaApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ export class ComplementoService {
   constructor(private http: HttpService) {}
 
   listarComplementos() {
-    return this.http.get<any>(`general/complemento/`);
+    return this.http.getDetalle<RespuestaApi<any>>(`general/complemento/`);
   }
 
   complementosInstalados() {
