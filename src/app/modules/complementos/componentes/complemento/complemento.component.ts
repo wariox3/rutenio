@@ -74,7 +74,7 @@ export default class ComplementoComponent extends General implements OnInit {
         })
       )
       .subscribe((respuesta) => {
-        this.arrComplementos = respuesta;
+        this.arrComplementos = respuesta.results;
         this.crearFormulario();
         this.changeDetectorRef.detectChanges();
       });
