@@ -115,19 +115,8 @@
                   </div>
                 </div>
 
-                <!-- El resto de tu texto informativo (opcional si aún lo quieres) -->
+                <!-- Texto informativo simplificado -->
                 <div class="text-xs text-gray-500 text-right">
-                  <ng-container
-                    *ngIf="despacho.estado === 'retrazado'; else normalTemplate"
-                  >
-                    Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
-                  </ng-container>
-                  <ng-template #normalTemplate>
-                    <ng-container *ngIf="despacho.visitas_entregadas_esperadas">
-                      Esperadas: {{ despacho.visitas_entregadas_esperadas }} |
-                    </ng-container>
-                  </ng-template>
-
                   Entregadas: {{ despacho.visitas_entregadas }}/{{
                     despacho.visitas
                   }}
