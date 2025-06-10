@@ -63,7 +63,7 @@ export default class DisenoRutaListaComponent
   implements OnInit
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
-  @ViewChild(GoogleMap) map!: GoogleMap
+  @ViewChild(GoogleMap) map!: GoogleMap;
 
   private _despachoApiService = inject(DespachoApiService);
   private _visitaApiService = inject(VisitaApiService);
@@ -203,7 +203,7 @@ export default class DisenoRutaListaComponent
     this.marcarPosicionesVisitasOrdenadas = [];
     this.directionsResults = undefined;
 
-    this.customMarkers = []; 
+    this.customMarkers = [];
 
     this.parametrosConsultaVisitas.filtros = [
       { propiedad: 'despacho_id', valor1: despacho.id },
@@ -222,7 +222,7 @@ export default class DisenoRutaListaComponent
           this.actualizandoLista.set(false);
         })
       )
-      .subscribe((respuesta) => {        
+      .subscribe((respuesta) => {
         this.arrVisitasPorDespacho = respuesta.registros;
         this.totalRegistrosVisitas = respuesta.cantidad_registros;
         this.initializeConnectedLists();
@@ -243,13 +243,13 @@ export default class DisenoRutaListaComponent
     });
   }
 
-openInfoWindow(marker: MapMarker, index: number) {
-  if (index >= 0 && index < this.arrVisitasPorDespacho.length) {
-    this.visitaSeleccionada = this.arrVisitasPorDespacho[index];
-    this._scrollToRow(this.visitaSeleccionada.id);
-    this.infoWindow.open(marker);
+  openInfoWindow(marker: MapMarker, index: number) {
+    if (index >= 0 && index < this.arrVisitasPorDespacho.length) {
+      this.visitaSeleccionada = this.arrVisitasPorDespacho[index];
+      this._scrollToRow(this.visitaSeleccionada.id);
+      this.infoWindow.open(marker);
+    }
   }
-}
 
   evento(visita: any) {
     this.visitaSeleccionada = visita;
@@ -262,24 +262,36 @@ openInfoWindow(marker: MapMarker, index: number) {
       this.customMarkers = [];
       this.marcarPosicionesVisitasOrdenadas = [this.center];
 
-      this._despachoApiService.obtenerRuta(this.despachoSeleccionado.id).subscribe({
-        next: (response) => {
-          const path = google.maps.geometry.encoding.decodePath(response.respuesta.ruta_puntos); 
-          
-          this.rutaOptimizada = {
-            path: path,
-            options: {
-              strokeColor: '#00b2ff',
-              strokeOpacity: 1.0,
-              strokeWeight: 4,
-            },
-          };
+      this._despachoApiService
+        .obtenerRuta(this.despachoSeleccionado.id)
+        .subscribe({
+          next: (response) => {
+            const path = response.respuesta.puntos_detallados.map((p) => ({
+              lat: p[0],
+              lng: p[1],
+            }));
 
-          this._generarMarcadoresPersonalizados(response.respuesta.data);
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (e) => console.error(e),
-      });
+            this.rutaOptimizada = {
+              path: path,
+              options: {
+                strokeColor: '#00b2ff',
+                strokeOpacity: 1.0,
+                strokeWeight: 4,
+              },
+              distancia: response.respuesta.distancia_total,
+              duracion: response.respuestaduracion_total,
+            };
+
+            // Ajustar vista del mapa
+            const bounds = new google.maps.LatLngBounds();
+            path.forEach((p) => bounds.extend(p));
+            this.map.fitBounds(bounds);
+
+            this._generarMarcadoresPersonalizados(response.respuesta.data);
+            this.changeDetectorRef.detectChanges();
+          },
+          error: (e) => console.error(e),
+        });
 
       this.mostrarMapaFlag = true;
       this.changeDetectorRef.detectChanges();
