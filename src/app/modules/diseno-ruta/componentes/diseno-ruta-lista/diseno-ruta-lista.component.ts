@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
+  GoogleMap,
   GoogleMapsModule,
   MapDirectionsService,
   MapInfoWindow,
@@ -42,6 +43,7 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
   imports: [
     CommonModule,
     GoogleMapsModule,
+    GoogleMap,
     PaginacionDefaultComponent,
     ModalDefaultComponent,
     VisitaRutearDetalleComponent,
@@ -61,6 +63,7 @@ export default class DisenoRutaListaComponent
   implements OnInit
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+  @ViewChild(GoogleMap) map!: GoogleMap
 
   private _despachoApiService = inject(DespachoApiService);
   private _visitaApiService = inject(VisitaApiService);
@@ -75,10 +78,11 @@ export default class DisenoRutaListaComponent
   public toggleModalTrasbordar$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
   private ultimoDespachoSeleccionadoId: number | null = null;
+  public rutaOptimizada: any;
 
   customMarkers: {
-    position: google.maps.LatLngLiteral;
-    label: google.maps.MarkerLabel;
+    position: any;
+    label: any;
   }[] = [];
   directionsRendererOptions = { suppressMarkers: true };
   mostrarMapaFlag: boolean = false;
@@ -191,24 +195,22 @@ export default class DisenoRutaListaComponent
   }
 
   seleccionarDespacho(despacho: any) {
-    if (this.ultimoDespachoSeleccionadoId === despacho.id) {
-      return;
-    }
+    if (this.ultimoDespachoSeleccionadoId === despacho.id) return;
+
     this.ultimoDespachoSeleccionadoId = despacho.id;
     this.despachoSeleccionado = despacho;
     this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
     this.directionsResults = undefined;
-    this.changeDetectorRef.detectChanges();
+
+    this.customMarkers = []; 
 
     this.parametrosConsultaVisitas.filtros = [
-      {
-        propiedad: 'despacho_id',
-        valor1: despacho.id,
-      },
+      { propiedad: 'despacho_id', valor1: despacho.id },
     ];
 
     this._consultarVisitas(this.parametrosConsultaVisitas);
+    this.changeDetectorRef.detectChanges();
   }
 
   private _consultarVisitas(parametrosConsulta: ParametrosConsulta) {
@@ -220,7 +222,7 @@ export default class DisenoRutaListaComponent
           this.actualizandoLista.set(false);
         })
       )
-      .subscribe((respuesta) => {
+      .subscribe((respuesta) => {        
         this.arrVisitasPorDespacho = respuesta.registros;
         this.totalRegistrosVisitas = respuesta.cantidad_registros;
         this.initializeConnectedLists();
@@ -241,11 +243,13 @@ export default class DisenoRutaListaComponent
     });
   }
 
-  openInfoWindow(marker: MapMarker, index: number) {
+openInfoWindow(marker: MapMarker, index: number) {
+  if (index >= 0 && index < this.arrVisitasPorDespacho.length) {
     this.visitaSeleccionada = this.arrVisitasPorDespacho[index];
     this._scrollToRow(this.visitaSeleccionada.id);
     this.infoWindow.open(marker);
   }
+}
 
   evento(visita: any) {
     this.visitaSeleccionada = visita;
@@ -258,46 +262,20 @@ export default class DisenoRutaListaComponent
       this.customMarkers = [];
       this.marcarPosicionesVisitasOrdenadas = [this.center];
 
-      // Tomar solo las últimas 25 visitas
-      const visitasLimitadas = this.arrVisitasPorDespacho.slice(-25);
-
-      visitasLimitadas.forEach((punto) => {
-        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
-      });
-
-      if (this.marcarPosicionesVisitasOrdenadas.length < 2) {
-        console.error(
-          'Se necesitan al menos dos puntos para calcular la ruta.'
-        );
-        this.changeDetectorRef.detectChanges();
-        return;
-      }
-
-      const origin = this.marcarPosicionesVisitasOrdenadas[0];
-      const destination =
-        this.marcarPosicionesVisitasOrdenadas[
-          this.marcarPosicionesVisitasOrdenadas.length - 1
-        ];
-
-      const waypoints = this.marcarPosicionesVisitasOrdenadas
-        .slice(1, -1)
-        .map((position) => ({
-          location: new google.maps.LatLng(position.lat, position.lng),
-          stopover: true,
-        }));
-
-      const request: google.maps.DirectionsRequest = {
-        origin: new google.maps.LatLng(origin.lat, origin.lng),
-        destination: new google.maps.LatLng(destination.lat, destination.lng),
-        waypoints: waypoints,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: false,
-      };
-
-      this.directionsService.route(request).subscribe({
+      this._despachoApiService.obtenerRuta(this.despachoSeleccionado.id).subscribe({
         next: (response) => {
-          this.directionsResults = response.result;
-          this._generarMarcadoresPersonalizados(response.result);
+          const path = google.maps.geometry.encoding.decodePath(response.respuesta.ruta_puntos); 
+          
+          this.rutaOptimizada = {
+            path: path,
+            options: {
+              strokeColor: '#00b2ff',
+              strokeOpacity: 1.0,
+              strokeWeight: 4,
+            },
+          };
+
+          this._generarMarcadoresPersonalizados(response.respuesta.data);
           this.changeDetectorRef.detectChanges();
         },
         error: (e) => console.error(e),
@@ -322,20 +300,19 @@ export default class DisenoRutaListaComponent
     // Agregar marcador para el punto de inicio
     this.customMarkers.push({
       position: {
-        lat: legs[0].start_location.lat(),
-        lng: legs[0].start_location.lng(),
+        lat: legs[0].start_location.lat,
+        lng: legs[0].start_location.lng,
       },
 
       label: {} as google.maps.MarkerLabel,
     });
 
-    // Agregar marcadores para los puntos intermedios (waypoints)
     let counter = 1;
     legs.forEach((leg) => {
       this.customMarkers.push({
         position: {
-          lat: leg.end_location.lat(),
-          lng: leg.end_location.lng(),
+          lat: leg.end_location.lat,
+          lng: leg.end_location.lng,
         },
         label: {
           text: counter.toString(),

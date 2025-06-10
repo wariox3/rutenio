@@ -12,6 +12,12 @@ export class DespachoApiService {
   private _generalService = inject(GeneralService);
   private _generalApiService = inject(GeneralApiService);
 
+  obtenerRuta(id) {
+    return this._httpService.post<any>(`ruteo/despacho/ruta/`, {
+      id: id
+    });
+  }
+
   lista(parametros: any) {
     return this._generalApiService.getLista<Despacho[]>(parametros);
   }

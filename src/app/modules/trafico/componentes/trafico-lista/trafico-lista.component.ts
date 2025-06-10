@@ -77,6 +77,7 @@ export default class TraficoListaComponent
   public novedades = signal<string[]>([]);
   public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
   public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalRuta$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisita$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
   public toggleModalLiberar$ = new BehaviorSubject(false);
@@ -84,7 +85,6 @@ export default class TraficoListaComponent
   public actualizandoLista = signal<boolean>(false);
 
   customMarkers: any[] = [];
-  directionsRendererOptions = { suppressMarkers: true };
   mostrarMapaFlag = false;
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
@@ -98,7 +98,6 @@ export default class TraficoListaComponent
     strokeOpacity: 1.0,
     strokeWeight: 3,
   };
-  directionsResults: google.maps.DirectionsResult | undefined;
 
   arrParametrosConsulta: ParametrosConsulta = {
     filtros: [
@@ -149,7 +148,6 @@ export default class TraficoListaComponent
   private limpiarInformacionAdicional() {
     this.arrVisitasPorDespacho = [];
     this.customMarkers = [];
-    this.directionsResults = undefined;
     this.directionsResultsVisitas = undefined;
     this.directionsResultsUbicaciones = undefined;
     this.changeDetectorRef.detectChanges();
@@ -263,7 +261,7 @@ export default class TraficoListaComponent
       if (this.arrVisitasPorDespacho.length > 0) {
         this.mostrarMapa(this.arrVisitasPorDespacho, true, false);
       }
-      this.toggleModal$.next(true);
+      this.toggleModalRuta$.next(true);
       this.changeDetectorRef.detectChanges();
     });
   }
@@ -294,6 +292,11 @@ export default class TraficoListaComponent
 
   cerrarModal() {
     this.toggleModal$.next(false);
+    this.limpiarInformacionAdicional();
+  }
+
+  cerrarModalRuta() {
+    this.toggleModalRuta$.next(false);
     this.limpiarInformacionAdicional();
   }
 
@@ -397,48 +400,50 @@ export default class TraficoListaComponent
     });
 
     if (this.marcarPosicionesVisitasOrdenadas.length >= 2 && calcular_ruta) {
-      this.calcularRuta();
+      // this.calcularRuta();
     }
 
     this.mostrarMapaFlag = true;
     this.changeDetectorRef.detectChanges();
   }
 
-  calcularRuta() {
-    const origin = this.marcarPosicionesVisitasOrdenadas[0];
-    const destination =
-      this.marcarPosicionesVisitasOrdenadas[
-        this.marcarPosicionesVisitasOrdenadas.length - 1
-      ];
-    const waypoints = this.marcarPosicionesVisitasOrdenadas
-      .slice(1, -1)
-      .map((position) => ({
-        location: new google.maps.LatLng(position.lat, position.lng),
-        stopover: true,
-      }));
 
-    const request: google.maps.DirectionsRequest = {
-      origin: new google.maps.LatLng(origin.lat, origin.lng),
-      destination: new google.maps.LatLng(destination.lat, destination.lng),
-      waypoints,
-      travelMode: google.maps.TravelMode.DRIVING,
-      optimizeWaypoints: false,
-    };
+  // En trafico no se muestra la ruta solo todos los puntos de entrega
+  // calcularRuta() {
+  //   const origin = this.marcarPosicionesVisitasOrdenadas[0];
+  //   const destination =
+  //     this.marcarPosicionesVisitasOrdenadas[
+  //       this.marcarPosicionesVisitasOrdenadas.length - 1
+  //     ];
+  //   const waypoints = this.marcarPosicionesVisitasOrdenadas
+  //     .slice(1, -1)
+  //     .map((position) => ({
+  //       location: new google.maps.LatLng(position.lat, position.lng),
+  //       stopover: true,
+  //     }));
 
-    this.directionsService
-      .route(request)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.directionsResultsVisitas = response.result;
-          this.changeDetectorRef.detectChanges();
-        },
-        error: (e) => {
-          console.error('Error al calcular la ruta:', e);
-          this.changeDetectorRef.detectChanges();
-        },
-      });
-  }
+  //   const request: google.maps.DirectionsRequest = {
+  //     origin: new google.maps.LatLng(origin.lat, origin.lng),
+  //     destination: new google.maps.LatLng(destination.lat, destination.lng),
+  //     waypoints,
+  //     travelMode: google.maps.TravelMode.DRIVING,
+  //     optimizeWaypoints: false,
+  //   };
+
+  //   this.directionsService
+  //     .route(request)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response) => {
+  //         this.directionsResultsVisitas = response.result;
+  //         this.changeDetectorRef.detectChanges();
+  //       },
+  //       error: (e) => {
+  //         console.error('Error al calcular la ruta:', e);
+  //         this.changeDetectorRef.detectChanges();
+  //       },
+  //     });
+  // }
 
   calcularRutaUbicaciones() {
     this.directionsResultsUbicacionesArray = [];
