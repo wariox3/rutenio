@@ -341,11 +341,11 @@
               </div>
             </section>
           </map-info-window>
-          <map-directions-renderer
-            *ngIf="directionsResults"
-            [directions]="directionsResults"
-            [options]="directionsRendererOptions"
-          ></map-directions-renderer>
+          <map-polyline
+            *ngIf="rutaOptimizada"
+            [path]="rutaOptimizada.path"
+            [options]="rutaOptimizada.options"
+          ></map-polyline>
         </google-map>
       </div>
     </div>

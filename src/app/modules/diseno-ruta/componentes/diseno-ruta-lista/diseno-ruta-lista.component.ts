@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
+  GoogleMap,
   GoogleMapsModule,
   MapDirectionsService,
   MapInfoWindow,
@@ -42,6 +43,7 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
   imports: [
     CommonModule,
     GoogleMapsModule,
+    GoogleMap,
     PaginacionDefaultComponent,
     ModalDefaultComponent,
     VisitaRutearDetalleComponent,
@@ -61,6 +63,7 @@ export default class DisenoRutaListaComponent
   implements OnInit
 {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
+  @ViewChild(GoogleMap) map!: GoogleMap
 
   private _despachoApiService = inject(DespachoApiService);
   private _visitaApiService = inject(VisitaApiService);
@@ -75,10 +78,11 @@ export default class DisenoRutaListaComponent
   public toggleModalTrasbordar$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
   private ultimoDespachoSeleccionadoId: number | null = null;
+  public rutaOptimizada: any;
 
   customMarkers: {
-    position: google.maps.LatLngLiteral;
-    label: google.maps.MarkerLabel;
+    position: any;
+    label: any;
   }[] = [];
   directionsRendererOptions = { suppressMarkers: true };
   mostrarMapaFlag: boolean = false;
@@ -286,18 +290,22 @@ export default class DisenoRutaListaComponent
           stopover: true,
         }));
 
-      const request: google.maps.DirectionsRequest = {
-        origin: new google.maps.LatLng(origin.lat, origin.lng),
-        destination: new google.maps.LatLng(destination.lat, destination.lng),
-        waypoints: waypoints,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: false,
-      };
-
-      this.directionsService.route(request).subscribe({
+      this._despachoApiService.obtenerRuta(this.despachoSeleccionado.id).subscribe({
         next: (response) => {
-          this.directionsResults = response.result;
-          this._generarMarcadoresPersonalizados(response.result);
+          console.log(response);
+          
+          const path = google.maps.geometry.encoding.decodePath(response.respuesta.ruta_puntos); 
+          
+          this.rutaOptimizada = {
+            path: path,
+            options: {
+              strokeColor: '#00b2ff',
+              strokeOpacity: 1.0,
+              strokeWeight: 4,
+            },
+          };
+
+          this._generarMarcadoresPersonalizados(response.respuesta.data);
           this.changeDetectorRef.detectChanges();
         },
         error: (e) => console.error(e),
@@ -322,20 +330,19 @@ export default class DisenoRutaListaComponent
     // Agregar marcador para el punto de inicio
     this.customMarkers.push({
       position: {
-        lat: legs[0].start_location.lat(),
-        lng: legs[0].start_location.lng(),
+        lat: legs[0].start_location.lat,
+        lng: legs[0].start_location.lng,
       },
 
       label: {} as google.maps.MarkerLabel,
     });
 
-    // Agregar marcadores para los puntos intermedios (waypoints)
     let counter = 1;
     legs.forEach((leg) => {
       this.customMarkers.push({
         position: {
-          lat: leg.end_location.lat(),
-          lng: leg.end_location.lng(),
+          lat: leg.end_location.lat,
+          lng: leg.end_location.lng,
         },
         label: {
           text: counter.toString(),
