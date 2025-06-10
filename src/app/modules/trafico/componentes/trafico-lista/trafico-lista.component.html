@@ -260,11 +260,11 @@
   size="large"
   [id]="'trafico-ruta-modal'"
   titulo="Ruta"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalRuta()"
   (onOpen)="onModalOpened()"
   #traficoRuta
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalRuta$ | async" modal-body>
     <div class="h-full" style="height: 600px; position: relative">
       <div class="flex justify-end mb-2">
         <button
@@ -276,9 +276,6 @@
           }}
         </button>
       </div>
-      <!-- [label]="{
-        text: markerPosition.infoContent.datosVisita.destinatario
-      }" -->
       <google-map
         height="90%"
         width="100%"
@@ -363,13 +360,6 @@
             fontWeight: 'bold',
           }"
         ></map-marker>
-
-        <!-- Primera ruta (visitas) -->
-        <map-directions-renderer
-          *ngIf="directionsResultsVisitas"
-          [directions]="directionsResultsVisitas"
-          [options]="directionsRendererOptions"
-        ></map-directions-renderer>
       </google-map>
     </div>
   </section>
