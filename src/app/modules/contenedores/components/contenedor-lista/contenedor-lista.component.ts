@@ -18,6 +18,8 @@ import { ContenedorEliminarComponent } from '../contenedor-eliminar/contenedor-e
 import { ContenedorInvitarComponent } from "../contenedor-invitar/contenedor-invitar.component";
 import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { EmpresaService } from '../../../empresa/servicios/empresa.service';
+import { empresaActionInit, empresaLimpiarAction } from '../../../../redux/actions/empresa/empresa.actions';
 
 @Component({
   selector: 'app-contenedor-lista',
@@ -36,13 +38,10 @@ import { ModalService } from '../../../../common/components/ui/modals/service/mo
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ContenedorListaComponent extends General implements OnInit {
-  // @ViewChild("contentTemplate") contentTemplate: TemplateRef<any>;
   private contenedorService = inject(ContenedorService);
   private _modalService = inject(ModalService);
-  // private menuService = inject(NbMenuService);
-  // private windowService = inject(NbWindowService);
+  private _empresaService = inject(EmpresaService);
   private destroy$ = new Subject<void>();
-  // windowRef: NbWindowRef | null;
   arrConectando: boolean[] = [];
   arrContenedores: any[] = [];
   contenedor: Contenedor;
@@ -52,6 +51,7 @@ export default class ContenedorListaComponent extends General implements OnInit 
 
   ngOnInit() {
     this.consultarLista();
+    this.limpiarEmpresa();
     // this.menu();
     // this.limpiarContenedores();
   }
@@ -87,35 +87,41 @@ export default class ContenedorListaComponent extends General implements OnInit 
       .subscribe();
   }
 
-  seleccionarEmpresa(contenedor_id: string, indexContenedor: number) {
+seleccionarEmpresa(contenedor_id: string, indexContenedor: number) {
     this.arrConectando[indexContenedor] = true;
     this.contenedorService
       .detalle(contenedor_id)
       .pipe(
+        switchMap((respuesta: ContenedorDetalle) => {
+          const contenedor: Contenedor = {
+            nombre: respuesta.nombre,
+            imagen: respuesta.imagen,
+            contenedor_id: respuesta.id,
+            subdominio: respuesta.subdominio,
+            id: respuesta.id,
+            usuario_id: respuesta.usuario_id,
+            seleccion: true,
+            rol: '',
+            plan_id: respuesta.plan_id,
+            plan_nombre: respuesta.plan_nombre,
+            usuarios: respuesta.plan_limite_usuarios,
+            usuarios_base: respuesta.plan_usuarios_base,
+            reddoc: respuesta.reddoc,
+            ruteo: respuesta.ruteo,
+            acceso_restringido: respuesta.acceso_restringido,
+          };
+          this.store.dispatch(ContenedorActionInit({ contenedor }));
+          this._empresaService.detalle().subscribe((empresa : any) => {
+              this.store.dispatch(empresaActionInit({ empresa }));
+          })
+          return of(null);
+        }),
         catchError(() => {
           this.arrConectando[indexContenedor] = false;
           return of(null);
         })
       )
-      .subscribe((respuesta: ContenedorDetalle) => {
-        const contenedor: Contenedor = {
-          nombre: respuesta.nombre,
-          imagen: respuesta.imagen,
-          contenedor_id: respuesta.id,
-          subdominio: respuesta.subdominio,
-          id: respuesta.id,
-          usuario_id: respuesta.usuario_id,
-          seleccion: true,
-          rol: '',
-          plan_id: respuesta.plan_id,
-          plan_nombre: respuesta.plan_nombre,
-          usuarios: respuesta.plan_limite_usuarios,
-          usuarios_base: respuesta.plan_usuarios_base,
-          reddoc: respuesta.reddoc,
-          ruteo: respuesta.ruteo,
-          acceso_restringido: respuesta.acceso_restringido,
-        };
-        this.store.dispatch(ContenedorActionInit({ contenedor }));
+      .subscribe(() => {
         this.arrConectando[indexContenedor] = false;
         this.router.navigateByUrl('/dashboard');
       });
@@ -159,5 +165,10 @@ export default class ContenedorListaComponent extends General implements OnInit 
 
   getModalInstaceState(id: string): Observable<boolean> {
     return this._modalService.isOpen$(id);
+  }
+
+    limpiarEmpresa() {
+    this.store.dispatch(empresaLimpiarAction());
+    this.changeDetectorRef.detectChanges();
   }
 }
