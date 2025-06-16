@@ -59,7 +59,7 @@
             <td>{{ despacho.vehiculo_placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
-            <td>{{ despacho.tiempo }}</td>
+            <td>{{ despacho.tiempo | number:'1.0-0' }} min</td>
             <td>{{ despacho.peso }}</td>
             <td>{{ despacho.volumen }}</td>
             <td>
