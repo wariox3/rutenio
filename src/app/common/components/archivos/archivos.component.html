@@ -2,10 +2,10 @@
   <thead>
     <tr class="bg-gray-100">
       <th class="bg-gray-100" style="width: 50px">Id</th>
-      <th class="bg-gray-100">Fecha</th>
-      <th class="bg-gray-100">Nombre</th>
-      <th class="bg-gray-100">Tamaño</th>
-      <th class="bg-gray-100" style="width: 50px"></th>
+      <th style="width: 100px">Tipo</th>
+      <th class="bg-gray-100" style="width: 200px">Fecha</th>
+      <th class="bg-gray-100" style="width: 200px">Nombre</th>
+      <th class="bg-gray-100" style="width: 100px">Tamaño</th>
       <th class="bg-gray-100" style="width: 50px"></th>
     </tr>
   </thead>
@@ -13,10 +13,17 @@
     @for (archivo of listaArchivos(); track $index) {
       <tr>
         <td class="w-40px">{{ archivo.id }}</td>
-        <td>{{ archivo.fecha }}</td>
-        <td>{{ archivo.nombre }}</td>
-        <td>{{ archivo.tamano }}</td>
         <td>
+          @switch(archivo.archivo_tipo_id) {
+            @case(1) { General }
+            @case(2) { Entrega }
+            @case(3) { Firma }
+          }
+        </td>
+        <td class="w-100px">{{ archivo.fecha | formatFecha : "Y-m-d H:i" }}</td>
+        <td>{{ archivo.nombre }}</td>
+        <td class="w-100px">{{ formatFileSize(archivo.tamano) }}</td>
+        <td class="w-40px">
           <button
             style="padding-top: 0; padding-bottom: 0; font-weight: bold"
             (click)="descargarArchivo(archivo)"
@@ -24,8 +31,6 @@
           >
             <i class="ki-filled ki-cloud-download"></i>
           </button>
-        </td>
-        <td class="text-center">
         </td>
       </tr>
     }

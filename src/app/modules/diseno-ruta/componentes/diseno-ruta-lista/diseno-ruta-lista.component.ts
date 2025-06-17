@@ -377,6 +377,7 @@ export default class DisenoRutaListaComponent
       this.alerta.mensajaExitoso('Despacho aprobado con exito');
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
+      this.router.navigate(['/trafico/lista']);
     });
   }
 
