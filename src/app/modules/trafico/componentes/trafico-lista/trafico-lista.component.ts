@@ -68,7 +68,7 @@ export default class TraficoListaComponent
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
   private directionsService = inject(MapDirectionsService);
-  private _generalApiService = inject(GeneralApiService)
+  private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
   private novedadService = inject(NovedadService);
 
@@ -157,7 +157,7 @@ export default class TraficoListaComponent
     this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => {
+      .subscribe((respuesta) => {        
         this.arrDespachos = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
@@ -323,9 +323,7 @@ export default class TraficoListaComponent
     entregadas: number,
     totales: number
   ): string {
-    if (estado === 'tiempo') {
-      return 'bg-green-500';
-    }
+    if (estado === 'tiempo') return 'bg-green-500';
     return estado === 'retrazado' || entregadas === 0
       ? 'bg-red-500'
       : 'bg-green-500';
@@ -341,7 +339,9 @@ export default class TraficoListaComponent
   }
 
   obtenerPorcentajeVisual(entregadas: number, totales: number): string {
-    return totales === 0 ? '0' : ((entregadas / totales) * 100).toFixed(0);
+    if (totales === 0) return '0';
+    const porcentaje = (entregadas / totales) * 100;
+    return Math.round(porcentaje).toString();
   }
 
   openInfoWindow(marker: MapMarker, index: number) {
@@ -406,7 +406,6 @@ export default class TraficoListaComponent
     this.mostrarMapaFlag = true;
     this.changeDetectorRef.detectChanges();
   }
-
 
   // En trafico no se muestra la ruta solo todos los puntos de entrega
   // calcularRuta() {

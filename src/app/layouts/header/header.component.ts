@@ -1,11 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, HostBinding, OnInit, signal } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostBinding,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { filter, map, Observable } from 'rxjs';
 import { General } from '../../common/clases/general';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
 import { obtenerUsuario } from '../../redux/selectors/usuario.selector';
 import { MenuComponent } from '../menu/menu.component';
+import { NavigationEnd, Router } from '@angular/router';
+import { ContenedorActionBorrarInformacion } from '../../redux/actions/contenedor/contenedor.actions';
 
 @Component({
   selector: 'app-header',
@@ -54,16 +62,30 @@ export class HeaderComponent extends General implements OnInit {
   }
 
   getUserImageUrl() {
-    return this.usuario$?.pipe(map((usuario) => {
-      if(usuario?.imagen.includes('defecto')){
-        return usuario?.imagen;
-      } else {
-        return `${usuario?.imagen}?${new Date().getTime()}`;
-      }
-    }));
+    return this.usuario$?.pipe(
+      map((usuario) => {
+        if (usuario?.imagen.includes('defecto')) {
+          return usuario?.imagen;
+        } else {
+          return `${usuario?.imagen}?${new Date().getTime()}`;
+        }
+      })
+    );
   }
 
   ngOnInit(): void {
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        if (event.url === '/contenedor/lista') {
+          this.limpiarEstado();
+        }
+      });
+  }
+
+  private limpiarEstado() {
+    this.store.dispatch(ContenedorActionBorrarInformacion());
   }
 }
