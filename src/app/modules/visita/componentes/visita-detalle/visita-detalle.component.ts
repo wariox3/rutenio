@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { General } from '../../../../common/clases/general';
 import { BotoneraOpcionesComponent } from '../../../../common/components/botonera-opciones/botonera-opciones.component';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
-import { NovedadTabComponent } from "../../../novedad/componentes/novedad-tab/novedad-tab.component";
+import { NovedadTabComponent } from '../../../novedad/componentes/novedad-tab/novedad-tab.component';
 import { Visita } from '../../interfaces/visita.interface';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 
@@ -22,8 +22,8 @@ import { VisitaApiService } from '../../servicios/visita-api.service';
     RouterLink,
     FormatFechaPipe,
     BotoneraOpcionesComponent,
-    NovedadTabComponent
-],
+    NovedadTabComponent,
+  ],
   templateUrl: './visita-detalle.component.html',
   styleUrl: './visita-detalle.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,6 +63,12 @@ export default class VisitaDetalleComponent extends General implements OnInit {
     estado_novedad: false,
     destinatario_direccion_formato: '',
     resultados: [],
+    datos_entrega: {
+      recibe: '',
+      recibeCelular: '',
+      recibeParentesco: '',
+      recibeNumeroIdentificacion: '',
+    },
   });
 
   activeTab: string = 'novedades';
@@ -73,11 +79,9 @@ export default class VisitaDetalleComponent extends General implements OnInit {
   }
 
   consultarVisita() {
-    this._visitaApiService
-      .getDetalle(this.visitaId)
-      .subscribe((respuesta) => {
-        this.visita.set(respuesta);
-      });
+    this._visitaApiService.getDetalle(this.visitaId).subscribe((respuesta) => {
+      this.visita.set(respuesta);
+    });
   }
 
   obtenerParametroRuta() {
@@ -85,5 +89,4 @@ export default class VisitaDetalleComponent extends General implements OnInit {
       this.visitaId = params.id;
     });
   }
-
 }
