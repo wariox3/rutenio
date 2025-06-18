@@ -28,4 +28,10 @@ export interface Visita {
   estado_novedad: boolean;
   destinatario_direccion_formato: string;
   resultados: any[];
+  datos_entrega: {
+    recibe: string;
+    recibeCelular: string;
+    recibeParentesco: string;
+    recibeNumeroIdentificacion: string;
+  };
 }
