@@ -113,6 +113,21 @@
                 {{ visita().volumen }}
               </td>
             </tr>
+            <tr>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Entrega
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300" colspan="3">
+                <ul>
+                  <li>Recibe : {{ visita().datos_entrega.recibe }}</li>
+                  <li>Parentesco: {{ visita().datos_entrega.recibeParentesco }}</li>
+                  <li>Celular: {{ visita().datos_entrega.recibeCelular }}</li>
+                  <li>Número identificación: {{ visita().datos_entrega.recibeNumeroIdentificacion }}</li>
+                </ul>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -136,7 +151,7 @@
   </div>
 
   <div class="card-body">
-    <div *ngIf="activeTab === 'novedades'" class="overflow-x-auto">
+    <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
       <app-novedad-tab [visitaId]="visitaId"></app-novedad-tab>
     </div>
   </div>
