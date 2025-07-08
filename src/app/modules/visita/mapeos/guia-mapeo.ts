@@ -3,6 +3,14 @@ export const guiaMapeo: any = {
   modelo: 'guia',
   tipo: 'Administrador',
   datos: [
+      {
+      nombre: 'id',
+      campoNombre: 'id',
+      campoTipo: 'IntegerField',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: true,
+    },
     {
       nombre: 'numero',
       campoNombre: 'Número',
