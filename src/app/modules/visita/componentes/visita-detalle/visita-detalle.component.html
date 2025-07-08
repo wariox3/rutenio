@@ -121,10 +121,10 @@
               </td>
               <td class="px-4 py-3 border-r border-gray-300" colspan="3">
                 <ul>
-                  <li>Recibe : {{ visita().datos_entrega.recibe }}</li>
-                  <li>Parentesco: {{ visita().datos_entrega.recibeParentesco }}</li>
-                  <li>Celular: {{ visita().datos_entrega.recibeCelular }}</li>
-                  <li>Número identificación: {{ visita().datos_entrega.recibeNumeroIdentificacion }}</li>
+                  <li>Recibe : {{ visita().datos_entrega?.recibe }}</li>
+                  <li>Parentesco: {{ visita().datos_entrega?.recibeParentesco }}</li>
+                  <li>Celular: {{ visita().datos_entrega?.recibeCelular }}</li>
+                  <li>Número identificación: {{ visita().datos_entrega?.recibeNumeroIdentificacion }}</li>
                 </ul>
               </td>
             </tr>
