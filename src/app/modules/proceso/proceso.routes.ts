@@ -9,6 +9,15 @@ export default [
   {
     path: 'enviar-entrega-complemento',
     loadComponent: () =>
-      import('./componentes/enviar-entrega-complemento/enviar-entrega-complemento.component'),
-  }
+      import(
+        './componentes/enviar-entrega-complemento/enviar-entrega-complemento.component'
+      ),
+  },
+  {
+    path: 'enviar-novedad-complemento',
+    loadComponent: () =>
+      import(
+        './componentes/enviar-novedad-complemento/enviar-novedad-complemento.component'
+      ),
+  },
 ] as Routes;
