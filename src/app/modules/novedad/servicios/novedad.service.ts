@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
 })
 export class NovedadService {
   private _httpService = inject(HttpService);
-  
+
   private actualizarListaSubject = new Subject<void>();
 
   actualizarLista$ = this.actualizarListaSubject.asObservable();
@@ -59,6 +59,13 @@ export class NovedadService {
 
   solucionarNovedad(data: any) {
     return this._httpService.post<any[]>(`ruteo/novedad/solucionar/`, data);
+  }
+
+  enviarNovedadComplemento() {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/novedad/nuevo_complemento/`,
+      {}
+    );
   }
 
 }

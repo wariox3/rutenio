@@ -1,0 +1,14 @@
+<div class="card min-w-full">
+    <div class="card-header">
+      <h3 class="card-title">Enviar novedad complemento</h3>
+    </div>
+    <div class="card-body">
+        <app-button
+            [texto]="'Sincronizar'"
+            [textoCargando]="'Sincronizando...'"
+            [estaCargando]="estaCargando$()"
+            [clases]="'btn btn-primary'"
+            (click)="enviarNovedadComplemento()"
+        ></app-button>
+    </div>
+</div>
