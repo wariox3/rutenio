@@ -99,6 +99,10 @@ export class SidebarComponent extends General {
           nombre: 'Enviar entrega complemento',
           link: '/proceso/enviar-entrega-complemento',
         },
+        {
+          nombre: 'Enviar novedad complemento',
+          link: '/proceso/enviar-novedad-complemento',
+        },
       ],
     },
     {
