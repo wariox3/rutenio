@@ -144,6 +144,7 @@ export class VisitaApiService {
     codigo_zona: string;
     fecha_desde: Date;
     fecha_hasta: Date;
+    codigo_despacho: number;
   }) {
     return this._httpService.post(`ruteo/visita/importar-complemento/`, {
       limite: parametros.numeroRegistros,
@@ -156,6 +157,7 @@ export class VisitaApiService {
       codigo_zona: parametros.codigo_zona,
       fecha_desde: parametros.fecha_desde,
       fecha_hasta: parametros.fecha_hasta,
+      codigo_despacho: parametros.codigo_despacho
     });
   }
 
