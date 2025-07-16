@@ -28,7 +28,7 @@
         </span>
       </ng-container>
     </div>
-    
+
     <div class="grid grid-cols-2 gap-4">
       <div>
         <app-label>Número desde</app-label>
@@ -77,6 +77,13 @@
         <app-label>Código zona</app-label>
         <app-input
           [control]="formularioComplementos.controls.codigoZona"
+        ></app-input>
+      </div>
+      <div>
+        <app-label>Código despacho</app-label>
+        <app-input
+          [type]="'number'"
+          [control]="formularioComplementos.controls.codigo_despacho"
         ></app-input>
       </div>
     </div>
