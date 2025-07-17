@@ -79,6 +79,15 @@ export class DespachoApiService {
     );
   }
 
+  regenerarIndicadorEntregas(id: number) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/regenerar-indicador-entregas/`,
+      {
+        id,
+      }
+    );
+  }
+
   adicionarVisita(payload: {
     id: number;
     visita_id: number;
