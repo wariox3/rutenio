@@ -59,7 +59,7 @@
             <td>{{ despacho.vehiculo_placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
-            <td>{{ despacho.tiempo | number:'1.0-0' }} min</td>
+            <td>{{ despacho.tiempo | number : "1.0-0" }} min</td>
             <td>{{ despacho.peso }}</td>
             <td>{{ despacho.volumen }}</td>
             <td>
@@ -241,7 +241,6 @@
                 </div>
                 <button
                   class="btn btn-sm btn-icon btn-clear btn-light p-1"
-                  data-modal-toggle="#trafico-despacho-visitas"
                   (click)="abrirModalDetalleVisita(despacho.id)"
                 >
                   <i class="ki-filled ki-eye"></i>
@@ -440,15 +439,13 @@
   </section>
 </app-modal-default>
 
-<app-modal-default
-  size="large"
-  [id]="'trafico-despacho-visitas'"
-  titulo=""
-  #visitas
-  (emitirModalCerrado)="cerrarModalDetalleVisita()"
+<app-modal-standard
+  title=""
+  size="8xl"
+  modalId="trafico-despacho-visita"
 >
   <section modal-body>
-    <div *ngIf="mostarModalDetalleVisita$ | async">
+  @if (getModalInstaceState('trafico-despacho-visita') | async) {
       <div class="border-b border-gray-200">
         <nav class="flex -mb-px pl-8">
           <button
@@ -495,9 +492,9 @@
           ></app-despacho-tab-ubicacion>
         </div>
       </div>
-    </div>
+    }
   </section>
-</app-modal-default>
+</app-modal-standard>
 
 <app-modal-default
   size="medium"
