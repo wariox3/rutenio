@@ -15,7 +15,7 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { BehaviorSubject, finalize } from 'rxjs';
+import { BehaviorSubject, finalize, Observable } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
@@ -36,6 +36,9 @@ import { DespachoApiService } from '../../../despacho/servicios/despacho-api.ser
 import { VisitaAdicionarComponent } from '../../../visita/componentes/visita-adicionar/visita-adicionar.component';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
+import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -53,6 +56,8 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
     DespachoTrasbordarComponent,
     VisitaAdicionarPendienteComponent,
     VisitaAdicionarComponent,
+    ModalStandardComponent,
+    NuevoDesdeComplementoComponent,
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
@@ -70,6 +75,7 @@ export default class DisenoRutaListaComponent
   private _generalApiService = inject(GeneralApiService);
   private directionsService = inject(MapDirectionsService);
   private _generalService = inject(GeneralService);
+  private _modalService = inject(ModalService);
 
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
@@ -507,5 +513,23 @@ export default class DisenoRutaListaComponent
 
   recargarDespachos() {
     this._consultarVisitas(this.parametrosConsultaVisitas);
+  }
+
+  cerrarModal(id: string) {
+    this._modalService.close(id);
+  }
+
+  complementoCargado() {
+    this.cerrarModal('nuevoDesdeComplemento');
+    this.consultarLista();
+    this._limpiarVisitasPorDespacho();
+  }
+
+  abrirModal(id: string) {
+    this._modalService.open(id);
+  }
+
+  getModalInstaceState(id: string): Observable<boolean> {
+    return this._modalService.isOpen$(id);
   }
 }

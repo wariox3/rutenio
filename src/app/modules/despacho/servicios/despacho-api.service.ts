@@ -102,6 +102,15 @@ export class DespachoApiService {
     );
   }
 
+  nuevoComplemento(despacho_id: string) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/nuevo-complemento/`,
+      {
+        despacho_id,
+      }
+    );
+  }
+
   descargarPlanoSemantica(id: number) {
     this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,
