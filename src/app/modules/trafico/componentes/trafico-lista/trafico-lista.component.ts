@@ -234,6 +234,19 @@ export default class TraficoListaComponent
       });
   }
 
+  regenerarIndicadorEntregas(id: number) {
+    this._despachoApiService
+      .regenerarIndicadorEntregas(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => {
+          this.alerta.mensajaExitoso(respuesta.mensaje);
+          this.consultarLista();
+          this.limpiarInformacionAdicional();
+        },
+      });
+  }
+
   terminarDespacho(id: number) {
     this._despachoApiService
       .terminar(id)
