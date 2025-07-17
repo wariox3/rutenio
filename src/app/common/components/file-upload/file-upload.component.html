@@ -1,0 +1,75 @@
+<div class="file-upload-container">
+  <!-- Mensaje de error -->
+  @if (errorMessage) {
+    <div class="alert alert-danger mb-3">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Formulario de carga -->
+  <form class="mb-4">
+    <div class="file-input-container">
+      <label for="fileInput" class="file-input-label">
+        <span class="file-input-text">{{ fileName || 'Seleccionar archivo' }}</span>
+        <span class="file-input-button">Examinar</span>
+      </label>
+      <input 
+        id="fileInput" 
+        class="file-input" 
+        type="file" 
+        (change)="onFileChange($event)" 
+        [accept]="acceptedFileTypes"
+      />
+    </div>
+    
+    <!-- Información del archivo seleccionado -->
+    @if (fileName && !fileSizeExceeded) {
+      <div class="file-info mt-2">
+        <span class="file-name">{{ fileName }}</span>
+        @if (selectedFile) {
+          <span class="file-size">
+            ({{ (selectedFile.size / 1024).toFixed(2) }} KB)
+          </span>
+        }
+      </div>
+    }
+  </form>
+
+  <!-- Botones de acción -->
+  <div class="flex justify-between items-center">
+    <!-- Botón de ejemplo (izquierda) -->
+    <div *ngIf="showExampleButton">
+      <app-button
+        [texto]="exampleButtonText"
+        color="primary"
+        type="button"
+        (click)="downloadExampleFile()"
+        [estaCargando]="isDownloadingExample$ | async"
+        textoCargando="Descargando..."
+      ></app-button>
+    </div>
+    
+    <!-- Espacio vacío si no hay botón de ejemplo para mantener la estructura -->
+    <div *ngIf="!showExampleButton"></div>
+    
+    <!-- Botones de cancelar e importar (derecha) -->
+    <div class="flex gap-3">
+      <button 
+        type="button" 
+        class="btn btn-light" 
+        (click)="onCancel()"
+      >
+        {{ cancelButtonText }}
+      </button>
+      <app-button
+        [texto]="buttonText"
+        color="primary"
+        type="button"
+        (click)="uploadFile()"
+        [estaDeshabilitado]="!selectedFile"
+        [estaCargando]="isUploading$ | async"
+        [textoCargando]="buttonLoadingText"
+      ></app-button>
+    </div>
+  </div>
+</div>

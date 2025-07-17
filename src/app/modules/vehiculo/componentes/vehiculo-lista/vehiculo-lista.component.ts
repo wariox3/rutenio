@@ -13,12 +13,24 @@ import { mapeo } from '../../../../common/mapeos/administradores';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { finalize } from 'rxjs';
+import { finalize, Observable } from 'rxjs';
+import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { FileUploadComponent } from '../../../../common/components/file-upload/file-upload.component';
+import { GeneralApiService } from '../../../../core';
+import { RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-vehiculo-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterLink, TablaComunComponent],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    RouterLink,
+    TablaComunComponent,
+    ModalStandardComponent,
+    FileUploadComponent,
+  ],
   templateUrl: './vehiculo-lista.component.html',
   styleUrl: './vehiculo-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +50,8 @@ export default class VehiculoListaComponent extends General implements OnInit {
   public mapeoAdministrador = mapeo;
   private _listaItemsEliminar: number[] = [];
   private vehiculoService = inject(VehiculoService);
+  private _modalService = inject(ModalService);
+  private _generalApiService = inject(GeneralApiService);
 
   ngOnInit(): void {
     this.consultarLista();
@@ -47,11 +61,12 @@ export default class VehiculoListaComponent extends General implements OnInit {
   }
 
   consultarLista() {
-    this.vehiculoService
-      .lista(this.arrParametrosConsulta)
+    this._generalApiService
+      .consultaApi<RespuestaApi<ListaVehiculo>>('ruteo/vehiculo/', {
+      })
       .subscribe((respuesta) => {
-        this.cantidad_registros = respuesta.cantidad_registros;
-        this.arrVehiculos = respuesta.registros;
+        this.cantidad_registros = respuesta.count;
+        this.arrVehiculos = respuesta.results;
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -93,5 +108,27 @@ export default class VehiculoListaComponent extends General implements OnInit {
           );
         },
       });
+  }
+
+  abrirModal(id: string) {
+    this._modalService.open(id);
+  }
+
+  getModalInstaceState(id: string): Observable<boolean> {
+    return this._modalService.isOpen$(id);
+  }
+
+  cerrarModal(id: string) {
+    this._modalService.close(id);
+  }
+
+  handleUploadSuccess(event: any) {
+    this.alerta.mensajaExitoso('Se importaron los vehículos correctamente');
+    this.cerrarModal('importarVehiculos');
+    this.consultarLista();
+  }
+
+  handleUploadError(event: any) {
+    this.alerta.mensajeError('Error al importar vehículos', event.error);
   }
 }

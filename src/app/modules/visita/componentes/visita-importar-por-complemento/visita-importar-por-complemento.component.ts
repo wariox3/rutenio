@@ -68,6 +68,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
       codigoZona: new FormControl(null),
+      codigo_despacho: new FormControl(null),
       complemento: new FormControl(null, Validators.required),
     },
     { validators: this.validarRango() }
@@ -116,6 +117,7 @@ export class VisitaImportarPorComplementoComponent extends General {
     const complemento = this.formularioComplementos.get('complemento')?.value;
     const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
     const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
+    const codigo_despacho = this.formularioComplementos.get('codigo_despacho')?.value;
 
     this._visitaApiService
       .importarPorComplemento({
@@ -128,7 +130,8 @@ export class VisitaImportarPorComplementoComponent extends General {
         codigo_destino,
         codigo_zona,
         fecha_desde,
-        fecha_hasta
+        fecha_hasta,
+        codigo_despacho
       })
       .pipe(
         finalize(() => {
@@ -164,7 +167,7 @@ export class VisitaImportarPorComplementoComponent extends General {
    modalDismiss() {
       const modalEl: HTMLElement = document.querySelector('#importar-por-complemento-modal');
       const modal = KTModal.getInstance(modalEl);
-  
+
       modal.toggle();
     }
 }

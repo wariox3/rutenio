@@ -79,6 +79,15 @@ export class DespachoApiService {
     );
   }
 
+  regenerarIndicadorEntregas(id: number) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/regenerar-indicador-entregas/`,
+      {
+        id,
+      }
+    );
+  }
+
   adicionarVisita(payload: {
     id: number;
     visita_id: number;
@@ -98,6 +107,15 @@ export class DespachoApiService {
       {
         id,
         despacho_origen_id,
+      }
+    );
+  }
+
+  nuevoComplemento(despacho_id: string) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/nuevo-complemento/`,
+      {
+        despacho_id,
       }
     );
   }

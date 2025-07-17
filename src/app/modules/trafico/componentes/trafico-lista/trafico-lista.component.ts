@@ -14,7 +14,7 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { BehaviorSubject, finalize, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, Subject, takeUntil } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -38,6 +38,8 @@ import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despac
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -55,7 +57,8 @@ import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liber
     VisitaAdicionarTraficoComponent,
     ButtonComponent,
     VisitaAdicionarPendienteComponent,
-  ],
+    ModalStandardComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,6 +70,7 @@ export default class TraficoListaComponent
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
+  private _modalService = inject(ModalService);
   private directionsService = inject(MapDirectionsService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
@@ -157,7 +161,7 @@ export default class TraficoListaComponent
     this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => {        
+      .subscribe((respuesta) => {
         this.arrDespachos = respuesta.registros;
         this.changeDetectorRef.detectChanges();
       });
@@ -230,6 +234,19 @@ export default class TraficoListaComponent
       });
   }
 
+  regenerarIndicadorEntregas(id: number) {
+    this._despachoApiService
+      .regenerarIndicadorEntregas(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => {
+          this.alerta.mensajaExitoso(respuesta.mensaje);
+          this.consultarLista();
+          this.limpiarInformacionAdicional();
+        },
+      });
+  }
+
   terminarDespacho(id: number) {
     this._despachoApiService
       .terminar(id)
@@ -245,13 +262,8 @@ export default class TraficoListaComponent
 
   abrirModalDetalleVisita(despacho_id: number) {
     this.selectedDespachoId = despacho_id;
-    this.mostarModalDetalleVisita$.next(true);
+    this.openModal('trafico-despacho-visita');
     this.changeDetectorRef.detectChanges();
-  }
-
-  cerrarModalDetalleVisita() {
-    this.mostarModalDetalleVisita$.next(false);
-    this.selectedDespachoId = null;
   }
 
   abrirModal(despacho_id: number) {
@@ -594,5 +606,17 @@ export default class TraficoListaComponent
       `)}`,
       scaledSize: new google.maps.Size(30, 30), // Ajusta el tamaño
     };
+  }
+
+  closeModal(id: string) {
+    this._modalService.close(id);
+  }
+
+  openModal(id: string) {
+    this._modalService.open(id);
+  }
+
+  getModalInstaceState(id: string): Observable<boolean> {
+    return this._modalService.isOpen$(id);
   }
 }
