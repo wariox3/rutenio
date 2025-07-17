@@ -11,6 +11,7 @@
   <div class="flex justify-end items-center mx-8">
     <div class="inline-flex rounded-md shadow-s my-5">
       <div class="menu menu-default p-0" data-menu="true">
+        <button class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg" (click)="abrirModal('importarVehiculos')">Importar</button>
         <div
           class="menu-item"
           data-menu-item-placement="bottom-start"
@@ -48,3 +49,24 @@
     (emitirDetalleItem)="detalleVehiculo($event)"
   ></app-tabla-comun>
 </div>
+
+<app-modal-standard
+  title="Importar vehículos"
+  size="md"
+  modalId="importarVehiculos"
+  
+>
+  @if (getModalInstaceState('importarVehiculos') | async) {
+  <app-file-upload
+    endpoint="ruteo/vehiculo/importar/"
+    acceptedFileTypes=".xlsx"
+    buttonText="Importar"
+    (uploadSuccess)="handleUploadSuccess($event)"
+    (uploadError)="handleUploadError($event)"
+    [showExampleButton]="true"
+    exampleButtonText="Ejemplo"
+    exampleFileUrl="https://semantica.sfo3.digitaloceanspaces.com/rutenio/ejemplos/importar_vehiculo.xlsx"
+    exampleFileName="importar_vehiculo.xlsx"
+  ></app-file-upload>
+  }
+</app-modal-standard>

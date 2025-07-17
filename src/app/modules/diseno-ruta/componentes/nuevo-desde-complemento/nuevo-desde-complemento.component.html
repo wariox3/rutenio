@@ -1,0 +1,23 @@
+<form [formGroup]="formularioNuevoComplemento">
+  <div class="grid grid-cols-1 gap-4 mb-5">
+    <div>
+      <div>
+        <app-label [required]="true">Despacho</app-label>
+        <app-input
+          [control]="formularioNuevoComplemento.controls.despacho_id"
+        ></app-input>
+      </div>
+    </div>
+  </div>
+  <div class="flex justify-end gap-2 mb-4">
+    <app-button
+      texto="Cargar"
+      [estaDeshabilitado]="!formularioNuevoComplemento.valid"
+      (click)="nuevoComplemento()"
+      [estaCargando]="cargando()"
+      [textoCargando]="'Cargando...'"
+    ></app-button>
+  </div>
+
+  <div class="mb-5"></div>
+</form>

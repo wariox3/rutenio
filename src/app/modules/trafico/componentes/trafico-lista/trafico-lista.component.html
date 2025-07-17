@@ -59,7 +59,7 @@
             <td>{{ despacho.vehiculo_placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
-            <td>{{ despacho.tiempo | number:'1.0-0' }} min</td>
+            <td>{{ despacho.tiempo | number : "1.0-0" }} min</td>
             <td>{{ despacho.peso }}</td>
             <td>{{ despacho.volumen }}</td>
             <td>
@@ -150,6 +150,7 @@
                           <span class="menu-title"> Terminar</span>
                         </button>
                       </div>
+
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
                           (click)="descargarPlanoSemantica(despacho.id)"
@@ -236,12 +237,25 @@
                           >
                         </button>
                       </div>
+
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="regenerarIndicadorEntregas(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-arrows-circle"></i>
+                          </span>
+                          <span class="menu-title">
+                            Regenerar indicador entregas</span
+                          >
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
                 <button
                   class="btn btn-sm btn-icon btn-clear btn-light p-1"
-                  data-modal-toggle="#trafico-despacho-visitas"
                   (click)="abrirModalDetalleVisita(despacho.id)"
                 >
                   <i class="ki-filled ki-eye"></i>
@@ -440,64 +454,58 @@
   </section>
 </app-modal-default>
 
-<app-modal-default
-  size="large"
-  [id]="'trafico-despacho-visitas'"
-  titulo=""
-  #visitas
-  (emitirModalCerrado)="cerrarModalDetalleVisita()"
->
+<app-modal-standard title="" size="8xl" modalId="trafico-despacho-visita">
   <section modal-body>
-    <div *ngIf="mostarModalDetalleVisita$ | async">
-      <div class="border-b border-gray-200">
-        <nav class="flex -mb-px pl-8">
-          <button
-            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
-            [class]="
-              activeTab === 'visitas'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            "
-            (click)="activeTab = 'visitas'"
-          >
-            Visitas
-          </button>
-          <button
-            class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
-            [class]="
-              activeTab === 'ubicaciones'
-                ? 'border-blue-500 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-            "
-            (click)="activeTab = 'ubicaciones'"
-          >
-            Ubicaciones
-          </button>
-        </nav>
+    @if (getModalInstaceState('trafico-despacho-visita') | async) {
+    <div class="border-b border-gray-200">
+      <nav class="flex -mb-px pl-8">
+        <button
+          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+          [class]="
+            activeTab === 'visitas'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          (click)="activeTab = 'visitas'"
+        >
+          Visitas
+        </button>
+        <button
+          class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
+          [class]="
+            activeTab === 'ubicaciones'
+              ? 'border-blue-500 text-blue-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+          "
+          (click)="activeTab = 'ubicaciones'"
+        >
+          Ubicaciones
+        </button>
+      </nav>
+    </div>
+
+    <div class="modal-tab-content">
+      <div
+        *ngIf="activeTab === 'visitas' && selectedDespachoId"
+        class="overflow-x-auto"
+      >
+        <app-despacho-tab-visita
+          [despachoId]="selectedDespachoId"
+        ></app-despacho-tab-visita>
       </div>
 
-      <div class="modal-tab-content">
-        <div
-          *ngIf="activeTab === 'visitas' && selectedDespachoId"
-          class="overflow-x-auto"
-        >
-          <app-despacho-tab-visita
-            [despachoId]="selectedDespachoId"
-          ></app-despacho-tab-visita>
-        </div>
-
-        <div
-          *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
-          class="overflow-x-auto"
-        >
-          <app-despacho-tab-ubicacion
-            [despachoId]="selectedDespachoId"
-          ></app-despacho-tab-ubicacion>
-        </div>
+      <div
+        *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
+        class="overflow-x-auto"
+      >
+        <app-despacho-tab-ubicacion
+          [despachoId]="selectedDespachoId"
+        ></app-despacho-tab-ubicacion>
       </div>
     </div>
+    }
   </section>
-</app-modal-default>
+</app-modal-standard>
 
 <app-modal-default
   size="medium"
