@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of } from 'rxjs';
 import { Subdomino } from '../clases/subdominio';
@@ -13,9 +13,9 @@ export class HttpService extends Subdomino {
   }
 
   // Método GET detalle
-  public getDetalle<T>(endpoint: string): Observable<T> {
+  public getDetalle<T>(endpoint: string, params?: HttpParams): Observable<T> {
     const url = `${this.urlSubDominio}/${endpoint}`;
-    return this.http.get<T>(url);
+    return this.http.get<T>(url, { params });
   }
 
   // Método GET para listas
