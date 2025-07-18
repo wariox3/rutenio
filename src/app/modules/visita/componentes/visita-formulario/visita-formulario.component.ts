@@ -100,8 +100,10 @@ export default class VisitaFormularioComponent
 
   enviar() {
     if (this.formularioVisita.valid) {
-      const formularioPreparado = this.prepararDatosEnvio(this.formularioVisita.value)
-      this.dataFormulario.emit(formularioPreparado)
+      const formularioPreparado = this.prepararDatosEnvio(
+        this.formularioVisita.value
+      );
+      this.dataFormulario.emit(formularioPreparado);
     } else {
       this.formularioVisita.markAllAsTouched();
     }
@@ -130,28 +132,14 @@ export default class VisitaFormularioComponent
   }
 
   consultarCiudad(nombre?: string) {
-    let arrFiltros = {
-      filtros: [
-        {
-          operador: 'icontains',
-          propiedad: 'nombre',
-          valor1: nombre,
-          valor2: '',
-        },
-      ],
-      limite: 10,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 10000,
-      modelo: 'GenCiudad',
-      serializador: 'ListaAutocompletar',
-    };
-
     this._generalApiService
-      .getLista<AutocompletarCiudades[]>(arrFiltros)
+      .consultaApi<AutocompletarCiudades[]>('general/ciudad/seleccionar/', {
+        nombre__icontains: nombre,
+        limit: 10,
+      })
       .pipe(
         tap((respuesta) => {
-          this.arrCiudades = respuesta.registros;
+          this.arrCiudades = respuesta;
           this.changeDetectorRef.detectChanges();
         })
       )
