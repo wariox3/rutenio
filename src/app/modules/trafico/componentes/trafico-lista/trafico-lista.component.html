@@ -43,10 +43,9 @@
             </th>
             <th>Placa</th>
             <th>Fecha</th>
-            <th>Hora</th>
             <th>Tiempo (min)</th>
-            <th>Peso (kg)</th>
-            <th>Volumen</th>
+            <th>Peso / Volumen</th>
+            <th>Ultima ubicación</th>
             <th>Progreso</th>
             <th></th>
           </tr>
@@ -57,11 +56,10 @@
             <td>{{ despacho.id }}</td>
             <td>{{ despacho.entrega_id }}</td>
             <td>{{ despacho.vehiculo_placa }}</td>
-            <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d" }}</td>
-            <td>{{ despacho.fecha_salida | formatFecha : "H:i" }}</td>
+            <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d H:i (24h)" }}</td>
             <td>{{ despacho.tiempo | number : "1.0-0" }} min</td>
-            <td>{{ despacho.peso }}</td>
-            <td>{{ despacho.volumen }}</td>
+            <td>{{ despacho.peso | redondear}} / {{ despacho.volumen | redondear}} </td>
+            <td>{{ despacho.fecha_ubicacion | formatFecha : "Y-m-d H:i (24h)" }}</td>
             <td>
               <div class="flex flex-col space-y-1">
                 <div
