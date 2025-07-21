@@ -7,13 +7,13 @@ export class FormatFechaPipe implements PipeTransform {
     
     const fecha = new Date(fechaISO);
     
-    // Formateo manual (sin librerías externas)
-    const año = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const dia = String(fecha.getDate()).padStart(2, '0');
-    let horas = fecha.getHours();
-    const minutos = String(fecha.getMinutes()).padStart(2, '0');
-    const segundos = String(fecha.getSeconds()).padStart(2, '0');
+    // Usar métodos UTC para evitar problemas de zona horaria
+    const año = fecha.getUTCFullYear();
+    const mes = String(fecha.getUTCMonth() + 1).padStart(2, '0');
+    const dia = String(fecha.getUTCDate()).padStart(2, '0');
+    let horas = fecha.getUTCHours();
+    const minutos = String(fecha.getUTCMinutes()).padStart(2, '0');
+    const segundos = String(fecha.getUTCSeconds()).padStart(2, '0');
     const ampm = horas >= 12 ? 'PM' : 'AM';
     
     // Convertir a formato 12 horas
@@ -22,25 +22,31 @@ export class FormatFechaPipe implements PipeTransform {
     const horas12 = String(horas).padStart(2, '0');
 
     // Formato 24 horas para combinaciones con fecha
-    const horas24 = String(fecha.getHours()).padStart(2, '0');
+    const horas24 = String(fecha.getUTCHours()).padStart(2, '0');
 
     switch (formato) {
       case 'Y-m-d':
         return `${año}-${mes}-${dia}`;
       case 'H:i':
-        return `${horas12}:${minutos} ${ampm}`; // Formato 12 horas con AM/PM (sin segundos)
+        return `${horas12}:${minutos} ${ampm}`;
       case 'H:i:s':
-        return `${horas12}:${minutos}:${segundos} ${ampm}`; // Formato 12 horas con AM/PM y segundos
+        return `${horas12}:${minutos}:${segundos} ${ampm}`;
       case 'Y-m-d H:i':
-        return `${año}-${mes}-${dia} ${horas12}:${minutos} ${ampm}`; // Fecha + hora 12h
+        return `${año}-${mes}-${dia} ${horas12}:${minutos} ${ampm}`;
       case 'Y-m-d H:i:s':
-        return `${año}-${mes}-${dia} ${horas12}:${minutos}:${segundos} ${ampm}`; // Fecha + hora 12h con segundos
+        return `${año}-${mes}-${dia} ${horas12}:${minutos}:${segundos} ${ampm}`;
       case 'Y-m-d H:i (24h)':
-        return `${año}-${mes}-${dia} ${horas24}:${minutos}`; // Fecha + hora 24h
+        return `${año}-${mes}-${dia} ${horas24}:${minutos}`;
       case 'Y-m-d H:i:s (24h)':
-        return `${año}-${mes}-${dia} ${horas24}:${minutos}:${segundos}`; // Fecha + hora 24h con segundos
+        return `${año}-${mes}-${dia} ${horas24}:${minutos}:${segundos}`;
       case 'd/m/Y H:i':
-        return `${dia}/${mes}/${año} ${horas12}:${minutos} ${ampm}`; // Formato día/mes/año + hora
+        return `${dia}/${mes}/${año} ${horas12}:${minutos} ${ampm}`;
+      case 'H:i (militar)': 
+        return `${horas24}:${minutos}`; // Formato: 18:12 (ejemplo para las 6:12 PM)
+      case 'Y-m-d H:i (militar)':
+        return `${año}-${mes}-${dia} ${horas24}:${minutos}`; // Formato: 2025-06-11 18:12
+      case 'd/m/Y H:i (militar)':
+        return `${dia}/${mes}/${año} ${horas24}:${minutos}`; // Formato: 11/06/2025 18:12
       default:
         return fechaISO;
     }
