@@ -7,13 +7,17 @@ export class FormatFechaPipe implements PipeTransform {
     
     const fecha = new Date(fechaISO);
     
-    // Usar métodos UTC para evitar problemas de zona horaria
-    const año = fecha.getUTCFullYear();
-    const mes = String(fecha.getUTCMonth() + 1).padStart(2, '0');
-    const dia = String(fecha.getUTCDate()).padStart(2, '0');
-    let horas = fecha.getUTCHours();
-    const minutos = String(fecha.getUTCMinutes()).padStart(2, '0');
-    const segundos = String(fecha.getUTCSeconds()).padStart(2, '0');
+    // Ajustar a la zona horaria de Colombia (UTC-5)
+    const offsetColombia = -5 * 60 * 60 * 1000; // -5 horas en milisegundos
+    const fechaColombia = new Date(fecha.getTime() + offsetColombia);
+    
+    // Obtener componentes de fecha/hora
+    const año = fechaColombia.getUTCFullYear();
+    const mes = String(fechaColombia.getUTCMonth() + 1).padStart(2, '0');
+    const dia = String(fechaColombia.getUTCDate()).padStart(2, '0');
+    let horas = fechaColombia.getUTCHours();
+    const minutos = String(fechaColombia.getUTCMinutes()).padStart(2, '0');
+    const segundos = String(fechaColombia.getUTCSeconds()).padStart(2, '0');
     const ampm = horas >= 12 ? 'PM' : 'AM';
     
     // Convertir a formato 12 horas
@@ -22,7 +26,7 @@ export class FormatFechaPipe implements PipeTransform {
     const horas12 = String(horas).padStart(2, '0');
 
     // Formato 24 horas para combinaciones con fecha
-    const horas24 = String(fecha.getUTCHours()).padStart(2, '0');
+    const horas24 = String(fechaColombia.getUTCHours()).padStart(2, '0');
 
     switch (formato) {
       case 'Y-m-d':
@@ -42,11 +46,11 @@ export class FormatFechaPipe implements PipeTransform {
       case 'd/m/Y H:i':
         return `${dia}/${mes}/${año} ${horas12}:${minutos} ${ampm}`;
       case 'H:i (militar)': 
-        return `${horas24}:${minutos}`; // Formato: 18:12 (ejemplo para las 6:12 PM)
+        return `${horas24}:${minutos}`;
       case 'Y-m-d H:i (militar)':
-        return `${año}-${mes}-${dia} ${horas24}:${minutos}`; // Formato: 2025-06-11 18:12
+        return `${año}-${mes}-${dia} ${horas24}:${minutos}`;
       case 'd/m/Y H:i (militar)':
-        return `${dia}/${mes}/${año} ${horas24}:${minutos}`; // Formato: 11/06/2025 18:12
+        return `${dia}/${mes}/${año} ${horas24}:${minutos}`;
       default:
         return fechaISO;
     }
