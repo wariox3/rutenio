@@ -20,20 +20,21 @@
       [class]="modalSize"
     >
       <!-- Close button -->
-       <div class="modal-header">
+      <div class="modal-header flex items-center justify-between px-4 pt-4">
         <h3 *ngIf="title" class="modal-title" id="modal-title">
           {{ title }}
         </h3>
-        <button class="btn btn-xs btn-icon btn-light" (click)="closeModal()" *ngIf="showCloseButton">
+        <button 
+          class="btn btn-xs btn-icon btn-light ml-auto"
+          (click)="closeModal()" 
+          *ngIf="showCloseButton"
+        >
           <i class="ki-outline ki-cross"> </i>
         </button>
-       </div>
+      </div>
        
       <!-- Modal content -->
       <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-        <!-- Title -->
-        
-
         <!-- Content slot -->
         <div *ngIf="isOpen()" class="mt-2">
           <ng-content></ng-content>
