@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../common/services/http.service';
-import { RespuestaLista } from '../types/api.type';
+import { ParametrosApi, RespuestaLista } from '../types/api.type';
 import { ParametrosConsulta } from '../../interfaces/general/api.interface';
 import { Configuracion } from '../../modules/configuracion/types/configuracion.types';
 import { HttpParams } from '@angular/common/http';
@@ -18,7 +18,7 @@ export class GeneralApiService {
     );
   }
 
-  consultaApi<T>(endpoint: string, queryParams: { [key: string]: any } = {}) {
+  consultaApi<T>(endpoint: string, queryParams: ParametrosApi = {}) {
     let params = new HttpParams();
 
     Object.keys(queryParams).forEach(key => {

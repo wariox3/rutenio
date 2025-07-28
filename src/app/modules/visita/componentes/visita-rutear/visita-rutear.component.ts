@@ -338,22 +338,25 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._consultarVisitas(parametrosConsulta);
   }
 
-private _calcularPorcentajeCapacidad() {
-    let total = 0;
-    if (this.capacidadTotal > 0) {
-      total = (this.pesoTotal / this.capacidadTotal) * 100;
-    }
+  private _calcularPorcentajeCapacidad() {
+      let porcentaje = 0;
+      if (this.capacidadTotal > 0) {
+        porcentaje = (this.pesoTotal / this.capacidadTotal) * 100;
+      }
 
-    this.porcentajeCapacidad = this._redondear(total, 1);
+      this.porcentajeCapacidad = porcentaje;
 
-    if (this.porcentajeCapacidad === 0) { 
-      this.barraCapacidad = 0;
-      this.errorCapacidad = true;
-    } else {
-      this.barraCapacidad = this.porcentajeCapacidad > 100 ? 100 : this.porcentajeCapacidad;
-      this.errorCapacidad = false;  
-    }
-}
+      if (this.pesoTotal === 0) { 
+        this.barraCapacidad = 0;
+        this.errorCapacidad = true;
+      } else if (porcentaje > 100) {
+        this.barraCapacidad = 100;
+        this.errorCapacidad = true;
+      } else {
+        this.barraCapacidad = porcentaje;
+        this.errorCapacidad = false;
+      }
+  }
 
   private _calcularPorcentajeTiempo() {
     let total = 0;
@@ -361,7 +364,7 @@ private _calcularPorcentajeCapacidad() {
       total = (this.servicio() / this.tiempoTotal()) * 100;
     }
 
-    this.porcentajeTiempo = this._redondear(total, 0);
+    this.porcentajeTiempo = total;
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
