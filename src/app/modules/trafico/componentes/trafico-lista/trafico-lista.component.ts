@@ -40,6 +40,7 @@ import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -103,18 +104,13 @@ export default class TraficoListaComponent
     strokeWeight: 3,
   };
 
-  arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [
-      { propiedad: 'estado_aprobado', valor1: true },
-      { propiedad: 'estado_terminado', valor1: false },
-      { propiedad: 'estado_anulado', valor1: false },
-    ],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['id'],
-    limite_conteo: 10000,
-    modelo: 'RutDespacho',
-    serializador: 'Trafico',
+  arrParametrosConsulta: ParametrosApi = {
+    limit : 50,
+    ordering : 'id',
+    serializador : 'trafico',
+    estado_aprobado : 'True',
+    estado_terminado : 'False',
+    estado_anulado : 'False',
   };
 
   arrDespachos: Despacho[] = [];
@@ -158,28 +154,23 @@ export default class TraficoListaComponent
   }
 
   consultarLista() {
-    this._despachoApiService
-      .lista(this.arrParametrosConsulta)
+    this._generalApiService
+      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/',this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.registros;
+        this.arrDespachos = respuesta.results;
         this.changeDetectorRef.detectChanges();
       });
   }
 
   private consultarVisitas(despachoId: number) {
-    const parametrosConsultaVisitas: ParametrosConsulta = {
-      filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
-      limite: 50,
-      desplazar: 0,
-      ordenamientos: ['orden'],
-      limite_conteo: 10000,
-      modelo: 'RutVisita',
+    const parametrosConsultaVisitas: ParametrosApi = {
+      limit : 50,
+      ordering : 'orden',
+      despacho_id : despachoId.toString(),
     };
 
-    return this._generalApiService
-      .getLista<Visita[]>(parametrosConsultaVisitas)
-      .pipe(takeUntil(this.destroy$));
+    return this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsultaVisitas).pipe(takeUntil(this.destroy$));
   }
 
   private consultarUbicacion(despachoId: number) {
@@ -269,7 +260,7 @@ export default class TraficoListaComponent
   abrirModal(despacho_id: number) {
     this.despachoIdActual = despacho_id;
     this.consultarVisitas(despacho_id).subscribe((respuesta) => {
-      this.arrVisitasPorDespacho = respuesta.registros;
+      this.arrVisitasPorDespacho = respuesta.results;
       if (this.arrVisitasPorDespacho.length > 0) {
         this.mostrarMapa(this.arrVisitasPorDespacho, true, false);
       }

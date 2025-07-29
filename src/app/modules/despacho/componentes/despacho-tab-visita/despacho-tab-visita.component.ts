@@ -5,9 +5,9 @@ import { General } from '../../../../common/clases/general';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
 import { GeneralApiService } from '../../../../core';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../visita/interfaces/visita.interface';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-despacho-tab-visita',
@@ -26,12 +26,10 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
 
   visitas = signal<Visita[]>([])
 
-  private baseParametrosConsulta: Omit<ParametrosConsulta, 'filtros'> = {
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['orden'],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
+  private baseParametrosConsulta: ParametrosApi= {
+    limit: 100,
+    ordering: 'orden',
+    serializador: 'trafico'
   };
 
   ngOnInit(): void {
@@ -41,10 +39,10 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
     this.consultarVisitaPorDespacho();
   }
 
-  private getParametrosConsulta(): ParametrosConsulta {
+  private getParametrosConsulta(): ParametrosApi {
     return {
       ...this.baseParametrosConsulta,
-      filtros: [{ propiedad: 'despacho_id', valor1: this.despachoId.toString() }]
+      'despacho_id' : this.despachoId.toString()
     };
   }
 
@@ -53,9 +51,9 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
     
     const parametros = this.getParametrosConsulta();
     
-    this._generalApiService.getLista<Visita[]>(parametros).subscribe({
+    this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametros).subscribe({
       next: (respuesta) => {
-        this.visitas.set(respuesta.registros);
+        this.visitas.set(respuesta.results);
       },
       error: (error) => {
         console.error('Error al cargar visitas:', error);
