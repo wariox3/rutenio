@@ -5,6 +5,8 @@ import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { GeneralApiService } from '../../../../core';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-despacho-tab-ubicacion',
@@ -18,26 +20,25 @@ export class DespachoTabUbicacionComponent extends General implements OnInit {
 
     @Input() despachoId: number;
   
+    private _destroy$ = new Subject<void>()
     private _generalApiService = inject(GeneralApiService)
   
     ubicaciones = signal<Ubicacion[]>([])
   
-    private baseParametrosConsulta: Omit<ParametrosConsulta, 'filtros'> = {
-      limite: 50,
-      desplazar: 0,
-      ordenamientos: ['-fecha'],
-      limite_conteo: 10000,
-      modelo: 'RutUbicacion',
+    private baseParametrosConsulta: ParametrosApi = {
+      limit: 100,
+      ordering: '-fecha',
+      serializador: 'trafico'
     };
   
     ngOnInit(): void {
       this.consultarUbicacionesPorDespacho();
     }
   
-    private getParametrosConsulta(): ParametrosConsulta {
+    private getParametrosConsulta(): ParametrosApi {
       return {
         ...this.baseParametrosConsulta,
-        filtros: [{ propiedad: 'despacho_id', valor1: this.despachoId.toString() }]
+        'despacho_id' : this.despachoId.toString()
       };
     }
   
@@ -46,14 +47,19 @@ export class DespachoTabUbicacionComponent extends General implements OnInit {
       
       const parametros = this.getParametrosConsulta();
       
-      this._generalApiService.getLista<Ubicacion[]>(parametros).subscribe({
+      this._generalApiService.consultaApi<RespuestaApi<Ubicacion>>('ruteo/ubicacion/' , parametros).subscribe({
         next: (respuesta) => {
-          this.ubicaciones.set(respuesta.registros);
+          this.ubicaciones.set(respuesta.results);
         },
         error: (error) => {
           console.error('Error al cargar visitas:', error);
         }
       });
+    }
+
+    ngOnDestroy(): void {
+      this._destroy$.next();
+      this._destroy$.unsubscribe();
     }
 
  }
