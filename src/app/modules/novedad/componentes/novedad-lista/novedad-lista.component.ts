@@ -67,7 +67,7 @@ export default class NovedadListaComponent extends General implements OnInit {
   consultaLista(filtros: any) {
     this.novedades$ = this._novedadService.lista(filtros).pipe(
       switchMap((response) => {
-        return of(response.registros);
+        return of(response.results);
       })
     );
   }

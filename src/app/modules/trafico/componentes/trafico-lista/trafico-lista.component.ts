@@ -199,7 +199,7 @@ export default class TraficoListaComponent
         })
       )
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.registros;
+        this.arrDespachos = respuesta.results;
         this.alerta.mensajaExitoso('Lista actualizada.', 'Operación exitosa');
         this.changeDetectorRef.detectChanges();
       });
@@ -366,7 +366,7 @@ export default class TraficoListaComponent
     this.novedadService.lista(parametros).subscribe({
       next: (respuesta) => {
         this.novedades.set(
-          respuesta.registros.map((novedad) => novedad.novedad_tipo_nombre)
+          respuesta.results.map((novedad) => novedad.novedad_tipo_nombre)
         );
       },
       error: (error) => {

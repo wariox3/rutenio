@@ -157,7 +157,7 @@ export const mapeo: any = {
       },
       {
         encabezado: 'Vehículo',
-        campoNombre: 'vehiculo_placa',
+        campoNombre: 'vehiculo__placa',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
