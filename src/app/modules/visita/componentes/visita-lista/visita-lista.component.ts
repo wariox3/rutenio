@@ -9,10 +9,10 @@ import {
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MapDirectionsService } from '@angular/google-maps';
 import { RouterLink } from '@angular/router';
-import { BehaviorSubject, finalize, forkJoin } from 'rxjs';
+import { BehaviorSubject, finalize, forkJoin, Subject, takeUntil } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
+import { FiltroBaseComponent } from "../../../../common/components/filtros/filtro-base/filtro-base.component";
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 import { PaginacionAvanzadaComponent } from '../../../../common/components/paginacion/paginacion-avanzada/paginacion-avanzada.component';
@@ -22,7 +22,7 @@ import { TablaComunComponent } from '../../../../common/components/ui/tablas/tab
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { GeneralService } from '../../../../common/services/general.service';
 import { GeneralApiService } from '../../../../core';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { Visita } from '../../interfaces/visita.interface';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
 import { VisitaApiService } from '../../servicios/visita-api.service';
@@ -68,19 +68,17 @@ export default class VisitaListaComponent extends General implements OnInit {
   public marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [
     { lat: 6.200713725811437, lng: -75.58609508555918 },
   ];
-  public arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['-id'],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
+  public arrParametrosConsulta: ParametrosApi = {
+    limit : 50,
+    ordering : '-id',
   };
+
   public formularioFiltros = new FormGroup({
     id: new FormControl(''),
     guia: new FormControl(''),
     estado_decodificado: new FormControl('todos'),
   });
+  private destroy$ = new Subject<void>();
 
   constructor() {
     super();
@@ -96,30 +94,30 @@ export default class VisitaListaComponent extends General implements OnInit {
     const filtroGuardado = localStorage.getItem(this.nombreFiltro);
     if (filtroGuardado !== null) {
       const filtros = JSON.parse(filtroGuardado);
-      this.arrParametrosConsulta.filtros = [...filtros];
+      //this.arrParametrosConsulta.filtros = [...filtros];
     }
   }
 
   recargarConsulta() {
     this.actualizandoLista.set(true);
     this._generalApiService.getLista<Visita[]>(this.arrParametrosConsulta)
-    .pipe(
-      finalize(() => {
-        this.actualizandoLista.set(false);
-      })
-    )
-    .subscribe((respuesta) => {
-      this.arrGuia = respuesta.registros?.map((guia) => ({
-        ...guia,
-        selected: false,
-      }));
-      this.cantidadRegistros = respuesta?.registros?.length;
-      respuesta?.registros?.forEach((punto) => {
-        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+      .pipe(
+        finalize(() => {
+          this.actualizandoLista.set(false);
+        })
+      )
+      .subscribe((respuesta) => {
+        this.arrGuia = respuesta.registros?.map((guia) => ({
+          ...guia,
+          selected: false,
+        }));
+        this.cantidadRegistros = respuesta?.registros?.length;
+        respuesta?.registros?.forEach((punto) => {
+          this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+        });
+        this.alerta.mensajaExitoso('Se ha actualizado correctamente', 'Actualizado');
+        this.changeDetectorRef.detectChanges();
       });
-      this.alerta.mensajaExitoso('Se ha actualizado correctamente','Actualizado');
-      this.changeDetectorRef.detectChanges();
-    });
     if (this.arrGuiasOrdenadas?.length >= 1) {
       this.arrGuiasOrdenadas.forEach((punto) => {
         this.addMarkerOrdenadas({ lat: punto.latitud, lng: punto.longitud });
@@ -130,25 +128,24 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
-    this._generalApiService.getLista<Visita[]>(filtros).subscribe((respuesta) => {
-      this.arrGuia = respuesta.registros?.map((guia) => ({
-        ...guia,
-        selected: false,
-      }));
-      this.cantidadRegistros = respuesta?.registros?.length;
-      respuesta?.registros?.forEach((punto) => {
-        this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+    this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+        limit: 50
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((respuesta) => {
+        this.arrGuia = respuesta.results?.map((guia) => ({
+          ...guia,
+          selected: false,
+        }));
+        this.cantidadRegistros = respuesta?.count || 0;
+        respuesta?.results?.forEach((punto) => {
+          this.addMarker({ lat: punto.latitud, lng: punto.longitud });
+        });
+        this.calculateRoute();
+        this.changeDetectorRef.detectChanges();
       });
-      this.changeDetectorRef.detectChanges();
-    });
-    if (this.arrGuiasOrdenadas?.length >= 1) {
-      this.arrGuiasOrdenadas.forEach((punto) => {
-        this.addMarkerOrdenadas({ lat: punto.latitud, lng: punto.longitud });
-      });
-      this.calculateRoute();
-      this.changeDetectorRef.detectChanges();
-    }
-  }
+  };
 
   recibirPaginacion(event: { desplazamiento: number; limite: number }) {
     this.arrParametrosConsulta = {
@@ -230,7 +227,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     const origin = this.marcarPosicionesVisitasOrdenadas[0];
     const destination =
       this.marcarPosicionesVisitasOrdenadas[
-        this.marcarPosicionesVisitasOrdenadas.length - 1
+      this.marcarPosicionesVisitasOrdenadas.length - 1
       ];
 
     const waypoints = this.marcarPosicionesVisitasOrdenadas
@@ -312,35 +309,27 @@ export default class VisitaListaComponent extends General implements OnInit {
       'estado_decodificado'
     ).value;
 
-    let parametrosConsulta: ParametrosConsulta = {
-      ...this.arrParametrosConsulta,
-      filtros: [
-        ...this.arrParametrosConsulta.filtros,
-        {
-          operador: 'icontains',
-          propiedad: 'id',
-          valor1: this.formularioFiltros.get('id').value,
-        },
-        {
-          operador: 'icontains',
-          propiedad: 'guia',
-          valor1: this.formularioFiltros.get('guia').value,
-        },
-      ],
+    let parametrosConsulta: ParametrosApi = {
+    //   ...this.arrParametrosConsulta,
+    //   filtros: [
+    //     ...this.arrParametrosConsulta.filtros,
+    //     {
+    //       'id': this.formularioFiltros.get('id').value,
+    //       'guia': this.formularioFiltros.get('guia').value,
     };
 
     if (estadoDecodificado !== 'todos') {
-      parametrosConsulta.filtros = [
-        ...parametrosConsulta.filtros,
-        {
-          operador: '',
-          propiedad: 'estado_decodificado',
-          valor1: estadoDecodificado === 'si',
-        },
-      ];
+      // parametrosConsulta.filtros = [
+      //   ...parametrosConsulta.filtros,
+      //   {
+      //     operador: '',
+      //     propiedad: 'estado_decodificado',
+      //     valor1: estadoDecodificado === 'si',
+      //   },
+      // ];
     }
 
-    this.consultaLista(parametrosConsulta);
+    //this.consultaLista(parametrosConsulta);
   }
 
   limpiarFiltros() {
@@ -354,9 +343,9 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   filtrosPersonalizados(filtros: any) {
     if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = filtros;
+      //this.arrParametrosConsulta.filtros = filtros;
     } else {
-      this.arrParametrosConsulta.filtros = [];
+      //this.arrParametrosConsulta.filtros = [];
     }
 
     this.consultaLista(this.arrParametrosConsulta);
