@@ -116,7 +116,7 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
   consultaLista(filtros: any) {
     this.visitasPendientes$ = this._despachoApiService.lista(filtros).pipe(
       switchMap((response) => {
-        return of(response.registros);
+        return of(response.results);
       })
     );
   }

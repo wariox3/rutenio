@@ -3,7 +3,11 @@
     <h3 class="card-title">Filtros</h3>
   </div>
   <div class="card-body">
-    <app-filtro-base (emitirFiltros)="filtrosPersonalizados($event)" [mapeoCampos]="mapeoFiltros"></app-filtro-base>
+    <app-filtro
+      (filtersApply)="filterChange($event)"
+      [availableFields]="DESPACHO_LISTA_FILTERS"
+      [localStorageKey]="filtroKey()"
+    ></app-filtro>
   </div>
 </div>
 
@@ -11,11 +15,21 @@
   <div class="card-header">
     <h3 class="card-title">Despachos</h3>
   </div>
-  <app-tabla-comun
-    campoMapeo="Despacho"
-    [mapeo]="mapeoDocumento"
-    [datos]="despachos$ | async"
-    (emitirDetalleItem)="detalleDespacho($event)"
-    (emitirEditarItem)="navegarDespachoEditar($event)"
-  ></app-tabla-comun>
+  <div>
+    <div class="flex justify-between items-center mx-8 my-5">
+      <app-paginador
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageChange)="onPageChange($event)"
+        [totalItems]="cantidadRegistros"
+      ></app-paginador>
+    </div>
+    <app-tabla-comun
+      campoMapeo="Despacho"
+      [mapeo]="mapeoDocumento"
+      [datos]="despachos$ | async"
+      (emitirDetalleItem)="detalleDespacho($event)"
+      (emitirEditarItem)="navegarDespachoEditar($event)"
+    ></app-tabla-comun>
+  </div>
 </div>

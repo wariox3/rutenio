@@ -185,7 +185,7 @@ export default class DisenoRutaListaComponent
     this._despachoApiService
       .lista(this.arrParametrosConsulta)
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.registros;
+        this.arrDespachos = respuesta.results;
         this.changeDetectorRef.detectChanges();
       });
   }
