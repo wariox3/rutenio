@@ -125,6 +125,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     // limite_conteo: 10000,
     // modelo: 'RutVisita',
   };
+  
 
   arrParametrosConsultaResumen: ParametrosConsulta = {
     filtros: [],
