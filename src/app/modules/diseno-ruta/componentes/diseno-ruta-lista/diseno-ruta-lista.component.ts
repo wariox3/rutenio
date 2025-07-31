@@ -394,10 +394,10 @@ export default class DisenoRutaListaComponent
       const despacho = this.arrDespachos.find((_, i) => i === index);
       const pesoActualizado = despacho?.peso + draggedItem?.peso;
 
-      if (pesoActualizado > despacho.vehiculo_capacidad) {
+      if (pesoActualizado > despacho.vehiculo__capacidad) {
         this.alerta.mensajeError(
           'La operación no es posible',
-          `El vehiculo tiene una capacidad maxima de ${despacho.vehiculo_capacidad} kg`
+          `El vehiculo tiene una capacidad maxima de ${despacho.vehiculo__capacidad} kg`
         );
         return null;
       }

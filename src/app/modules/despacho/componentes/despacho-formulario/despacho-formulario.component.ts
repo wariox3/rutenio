@@ -73,7 +73,7 @@ export default class DespachoFormularioComponent extends General {
     visitas_entregadas: new FormControl<number>(0, [Validators.min(0)]),
     visitas_liberadas: new FormControl<number>(0, [Validators.min(0)]),
     vehiculo: new FormControl<number>(0, [Validators.required]),
-    vehiculo_placa: new FormControl<string>('', [
+    vehiculo__placa: new FormControl<string>('', [
       Validators.minLength(3),
       Validators.maxLength(10),
     ]),
@@ -122,7 +122,7 @@ export default class DespachoFormularioComponent extends General {
       visitas_entregadas: this.despacho.visitas_entregadas,
       visitas_liberadas: this.despacho.visitas_liberadas,
       vehiculo: this.despacho.vehiculo_id,
-      vehiculo_placa: this.despacho.vehiculo_placa,
+      vehiculo__placa: this.despacho.vehiculo__placa,
       estado_aprobado: this.despacho.estado_aprobado,
       estado_terminado: this.despacho.estado_terminado,
     });
