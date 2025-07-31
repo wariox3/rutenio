@@ -96,7 +96,7 @@ export class AgregarFlotaComponent extends General implements OnInit {
         switchMap((busqueda) => {
           const parametrosConsulta = {
               ...this._parametrosConsulta,
-              placa_icontains : busqueda
+              placa__icontains : busqueda
           };
 
           return this._generalApiService
