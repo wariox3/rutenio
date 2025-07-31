@@ -68,7 +68,7 @@
                 <button
                   class="menu-link"
                   data-modal-toggle="#importar-por-excel-modal"
-                  (click)="abrirModal()"
+                  (click)="abrirModalImportarExcel()"
                 >
                   <span class="menu-title"> Por excel </span>
                 </button>
@@ -77,7 +77,7 @@
                 <button
                   class="menu-link"
                   data-modal-toggle="#importar-por-complemento-modal"
-                  (click)="abrirModal()"
+                  (click)="abrirModalImportarComplemento()"
                 >
                   <span class="menu-title"> Por complemento </span>
                 </button>
@@ -174,10 +174,10 @@
   size="small"
   [id]="'importar-por-complemento-modal'"
   titulo="Importar por complemento"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalImportarComplemento()"
   #importarPorComplementoModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalImportarComplemento$ | async" modal-body>
     <app-visita-importar-por-complemento
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-complemento-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
@@ -189,10 +189,10 @@
   size="medium"
   [id]="'importar-por-excel-modal'"
   titulo="Importar por excel"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalImportarExcel()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalImportarExcel$ | async" modal-body>
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"

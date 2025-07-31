@@ -83,8 +83,8 @@ export class VisitaImportarPorComplementoComponent extends General {
   }
 
   getComplementos() {
-    this._complementoService.complementosInstalados().subscribe((response) => {
-      this.complementos.set(response.registros);
+    this._complementoService.complementosInstalados().subscribe((response: any) => {
+      this.complementos.set(response.result);
     });
   }
 
