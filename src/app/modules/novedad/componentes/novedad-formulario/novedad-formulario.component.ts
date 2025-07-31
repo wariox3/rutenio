@@ -84,11 +84,6 @@ export default class NovedadFormularioComponent
     }
   }
 
-  private getCurrentDateTime(): string {
-    const now = new Date();
-    return now.toLocaleString();
-  }
-
   private _consultarInformacion() {
     this._generalApiService
       .consultaApi<any>('ruteo/novedad_tipo/seleccionar/')
