@@ -144,13 +144,13 @@
     <div class="card-header flex justify-between items-center">
       <section class="flex gap-2 items-center">
         <h3 class="card-title">Visita</h3>
-        <span class="text-sm text-slate-500" *ngIf="valoresFiltrados.length > 0"
-          >[ {{ valoresFiltrados }} ]</span
-        >
+        @if(valoresFiltrados.length > 0){
+          <span class="text-sm text-slate-500">[ {{ valoresFiltrados }} ]</span>
+        }
       </section>
       <section class="flex items-center">
         @if (valoresFiltrados) {
-        <button class="btn" (click)="limpiarFiltros($event)">
+        <button class="btn" (click)="limpiarFiltros($event)" title="Limpiar filtros">
           <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
             <i
               class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"

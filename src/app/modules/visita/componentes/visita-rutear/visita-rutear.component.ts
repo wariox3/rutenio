@@ -1,21 +1,21 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
   QueryList,
   signal,
   ViewChild,
-  ViewChildren,
+  ViewChildren
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import {
   GoogleMapsModule,
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize, Observable, of, switchMap, takeUntil } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, of, switchMap, tap } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
@@ -24,16 +24,20 @@ import { FiltroBaseService } from '../../../../common/components/filtros/filtro-
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralApiService } from '../../../../core';
-import { Flota, ListaFlota } from '../../../../interfaces/flota/flota.interface';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { FlotaService } from '../../../flota/servicios/flota.service';
 import { FranjaService } from '../../../franja/servicios/franja.service';
+import { VISITA_RUTEAR_FILTERS } from '../../mapeos/visita-rutear-mapeo';
 import { visitaRutearMapeo } from '../../mapeos/visita-rutear.mapeo';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 import { VisitaEditarRutearComponent } from '../visita-editar-rutear/visita-editar-rutear.component';
@@ -42,11 +46,6 @@ import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-co
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
-import { FormsModule, NgModel } from '@angular/forms';
-import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
-import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
-import { VISITA_RUTEAR_FILTERS } from '../../mapeos/visita-rutear-mapeo';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -350,7 +349,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
       this.porcentajeCapacidad = porcentaje;
 
-      if (this.pesoTotal === 0) { 
+      if (this.pesoTotal === 0) {
         this.barraCapacidad = 0;
         this.errorCapacidad = true;
       } else if (porcentaje > 100) {
@@ -724,7 +723,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   limpiarFiltros(event: Event) {
     event.stopPropagation();
-    this._filtroBaseService.myEvent.next();
+    this.valoresFiltrados = '';
+    this._initView();
   }
 
   get vehiculosDisponibles(): number {
@@ -767,6 +767,13 @@ export default class VisitaRutearComponent extends General implements OnInit {
           ...filters,
           ...this.arrParametrosConsultaVisita
         })
+        .pipe(
+          tap(() => {
+            this.valoresFiltrados = Object.values(filters)
+              .filter((value) => value)
+              .join(', ');
+          })
+        )
         .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
 
         this.cerrarModalFiltrosPorId('#filtros-visita');
