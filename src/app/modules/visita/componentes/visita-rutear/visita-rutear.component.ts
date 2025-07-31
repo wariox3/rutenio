@@ -15,7 +15,7 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, finalize, Observable, of, switchMap, takeUntil } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
@@ -28,7 +28,7 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralApiService } from '../../../../core';
-import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
+import { Flota, ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
@@ -43,6 +43,10 @@ import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visit
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
 import { FormsModule, NgModel } from '@angular/forms';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { VISITA_RUTEAR_FILTERS } from '../../mapeos/visita-rutear-mapeo';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -66,7 +70,9 @@ import { FormsModule, NgModel } from '@angular/forms';
     RedondearPipe,
     VisitaFormularioComponent,
     VisitaImportarPorComplementoComponent,
-  ],
+    PaginadorComponent,
+    FiltroComponent
+],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
 })
@@ -88,29 +94,37 @@ export default class VisitaRutearComponent extends General implements OnInit {
   directionsResults: google.maps.DirectionsResult | undefined;
   markerMap: Map<number, MapMarker> = new Map();
 
-  arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['prioridad'],
-    limite_conteo: 10000,
-    modelo: 'RutFlota',
+  public currentPage = signal(1);
+  public totalPages = signal(1);
+
+  arrParametrosConsultaFlota: ParametrosApi = {
+    ordering : 'prioridad'
+    // filtros: [],
+    // limite: 50,
+    // desplazar: 0,
+    // ordenamientos: ['prioridad'],
+    // limite_conteo: 10000,
+    // modelo: 'RutFlota',
   };
 
-  arrParametrosConsultaVisita: ParametrosConsulta = {
-    filtros: [
-      { propiedad: 'estado_despacho', valor1: false },
-      { propiedad: 'estado_devolucion', valor1: false },
-    ],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: [
-      'estado_decodificado',
-      '-estado_decodificado_alerta',
-      'orden',
-    ],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
+  arrParametrosConsultaVisita: ParametrosApi = {
+    ordering : 'estado_decodificado,-estado_decodificado_alerta,orden',
+    estado_despacho: 'False',
+    estado_devolucion: 'False',
+    limite: 50
+    // filtros: [
+    //   { propiedad: 'estado_despacho', valor1: false },
+    //   { propiedad: 'estado_devolucion', valor1: false },
+    // ],
+    // limite: 50,
+    // desplazar: 0,
+    // ordenamientos: [
+    //   'estado_decodificado',
+    //   '-estado_decodificado_alerta',
+    //   'orden',
+    // ],
+    // limite_conteo: 10000,
+    // modelo: 'RutVisita',
   };
 
   arrParametrosConsultaResumen: ParametrosConsulta = {
@@ -150,13 +164,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cargandoConsultas$: BehaviorSubject<boolean>;
   public franjas$: Observable<Franja[]>;
   public mostrarFranjas$: BehaviorSubject<boolean>;
-  public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalImportarPorExcel$ = new BehaviorSubject(false);
   public toggleModalImportarPorComplemento$ = new BehaviorSubject(false);
   public toggleModalAgregarFlota$ = new BehaviorSubject(false);
   public toggleModalFiltros$ = new BehaviorSubject(false);
   public toggleModalVisitaResumen$ = new BehaviorSubject(false);
   public toggleModalVisitaNuevo$ = new BehaviorSubject(false);
+  public toggleModalVisitaEditar$ = new BehaviorSubject(false);
+  public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
   public toggleModalFlotas$ = new BehaviorSubject(false);
+  public cantidadRegistros: number = 0;
+  public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS
+  public filtroKey = signal<string>('');
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -176,7 +195,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    this._aplicarFiltrosPermanentes();
+    // this._aplicarFiltrosPermanentes();
     this._initView();
     this._initListeners();
   }
@@ -185,35 +204,35 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._filtroBaseService.myEvent.subscribe({});
   }
 
-  private _aplicarFiltrosPermanentes() {
-    const filtroKey = this._filtroBaseService.construirFiltroKey();
-    let filtrosPermanentesKey = localStorage.getItem(filtroKey);
-    let parametrosConsulta = [];
+  // private _aplicarFiltrosPermanentes() {
+  //   const filtroKey = this._filtroBaseService.construirFiltroKey();
+  //   let filtrosPermanentesKey = localStorage.getItem(filtroKey);
+  //   let parametrosConsulta = [];
 
-    if (filtrosPermanentesKey === null) {
-      return null;
-    }
+  //   if (filtrosPermanentesKey === null) {
+  //     return null;
+  //   }
 
-    parametrosConsulta = JSON.parse(filtrosPermanentesKey);
+  //   parametrosConsulta = JSON.parse(filtrosPermanentesKey);
 
-    this.arrParametrosConsultaVisita = {
-      ...this.arrParametrosConsultaVisita,
-      filtros: [
-        ...this.arrParametrosConsultaVisita.filtros,
-        ...parametrosConsulta,
-      ],
-    };
+  //   this.arrParametrosConsultaVisita = {
+  //     ...this.arrParametrosConsultaVisita,
+  //     filtros: [
+  //       ...this.arrParametrosConsultaVisita.filtros,
+  //       ...parametrosConsulta,
+  //     ],
+  //   };
 
-    this.arrParametrosConsultaResumen = {
-      ...this.arrParametrosConsultaResumen,
-      filtros: [
-        ...this.arrParametrosConsultaResumen.filtros,
-        ...parametrosConsulta,
-      ],
-    };
+  //   this.arrParametrosConsultaResumen = {
+  //     ...this.arrParametrosConsultaResumen,
+  //     filtros: [
+  //       ...this.arrParametrosConsultaResumen.filtros,
+  //       ...parametrosConsulta,
+  //     ],
+  //   };
 
-    this._actualizarFiltrosParaMostrar(parametrosConsulta);
-  }
+  //   this._actualizarFiltrosParaMostrar(parametrosConsulta);
+  // }
 
   private _initView() {
     this._consultarResumen()
@@ -229,7 +248,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   consultarLista() {
-    this.consultarFlotas(this.arrParametrosConsulta);
+    this.consultarFlotas(this.arrParametrosConsultaFlota);
     this._consultarVisitas(this.arrParametrosConsultaVisita);
   }
 
@@ -274,26 +293,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private _consultarVisitas(parametros: ParametrosConsulta) {
+  private _consultarVisitas(parametros: ParametrosApi) {
     this._generalApiService
-      .getLista<Visita[]>(parametros)
-      .subscribe((respuesta) => {
-        this.limpiarMarkers();
-        this._limpiarBarraCapacidad();
-        this._limpiarBarraTiempo();
-        this.totalRegistrosVisitas = respuesta.cantidad_registros;
-
-        respuesta.registros.forEach((visita) => {
-          const position = { lat: visita.latitud, lng: visita.longitud };
-          this.addMarker(position, visita); // Agrega el ID de la visita
-        });
-
-        // this._consultarErrores();
-        this._calcularPorcentajeCapacidad();
-        this._calcularPorcentajeTiempo();
-        this.arrVisitas = respuesta.registros;
-        this.changeDetectorRef.detectChanges();
-      });
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametros)
+      .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta)
+      );
   }
 
   consultarFranjas() {
@@ -307,27 +311,27 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.mostrarFranjas$.next(!currentValue);
   }
 
-  consultarFlotas(parametros: ParametrosConsulta) {
+  consultarFlotas(parametros: ParametrosApi) {
     this.cargandoConsultas$.next(true);
-    this._flotaService
-      .lista(parametros)
+    this._generalApiService
+      .consultaApi<RespuestaApi<ListaFlota>>('ruteo/flota/', parametros)
       .pipe(finalize(() => this.cargandoConsultas$.next(false)))
       .subscribe((response) => {
-        this.flotasSeleccionadas = response.registros.map(
+        this.flotasSeleccionadas = response.results.map(
           (registro) => registro.vehiculo_id
         );
 
-        this._calcularCapacidadTotal(response.registros);
-        this._calcularTiempoTotal(response.registros);
+        this._calcularCapacidadTotal(response.results);
+        this._calcularTiempoTotal(response.results);
         this._calcularPorcentajeCapacidad();
         this._calcularPorcentajeTiempo();
-        this.arrFlota.set(response.registros);
+        this.arrFlota.set(response.results);
         this.changeDetectorRef.detectChanges();
       });
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
-    const parametrosConsulta: ParametrosConsulta = {
+    const parametrosConsulta: ParametrosApi = {
       ...this.arrParametrosConsultaVisita,
       limite: evento.limite,
       desplazar: evento.desplazar,
@@ -468,8 +472,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
     }
   }
 
-  abrirModal() {
-    this.toggleModal$.next(true);
+  abrirModalImportarExcel() {
+    this.toggleModalImportarPorExcel$.next(true);
+  }
+
+  abrirModalDetalleVisita() {
+    this.toggleModalVisitaEditar$.next(true);
   }
 
   abrirModalImportarPorComplemento() {
@@ -477,7 +485,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   abrirModalAgregarFlota() {
-    this.toggleModal$.next(true);
+    this.toggleModalAgregarFlota$.next(true);
   }
 
   abrirModalFiltros() {
@@ -492,8 +500,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalFlotas$.next(true);
   }
 
-  cerrarModal() {
-    this.toggleModal$.next(false);
+  cerrarModalImportarPorExcel() {
+    this.toggleModalImportarPorExcel$.next(false);
   }
 
   cerrarModalImportarPorComplemento() {
@@ -504,13 +512,25 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaNuevo$.next(false);
   }
 
+  cerrarModalEditarVisita() {
+    this.toggleModalVisitaEditar$.next(false);
+  }
+
+  cerrarModalVisitaDetalle() {
+    this.toggleModalVisitaDetalle$.next(false);
+  }
+
   cerrarModalFlotas() {
+    this.toggleModalFlotas$.next(false);
+  }
+
+  cerrarModalFiltrosVisita() {
     this.toggleModalFlotas$.next(false);
   }
 
   eliminarFlota(id: number) {
     this._flotaService.eliminarFlota(id).subscribe((response) => {
-      this.consultarFlotas(this.arrParametrosConsulta);
+      this.consultarFlotas(this.arrParametrosConsultaFlota);
       this.alerta.mensajaExitoso('Flota eliminada');
     });
   }
@@ -575,7 +595,15 @@ export default class VisitaRutearComponent extends General implements OnInit {
   cerrarModalPorId(id: string) {
     const modalEl: HTMLElement = document.querySelector(id);
     const modal = KTModal.getInstance(modalEl);
-    this.toggleModal$.next(false);
+    this.toggleModalImportarPorExcel$.next(false);
+
+    modal.toggle();
+  }
+
+  cerrarModalFiltrosPorId(id: string) {
+    const modalEl: HTMLElement = document.querySelector(id);
+    const modal = KTModal.getInstance(modalEl);
+    this.toggleModalFiltros$.next(false);
 
     modal.toggle();
   }
@@ -608,8 +636,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
     }
   }
 
-  editarModal(visita) {
-    this.toggleModal$.next(true);
+  editarModalVisita(visita) {
+    this.toggleModalVisitaEditar$.next(true);
     this.visitarEditar = visita;
   }
 
@@ -618,33 +646,23 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.consultarVisitas();
   }
 
-  private _actualizarFiltrosParaMostrar(filtros: any[]) {
-    this.valoresFiltrados = '';
-    filtros.forEach((filtro, index) => {
-      this.valoresFiltrados += filtro.valor1;
-      if (index + 1 < filtros.length) {
-        this.valoresFiltrados += ', ';
-      }
-    });
-  }
+
 
   filtrosPersonalizados(filtros: any[], modalId: string) {
     if (filtros.length >= 1) {
-      this.arrParametrosConsultaVisita.filtros = [
-        { propiedad: 'estado_despacho', valor1: false },
-        { propiedad: 'estado_devolucion', valor1: false },
-        ...filtros,
-      ];
-      this.arrParametrosConsultaResumen.filtros = [...filtros];
-    } else {
-      this.arrParametrosConsultaVisita.filtros = [
-        { propiedad: 'estado_despacho', valor1: false },
-        { propiedad: 'estado_devolucion', valor1: false },
-      ];
-      this.arrParametrosConsultaResumen.filtros = [];
+    //   this.arrParametrosConsultaVisita.filtros = [
+    //     { propiedad: 'estado_despacho', valor1: false },
+    //     { propiedad: 'estado_devolucion', valor1: false },
+    //     ...filtros,
+    //   ];
+    //   this.arrParametrosConsultaResumen.filtros = [...filtros];
+    // } else {
+    //   this.arrParametrosConsultaVisita.filtros = [
+    //     { propiedad: 'estado_despacho', valor1: false },
+    //     { propiedad: 'estado_devolucion', valor1: false },
+    //   ];
+    //   this.arrParametrosConsultaResumen.filtros = [];
     }
-
-    this._actualizarFiltrosParaMostrar(filtros);
 
     this.consultarVisitas();
 
@@ -703,26 +721,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     });
   }
 
-  recibirFiltrosVacios(filtros: any[]) {
-    if (filtros.length >= 1) {
-      this.arrParametrosConsultaVisita.filtros = [
-        { propiedad: 'estado_despacho', valor1: false },
-        { propiedad: 'estado_devolucion', valor1: false },
-        ...filtros,
-      ];
-      this.arrParametrosConsultaResumen.filtros = [...filtros];
-    } else {
-      this.arrParametrosConsultaVisita.filtros = [
-        { propiedad: 'estado_despacho', valor1: false },
-        { propiedad: 'estado_devolucion', valor1: false },
-      ];
-      this.arrParametrosConsultaResumen.filtros = [];
-    }
-
-    this._actualizarFiltrosParaMostrar(filtros);
-
-    this.consultarVisitas();
-  }
 
   limpiarFiltros(event: Event) {
     event.stopPropagation();
@@ -750,8 +748,47 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .subscribe({
         next: () => {
           this.alerta.mensajaExitoso('Prioridad actualizada exitosamente');
-          this.consultarFlotas(this.arrParametrosConsulta);
+          this.consultarFlotas(this.arrParametrosConsultaFlota);
         },
       });
   }
+
+  onPageChange(page: number): void {
+    this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+        limit: 50,
+        page,
+      }).subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
+  }
+
+    filterChange(filters: Record<string, any>) {
+      this._generalApiService
+        .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+          ...filters,
+          ...this.arrParametrosConsultaVisita
+        })
+        .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
+
+        this.cerrarModalFiltrosPorId('#filtros-visita');
+    }
+
+  private _procesarRespuestaVisita(respuesta: RespuestaApi<Visita>): void {
+        this.limpiarMarkers();
+        this._limpiarBarraCapacidad();
+        this._limpiarBarraTiempo();
+        this.totalRegistrosVisitas = respuesta.count;
+
+        respuesta.results.forEach((visita) => {
+          const position = { lat: visita.latitud, lng: visita.longitud };
+          this.addMarker(position, visita);
+        });
+
+        this._calcularPorcentajeCapacidad();
+        this._calcularPorcentajeTiempo();
+        this.arrVisitas = respuesta.results;
+        this.cantidadRegistros = respuesta.count;
+        this.changeDetectorRef.detectChanges();
+  }
+
+
 }
