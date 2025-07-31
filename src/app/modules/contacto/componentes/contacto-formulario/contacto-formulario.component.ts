@@ -29,6 +29,7 @@ import {
   AutocompletarTipoPersona,
 } from '../../../../interfaces/general/autocompletar.interface';
 import { ContactoService } from '../../servicios/contacto.service';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-contacto-formulario',
@@ -49,13 +50,13 @@ import { ContactoService } from '../../servicios/contacto.service';
 })
 export default class ContactoFormularioComponent
   extends General
-  implements OnInit
-{
+  implements OnInit {
   @Input() contacto: RespuestaContacto;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
   @Output() emitirFormulario: EventEmitter<any> = new EventEmitter();
 
   private _contactoService = inject(ContactoService);
+  private _generalService = inject(GeneralService);
 
   public arrTipoPersona: AutocompletarTipoPersona[] = [];
   public arrIdentificacion: AutocompletarIdentificacion[] = [];
@@ -102,23 +103,15 @@ export default class ContactoFormularioComponent
 
   private _consultarInformacion() {
     zip(
-      this._contactoService.listaAutocompletar<AutocompletarTipoPersona>(
-        'GenTipoPersona'
-      ),
-      this._contactoService.listaAutocompletar<AutocompletarIdentificacion>(
-        'GenIdentificacion'
-      ),
-      this._contactoService.listaAutocompletar<AutocompletarRegimen>(
-        'GenRegimen'
-      ),
-      this._contactoService.listaAutocompletar<AutocompletarPlazoPagos>(
-        'GenPlazoPago'
-      )
-    ).subscribe((respuesta) => {
-      this.arrTipoPersona = respuesta[0].registros;
-      this.arrIdentificacion = respuesta[1].registros;
-      this.arrRegimen = respuesta[2].registros;
-      this.arrPlazoPagos = respuesta[3].registros;
+      this._generalService.consultaApi('general/tipo_persona/seleccionar/'),
+      this._generalService.consultaApi('general/identificacion/seleccionar/'),
+      this._generalService.consultaApi('general/regimen/seleccionar/'),
+      this._generalService.consultaApi('general/plazo_pago/seleccionar/')
+    ).subscribe((respuesta: any) => {
+      this.arrTipoPersona = respuesta[0];
+      this.arrIdentificacion = respuesta[1];
+      this.arrRegimen = respuesta[2];
+      this.arrPlazoPagos = respuesta[3];
       this.changeDetectorRef.detectChanges();
     });
   }
@@ -136,27 +129,15 @@ export default class ContactoFormularioComponent
 
   consultarCiudad(nombre?: string) {
     let arrFiltros = {
-      filtros: [
-        {
-          operador: 'icontains',
-          propiedad: 'nombre',
-          valor1: nombre,
-          valor2: '',
-        },
-      ],
-      limite: 10,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 10000,
-      modelo: 'GenCiudad',
-      serializador: 'ListaAutocompletar',
+      'nombre__icontains': nombre,
+      limit: 10,
     };
 
-    this._contactoService
-      .listaCiudades(arrFiltros)
+    this._generalService
+      .consultaApi('general/ciudad/seleccionar/', arrFiltros)
       .pipe(
-        tap((respuesta) => {
-          this.arrCiudades = respuesta.registros;
+        tap((respuesta: any) => {
+          this.arrCiudades = respuesta;
           this.changeDetectorRef.detectChanges();
         })
       )

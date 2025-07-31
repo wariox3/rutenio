@@ -29,7 +29,7 @@
                 <button
                   class="menu-link"
                   data-modal-toggle="#agregar-flota"
-                  (click)="abrirModal()"
+                  (click)="abrirModalAgregarFlota()"
                 >
                   <span class="menu-icon">
                     <i class="ki-filled ki-abstract-10"></i>
@@ -144,13 +144,13 @@
     <div class="card-header flex justify-between items-center">
       <section class="flex gap-2 items-center">
         <h3 class="card-title">Visita</h3>
-        <span class="text-sm text-slate-500" *ngIf="valoresFiltrados.length > 0"
-          >[ {{ valoresFiltrados }} ]</span
-        >
+        @if(valoresFiltrados.length > 0){
+          <span class="text-sm text-slate-500">[ {{ valoresFiltrados }} ]</span>
+        }
       </section>
       <section class="flex items-center">
         @if (valoresFiltrados) {
-        <button class="btn" (click)="limpiarFiltros($event)">
+        <button class="btn" (click)="limpiarFiltros($event)" title="Limpiar filtros">
           <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
             <i
               class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"
@@ -187,7 +187,7 @@
                 <button
                   class="menu-link"
                   data-modal-toggle="#importar-por-excel-modal"
-                  (click)="abrirModal()"
+                  (click)="abrirModalImportarExcel()"
                 >
                   <span class="menu-icon">
                     <i class="ki-filled ki-file-up"></i>
@@ -347,7 +347,7 @@
                     <button
                       class="hover:text-blue-500 transition-all"
                       data-modal-toggle="#detalle-visita"
-                      (click)="abrirModal()"
+                      (click)="abrirModalDetalleVisita()"
                     >
                       <i class="ki-filled ki-eye text-xl"></i>
                     </button>
@@ -368,7 +368,7 @@
                             <button
                               class="menu-link"
                               data-modal-toggle="#editar-visita"
-                              (click)="editarModal(visita)"
+                              (click)="editarModalVisita(visita)"
                             >
                               <span class="menu-icon">
                                 <i class="ki-filled ki-notepad-edit"></i>
@@ -402,12 +402,12 @@
     </div>
 
     <div class="card-footer flex justify-center">
-      <app-paginacion-default
-        [limite]="arrParametrosConsultaVisita.limite"
-        [totalRegistros]="totalRegistrosVisitas"
-        [maxPaginasVisibles]="5"
-        (paginar)="paginar($event)"
-      ></app-paginacion-default>
+      <app-paginador
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        (pageChange)="onPageChange($event)"
+        [totalItems]="cantidadRegistros"
+      ></app-paginador>
     </div>
   </div>
   <div class="card h-[45rem]">
@@ -490,14 +490,14 @@
   titulo="Agregar flota"
   size="large"
   [id]="'agregar-flota'"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalFlotas()"
 >
   <section
-    *ngIf="!(cargandoConsultas$ | async) && (toggleModal$ | async)"
+    *ngIf="!(cargandoConsultas$ | async) && (toggleModalAgregarFlota$ | async)"
     modal-body
   >
     <app-agregar-flota
-      (emitirConsultarLista)="consultarFlotas(arrParametrosConsulta)"
+      (emitirConsultarLista)="consultarFlotas(arrParametrosConsultaFlota)"
       [itemsSeleccionados]="flotasSeleccionadas"
     ></app-agregar-flota>
   </section>
@@ -535,10 +535,10 @@
   size="medium"
   [id]="'importar-por-excel-modal'"
   titulo="Importar por excel"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalImportarPorExcel()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalImportarPorExcel$ | async" modal-body>
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultarVisitas()"
@@ -556,10 +556,10 @@
   size="medium"
   [id]="'editar-visita'"
   titulo="Editar visita"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalEditarVisita()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalVisitaEditar$ | async" modal-body>
     <app-visita-editar-rutear
       [visita]="visitarEditar"
       (emitirCerrarModal)="visitaActualizada('#editar-visita')"
@@ -572,16 +572,14 @@
   size="medium"
   [id]="'filtros-visita'"
   titulo="Filtrar visita"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalFiltrosVisita()"
 >
   <section modal-body>
-    <app-filtro-base
-      [modeloConsulta]="'RutFranja'"
-      [mapeoCampos]="mapeo"
-      (emitirFiltros)="filtrosPersonalizados($event, '#filtros-visita')"
-      (emitirLimpiarFiltros)="recibirFiltrosVacios($event)"
-      [persistirFiltros]="true"
-    ></app-filtro-base>
+    <app-filtro
+      (filtersApply)="filterChange($event)"
+      [availableFields]="VISITA_RUTEAR_FILTERS"
+      [localStorageKey]="filtroKey()"
+    ></app-filtro>
   </section>
 </app-modal-default>
 
@@ -589,9 +587,9 @@
   size="medium"
   [id]="'detalle-visita'"
   titulo="Visita"
-  (emitirModalCerrado)="cerrarModal()"
+  (emitirModalCerrado)="cerrarModalVisitaDetalle()"
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  <section *ngIf="toggleModalVisitaDetalle$ | async" modal-body>
     <app-visita-rutear-detalle
       (emitirRecargarLista)="visitaActualizada('#detalle-visita')"
       [visita]="selectedVisita"

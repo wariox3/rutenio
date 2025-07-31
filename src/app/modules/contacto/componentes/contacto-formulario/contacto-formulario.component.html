@@ -30,8 +30,8 @@
           >
             <option value="0">Seleccionar</option>
             @for (tipoPersona of arrTipoPersona; track $index) {
-            <option [value]="tipoPersona.tipo_persona_id">
-              {{ tipoPersona.tipo_persona_nombre }}
+            <option [value]="tipoPersona.id">
+              {{ tipoPersona.nombre }}
             </option>
             }
           </select>
@@ -65,8 +65,8 @@
           >
             <option value="0">Seleccionar</option>
             @for (identificacion of arrIdentificacion; track $index) {
-            <option [value]="identificacion.identificacion_id">
-              {{ identificacion.identificacion_nombre }}
+            <option [value]="identificacion.id">
+              {{ identificacion.nombre }}
             </option>
             }
           </select>
@@ -188,8 +188,8 @@
           >
             <option value="0">Seleccionar</option>
             @for (regimen of arrRegimen; track $index) {
-            <option [value]="regimen.regimen_id">
-              {{ regimen.regimen_nombre }}
+            <option [value]="regimen.id">
+              {{ regimen.nombre }}
             </option>
             }
           </select>
@@ -221,8 +221,8 @@
           >
             <option value="0">Seleccionar</option>
             @for (plazoPago of arrPlazoPagos; track $index) {
-            <option [value]="plazoPago.plazo_pago_id">
-              {{ plazoPago.plazo_pago_nombre }}
+            <option [value]="plazoPago.id">
+              {{ plazoPago.nombre }}
             </option>
             }
           </select>

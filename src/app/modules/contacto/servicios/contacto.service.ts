@@ -11,53 +11,20 @@ import { RespuestaContacto } from '../../../interfaces/contacto/contacto.interfa
 import { HttpService } from '../../../common/services/http.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { cambiarVacioPorNulo } from '../../../common/validaciones/campo-no-obligatorio.validator';
+import { ParametrosApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContactoService {
+
   constructor(private http: HttpService) {}
 
   consultarDetalle(id: number) {
     return this.http.getDetalle<any>(`general/contacto/${id}/`);
   }
 
-  lista(parametros: ParametrosConsulta) {
-    return this.http.post<RespuestaGeneralLista<RespuestaContacto>>(
-      `general/funcionalidad/lista/`,
-      parametros
-    );
-  }
 
-  listaAutocompletar<T>(modelo: string) {
-    return this.http.post<RespuestaAutocompletar<T>>(
-      'general/funcionalidad/lista/',
-      {
-        filtros: [
-          {
-            id: '1692284537644-1688',
-            operador: 'icontains',
-            propiedad: 'nombre',
-            valor1: ``,
-            valor2: '',
-          },
-        ],
-        limite: 1000,
-        desplazar: 0,
-        ordenamientos: [],
-        limite_conteo: 10000,
-        modelo,
-        serializador: 'ListaAutocompletar',
-      }
-    );
-  }
-
-  listaCiudades(arrFiltros: ParametrosConsulta) {
-    return this.http.post<RespuestaAutocompletar<AutocompletarCiudades>>(
-      'general/funcionalidad/lista/',
-      arrFiltros
-    );
-  }
 
   guardarContacto(data: any) {
     return this.http.post<RespuestaContacto>(`general/contacto/`, data);

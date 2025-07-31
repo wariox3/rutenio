@@ -74,7 +74,7 @@ export class NovedadTabComponent extends General implements OnInit {
 
     this._novedadService.lista(parametros).subscribe({
       next: (respuesta) => {
-        this.novedades.set(respuesta.registros);
+        this.novedades.set(respuesta.results);
       },
       error: (error) => {
         console.error('Error al cargar visitas:', error);

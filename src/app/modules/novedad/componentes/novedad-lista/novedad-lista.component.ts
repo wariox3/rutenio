@@ -1,28 +1,29 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
-import { General } from '../../../../common/clases/general';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
-import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
-import { Observable, of, switchMap } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import { NovedadService } from '../../servicios/novedad.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { FormControl, FormGroup } from '@angular/forms';
-import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
-import { novedadMapeo } from '../../mapeos/novedad-mapeo';
-import { mapeo } from '../../../../common/mapeos/documentos';
-import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
 import { RouterLink } from '@angular/router';
+import { Observable, of, switchMap } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/documentos';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { NovedadService } from '../../servicios/novedad.service';
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { NOVEDAD_FILTERS } from '../../mapeos/novedad-mapeo';
+import { ParametrosApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-novedad-lista',
   standalone: true,
-  imports: [FiltroBaseComponent, TablaComunComponent, CommonModule, ButtonComponent, RouterLink],
+  imports: [TablaComunComponent, CommonModule, ButtonComponent, RouterLink, FiltroComponent],
   templateUrl: './novedad-lista.component.html',
   styleUrl: './novedad-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,16 +34,13 @@ export default class NovedadListaComponent extends General implements OnInit {
 
   public novedades$: Observable<any[]>;
   public mapeoDocumento = mapeo;
-  public mapeoFiltros = novedadMapeo;
+  public mapeoFiltros = NOVEDAD_FILTERS;
   public nombreFiltro = '';
+  public filtroKey = signal<string>('');
 
-  public arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['-fecha'],
-    limite_conteo: 10000,
-    modelo: 'RutNovedad',
+  public arrParametrosConsulta: ParametrosApi = {
+    limit: 50,
+    ordering: '-fecha',
   };
 
   public formularioFiltros = new FormGroup({
@@ -51,35 +49,18 @@ export default class NovedadListaComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    this._construirFiltros();
     this.consultaLista(this.arrParametrosConsulta);
-  }
-
-  private _construirFiltros() {
-    this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
-    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
-    if (filtroGuardado !== null) {
-      const filtros = JSON.parse(filtroGuardado);
-      this.arrParametrosConsulta.filtros = [...filtros];
-    }
+    this.filtroKey.set(
+      'novedad_lista_filtro'
+    );
   }
 
   consultaLista(filtros: any) {
     this.novedades$ = this._novedadService.lista(filtros).pipe(
       switchMap((response) => {
-        return of(response.registros);
+        return of(response.results);
       })
     );
-  }
-
-  filtrosPersonalizados(filtros: any) {
-    if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = filtros;
-    } else {
-      this.arrParametrosConsulta.filtros = [];
-    }
-
-    this.consultaLista(this.arrParametrosConsulta);
   }
 
   limpiarFiltros() {
@@ -89,50 +70,14 @@ export default class NovedadListaComponent extends General implements OnInit {
     });
   }
 
-  aplicarFiltros() {
-    const estadoAprobado = this.formularioFiltros.get('estado_aprobado').value;
-    const estadoTerminado =
-      this.formularioFiltros.get('estado_terminado').value;
-
-    let parametrosConsulta: ParametrosConsulta = {
-      ...this.arrParametrosConsulta,
-      filtros: [
-        ...this.arrParametrosConsulta.filtros,
-        {
-          operador: 'icontains',
-          propiedad: 'id',
-          valor1: this.formularioFiltros.get('id').value,
-        },
-        {
-          operador: 'icontains',
-          propiedad: 'vehiculo__placa',
-          valor1: this.formularioFiltros.get('vehiculo__placa').value,
-        },
-        ...(estadoAprobado !== 'todos'
-          ? [
-              {
-                operador: '',
-                propiedad: 'estado_aprobado',
-                valor1: estadoAprobado === 'si',
-              },
-            ]
-          : []),
-        ...(estadoTerminado && estadoTerminado !== 'todos'
-          ? [
-              {
-                operador: '',
-                propiedad: 'estado_terminado',
-                valor1: estadoTerminado === 'si',
-              },
-            ]
-          : []),
-      ],
-    };
-
-    this.consultaLista(parametrosConsulta);
-  }
-
   detalleNovedad(id: number) {
     this.router.navigateByUrl(`/movimiento/novedad/detalle/${id}`);
+  }
+
+  filterChange(filters: Record<string, any>) {
+    this.consultaLista({
+      ...this.arrParametrosConsulta,
+      ...filters,
+    })
   }
 }

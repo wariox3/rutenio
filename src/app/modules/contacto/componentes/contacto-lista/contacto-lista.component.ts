@@ -5,14 +5,15 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';
 import { General } from '../../../../common/clases/general';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { mapeo } from '../../../../common/mapeos/administradores';
-import { ContactoService } from '../../servicios/contacto.service';
-import { RespuestaContacto } from '../../../../interfaces/contacto/contacto.interface';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/administradores';
+import { ParametrosApi } from '../../../../core/types/api.type';
+import { RespuestaContacto } from '../../../../interfaces/contacto/contacto.interface';
+import { ContactoService } from '../../servicios/contacto.service';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-contacto-lista',
@@ -23,13 +24,8 @@ import { TablaComunComponent } from '../../../../common/components/ui/tablas/tab
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ContactoListaComponent extends General implements OnInit {
-  arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: [],
-    limite_conteo: 10000,
-    modelo: 'GenContacto',
+  arrParametrosConsulta: ParametrosApi = {
+    limit: 50,
   };
   cantidad_registros!: number;
   arrContactos: RespuestaContacto[];
@@ -37,6 +33,7 @@ export default class ContactoListaComponent extends General implements OnInit {
   public mapeoAdministrador = mapeo;
 
   private contactoService = inject(ContactoService);
+  private _generalService = inject(GeneralService);
 
   ngOnInit(): void {
     this.consultarLista();
@@ -46,11 +43,11 @@ export default class ContactoListaComponent extends General implements OnInit {
   }
 
   consultarLista() {
-    this.contactoService
-      .lista(this.arrParametrosConsulta)
-      .subscribe((respuesta) => {
-        this.cantidad_registros = respuesta.cantidad_registros;
-        this.arrContactos = respuesta.registros;
+    this._generalService
+      .consultaApi('general/contacto/', this.arrParametrosConsulta)
+      .subscribe((respuesta: any) => {
+        this.cantidad_registros = respuesta.count;
+        this.arrContactos = respuesta.results;
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -58,7 +55,7 @@ export default class ContactoListaComponent extends General implements OnInit {
   editarContacto(id: number) {
     this.router.navigateByUrl(`/administracion/contacto/editar/${id}`);
   }
-  
+
   detalleContacto(id: number) {
     this.router.navigateByUrl(`/administracion/contacto/detalle/${id}`);
   }

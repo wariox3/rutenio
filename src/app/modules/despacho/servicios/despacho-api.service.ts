@@ -1,3 +1,4 @@
+import { RespuestaApi } from './../../../core/types/api.type';
 import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { Despacho, DespachoDetalle } from '../../../interfaces/despacho/despacho.interface';
@@ -19,7 +20,7 @@ export class DespachoApiService {
   }
 
   lista(parametros: any) {
-    return this._generalApiService.getLista<Despacho[]>(parametros);
+    return this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', parametros);
   }
 
   guardar(data: any) {

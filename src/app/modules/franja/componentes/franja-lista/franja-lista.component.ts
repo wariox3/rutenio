@@ -22,6 +22,8 @@ import FranjaImportarPorKmlComponent from '../franja-importar-por-kml/franja-imp
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { KTModal } from '../../../../../metronic/core';
 import FranjaEditarComponent from '../franja-editar/franja-editar.component';
+import { GeneralService } from '../../../../common/services/general.service';
+import { RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-franja-lista',
@@ -75,6 +77,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   };
 
   private _franjaService = inject(FranjaService);
+  private _generalService = inject(GeneralService);
   private franjasSubject = new BehaviorSubject<Franja[]>([]);
   franjas$ = this.franjasSubject.asObservable();
   @ViewChild('map', { static: false }) map!: GoogleMap;
@@ -98,13 +101,13 @@ export default class FranjaListaComponent extends General implements OnInit {
   }
 
   consultarFranjas() {
-    this._franjaService
-      .lista(this.arrParametrosConsulta)
+    this._generalService
+      .consultaApi<RespuestaApi<Franja>>('ruteo/franja/',this.arrParametrosConsulta)
       .pipe(
         tap((respuesta) => {
-          this.cantidadRegistros = respuesta.cantidad_registros;
+          this.cantidadRegistros = respuesta.count;
         }),
-        map((respuesta) => respuesta.registros)
+        map((respuesta) => respuesta.results)
       )
       .subscribe((registros) => {
         this.franjasSubject.next(registros);
@@ -209,14 +212,14 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   clickMap(evento: any) {
     const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
-  
+
     if (this.estaCreando) {
       // Asegúrate de que las coordenadas son solo de la nueva franja
       const nuevoVertice = evento.latLng.toJSON();
       this.nuevaVertice = [...this.nuevaVertice, nuevoVertice];
       coordenadasFormArray.push(new FormControl(nuevoVertice));
     }
-  
+
     if (this.editableFranja) {
       this.editableFranja.setEditable(false);
       this.editableFranja.setMap(null);
@@ -263,7 +266,7 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   resetCrearPoligono() {
     this.estaCreando = false;
-    this.estaCerrado = false; 
+    this.estaCerrado = false;
     this.nuevaVertice = [];
     const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
     coordenadasFormArray.clear();
@@ -272,7 +275,7 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   private generarColorAleatorio(): string {
     const generarComponente = () => Math.floor(Math.random() * 100 + 30);
-    const r = generarComponente().toString(16).padStart(2, '0'); 
+    const r = generarComponente().toString(16).padStart(2, '0');
     const g = generarComponente().toString(16).padStart(2, '0');
     const b = generarComponente().toString(16).padStart(2, '0');
     return `${r}${g}${b}`;

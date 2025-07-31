@@ -4,12 +4,15 @@ import { RespuestaGeneralLista } from '../../../interfaces/general/api.interface
 import { Novedad } from '../interfaces/novedad.interface';
 import { RespuestaAutocompletar } from '../../../interfaces/general/autocompletar.interface';
 import { Subject } from 'rxjs';
+import { GeneralApiService } from '../../../core';
+import { RespuestaApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NovedadService {
   private _httpService = inject(HttpService);
+  private _generalApiService = inject(GeneralApiService);
 
   private actualizarListaSubject = new Subject<void>();
 
@@ -20,10 +23,7 @@ export class NovedadService {
   }
 
   lista(parametros: any) {
-    return this._httpService.post<RespuestaGeneralLista<Novedad>>(
-      `general/funcionalidad/lista/`,
-      parametros
-    );
+    return this._generalApiService.consultaApi<RespuestaApi<Novedad>>('ruteo/novedad/', parametros);
   }
 
   guardarNovedad(data: any) {
