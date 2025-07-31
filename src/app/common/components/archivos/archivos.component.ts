@@ -10,6 +10,7 @@ import { GeneralService } from '../../services/general.service';
 import { ParametrosConsulta } from '../../../interfaces/general/api.interface';
 import { ArchivosService } from '../../services/archivos.service';
 import { FormatFechaPipe } from '../../pipes/formatear_fecha';
+import { ParametrosApi, RespuestaApi } from '../../../core/types/api.type';
 
 @Component({
   selector: 'app-archivos',
@@ -33,44 +34,32 @@ export class ArchivosComponent implements OnInit {
   }
 
   private _consultarArchivos() {
-    let arrFiltros: ParametrosConsulta = {
-      filtros: [
-        {
-          propiedad: 'codigo',
-          valor1: this.registroId.toString(),
-        },
-        {
-          propiedad: 'modelo',
-          valor1: this.modelo,
-        }
-      ],
-      limite: 10,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 0,
-      modelo: 'GenArchivo',
+    let arrFiltros: ParametrosApi = {
+      codigo: this.registroId.toString(),
+      modelo: this.modelo,
+      limit: 10,
     };
 
-    this._generalService.autocompletar(arrFiltros).subscribe((respuesta) => {
-      this.listaArchivos.set(respuesta.registros)
+    this._generalService.consultaApi<RespuestaApi<any>>('general/archivo', arrFiltros).subscribe((respuesta) => {
+      this.listaArchivos.set(respuesta.results)
     });
   }
 
-  descargarArchivo(archivo){
+  descargarArchivo(archivo) {
     this._archivosService.descargarArchivoGeneral({
       id: archivo.id,
     });
   }
 
-formatFileSize(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 MB';
+  formatFileSize(bytes: number, decimals: number = 2): string {
+    if (bytes === 0) return '0 MB';
 
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
 
 }
