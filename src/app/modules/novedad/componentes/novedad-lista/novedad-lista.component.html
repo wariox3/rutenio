@@ -3,10 +3,16 @@
     <h3 class="card-title">Filtros</h3>
   </div>
   <div class="card-body">
-    <app-filtro-base
+    <app-filtro
+
+          (filtersApply)="filterChange($event)"
+      [availableFields]="mapeoFiltros"
+      [localStorageKey]="filtroKey()"
+    ></app-filtro>
+    <!-- <app-filtro-base
       (emitirFiltros)="filtrosPersonalizados($event)"
       [mapeoCampos]="mapeoFiltros"
-    ></app-filtro-base>
+    ></app-filtro-base> -->
   </div>
 </div>
 
