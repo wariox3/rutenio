@@ -28,12 +28,6 @@
   background-color: #dcfce7;
 }
 
-.modal-tab-content {
-  padding: 1rem;
-  max-height: calc(100vh - 200px); /* Ajusta según necesites */
-  overflow-y: auto;
-}
-
 .menu-dropdown {
   width: auto !important;  /* Ancho automático */
   min-width: 48px;        /* Ancho mínimo por si acaso */
