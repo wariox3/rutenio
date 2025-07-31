@@ -1,4 +1,12 @@
-<table class="table-auto border border-gray-300 text-sm w-full">
+<div class="flex justify-between items-center my-4">
+  <app-paginador
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    (pageChange)="onPageChange($event)"
+    [totalItems]="cantidadRegistros"
+  ></app-paginador>
+</div>
+<table class="table border border-gray-300 text-sm">
     <thead>
         <tr class="bg-gray-100">
             <th class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100">Id</th>

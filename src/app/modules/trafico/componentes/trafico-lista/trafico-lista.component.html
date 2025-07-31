@@ -482,10 +482,8 @@
       </nav>
     </div>
 
-    <div class="modal-tab-content">
       <div
         *ngIf="activeTab === 'visitas' && selectedDespachoId"
-        class="overflow-x-auto"
       >
         <app-despacho-tab-visita
           [despachoId]="selectedDespachoId"
@@ -500,7 +498,6 @@
           [despachoId]="selectedDespachoId"
         ></app-despacho-tab-ubicacion>
       </div>
-    </div>
     }
   </section>
 </app-modal-standard>
