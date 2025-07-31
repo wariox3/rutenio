@@ -55,7 +55,7 @@
           <tr>
             <td>{{ despacho.id }}</td>
             <td>{{ despacho.entrega_id }}</td>
-            <td>{{ despacho.vehiculo_placa }}</td>
+            <td>{{ despacho.vehiculo__placa }}</td>
             <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d H:i (24h)" }}</td>
             <td>{{ despacho.tiempo | number : "1.0-0" }} min</td>
             <td>{{ despacho.peso | redondear}} / {{ despacho.volumen | redondear}} </td>
@@ -408,7 +408,7 @@
               <i class="ki-filled ki-delivery text-blue-500 text-lg"></i>
               <span class="ml-2 font-medium">Placa:</span>
               <span class="ml-1 font-semibold">{{
-                despachoSeleccionado?.vehiculo_placa
+                despachoSeleccionado?.vehiculo__placa
               }}</span>
             </div>
 
@@ -482,10 +482,8 @@
       </nav>
     </div>
 
-    <div class="modal-tab-content">
       <div
         *ngIf="activeTab === 'visitas' && selectedDespachoId"
-        class="overflow-x-auto"
       >
         <app-despacho-tab-visita
           [despachoId]="selectedDespachoId"
@@ -500,7 +498,6 @@
           [despachoId]="selectedDespachoId"
         ></app-despacho-tab-ubicacion>
       </div>
-    </div>
     }
   </section>
 </app-modal-standard>
