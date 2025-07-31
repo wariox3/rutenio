@@ -20,15 +20,14 @@ import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
-import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
 import { GeneralApiService } from '../../../../core';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import {
   Despacho,
   DespachoDetalle,
 } from '../../../../interfaces/despacho/despacho.interface';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes/despacho-adicionar-visita/despacho-adicionar-visita-pendiente.component';
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
@@ -38,7 +37,7 @@ import { VisitaAdicionarComponent } from '../../../visita/componentes/visita-adi
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
-import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -47,7 +46,6 @@ import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
     CommonModule,
     GoogleMapsModule,
     GoogleMap,
-    PaginacionDefaultComponent,
     ModalDefaultComponent,
     VisitaRutearDetalleComponent,
     DragDropModule,
@@ -58,6 +56,7 @@ import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
     VisitaAdicionarComponent,
     ModalStandardComponent,
     NuevoDesdeComplementoComponent,
+    PaginadorComponent
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
@@ -74,6 +73,7 @@ export default class DisenoRutaListaComponent
   private _generalApiService = inject(GeneralApiService);
   private _generalService = inject(GeneralService);
   private _modalService = inject(ModalService);
+  private ultimoDespachoSeleccionadoId: number | null = null;
 
   public despachoSeleccionado: Despacho;
   public visitaSeleccionada: Visita;
@@ -81,9 +81,9 @@ export default class DisenoRutaListaComponent
   public toggleModal$ = new BehaviorSubject(false);
   public toggleModalTrasbordar$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
-  private ultimoDespachoSeleccionadoId: number | null = null;
   public rutaOptimizada: any;
-
+  public currentPage = signal(1);
+  public totalPages = signal(1);
   customMarkers: {
     position: any;
     label: any;
@@ -116,7 +116,8 @@ export default class DisenoRutaListaComponent
     limit: 50,
     ordering: 'id',
   };
-
+  public cantidadRegistros: number = 0;
+  public despachoSeleccionadoId = signal<number>(0);
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
   connectedLists: string[] = [];
@@ -181,16 +182,6 @@ export default class DisenoRutaListaComponent
       });
   }
 
-  paginar(evento: { limite: number; desplazar: number }) {
-    // const parametrosConsulta: ParametrosConsulta = {
-    //   ...this.parametrosConsultaVisitas,
-    //   limite: evento.limite,
-    //   desplazar: evento.desplazar,
-    // };
-
-    // this._consultarVisitas(parametrosConsulta);
-  }
-
   seleccionarDespacho(despacho: any) {
     if (this.ultimoDespachoSeleccionadoId === despacho.id) return;
 
@@ -201,11 +192,11 @@ export default class DisenoRutaListaComponent
     this.directionsResults = undefined;
 
     this.customMarkers = [];
-
-    this.parametrosConsultaVisitas ={
+    this.despachoSeleccionadoId.set(despacho.id);
+    this.parametrosConsultaVisitas = {
       ...this.parametrosConsultaVisitas,
       'despacho_id': despacho.id
-     };
+    };
 
     this._consultarVisitas(this.parametrosConsultaVisitas);
     this.changeDetectorRef.detectChanges();
@@ -524,4 +515,15 @@ export default class DisenoRutaListaComponent
   getModalInstaceState(id: string): Observable<boolean> {
     return this._modalService.isOpen$(id);
   }
+
+  onPageChange(page: number): void {
+
+    this.parametrosConsultaVisitas = {
+      ...this.parametrosConsultaVisitas,
+      'despacho_id': this.despachoSeleccionadoId(),
+      page
+    };
+    this._consultarVisitas(this.parametrosConsultaVisitas);
+  }
+
 }
