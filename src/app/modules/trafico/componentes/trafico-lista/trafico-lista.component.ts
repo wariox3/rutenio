@@ -174,17 +174,19 @@ export default class TraficoListaComponent
   }
 
   private consultarUbicacion(despachoId: number) {
-    const parametrosConsultaUbicacion: ParametrosConsulta = {
-      filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
-      limite: 25,
-      desplazar: 0,
-      ordenamientos: ['-fecha'],
-      limite_conteo: 25,
-      modelo: 'RutUbicacion',
+    const parametrosConsultaUbicacion: ParametrosApi = {
+      ordering: '-fecha',
+      despacho_id: despachoId.toString() 
+      // filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
+      // limite: 25,
+      // desplazar: 0,
+      // ordenamientos: ['-fecha'],
+      // limite_conteo: 25,
+      // modelo: 'RutUbicacion',
     };
 
     return this._generalApiService
-      .getLista<Ubicacion[]>(parametrosConsultaUbicacion)
+      .consultaApi<RespuestaApi<Ubicacion>>('ruteo/ubicacion/',parametrosConsultaUbicacion)
       .pipe(takeUntil(this.destroy$));
   }
 
@@ -505,7 +507,7 @@ export default class TraficoListaComponent
     if (this.arrUbicaciones.length > 0) return;
 
     this.consultarUbicacion(despacho_id).subscribe((respuesta) => {
-      this.arrUbicaciones = respuesta.registros;
+      this.arrUbicaciones = respuesta.results;
       this.marcarPosicionesUbicacionesOrdenadas = [
         ...this.arrUbicaciones.map((ubicacion) => ({
           lat: parseFloat(ubicacion.latitud),
