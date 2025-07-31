@@ -27,6 +27,8 @@ import { ParametrosConsulta } from '../../../../../../interfaces/general/api.int
 import { ListaVehiculo } from '../../../../../../interfaces/vehiculo/vehiculo.interface';
 import { FlotaService } from '../../../../../flota/servicios/flota.service';
 import { VehiculoService } from '../../../../../vehiculo/servicios/vehiculo.service';
+import { ParametrosApi, RespuestaApi } from '../../../../../../core/types/api.type';
+import { GeneralApiService } from '../../../../../../core';
 
 @Component({
   selector: 'app-agregar-flota',
@@ -40,19 +42,22 @@ export class AgregarFlotaComponent extends General implements OnInit {
   @Input() itemsSeleccionados: number[] = [];
   @Output() emitirConsultarLista: EventEmitter<void>;
   private _vehiculoService = inject(VehiculoService);
+  private _generalApiService = inject(GeneralApiService);
   private _flotaService = inject(FlotaService);
   public vehiculosDisponibles$: Observable<ListaVehiculo[]>;
   public textoBusqueda = new FormControl();
   private _vehiculosSeleccionados: { id: number }[] = [];
-  private _parametrosConsulta: ParametrosConsulta = {
-    filtros: [
-      { propiedad: 'estado_activo', operador: 'exact', valor1: true },
-    ],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: [],
-    limite_conteo: 10000,
-    modelo: 'RutVehiculo',
+  private _parametrosConsulta: ParametrosApi = {
+    estado_activo: 'True'
+
+    // filtros: [
+    //   { propiedad: 'estado_activo', operador: 'exact', valor1: true },
+    // ],
+    // limite: 50,
+    // desplazar: 0,
+    // ordenamientos: [],
+    // limite_conteo: 10000,
+    // modelo: 'RutVehiculo',
   };
 
   formularioFlota: FormGroup = new FormGroup({
@@ -90,20 +95,13 @@ export class AgregarFlotaComponent extends General implements OnInit {
         distinctUntilChanged(),
         switchMap((busqueda) => {
           const parametrosConsulta = {
-            ...this._parametrosConsulta,
-            filtros: [
-              ...this._parametrosConsulta.filtros,
-              {
-                operador: 'icontains',
-                propiedad: 'placa',
-                valor1: busqueda,
-              },
-            ],
+              ...this._parametrosConsulta,
+              placa_icontains : busqueda
           };
 
-          return this._vehiculoService
-            .lista(parametrosConsulta)
-            .pipe(map((response) => response.registros));
+          return this._generalApiService
+            .consultaApi<RespuestaApi<any>>('ruteo/vehiculo/', parametrosConsulta)
+            .pipe(map((response) => response.results));
         })
       )
       .subscribe((response) => {
@@ -168,11 +166,11 @@ export class AgregarFlotaComponent extends General implements OnInit {
   }
 
   private _consultarVehiculos() {
-    this.vehiculosDisponibles$ = this._vehiculoService
-      .lista(this._parametrosConsulta)
+    this.vehiculosDisponibles$ = this._generalApiService
+      .consultaApi<RespuestaApi<any>>('ruteo/vehiculo/',this._parametrosConsulta)
       .pipe(
         map((response) => {
-          return response.registros;
+          return response.results;
         })
       );
   }
