@@ -11,14 +11,15 @@ import {
 import {
   GoogleMap,
   GoogleMapsModule,
-  MapDirectionsService,
   MapInfoWindow,
-  MapMarker,
+  MapMarker
 } from '@angular/google-maps';
 import { BehaviorSubject, finalize, Observable } from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
@@ -36,9 +37,8 @@ import { DespachoApiService } from '../../../despacho/servicios/despacho-api.ser
 import { VisitaAdicionarComponent } from '../../../visita/componentes/visita-adicionar/visita-adicionar.component';
 import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita-rutear/components/visita-detalle/visita-rutear-detalle.component';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
-import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
-import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -65,15 +65,13 @@ import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo
 })
 export default class DisenoRutaListaComponent
   extends General
-  implements OnInit
-{
+  implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   @ViewChild(GoogleMap) map!: GoogleMap;
 
   private _despachoApiService = inject(DespachoApiService);
   private _visitaApiService = inject(VisitaApiService);
   private _generalApiService = inject(GeneralApiService);
-  private directionsService = inject(MapDirectionsService);
   private _generalService = inject(GeneralService);
   private _modalService = inject(ModalService);
 
@@ -109,21 +107,14 @@ export default class DisenoRutaListaComponent
   public mostarModalAdicionarVisita$: BehaviorSubject<boolean>;
   public mostrarModalAdicionarVisitaPendiente$: BehaviorSubject<boolean>;
   public actualizandoLista = signal(false);
-  public parametrosConsultaVisitas: ParametrosConsulta = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['orden'],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
+  public parametrosConsultaVisitas: ParametrosApi = {
+    limit: 50,
+    ordering: 'orden',
   };
-  arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_aprobado', valor1: false }],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['id'],
-    limite_conteo: 10000,
-    modelo: 'RutDespacho',
+  arrParametrosConsulta: ParametrosApi = {
+    'estado_aprobado': 'False',
+    limit: 50,
+    ordering: 'id',
   };
 
   arrDespachos: Despacho[] = [];
@@ -191,13 +182,13 @@ export default class DisenoRutaListaComponent
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
-    const parametrosConsulta: ParametrosConsulta = {
-      ...this.parametrosConsultaVisitas,
-      limite: evento.limite,
-      desplazar: evento.desplazar,
-    };
+    // const parametrosConsulta: ParametrosConsulta = {
+    //   ...this.parametrosConsultaVisitas,
+    //   limite: evento.limite,
+    //   desplazar: evento.desplazar,
+    // };
 
-    this._consultarVisitas(parametrosConsulta);
+    // this._consultarVisitas(parametrosConsulta);
   }
 
   seleccionarDespacho(despacho: any) {
@@ -211,26 +202,27 @@ export default class DisenoRutaListaComponent
 
     this.customMarkers = [];
 
-    this.parametrosConsultaVisitas.filtros = [
-      { propiedad: 'despacho_id', valor1: despacho.id },
-    ];
+    this.parametrosConsultaVisitas ={
+      ...this.parametrosConsultaVisitas,
+      'despacho_id': despacho.id
+     };
 
     this._consultarVisitas(this.parametrosConsultaVisitas);
     this.changeDetectorRef.detectChanges();
   }
 
-  private _consultarVisitas(parametrosConsulta: ParametrosConsulta) {
+  private _consultarVisitas(parametrosConsulta: ParametrosApi) {
     this.actualizandoLista.set(true);
     this._generalApiService
-      .getLista<Visita[]>(parametrosConsulta)
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsulta)
       .pipe(
         finalize(() => {
           this.actualizandoLista.set(false);
         })
       )
       .subscribe((respuesta) => {
-        this.arrVisitasPorDespacho = respuesta.registros;
-        this.totalRegistrosVisitas = respuesta.cantidad_registros;
+        this.arrVisitasPorDespacho = respuesta.results;
+        this.totalRegistrosVisitas = respuesta.count;
         this.initializeConnectedLists();
         this.changeDetectorRef.detectChanges();
         this.mostrarMapa();
