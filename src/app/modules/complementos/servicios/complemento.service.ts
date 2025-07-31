@@ -1,32 +1,26 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpService } from '../../../common/services/http.service';
 import { RespuestaApi } from '../../../core/types/api.type';
+import { GeneralApiService } from '../../../core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ComplementoService {
-  constructor(private http: HttpService) {}
+
+  private http = inject(HttpService);
+  private _generalApiService = inject(GeneralApiService);
+
+  constructor() {}
 
   listarComplementos() {
     return this.http.getDetalle<RespuestaApi<any>>(`general/complemento/`);
   }
 
   complementosInstalados() {
-    return this.http.post<any>(`general/funcionalidad/lista/`, {
-      filtros: [
-        {
-          propiedad: 'instalado',
-          operador: 'exact',
-          valor1: true,
-        }
-      ],
-      limite: 1000,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 10000,
-      modelo: 'GenComplemento',
-    });
+    return this._generalApiService.consultaApi('general/complemento/', {
+      instalado: 'True'
+    })
   }
 
   desinstalarComplemento(complemento: any) {

@@ -60,7 +60,8 @@ export default class VisitaListaComponent extends General implements OnInit {
   public actualizandoLista = signal<boolean>(false);
   public guiaMapeo = guiaMapeo
   public VISITA_LISTA_FILTERS = VISITA_LISTA_FILTERS
-  public toggleModal$ = new BehaviorSubject(false);
+  public toggleModalImportarComplemento$ = new BehaviorSubject(false);
+  public toggleModalImportarExcel$ = new BehaviorSubject(false);
   public nombreFiltro = '';
   public cantidadRegistros: number = 0;
   public arrGuia: any[];
@@ -109,20 +110,22 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   recargarConsulta() {
-    this.actualizandoLista.set(true);
-    this._generalApiService.getLista<Visita[]>(this.arrParametrosConsulta)
+
+    this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', { limit: 50 })
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => {
           this.actualizandoLista.set(false);
         })
       )
       .subscribe((respuesta) => {
-        this.arrGuia = respuesta.registros?.map((guia) => ({
+        this.arrGuia = respuesta.results?.map((guia) => ({
           ...guia,
           selected: false,
         }));
-        this.cantidadRegistros = respuesta?.registros?.length;
-        respuesta?.registros?.forEach((punto) => {
+        this.cantidadRegistros = respuesta?.results?.length;
+        respuesta?.results?.forEach((punto) => {
           this.addMarker({ lat: punto.latitud, lng: punto.longitud });
         });
         this.alerta.mensajaExitoso('Se ha actualizado correctamente', 'Actualizado');
@@ -246,17 +249,29 @@ export default class VisitaListaComponent extends General implements OnInit {
   cerrarModalPorId(id: string) {
     const modalEl: HTMLElement = document.querySelector(id);
     const modal = KTModal.getInstance(modalEl);
-    this.toggleModal$.next(false);
-
+    if (id === '#importar-por-excel-modal') {
+      this.cerrarModalImportarExcel();
+    }
+    if (id === '#importar-por-complemento-modal') {
+      this.cerrarModalImportarComplemento();
+    }
     modal.hide();
   }
 
-  abrirModal() {
-    this.toggleModal$.next(true);
+  abrirModalImportarExcel() {
+    this.toggleModalImportarExcel$.next(true);
   }
 
-  cerrarModal() {
-    this.toggleModal$.next(false);
+  abrirModalImportarComplemento() {
+    this.toggleModalImportarComplemento$.next(true);
+  }
+
+  cerrarModalImportarExcel() {
+    this.toggleModalImportarExcel$.next(false);
+  }
+
+  cerrarModalImportarComplemento() {
+    this.toggleModalImportarComplemento$.next(false);
   }
 
   actualizarItemsSeleccionados(itemsSeleccionados: number[]) {
@@ -292,31 +307,29 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   aplicarFiltros() {
-    const id = this.formularioFiltros.get('id').value;
-    const guia = this.formularioFiltros.get('guia').value;
-    const estadoDecodificado = this.formularioFiltros.get(
-      'estado_decodificado'
-    ).value;
-
-    let parametrosConsulta: ParametrosApi = {
-      //   ...this.arrParametrosConsulta,
-      //   filtros: [
-      //     ...this.arrParametrosConsulta.filtros,
-      //     {
-      //       'id': this.formularioFiltros.get('id').value,
-      //       'guia': this.formularioFiltros.get('guia').value,
-    };
-
-    if (estadoDecodificado !== 'todos') {
-      // parametrosConsulta.filtros = [
-      //   ...parametrosConsulta.filtros,
-      //   {
-      //     operador: '',
-      //     propiedad: 'estado_decodificado',
-      //     valor1: estadoDecodificado === 'si',
-      //   },
-      // ];
-    }
+    // const id = this.formularioFiltros.get('id').value;
+    // const guia = this.formularioFiltros.get('guia').value;
+    // const estadoDecodificado = this.formularioFiltros.get(
+    //   'estado_decodificado'
+    // ).value;
+    //let parametrosConsulta: ParametrosApi = {
+    //   ...this.arrParametrosConsulta,
+    //   filtros: [
+    //     ...this.arrParametrosConsulta.filtros,
+    //     {
+    //       'id': this.formularioFiltros.get('id').value,
+    //       'guia': this.formularioFiltros.get('guia').value,
+    //};
+    //if (estadoDecodificado !== 'todos') {
+    // parametrosConsulta.filtros = [
+    //   ...parametrosConsulta.filtros,
+    //   {
+    //     operador: '',
+    //     propiedad: 'estado_decodificado',
+    //     valor1: estadoDecodificado === 'si',
+    //   },
+    // ];
+    //}
     //this.consultaLista(parametrosConsulta);
   }
 
