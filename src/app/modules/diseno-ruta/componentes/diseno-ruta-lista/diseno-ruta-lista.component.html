@@ -25,9 +25,6 @@
                       id="submenu"
                       data-modal-toggle="#filtros-visita"
                     >
-                      <!-- <span class="menu-icon">
-                    <i class="ki-filled ki-filter-search"></i>
-                  </span> -->
                       <span
                         class="menu-title"
                         (click)="abrirModalCrearDespacho()"
@@ -327,12 +324,12 @@
           </table>
         </div>
         <div class="card-footer flex justify-center">
-          <!-- <app-paginacion-default
-            [limite]="parametrosConsultaVisitas.limite"
-            [totalRegistros]="totalRegistrosVisitas"
-            [maxPaginasVisibles]="5"
-            (paginar)="paginar($event)"
-          ></app-paginacion-default> -->
+          <app-paginador
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            (pageChange)="onPageChange($event)"
+            [totalItems]="totalRegistrosVisitas"
+          ></app-paginador>
         </div>
       </div>
     </div>
