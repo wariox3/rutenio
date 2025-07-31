@@ -8,11 +8,12 @@ import { GeneralApiService } from '../../../../core';
 import { Visita } from '../../../visita/interfaces/visita.interface';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 
 @Component({
   selector: 'app-despacho-tab-visita',
   standalone: true,
-  imports: [CommonModule, ValidarBooleanoPipe, FormatFechaPipe],
+  imports: [CommonModule, ValidarBooleanoPipe, FormatFechaPipe, PaginadorComponent],
   templateUrl: './despacho-tab-visita.component.html',
   styleUrl: './despacho-tab-visita.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,10 +24,14 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   private _destroy$ = new Subject<void>()
   private visitaService = inject(VisitaService)
   private _generalApiService = inject(GeneralApiService)
+  public currentPage = signal(1);
+  public totalPages = signal(1);
+  public totalItems: number = 0;
+  public cantidadRegistros: number = 0;
 
   visitas = signal<Visita[]>([])
 
-  private baseParametrosConsulta: ParametrosApi= {
+  private baseParametrosConsulta: ParametrosApi = {
     limit: 100,
     ordering: 'orden',
     serializador: 'trafico'
@@ -42,18 +47,19 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   private getParametrosConsulta(): ParametrosApi {
     return {
       ...this.baseParametrosConsulta,
-      'despacho_id' : this.despachoId.toString()
+      'despacho_id': this.despachoId.toString()
     };
   }
 
   consultarVisitaPorDespacho() {
     if (!this.despachoId) return;
-    
+
     const parametros = this.getParametrosConsulta();
-    
+
     this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametros).subscribe({
       next: (respuesta) => {
         this.visitas.set(respuesta.results);
+        this.cantidadRegistros = respuesta.count;
       },
       error: (error) => {
         console.error('Error al cargar visitas:', error);
@@ -66,4 +72,19 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
     this._destroy$.unsubscribe();
   }
 
- }
+  onPageChange(page: number): void {
+    const parametros = this.getParametrosConsulta();
+
+    this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+      ...parametros,
+      page
+    }).subscribe({
+      next: (respuesta) => {
+        this.visitas.set(respuesta.results);
+      },
+      error: (error) => {
+        console.error('Error al cargar visitas:', error);
+      }
+    });
+  }
+}

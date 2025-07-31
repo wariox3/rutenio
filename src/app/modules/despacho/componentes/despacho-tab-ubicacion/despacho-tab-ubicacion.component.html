@@ -1,3 +1,11 @@
+<div class="flex justify-between items-center my-4">
+  <app-paginador
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    (pageChange)="onPageChange($event)"
+    [totalItems]="cantidadRegistros"
+  ></app-paginador>
+</div>
 <table class="table-auto border border-gray-300 text-sm w-full">
     <thead>
         <tr class="bg-gray-100">
