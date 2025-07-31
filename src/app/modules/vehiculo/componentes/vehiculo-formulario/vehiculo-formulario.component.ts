@@ -26,6 +26,7 @@ import { SwitchComponent } from '../../../../common/components/ui/form/switch/sw
 import { GeneralService } from '../../../../common/services/general.service';
 import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
 import { MultiSelectComponent } from "../../../../common/components/ui/form/multi-select/multi-select.component";
+import { RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -40,15 +41,14 @@ import { MultiSelectComponent } from "../../../../common/components/ui/form/mult
     LabelComponent,
     NgSelectModule,
     MultiSelectComponent
-],
+  ],
   templateUrl: './vehiculo-formulario.component.html',
   styleUrl: './vehiculo-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class VehiculoFormularioComponent
   extends General
-  implements OnInit
-{
+  implements OnInit {
   @Input() informacionVehiculo: any;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
@@ -112,9 +112,11 @@ export default class VehiculoFormularioComponent
 
   private _consultarOpcionesFranjas() {
     this._generalService
-      .listaAutocompletar<AutocompletarFranja>('RutFranja')
+      .consultaApi<RespuestaApi<AutocompletarFranja>>('ruteo/franja/', {
+        limit: 50
+      })
       .subscribe((response) => {
-        this.franjaOpciones.set(response.registros);
+        this.franjaOpciones.set(response.results);
         this.changeDetectorRef.detectChanges();
       });
   }
