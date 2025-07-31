@@ -89,12 +89,9 @@
           <div>
             <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
-              <i
-                class="ki-filled ki-package"
-                data-tooltip="#tooltip_capacidad"
-              ></i>
-              {{ pesoTotal }}/{{ capacidadTotal }}</span
-            >
+              <i class="ki-filled ki-package" data-tooltip="#tooltip_capacidad"></i>
+              {{ pesoTotal | number:'1.0-0' }}/{{ capacidadTotal | number:'1.0-0' }}
+            </span>
           </div>
           <div>
             <app-progreso-circular
@@ -108,7 +105,7 @@
             <p class="text-xs text-slate-600">Tiempo</p>
             <span class="font-semibold">
               <i class="ki-filled ki-timer" data-tooltip="#tooltip_tiempo"></i>
-              {{ servicio() }}/{{ tiempoTotal() }}
+              {{ servicio() | number:'1.0-0' }}/{{ tiempoTotal() | number:'1.0-0' }}
             </span>
           </div>
           <div>
