@@ -476,7 +476,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   abrirModalDetalleVisita() {
-    this.toggleModalVisitaEditar$.next(true);
+    this.toggleModalVisitaDetalle$.next(true);
   }
 
   abrirModalImportarPorComplemento() {
