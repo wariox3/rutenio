@@ -1,3 +1,5 @@
+import { FilterField } from "../../../core/interfaces/filtro.interface";
+
 export const novedadMapeo: any = {
   modulo: 'general',
   modelo: 'guia',
@@ -21,3 +23,10 @@ export const novedadMapeo: any = {
     },
   ],
 };
+
+
+
+export const NOVEDAD_FILTERS: FilterField[] = [
+  { name: 'id', displayName: 'Id', type: 'number' },
+  { name: 'estado_solucion', displayName: 'Solucionado', type: 'boolean' },
+];

@@ -5,6 +5,7 @@ import {
   ParametrosDireccionAlternativa,
   VisitaResumen,
 } from '../../../interfaces/visita/rutear.interface';
+import { ParametrosApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
@@ -63,7 +64,7 @@ export class VisitaApiService {
     );
   }
 
-  ordenar(parametros?: ParametrosConsulta) {
+  ordenar(parametros?: ParametrosApi) {
     return this._httpService.post<any[]>(`ruteo/visita/ordenar/`, parametros);
   }
 
@@ -161,7 +162,7 @@ export class VisitaApiService {
     });
   }
 
-  ubicarFranja(parametros?: ParametrosConsulta) {
+  ubicarFranja(parametros?: ParametrosApi) {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/ubicar/`,
       parametros

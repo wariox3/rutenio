@@ -5,15 +5,6 @@
         <div class="card-header">
           <h3 class="card-title">Despachos</h3>
           <div class="flex items-center">
-            <!-- <button
-            class="btn btn-primary ms-2"
-            (click)="abrirModalCrearDespacho()"
-            data-modal-toggle="#crear-despacho"
-          >
-          <i class="ki-filled ki-abstract-10"></i>
-            Nuevo despacho
-          </button> -->
-
             <div
               class="dropdown"
               data-dropdown="true"
@@ -34,9 +25,6 @@
                       id="submenu"
                       data-modal-toggle="#filtros-visita"
                     >
-                      <!-- <span class="menu-icon">
-                    <i class="ki-filled ki-filter-search"></i>
-                  </span> -->
                       <span
                         class="menu-title"
                         (click)="abrirModalCrearDespacho()"
@@ -52,11 +40,8 @@
                       class="menu-link"
                       id="submenu"
                       data-modal-toggle="#filtros-visita"
-                      (click)="abrirModal('nuevoDesdeComplemento')"     
+                      (click)="abrirModal('nuevoDesdeComplemento')"
                     >
-                      <!-- <span class="menu-icon">
-                    <i class="ki-filled ki-filter-search"></i>
-                  </span> -->
                       <span class="menu-title"> Nuevo desde complemento </span>
                     </button>
                   </div>
@@ -339,12 +324,12 @@
           </table>
         </div>
         <div class="card-footer flex justify-center">
-          <app-paginacion-default
-            [limite]="parametrosConsultaVisitas.limite"
-            [totalRegistros]="totalRegistrosVisitas"
-            [maxPaginasVisibles]="5"
-            (paginar)="paginar($event)"
-          ></app-paginacion-default>
+          <app-paginador
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            (pageChange)="onPageChange($event)"
+            [totalItems]="totalRegistrosVisitas"
+          ></app-paginador>
         </div>
       </div>
     </div>
@@ -479,11 +464,10 @@
   title="Nuevo desde complemento"
   size="md"
   modalId="nuevoDesdeComplemento"
-  
 >
   @if (getModalInstaceState('nuevoDesdeComplemento') | async) {
   <app-nuevo-desde-complemento
-  (complementoCargado)="complementoCargado()"
+    (complementoCargado)="complementoCargado()"
   ></app-nuevo-desde-complemento>
   }
 </app-modal-standard>

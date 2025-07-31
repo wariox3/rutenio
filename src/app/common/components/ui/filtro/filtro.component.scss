@@ -1,0 +1,25 @@
+/* Styles for the relation dropdown */
+.z-index-dropdown {
+  z-index: 1050;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.position-relative {
+  position: relative;
+}
+
+/* Ensure the dropdown options are visible */
+.list-group-item-action {
+  cursor: pointer;
+  
+  &:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+  }
+}
+
+/* Style for the clear button */
+.btn-link.text-danger {
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+}

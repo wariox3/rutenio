@@ -8,9 +8,9 @@
         [formControl]="formularioNovedad.controls.novedad_tipo"
       >
         <option value="0">Seleccionar</option>
-        @for (tipoPersona of arrTipoNovedad; track $index) {
-        <option [value]="tipoPersona.id">
-          {{ tipoPersona.nombre }}
+        @for (novedadTipo of arrTipoNovedad; track $index) {
+        <option [value]="novedadTipo.id">
+          {{ novedadTipo.nombre }}
         </option>
         }
       </select>

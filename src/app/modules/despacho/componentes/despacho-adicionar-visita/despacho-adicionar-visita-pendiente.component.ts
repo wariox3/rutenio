@@ -9,16 +9,17 @@ import {
 import { FormControl, FormGroup, FormsModule } from '@angular/forms';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
-import { FiltroBaseComponent } from '../../../../common/components/filtros/filtro-base/filtro-base.component';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { visitaAdicionarMapeo } from '../../../visita/mapeos/visita-adicionar-mapeo';
+import { GeneralApiService } from '../../../../core';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { Visita } from '../../../visita/interfaces/visita.interface';
+import { DESPACHO_ADICIONAR_VISITA_PENDIENTE_FILTERS } from '../../mapeos/despacho-adicionar-visita-pendiente.mapeo';
 import { DespachoApiService } from '../../servicios/despacho-api.service';
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 
 @Component({
   selector: 'app-despacho-adicionar-visita-pendiente',
   standalone: true,
-  imports: [FormsModule, CommonModule, FiltroBaseComponent],
+  imports: [FormsModule, CommonModule, FiltroComponent],
   templateUrl: './despacho-adicionar-visita-pendiente.component.html',
   styleUrl: './despacho-adicionar-visita-pendiente.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,20 +27,17 @@ import { DespachoApiService } from '../../servicios/despacho-api.service';
 export class VisitaAdicionarPendienteComponent extends General implements OnInit {
   @Input() despachoId: number;
   private _despachoApiService = inject(DespachoApiService);
-  private _filtroBaseService = inject(FiltroBaseService);
+  private _generalApiService = inject(GeneralApiService);
 
   public nombreFiltro = '';
-  public mapeoFiltros = visitaAdicionarMapeo;
+  public mapeoFiltros = DESPACHO_ADICIONAR_VISITA_PENDIENTE_FILTERS;
   public visitasPendientes$: Observable<any[]>;
   public procesando: number | null = null;
 
-  arrParametrosConsulta: ParametrosConsulta = {
-    filtros: [{ propiedad: 'estado_despacho', valor1: false }],
-    limite: 20,
-    desplazar: 0,
-    ordenamientos: ['id'],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
+  arrParametrosConsulta: ParametrosApi = {
+    estado_despacho: 'False',
+    limit: 20,
+    ordenamientos: 'id',
   };
 
   public formularioFiltros = new FormGroup({
@@ -50,73 +48,64 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
   });
 
   ngOnInit(): void {
-    this._construirFiltros();
     this.consultaLista(this.arrParametrosConsulta);
     this.changeDetectorRef.detectChanges();
   }
 
-  private _construirFiltros() {
-    this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
-    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
-    if (filtroGuardado !== null) {
-      const filtros = JSON.parse(filtroGuardado);
-      this.arrParametrosConsulta.filtros = [...filtros];
-    }
-  }
 
   aplicarFiltros() {
-    // Filtro base que siempre debe aplicarse
-    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
+    // // Filtro base que siempre debe aplicarse
+    // const filtroBase = { propiedad: 'estado_despacho', valor1: false };
 
-    // Filtros del formulario
-    const filtrosFormulario = [
-      {
-        operador: '',
-        propiedad: 'id',
-        valor1: this.formularioFiltros.get('id').value,
-      },
-      {
-        operador: 'numero',
-        propiedad: 'numero',
-        valor1: this.formularioFiltros.get('numero').value,
-      },
-      {
-        operador: 'icontains',
-        propiedad: 'destinatario',
-        valor1: this.formularioFiltros.get('destinatario').value,
-      },
-      {
-        operador: 'icontains',
-        propiedad: 'documento',
-        valor1: this.formularioFiltros.get('documento').value,
-      },
-    ].filter((filtro) => filtro.valor1 !== '' && filtro.valor1 !== null); // Filtrar los vacíos
+    // // Filtros del formulario
+    // const filtrosFormulario = [
+    //   {
+    //     operador: '',
+    //     propiedad: 'id',
+    //     valor1: this.formularioFiltros.get('id').value,
+    //   },
+    //   {
+    //     operador: 'numero',
+    //     propiedad: 'numero',
+    //     valor1: this.formularioFiltros.get('numero').value,
+    //   },
+    //   {
+    //     operador: 'icontains',
+    //     propiedad: 'destinatario',
+    //     valor1: this.formularioFiltros.get('destinatario').value,
+    //   },
+    //   {
+    //     operador: 'icontains',
+    //     propiedad: 'documento',
+    //     valor1: this.formularioFiltros.get('documento').value,
+    //   },
+    // ].filter((filtro) => filtro.valor1 !== '' && filtro.valor1 !== null); // Filtrar los vacíos
 
-    let parametrosConsulta: ParametrosConsulta = {
-      ...this.arrParametrosConsulta,
-      filtros: [filtroBase, ...filtrosFormulario],
-    };
+    // let parametrosConsulta: ParametrosConsulta = {
+    //   ...this.arrParametrosConsulta,
+    //   filtros: [filtroBase, ...filtrosFormulario],
+    // };
 
-    this.consultaLista(parametrosConsulta);
+    // this.consultaLista(parametrosConsulta);
   }
 
-  filtrosPersonalizados(filtros: any) {
-    // Filtro base que siempre debe aplicarse
-    const filtroBase = { propiedad: 'estado_despacho', valor1: false };
-
-    if (filtros.length >= 1) {
-      this.arrParametrosConsulta.filtros = [filtroBase, ...filtros];
-    } else {
-      this.arrParametrosConsulta.filtros = [filtroBase];
-    }
-
-    this.consultaLista(this.arrParametrosConsulta);
+  filterChange(filters: Record<string, any>) {
+    this.visitasPendientes$ = this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+        ...this.arrParametrosConsulta,
+        ...filters,
+      }).pipe(
+        switchMap((response) => {
+          return of(response.results);
+        })
+      );
   }
+
 
   consultaLista(filtros: any) {
-    this.visitasPendientes$ = this._despachoApiService.lista(filtros).pipe(
+    this.visitasPendientes$ = this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', filtros).pipe(
       switchMap((response) => {
-        return of(response.registros);
+        return of(response.results);
       })
     );
   }

@@ -1,3 +1,4 @@
+import { RespuestaApi } from './../../../../core/types/api.type';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -27,6 +28,7 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { Vehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { RouterLink } from '@angular/router';
 import { FechasService } from '../../../../common/services/fechas.service';
+import { ParametrosApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-despacho-formulario',
@@ -75,7 +77,7 @@ export default class DespachoFormularioComponent extends General {
       Validators.minLength(3),
       Validators.maxLength(10),
     ]),
-    estado_aprobado: new FormControl<boolean>(false), 
+    estado_aprobado: new FormControl<boolean>(false),
     estado_terminado: new FormControl<boolean>(false),
   });
 
@@ -93,32 +95,18 @@ export default class DespachoFormularioComponent extends General {
 
   getVehiculoByPlaca(placa: string) {
     let filtros = {
-      filtros: [
-        {
-          propiedad: 'estado_activo',
-          operador: 'exact',
-          valor1: true,
-        },
-        {
-          operador: 'icontains',
-          propiedad: 'placa',
-          valor1: placa,
-        },
-      ],
-      limite: 10,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 10000,
-      modelo: 'RutVehiculo',
+      estado_activo: 'True',
+      'placa_icontains': placa,
+      limit: 10,
     };
 
     this.getVehiculos(filtros).subscribe((response) => {
-      this.vehiculos.set(response.registros);
+      this.vehiculos.set(response.results);
     });
   }
 
-  getVehiculos(filtros?: ParametrosConsulta) {
-    return this._generalService.autocompletar<Vehiculo>(filtros);
+  getVehiculos(filtros?: ParametrosApi) {
+    return this._generalService.consultaApi<RespuestaApi<Vehiculo>>('ruteo/vehiculo/', filtros);
   }
 
   private _initValoresFormulario() {

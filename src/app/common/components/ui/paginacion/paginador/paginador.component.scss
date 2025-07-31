@@ -1,0 +1,26 @@
+/* paginator-input.component.scss */
+.paginator-container {
+  font-size: 1rem;
+
+  .page-input {
+    width: 70px;
+    text-align: center;
+
+    /* Ocultar flechas en navegadores WebKit */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Ocultar flechas en Firefox */
+    -moz-appearance: textfield;
+  }
+
+  .btn {
+    width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
