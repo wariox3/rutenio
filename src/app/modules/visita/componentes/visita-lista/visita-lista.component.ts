@@ -371,7 +371,7 @@ export default class VisitaListaComponent extends General implements OnInit {
       this.addMarker({ lat: punto.latitud, lng: punto.longitud });
     });
 
-    if (ordenarRuta) this.calculateRoute();
+    // if (ordenarRuta) this.calculateRoute();
     this.changeDetectorRef.detectChanges();
   }
 
