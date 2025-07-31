@@ -10,8 +10,8 @@ export interface Despacho {
   visitas_entregadas_esperadas: number;
   visitas_liberadas: number;
   vehiculo_id: number;
-  vehiculo_placa: string;
-  vehiculo_capacidad: number;
+  vehiculo__placa: string;
+  vehiculo__capacidad: number;
   estado_aprobado: boolean;
   tiempo: number;
   tiempo_trayecto: number;
@@ -38,7 +38,7 @@ export interface DespachoDetalle {
   visitas_entregadas: number;
   visitas_liberadas: number;
   vehiculo_id: number;
-  vehiculo_placa: string;
+  vehiculo__placa: string;
   entrega_id: number;
   estado_aprobado: boolean;
   estado_terminado: boolean;
@@ -58,7 +58,7 @@ export const despachoDetalleEmpty: DespachoDetalle = {
   visitas_entregadas: 0,
   visitas_liberadas: 0,
   vehiculo_id: 0,
-  vehiculo_placa: '',
+  vehiculo__placa: '',
   entrega_id: 0,
   estado_aprobado: false,
   estado_terminado: false,
