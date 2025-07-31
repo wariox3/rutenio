@@ -19,11 +19,13 @@ import { ButtonComponent } from '../../../../common/components/ui/button/button.
 import { RouterLink } from '@angular/router';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
-import { InputDateComponent } from "../../../../common/components/ui/form/input-date/input-date/input-date.component";
-import { InputTextareaComponent } from "../../../../common/components/ui/form/input-textarea/input-textarea.component";
+import { InputDateComponent } from '../../../../common/components/ui/form/input-date/input-date/input-date.component';
+import { InputTextareaComponent } from '../../../../common/components/ui/form/input-textarea/input-textarea.component';
 import { AutocompletarTipoNovedad } from '../../../../interfaces/general/autocompletar.interface';
 import { NovedadService } from '../../servicios/novedad.service';
-import { LabelComponent } from "../../../../common/components/ui/form/label/label.component";
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
+import { GeneralApiService } from '../../../../core';
+import { RespuestaApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-novedad-formulario',
@@ -36,8 +38,8 @@ import { LabelComponent } from "../../../../common/components/ui/form/label/labe
     InputComponent,
     SwitchComponent,
     ButtonComponent,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './novedad-formulario.component.html',
   styleUrl: './novedad-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,6 +53,7 @@ export default class NovedadFormularioComponent
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
 
   private _novedadService = inject(NovedadService);
+  private _generalApiService = inject(GeneralApiService);
 
   public arrTipoNovedad: AutocompletarTipoNovedad[] = [];
 
@@ -74,15 +77,26 @@ export default class NovedadFormularioComponent
         descripcion: this.informacionNovedad.descripcion,
         novedad_tipo: this.informacionNovedad.tipo_novedad_id,
       });
+    } else {
+      this.formularioNovedad.patchValue({
+        fecha: new Date().toISOString(),
+      });
     }
   }
 
-    private _consultarInformacion() {
-      this._novedadService.listaAutocompletar<AutocompletarTipoNovedad>('RutNovedadTipo').subscribe((respuesta)=> {
-        this.arrTipoNovedad = respuesta.registros;
+  private getCurrentDateTime(): string {
+    const now = new Date();
+    return now.toLocaleString();
+  }
+
+  private _consultarInformacion() {
+    this._generalApiService
+      .consultaApi<any>('ruteo/novedad_tipo/seleccionar/')
+      .subscribe((respuesta) => {
+        this.arrTipoNovedad = respuesta;
         this.changeDetectorRef.detectChanges();
-      })
-    }
+      });
+  }
 
   enviar() {
     if (this.formularioNovedad.valid) {
