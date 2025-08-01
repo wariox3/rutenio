@@ -17,6 +17,7 @@ import { ParametrosConsulta } from '../../../../interfaces/general/api.interface
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { NovedadSolucionComponent } from '../novedad-solucion/novedad-solucion.component';
 import { KTModal } from '../../../../../metronic/core';
+import { ParametrosApi } from '../../../../core/types/api.type';
 
 @Component({
   selector: 'app-novedad-tab',
@@ -43,12 +44,9 @@ export class NovedadTabComponent extends General implements OnInit {
 
   selectedNovedadId: number | null = null;
 
-  private baseParametrosConsulta: Omit<ParametrosConsulta, 'filtros'> = {
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: ['-fecha'],
-    limite_conteo: 10000,
-    modelo: 'RutNovedad',
+  private baseParametrosConsulta: ParametrosApi = {
+    limit: 50,
+    ordering: '-fecha',
   };
 
   ngOnInit(): void {
@@ -60,10 +58,10 @@ export class NovedadTabComponent extends General implements OnInit {
     this.consultarNovedadPorVisita();
   }
 
-  private getParametrosConsulta(): ParametrosConsulta {
+  private getParametrosConsulta(): ParametrosApi {
     return {
       ...this.baseParametrosConsulta,
-      filtros: [{ propiedad: 'visita_id', valor1: this.visitaId.toString() }],
+      'visita_id': this.visitaId.toString(),
     };
   }
 
@@ -97,7 +95,7 @@ export class NovedadTabComponent extends General implements OnInit {
     this.toggleModal$.next(false);
   }
 
-  actualizarNovedad(){
+  actualizarNovedad() {
     this.modalDismiss();
   }
 
