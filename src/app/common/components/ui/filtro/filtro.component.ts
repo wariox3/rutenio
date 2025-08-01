@@ -235,14 +235,10 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getOperatorsForField(fieldName: string): Operator[] {
-    console.log(fieldName);
-
     const field = this.availableFields.find(
       (field) => field.name === fieldName,
     );
     if (!field) return [];
-    console.log(field);
-
     return this.operators.filter((op) => op.types.includes(field.type));
   }
 
