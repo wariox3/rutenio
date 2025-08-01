@@ -143,7 +143,7 @@
             ? 'border-blue-500 text-blue-600'
             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
         "
-        (click)="activeTab = 'visitas'"
+        (click)="activeTab = 'novedades'"
       >
         Novedad
       </button>
@@ -151,7 +151,7 @@
   </div>
 
   <div class="card-body">
-    <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
+    <div *ngIf="activeTab === 'novedades'" class="overflow-x-auto">
       <app-novedad-tab [visitaId]="visitaId"></app-novedad-tab>
     </div>
   </div>
