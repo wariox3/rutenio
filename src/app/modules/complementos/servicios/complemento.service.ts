@@ -18,7 +18,7 @@ export class ComplementoService {
   }
 
   complementosInstalados() {
-    return this._generalApiService.consultaApi('general/complemento/', {
+    return this._generalApiService.consultaApi<RespuestaApi<any>>('general/complemento/', {
       instalado: 'True'
     })
   }
