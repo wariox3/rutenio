@@ -8,6 +8,9 @@ export const VISITA_RUTEAR_FILTERS: FilterField[] = [
       valueField: 'id',
       displayField: 'nombre',
       searchField: 'nombre__icontains',
+      queryParams: {
+        limit: 100,
+      },
       multiple: true
     }
   },
