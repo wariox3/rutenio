@@ -4,6 +4,7 @@ export interface FilterCondition {
   operator: string;
   value: any;
   displayValue?: string; // Added to store display text for relational fields
+  multiple?: boolean; // Whether multiple selections are allowed
 }
 
 export interface FilterField {
