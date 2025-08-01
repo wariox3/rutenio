@@ -52,6 +52,18 @@
 
         <!-- Relation -->
         <div *ngSwitchCase="'relation'" class="relative">
+          @if(condition.multiple){
+          <app-multi-select
+            [options]="getRelationOptions(condition.field)"
+            [label]="'display'"
+            [value]="'value'"
+            (selectionChange)="
+              onRelationOptionSelectedMultiple(condition, {
+                value: $event,
+                display: condition.field
+              })"
+          ></app-multi-select>
+          } @else {
           <div
             class="dropdown"
             data-dropdown="true"
@@ -99,6 +111,7 @@
               </div>
             </div>
           </div>
+          }
         </div>
 
         <!-- Default -->
@@ -135,16 +148,10 @@
 
   <!-- Botones de acción -->
   <div class="flex justify-end gap-2 mt-3">
-    <button
-      class="mr-1 btn btn-secondary"
-      (click)="clearAllFilters()"
-    >
+    <button class="mr-1 btn btn-secondary" (click)="clearAllFilters()">
       Limpiar
     </button>
-    <button
-      class="btn btn-outline btn-primary"
-      (click)="applyFilters()"
-    >
+    <button class="btn btn-outline btn-primary" (click)="applyFilters()">
       Filtrar
     </button>
   </div>

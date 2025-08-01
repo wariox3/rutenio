@@ -74,7 +74,8 @@ export class FilterTransformerService {
       '<=': '__lte',
       'contains': '__icontains',
       'startsWith': '__startswith',
-      'endsWith': '__endswith'
+      'endsWith': '__endswith',
+      'in': '__in'
     };
 
     const operatorSuffix = operatorMap[operator] || '';

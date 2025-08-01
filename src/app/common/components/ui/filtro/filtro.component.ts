@@ -11,16 +11,18 @@ import {
   OnInit,
   Output,
   QueryList,
+  signal,
   SimpleChanges,
   ViewChildren,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Subject, Subscription } from 'rxjs';
+import { Subject, Subscription, map } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GeneralService } from '../../../services/general.service';
 import { FilterCondition, FilterField, Operator } from '../../../../core/interfaces/filtro.interface';
 import { OPERADORES_FILTRO } from '../../../../core/constants/filter/operadores-filtro.constant';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
+import { MultiSelectComponent } from "../form/multi-select/multi-select.component";
 
 interface RelationOption {
   value: any;
@@ -30,7 +32,7 @@ interface RelationOption {
 @Component({
   selector: 'app-filtro',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MultiSelectComponent],
   templateUrl: './filtro.component.html',
   styleUrl: './filtro.component.scss',
 })
@@ -167,6 +169,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     // Si es un campo de relación con precarga, cargar las opciones
     if (selectedField.type === 'relation' && selectedField.relationConfig) {
       this._loadRelationOptions(selectedField.name, '');
+      condition.multiple = selectedField.relationConfig?.multiple || false;
 
       // Asegurarse de que tenemos un subject de búsqueda para este campo
       if (!this.searchSubjects[selectedField.name]) {
@@ -236,12 +239,11 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       (field) => field.name === fieldName,
     );
     if (!field) return [];
-
     return this.operators.filter((op) => op.types.includes(field.type));
   }
 
   private createEmptyCondition(): FilterCondition {
-    return { field: '', operator: '', value: '' };
+    return { field: '', operator: '', value: '', multiple: false };
   }
 
   getInputType(fieldName: string): string {
@@ -286,6 +288,13 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       this.filterConditions = parsedFilters;
+
+      this.filterConditions.forEach((condition) => {
+        const field = this.availableFields.find((f) => f.name === condition.field);
+        if (field?.type === 'relation') {
+          condition.multiple = field.relationConfig?.multiple || false;
+        }
+      });
 
       // Cargar valores de visualización para campos de relación
       this._loadRelationDisplayValues();
@@ -409,12 +418,12 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       });
   }
 
-onFocusDropdown(toggleButton: HTMLButtonElement): void {
-  // Abre el dropdown de Metronic al hacer focus en el input
-  setTimeout(() => {
-    toggleButton.click(); // simula el click en el dropdown-toggle oculto
-  }, 0);
-}
+  onFocusDropdown(toggleButton: HTMLButtonElement): void {
+    // Abre el dropdown de Metronic al hacer focus en el input
+    setTimeout(() => {
+      toggleButton.click(); // simula el click en el dropdown-toggle oculto
+    }, 0);
+  }
 
   // Método para manejar la entrada de búsqueda para campos de relación
   onRelationSearch(fieldName: string, searchTerm: string): void {
@@ -448,6 +457,16 @@ onFocusDropdown(toggleButton: HTMLButtonElement): void {
     option: RelationOption,
   ): void {
     condition.value = option.value;
+    condition.displayValue = option.display;
+    this.searchTerms[condition.field] = option.display;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  onRelationOptionSelectedMultiple(
+    condition: FilterCondition,
+    option: RelationOption,
+  ): void {
+    condition.value = option.value.join(',');
     condition.displayValue = option.display;
     this.searchTerms[condition.field] = option.display;
     this.changeDetectorRef.detectChanges();
