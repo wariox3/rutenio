@@ -103,6 +103,61 @@ export class HttpService extends Subdomino {
       });
   }
 
+  public descargarArchivoPorGet(endpoint: string): void {
+    const url = `${this.urlSubDominio}/${endpoint}`;
+    this.alertaService.mensajaEspera('Cargando');
+    this.http
+      .get<HttpResponse<Blob>>(url, {
+        observe: 'response',
+        responseType: 'blob' as 'json',
+      })
+      .pipe(
+        catchError((error) => {
+          this.alertaService.cerrarMensajes();
+          this.alertaService.mensajeError(
+            `Error 15`,
+            'El documento no tiene un formato'
+          );
+          return of(null);
+        })
+      )
+      .subscribe((response) => {
+        if (response !== null) {
+          const headers = response.headers as HttpHeaders;
+          if (headers.get('Content-Disposition') !== null) {
+            let nombreArchivo = headers
+              .get('Content-Disposition')!
+              .split(';')[1]
+              .trim()
+              .split('=')[1];
+            nombreArchivo = decodeURI(nombreArchivo.replace(/"/g, ''));
+
+            if (!nombreArchivo) {
+              throw new Error('fileName error')
+            }
+            const data: any = response.body;
+
+            if (data !== null) {
+              const blob = new Blob([data], {
+                type: data?.type,
+              });
+              const objectUrl = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.setAttribute('style', 'display:none');
+              a.setAttribute('href', objectUrl);
+              a.setAttribute('download', nombreArchivo);
+              a.click();
+              URL.revokeObjectURL(objectUrl);
+              setTimeout(() => this.alertaService.cerrarMensajes(), 1000);
+            }
+          } else {
+            setTimeout(() => this.alertaService.cerrarMensajes(), 1000);
+            throw new Error('Error no existe Content-Disposition')
+          }
+        }
+      });
+  }
+
   public descargarArchivoDominio(endpoint: string, data: any): void {
     const url = `${this.urlSubDominio}/${endpoint}`;
     this.alertaService.mensajaEspera('Cargando');
