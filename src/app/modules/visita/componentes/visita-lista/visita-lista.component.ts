@@ -297,40 +297,10 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   exportarExcel() {
-    this._generalService.descargarArchivo(`general/funcionalidad/lista/`, {
+    this._generalService.descargarArchivo(`ruteo/visita`, {
       ...this.arrParametrosConsulta,
-      excel: true,
-      ...{
-        limite: 5000,
-      },
+      limit: 5000,
     });
-  }
-
-  aplicarFiltros() {
-    // const id = this.formularioFiltros.get('id').value;
-    // const guia = this.formularioFiltros.get('guia').value;
-    // const estadoDecodificado = this.formularioFiltros.get(
-    //   'estado_decodificado'
-    // ).value;
-    //let parametrosConsulta: ParametrosApi = {
-    //   ...this.arrParametrosConsulta,
-    //   filtros: [
-    //     ...this.arrParametrosConsulta.filtros,
-    //     {
-    //       'id': this.formularioFiltros.get('id').value,
-    //       'guia': this.formularioFiltros.get('guia').value,
-    //};
-    //if (estadoDecodificado !== 'todos') {
-    // parametrosConsulta.filtros = [
-    //   ...parametrosConsulta.filtros,
-    //   {
-    //     operador: '',
-    //     propiedad: 'estado_decodificado',
-    //     valor1: estadoDecodificado === 'si',
-    //   },
-    // ];
-    //}
-    //this.consultaLista(parametrosConsulta);
   }
 
   detalleVisita(id: number) {

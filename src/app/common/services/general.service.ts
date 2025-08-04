@@ -7,12 +7,14 @@ import { Subdomino } from '../clases/subdominio';
 import { AlertaService } from './alerta.service';
 import { RespuestaAutocompletar } from '../../interfaces/general/autocompletar.interface';
 import { ParametrosConsulta } from '../../interfaces/general/api.interface';
+import { FilterTransformerService } from '../../core/servicios/filter-transformer.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeneralService extends Subdomino {
   private _alertaService = inject(AlertaService);
+  private _filterTransformerService = inject(FilterTransformerService);
 
   constructor(private http: HttpService, private _httpClient: HttpClient) {
     super();
@@ -64,55 +66,13 @@ export class GeneralService extends Subdomino {
   }
 
   public descargarArchivo(endpoint: string, data: any): void {
-    const url = `${this.urlSubDominio}/${endpoint}`;
     this._alertaService.mensajaEspera('Cargando');
-    this._httpClient
-      .post<HttpResponse<Blob>>(url, data, {
-        observe: 'response',
-        responseType: 'blob' as 'json',
-      })
-      .pipe(
-        catchError((error) => {
-          this._alertaService.cerrarMensajes();
-          this._alertaService.mensajeError(
-            `Error 15`,
-            'El documento no tiene un formato'
-          );
-          return of(null);
-        })
-      )
-      .subscribe((response) => {
-        if (response !== null) {
-          const headers = response.headers as HttpHeaders;
-
-          let nombreArchivo = headers
-            .get('Content-Disposition')!
-            .split(';')[1]
-            .trim()
-            .split('=')[1];
-          nombreArchivo = decodeURI(nombreArchivo.replace(/"/g, ''));
-
-          if (!nombreArchivo) {
-            console.log('fileName error');
-            return;
-          }
-          const data: any = response.body;
-
-          if (data !== null) {
-            const blob = new Blob([data], {
-              type: data?.type,
-            });
-            const objectUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('style', 'display:none');
-            a.setAttribute('href', objectUrl);
-            a.setAttribute('download', nombreArchivo);
-            a.click();
-            URL.revokeObjectURL(objectUrl);
-            setTimeout(() => this._alertaService.cerrarMensajes(), 1000);
-          }
-        }
-      });
+    const query = this._filterTransformerService.toQueryString({
+      ...data,
+    });
+    this.http.descargarArchivoPorGet(
+      `${endpoint}/?excel=1${endpoint ? `&${query}` : ''}`,
+    )
   }
 
   puntoOrigen() {
