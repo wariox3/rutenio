@@ -23,7 +23,7 @@ export class MenuComponent {
   @Input() imagen: string;
 
   private _authService = inject(AuthService);
-  public URL_REDDOC_CUENTA = environment.URL_REDDOC_CUENTA;
+  public url_reddoc_cuenta = environment.url_reddoc_cuenta;
 
   cerrarSesion() {
     this._authService.logout();
