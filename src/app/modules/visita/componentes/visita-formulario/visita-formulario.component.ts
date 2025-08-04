@@ -68,6 +68,7 @@ export default class VisitaFormularioComponent
     destinatario_correo: new FormControl(null),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
+    tiempo_servicio: new FormControl('', [Validators.required, Validators.min(1)]),
     ciudad_nombre: new FormControl(''),
     ciudad: new FormControl(null, [Validators.required]),
   });
@@ -83,6 +84,7 @@ export default class VisitaFormularioComponent
         destinatario_correo: this.informacionVisita.destinatario_correo,
         ciudad: this.informacionVisita.ciudad_id,
         ciudad_nombre: this.informacionVisita.ciudad_nombre,
+        tiempo_servicio: this.informacionVisita.tiempo_visita,
       });
       this.ciudadSeleccionada = {
         id: this.informacionVisita.ciudad_id,

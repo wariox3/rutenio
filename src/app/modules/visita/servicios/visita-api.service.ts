@@ -31,7 +31,7 @@ export class VisitaApiService {
   }
 
   guardar(data: any) {
-    return this._httpService.post<any[]>(`ruteo/visita/`, data);
+    return this._httpService.post<any[]>(`ruteo/visita/nuevo/`, data);
   }
 
   getDetalle(id: number) {
