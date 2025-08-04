@@ -36,11 +36,6 @@ export class HeaderComponent extends General implements OnInit {
 
   public menuItems: MenuItems[] = [
     {
-      titulo: 'Perfil',
-      icono: 'ki-filled ki-user',
-      link: '/perfil',
-    },
-    {
       titulo: 'Mis contenedores',
       icono: 'ki-filled ki-abstract-26',
       link: '/contenedor/lista',
