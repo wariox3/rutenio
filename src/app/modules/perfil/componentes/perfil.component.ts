@@ -40,10 +40,10 @@ export default class PerfilComponent extends General {
 
   getUserImageUrl() {
     return this.usuario$?.pipe(map((usuario) => {
-      if(usuario?.imagen.includes('defecto')){
-        return usuario?.imagen;
+      if(usuario?.imagen_thumbnail.includes('defecto')){
+        return usuario?.imagen_thumbnail;
       } else {
-        return `${usuario?.imagen}?${new Date().getTime()}`;
+        return `${usuario?.imagen_thumbnail}?${new Date().getTime()}`;
       }
     }));
   }

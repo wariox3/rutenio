@@ -1,6 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { Usuario } from '../../interfaces/user/user.interface';
 
-const Usuario = createFeatureSelector<any>('usuario');
+const Usuario = createFeatureSelector<Usuario>('usuario');
 
 export const obtenerUsuario = createSelector(
   Usuario,
@@ -9,7 +10,7 @@ export const obtenerUsuario = createSelector(
 
 export const obtenerUsuarioImagen = createSelector(
   Usuario,
-  (Usuario) => Usuario.imagen
+  (Usuario) => Usuario.imagen_thumbnail
 )
 
 export const obtenerUsuarioNombreCorto = createSelector(
