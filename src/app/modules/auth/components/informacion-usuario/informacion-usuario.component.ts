@@ -25,10 +25,10 @@ import {
   obtenerUsuario,
   obtenerUsuarioId,
 } from '../../../../redux/selectors/usuario.selector';
-import { Usuario } from '../../../contenedores/interfaces/usuarios-contenedores.interface';
 import { paises } from '../../constants/paises';
 import { LanguageFlag } from '../../types/informacion-perfil.type';
 import { AuthService } from '../../services/auth.service';
+import { Usuario } from '../../../../interfaces/user/user.interface';
 
 @Component({
   selector: 'app-informacion-usuario',
@@ -63,7 +63,7 @@ export class InformacionUsuarioComponent extends General implements OnInit {
   paises = paises;
   srcResult: string = '';
   usuario: Usuario;
-  codigoUsuario = 0;
+  codigoUsuario = "";
   btnGuardar!: ElementRef<HTMLButtonElement>;
   modalRef: any;
   language: LanguageFlag;

@@ -5,6 +5,7 @@ export interface Usuario {
   imagen: string;
   nombre_corto: string;
   nombre: string;
+  imagen_thumbnail: string;
   apellido: string;
   telefono: string;
   correo: string;

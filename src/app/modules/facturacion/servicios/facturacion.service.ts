@@ -12,7 +12,7 @@ export class FacturacionService {
 
   constructor(private http: HttpClient, private fechaServices: FechasService) { }
 
-  facturacion(usuario_id: number) {
+  facturacion(usuario_id: string) {
     return this.http.post<Facturas>(
       `${environment.url_api}/contenedor/movimiento/pendiente/`,
       {
@@ -21,7 +21,7 @@ export class FacturacionService {
     );
   }
 
-  facturacionFechas(usuario_id: number, fechaHasta: any) {
+  facturacionFechas(usuario_id: string, fechaHasta: any) {
     return this.http.post<Consumos>(
       `${environment.url_api}/contenedor/consumo/consulta-usuario-fecha/`,
       {
@@ -32,13 +32,13 @@ export class FacturacionService {
     );
   }
 
-  obtenerUsuarioVrSaldo(usuario_id: number) {
+  obtenerUsuarioVrSaldo(usuario_id: string) {
     return this.http.get<{ saldo: number }>(
       `${environment.url_api}/seguridad/usuario/saldo/${usuario_id}/`,
     );
   }
 
-  informacionFacturacion(usuario_id: number) {
+  informacionFacturacion(usuario_id: string) {
     return this.http.post<any>(
       `${environment.url_api}/contenedor/informacion_facturacion/consulta-usuario/`,
       {
