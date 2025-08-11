@@ -7,6 +7,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { AuthService } from '../../modules/auth/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-menu',
@@ -22,6 +23,7 @@ export class MenuComponent {
   @Input() imagen: string;
 
   private _authService = inject(AuthService);
+  public url_reddoc_cuenta = environment.url_reddoc_cuenta;
 
   cerrarSesion() {
     this._authService.logout();

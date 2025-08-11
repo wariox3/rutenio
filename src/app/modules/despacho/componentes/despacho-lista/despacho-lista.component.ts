@@ -12,7 +12,6 @@ import { General } from '../../../../common/clases/general';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
 import { DespachoApiService } from '../../servicios/despacho-api.service';
 import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
@@ -30,7 +29,6 @@ import { PaginadorComponent } from "../../../../common/components/ui/paginacion/
 })
 export default class DespachoListaComponent extends General implements OnInit {
   private _despachoApiService = inject(DespachoApiService);
-  private _filtroBaseService = inject(FiltroBaseService);
 
   public DESPACHO_LISTA_FILTERS = DESPACHO_LISTA_FILTERS
   public mapeoDocumento = mapeo;
@@ -59,6 +57,8 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   consultaLista(filtros: any) {
+    console.log(filtros);
+    
     this.despachos$ = this._despachoApiService.lista(filtros).pipe(
       switchMap((response) => {
         this.cantidadRegistros = response.count;

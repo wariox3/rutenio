@@ -4,7 +4,7 @@ export const despachoMapeo: any = {
   tipo: 'Administrador',
   datos: [
     {
-      nombre: 'ID',
+      nombre: 'id',
       campoNombre: 'Id',
       campoTipo: 'IntegerField',
       visibleTabla: true,
