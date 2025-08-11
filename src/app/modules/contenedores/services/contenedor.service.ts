@@ -112,7 +112,7 @@ export class ContenedorService {
     );
   }
 
-  consultaUsuario(usuario_id: number) {
+  consultaUsuario(usuario_id: string) {
     return this.http.post<Movimientos>(
       `${environment.url_api}/contenedor/movimiento/consulta-usuario/`,
       {

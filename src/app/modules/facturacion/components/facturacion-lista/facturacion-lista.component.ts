@@ -56,7 +56,7 @@ export default class FacturacionComponent
   consumos: Consumo[] = [];
   active: number = 1;
   consumoTotal = 0;
-  codigoUsuario = 0;
+  codigoUsuario = "";
 
   arrFacturasSeleccionados: any[] = [];
   arrFacturacionInformacion: any[] = [];

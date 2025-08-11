@@ -36,11 +36,6 @@ export class HeaderComponent extends General implements OnInit {
 
   public menuItems: MenuItems[] = [
     {
-      titulo: 'Perfil',
-      icono: 'ki-filled ki-user',
-      link: '/perfil',
-    },
-    {
       titulo: 'Mis contenedores',
       icono: 'ki-filled ki-abstract-26',
       link: '/contenedor/lista',
@@ -64,10 +59,10 @@ export class HeaderComponent extends General implements OnInit {
   getUserImageUrl() {
     return this.usuario$?.pipe(
       map((usuario) => {
-        if (usuario?.imagen.includes('defecto')) {
-          return usuario?.imagen;
+        if (usuario?.imagen_thumbnail.includes('defecto')) {
+          return usuario?.imagen_thumbnail;
         } else {
-          return `${usuario?.imagen}?${new Date().getTime()}`;
+          return `${usuario?.imagen_thumbnail}?${new Date().getTime()}`;
         }
       })
     );

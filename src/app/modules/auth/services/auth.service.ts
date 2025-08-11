@@ -81,7 +81,7 @@ export class AuthService {
     );
   }
 
-  perfil(codigoUsuario: number) {
+  perfil(codigoUsuario: string) {
     return this.http.get<UsuarioInformacionPerfil>(
       `${environment.url_api}/seguridad/usuario/${codigoUsuario}/`,
     );
