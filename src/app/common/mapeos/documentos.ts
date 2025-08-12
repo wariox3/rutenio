@@ -244,7 +244,7 @@ export const mapeo: any = {
       },
       {
         encabezado: 'Visita',
-        campoNombre: 'visita',
+        campoNombre: 'visita__numero',
         campoTipo: 'IntegerField',
         visibleTabla: true,
         visibleFiltro: true,
