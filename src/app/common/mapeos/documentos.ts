@@ -243,6 +243,14 @@ export const mapeo: any = {
         ordenable: false,
       },
       {
+        encabezado: 'Visita',
+        campoNombre: 'visita',
+        campoTipo: 'IntegerField',
+        visibleTabla: true,
+        visibleFiltro: true,
+        ordenable: true,
+      },
+      {
         encabezado: 'Descripción',
         campoNombre: 'descripcion',
         campoTipo: 'CharField',

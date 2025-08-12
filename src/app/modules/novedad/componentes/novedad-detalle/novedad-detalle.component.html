@@ -46,7 +46,7 @@
                 Tipo
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ novedad().novedad_tipo_nombre }}
+                {{ novedad().novedad_tipo__nombre }}
               </td>
             </tr>
             <tr class="border-b border-gray-300">
@@ -57,6 +57,24 @@
               </td>
               <td class="px-4 py-3" colspan="3">
                 {{ novedad().descripcion }}
+              </td>
+            </tr>
+            <tr class="border-b border-gray-300">
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Visita
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().visita }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Fecha solución
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ novedad().fecha_solucion | formatFecha : "Y-m-d" }}
               </td>
             </tr>
             <tr class="border-b border-gray-300">
