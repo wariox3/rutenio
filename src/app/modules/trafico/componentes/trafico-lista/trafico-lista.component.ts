@@ -41,6 +41,7 @@ import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liber
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
 
 @Component({
   selector: 'app-trafico-lista',
@@ -58,7 +59,8 @@ import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
     VisitaAdicionarTraficoComponent,
     ButtonComponent,
     VisitaAdicionarPendienteComponent,
-    ModalStandardComponent
+    ModalStandardComponent,
+    DespachoTrasbordarComponent
 ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
@@ -87,7 +89,9 @@ export default class TraficoListaComponent
   public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
   public toggleModalLiberar$ = new BehaviorSubject(false);
   public toggleModalUbicacion$ = new BehaviorSubject(false);
+  public toggleModalTrasbordarTrafico$ = new BehaviorSubject(false);
   public actualizandoLista = signal<boolean>(false);
+
 
   customMarkers: any[] = [];
   mostrarMapaFlag = false;
@@ -611,5 +615,16 @@ export default class TraficoListaComponent
 
   getModalInstaceState(id: string): Observable<boolean> {
     return this._modalService.isOpen$(id);
+  }
+
+  abrirModalTrasbordar(id) {
+    this.despachoIdActual = id;
+    this.toggleModalTrasbordarTrafico$.next(true);
+  }
+
+  cerrarModalTrasbordar(selector: string) {
+    this.toggleModalTrasbordarTrafico$.next(false);
+    this.dismissModal(selector);
+    this.consultarLista();
   }
 }

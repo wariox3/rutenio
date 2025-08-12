@@ -46,7 +46,7 @@
             <th>Tiempo (min)</th>
             <th>Peso / Volumen</th>
             <th>Ultima ubicación</th>
-            <th style="text-align: center;">Progreso</th>
+            <th style="text-align: center">Progreso</th>
             <th></th>
           </tr>
         </thead>
@@ -56,10 +56,17 @@
             <td>{{ despacho.id }}</td>
             <td>{{ despacho.entrega_id }}</td>
             <td>{{ despacho.vehiculo__placa }}</td>
-            <td>{{ despacho.fecha_salida | formatFecha : "Y-m-d H:i (24h)" }}</td>
+            <td>
+              {{ despacho.fecha_salida | formatFecha : "Y-m-d H:i (24h)" }}
+            </td>
             <td>{{ despacho.tiempo | number : "1.0-0" }} min</td>
-            <td>{{ despacho.peso | redondear}} / {{ despacho.volumen | redondear}} </td>
-            <td>{{ despacho.fecha_ubicacion | formatFecha : "Y-m-d H:i (24h)" }}</td>
+            <td>
+              {{ despacho.peso | redondear }} /
+              {{ despacho.volumen | redondear }}
+            </td>
+            <td>
+              {{ despacho.fecha_ubicacion | formatFecha : "Y-m-d H:i (24h)" }}
+            </td>
             <td>
               <div class="flex flex-col space-y-1">
                 <div
@@ -247,6 +254,19 @@
                           <span class="menu-title">
                             Regenerar indicador entregas</span
                           >
+                        </button>
+                      </div>
+
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          class="menu-link"
+                          data-modal-toggle="#trasbordar-despacho-trafico"
+                          (click)="abrirModalTrasbordar(despacho.id)"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-arrow-right-left"></i>
+                          </span>
+                          <span class="menu-title">Trasbordar</span>
                         </button>
                       </div>
                     </div>
@@ -482,22 +502,20 @@
       </nav>
     </div>
 
-      <div
-        *ngIf="activeTab === 'visitas' && selectedDespachoId"
-      >
-        <app-despacho-tab-visita
-          [despachoId]="selectedDespachoId"
-        ></app-despacho-tab-visita>
-      </div>
+    <div *ngIf="activeTab === 'visitas' && selectedDespachoId">
+      <app-despacho-tab-visita
+        [despachoId]="selectedDespachoId"
+      ></app-despacho-tab-visita>
+    </div>
 
-      <div
-        *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
-        class="overflow-x-auto"
-      >
-        <app-despacho-tab-ubicacion
-          [despachoId]="selectedDespachoId"
-        ></app-despacho-tab-ubicacion>
-      </div>
+    <div
+      *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
+      class="overflow-x-auto"
+    >
+      <app-despacho-tab-ubicacion
+        [despachoId]="selectedDespachoId"
+      ></app-despacho-tab-ubicacion>
+    </div>
     }
   </section>
 </app-modal-standard>
@@ -563,5 +581,19 @@
     <app-despacho-adicionar-visita-trafico
       [despachoId]="despachoIdActual"
     ></app-despacho-adicionar-visita-trafico>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="small"
+  [id]="'trasbordar-despacho-trafico'"
+  [titulo]="'Trasbordar a despacho ' + despachoIdActual"
+  (emitirModalCerrado)="cerrarModalAdicionar()"
+>
+  <section *ngIf="toggleModalTrasbordarTrafico$ | async" modal-body>
+    <app-despacho-trasbordar
+      [despachoId]="despachoIdActual"
+      (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho-trafico')"
+    ></app-despacho-trasbordar>
   </section>
 </app-modal-default>
