@@ -4,15 +4,10 @@
   </div>
   <div class="card-body">
     <app-filtro
-
-          (filtersApply)="filterChange($event)"
+      (filtersApply)="filterChange($event)"
       [availableFields]="mapeoFiltros"
       [localStorageKey]="filtroKey()"
     ></app-filtro>
-    <!-- <app-filtro-base
-      (emitirFiltros)="filtrosPersonalizados($event)"
-      [mapeoCampos]="mapeoFiltros"
-    ></app-filtro-base> -->
   </div>
 </div>
 

@@ -236,7 +236,7 @@ export const mapeo: any = {
       },
       {
         encabezado: 'Tipo',
-        campoNombre: 'novedad_tipo_nombre',
+        campoNombre: 'novedad_tipo__nombre',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
