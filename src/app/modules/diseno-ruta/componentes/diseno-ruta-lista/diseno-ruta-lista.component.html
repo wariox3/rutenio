@@ -428,7 +428,7 @@
 >
   <section *ngIf="toggleModalTrasbordar$ | async" modal-body>
     <app-despacho-trasbordar
-      [despachoId]="despachoSeleccionado"
+      [despachoId]="despachoSeleccionadoAdicionar"
       (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho')"
     ></app-despacho-trasbordar>
   </section>

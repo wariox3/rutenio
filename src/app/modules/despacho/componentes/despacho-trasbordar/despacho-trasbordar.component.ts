@@ -39,9 +39,9 @@ export class DespachoTrasbordarComponent extends General implements OnInit {
     this.trasbordoInput.nativeElement.focus();
   }
 
-  trasbordar() {
+  trasbordar() {    
     this._despachoApiService
-      .trasbordar(this.despachoId.id, this.codigoTrasbordo)
+      .trasbordar(this.despachoId, this.codigoTrasbordo)
       .subscribe((response) => {
         this._despachoService.notificarActualizacionLista();
         this.alerta.mensajaExitoso(response.mensaje);
