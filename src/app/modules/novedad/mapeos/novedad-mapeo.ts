@@ -21,6 +21,14 @@ export const novedadMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
+    {
+      nombre: 'visita',
+      campoNombre: 'Id',
+      campoTipo: 'IntegerField',
+      visibleTabla: true,
+      visibleFiltro: true,
+      ordenable: true,
+    },
   ],
 };
 
@@ -29,4 +37,5 @@ export const novedadMapeo: any = {
 export const NOVEDAD_FILTERS: FilterField[] = [
   { name: 'id', displayName: 'Id', type: 'number' },
   { name: 'estado_solucion', displayName: 'Solucionado', type: 'boolean' },
+  { name: 'visita_id', displayName: 'Visita', type: 'number' },
 ];

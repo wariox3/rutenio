@@ -372,7 +372,7 @@ export default class TraficoListaComponent
     this.novedadService.lista(parametros).subscribe({
       next: (respuesta) => {
         this.novedades.set(
-          respuesta.results.map((novedad) => novedad.novedad_tipo_nombre)
+          respuesta.results.map((novedad) => novedad.novedad_tipo__nombre)
         );
       },
       error: (error) => {
