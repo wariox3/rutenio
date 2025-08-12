@@ -49,7 +49,8 @@ export default class NovedadDetalleComponent extends General implements OnInit {
     estado_solucion: false,
     fecha_solucion: '',
     solucion: '',
-    visita: 0
+    visita: 0,
+    visita__numero: 0
   });
 
   ngOnInit(): void {

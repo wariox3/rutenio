@@ -7,4 +7,5 @@ export interface Novedad {
   fecha_solucion: string;
   solucion: string;
   visita: number;
+  visita__numero: number;
 }
