@@ -13,12 +13,12 @@
     </form>
   </div>
   <div class="card-footer justify-end">
-    <button
-      class="btn btn-primary"
-      (click)="enviarInvitacionUsuario(contenedor.contenedor_id)"
-    >
-      Enviar
-    </button>
+    <app-button
+      texto="Enviar"
+      color="primary"
+      [estaDeshabilitado]="!formularioInvitacionUsuario.valid"
+      (emitirBotonClicked)="enviarInvitacionUsuario(contenedor.contenedor_id)"
+    ></app-button>
   </div>
 </div>
 

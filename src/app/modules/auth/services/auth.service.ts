@@ -4,7 +4,7 @@ import { removeCookie } from "typescript-cookie";
 import { environment } from "../../../../environments/environment.development";
 import { noRequiereToken } from "../../../common/interceptors/token.interceptor";
 import { TokenService } from "./token.service";
-import { enviarDatosUsuario, UsuarioInformacionPerfil } from "../types/informacion-perfil.type";
+import { ConfirmarInivitacion, enviarDatosUsuario, UsuarioInformacionPerfil } from "../types/informacion-perfil.type";
 
 @Injectable({
   providedIn: "root",
@@ -77,6 +77,16 @@ export class AuthService {
         idioma: data.idioma,
         cargo: data.cargo,
         numero_identificacion: data.numero_identificacion,
+      },
+    );
+  }
+
+  
+  confirmarInivitacion(token: string) {
+    return this.http.post<ConfirmarInivitacion>(
+      `${environment.url_api}/contenedor/usuariocontenedor/confirmar/`,
+      {
+        token,
       },
     );
   }
