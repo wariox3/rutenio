@@ -44,11 +44,13 @@ export default class NovedadDetalleComponent extends General implements OnInit {
   novedad = signal<Novedad>({
     id: 0,
     fecha: '',
-    novedad_tipo_nombre: '',
+    novedad_tipo__nombre: '',
     descripcion: '',
     estado_solucion: false,
     fecha_solucion: '',
     solucion: '',
+    visita: 0,
+    visita__numero: 0
   });
 
   ngOnInit(): void {
