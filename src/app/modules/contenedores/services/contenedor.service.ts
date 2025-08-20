@@ -84,6 +84,7 @@ export class ContenedorService {
       `${environment.url_api}/contenedor/usuariocontenedor/invitar/`,
       {
         accion: payload.accion,
+        aplicacion: payload.aplicacion,
         contenedor_id: payload.contenedor_id,
         usuario_id: payload.usuario_id,
         invitado: payload.invitado,

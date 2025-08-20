@@ -22,3 +22,9 @@ export interface enviarDatosUsuario {
 export interface UsuarioInformacionPerfil extends Partial<Usuario> {
   indicativoPais: string;
 }
+
+export interface ConfirmarInivitacion {
+  mensaje: string
+  codigo: Number;
+}
+
