@@ -42,6 +42,7 @@ import { ModalService } from '../../../../common/components/ui/modals/service/mo
 import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
+import { TraficoService } from '../../servicios/trafico.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -77,6 +78,7 @@ export default class TraficoListaComponent
   private directionsService = inject(MapDirectionsService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
+  private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
 
   public visitaSeleccionada: Visita;
@@ -162,7 +164,8 @@ export default class TraficoListaComponent
       .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/',this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.results;
+        this.arrDespachos = this._traficoService.agregarEstadoDespacho(respuesta.results);
+        console.log(this.arrDespachos);
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -339,7 +342,6 @@ export default class TraficoListaComponent
   }
 
   obtenerAnchoProgreso(
-    estado: string,
     entregadas: number,
     totales: number
   ): string {
