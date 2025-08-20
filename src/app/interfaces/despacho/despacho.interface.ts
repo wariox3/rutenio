@@ -1,7 +1,7 @@
 export interface Despacho {
   id: number;
   fecha: string;
-  estado: string;
+  estado?: 'tiempo' | 'retrazado';
   peso: number;
   volumen: number;
   visitas: number;
@@ -20,6 +20,7 @@ export interface Despacho {
   latitud: string;
   longitud: string;
   fecha_ubicacion: string;
+  codigo_complemento: string;
   entrega_id: number;
   estado_terminado: boolean;
 }

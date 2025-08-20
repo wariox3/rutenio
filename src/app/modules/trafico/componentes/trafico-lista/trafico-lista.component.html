@@ -20,7 +20,7 @@
         <button
           class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
-          data-modal-toggle="#trafico-ubicacion-actual"
+          data-modal-toggle="#trafico-ubicacion-actual" 
         >
           <i class="ki-filled ki-delivery-time"></i>
           Ubicación actual
@@ -41,6 +41,7 @@
                 >O_E</span
               >
             </th>
+            <th>Complemento</th>
             <th>Placa</th>
             <th>Fecha</th>
             <th>Tiempo (min)</th>
@@ -55,6 +56,7 @@
           <tr>
             <td>{{ despacho.id }}</td>
             <td>{{ despacho.entrega_id }}</td>
+            <td>{{ despacho.codigo_complemento }}</td>
             <td>{{ despacho.vehiculo__placa }}</td>
             <td>
               {{ despacho.fecha_salida | formatFecha : "Y-m-d H:i (24h)" }}
@@ -98,7 +100,6 @@
                     "
                     [style.width]="
                       obtenerAnchoProgreso(
-                        despacho.estado,
                         despacho.visitas_entregadas,
                         despacho.visitas
                       )

@@ -9,11 +9,13 @@ import { Visita } from '../../../visita/interfaces/visita.interface';
 import { VisitaService } from '../../../visita/servicios/visita.service';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { VISITA_TRAFICO_TAB_FILTERS } from '../../../visita/mapeos/visita-trafico-tab-mapeo';
 
 @Component({
   selector: 'app-despacho-tab-visita',
   standalone: true,
-  imports: [CommonModule, ValidarBooleanoPipe, FormatFechaPipe, PaginadorComponent],
+  imports: [CommonModule, ValidarBooleanoPipe, FormatFechaPipe, PaginadorComponent, FiltroComponent],
   templateUrl: './despacho-tab-visita.component.html',
   styleUrl: './despacho-tab-visita.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +30,8 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   public totalPages = signal(1);
   public totalItems: number = 0;
   public cantidadRegistros: number = 0;
+  public VISITA_LISTA_FILTERS = VISITA_TRAFICO_TAB_FILTERS
+  public filtroKey = signal<string>('');
 
   visitas = signal<Visita[]>([])
 
@@ -56,6 +60,10 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
 
     const parametros = this.getParametrosConsulta();
 
+    this._consultarVisitaPorDespacho(parametros)
+  }
+
+  private _consultarVisitaPorDespacho(parametros:ParametrosApi){
     this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametros).subscribe({
       next: (respuesta) => {
         this.visitas.set(respuesta.results);
@@ -70,6 +78,13 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.unsubscribe();
+  }
+
+  filterChange(filters: Record<string, any>) {
+    this._consultarVisitaPorDespacho({
+      ...this.getParametrosConsulta(),
+      ...filters
+    });
   }
 
   onPageChange(page: number): void {
