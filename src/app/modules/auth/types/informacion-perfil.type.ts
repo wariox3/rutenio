@@ -24,7 +24,21 @@ export interface UsuarioInformacionPerfil extends Partial<Usuario> {
 }
 
 export interface ConfirmarInivitacion {
-  mensaje: string
-  codigo: Number;
+  confirmar: boolean;
 }
+
+export interface TokenVerificacion {
+  verificacion: boolean;
+}
+
+export interface Verificacion {
+  codigoUsuario: string;
+  token: string;
+  vence: string;
+}
+
+export interface TokenReenviarValidacion {
+  verificacion: Verificacion;
+}
+
 

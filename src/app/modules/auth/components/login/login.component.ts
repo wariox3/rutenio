@@ -12,7 +12,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, catchError, finalize, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -94,7 +101,8 @@ export default class LoginComponent extends General implements OnInit {
         tap((resultado: RespuestaLogin) => {
           if (resultado.token) {
             let calcularTiempo = new Date(
-              new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
+              new Date().getTime() +
+                environment.sessionLifeTime * 60 * 60 * 1000
             );
             this.store.dispatch(
               usuarioIniciar({
@@ -102,21 +110,27 @@ export default class LoginComponent extends General implements OnInit {
               })
             );
             this.tokenService.guardar(resultado.token, calcularTiempo);
-            this._router.navigate(['contenedor']);
           }
         }),
-        switchMap((resultado: RespuestaLogin) => {
+        switchMap(() => {
           if (tokenUrl) {
-            return this.authService.confirmarInivitacion(tokenUrl);
+            return this.authService.confirmarInivitacion(tokenUrl).pipe(
+              catchError(() => {
+                this._router.navigate(['contenedor']);
+                return of(null);
+              })
+            );
           }
-
           return of(null);
         }),
-        tap((resultado: any) => {
+        tap((resultado) => {
+          this._router.navigate(['contenedor']);
           if (resultado.confirmar) {
-            this.alerta.mensajaExitoso('Se ha confirmado la invitación exitosamente.');
+            this.alerta.mensajaExitoso(
+              'Se ha confirmado la invitación exitosamente.'
+            );
           }
-        }), 
+        }),
         catchError(() => {
           return of(null);
         }),
