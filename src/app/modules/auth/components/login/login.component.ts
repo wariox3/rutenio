@@ -12,7 +12,14 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, catchError, finalize, of } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  finalize,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { environment } from '../../../../../environments/environment.development';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -23,6 +30,7 @@ import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../services/token.service';
 import { NgxTurnstileModule } from 'ngx-turnstile';
+import { ConfirmarInivitacion } from '../../types/informacion-perfil.type';
 
 @Component({
   selector: 'app-login',
@@ -84,29 +92,51 @@ export default class LoginComponent extends General implements OnInit {
       return;
     }
 
+    const tokenUrl = this.activatedRoute.snapshot.paramMap.get('token');
+
     this.isLoading$.next(true);
     this.authService
       .login(this.formularioLogin.value)
       .pipe(
+        tap((resultado: RespuestaLogin) => {
+          if (resultado.token) {
+            let calcularTiempo = new Date(
+              new Date().getTime() +
+                environment.sessionLifeTime * 60 * 60 * 1000
+            );
+            this.store.dispatch(
+              usuarioIniciar({
+                usuario: resultado.user,
+              })
+            );
+            this.tokenService.guardar(resultado.token, calcularTiempo);
+          }
+        }),
+        switchMap(() => {
+          if (tokenUrl) {
+            return this.authService.confirmarInivitacion(tokenUrl).pipe(
+              catchError(() => {
+                this._router.navigate(['contenedor']);
+                return of(null);
+              })
+            );
+          }
+          return of(null);
+        }),
+        tap((resultado) => {
+          this._router.navigate(['contenedor']);
+          if (resultado.confirmar) {
+            this.alerta.mensajaExitoso(
+              'Se ha confirmado la invitación exitosamente.'
+            );
+          }
+        }),
         catchError(() => {
           return of(null);
         }),
         finalize(() => this.isLoading$.next(false))
       )
-      .subscribe((resultado: RespuestaLogin) => {
-        if (resultado.token) {
-          let calcularTiempo = new Date(
-            new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
-          );
-          this.store.dispatch(
-            usuarioIniciar({
-              usuario: resultado.user,
-            })
-          );
-          this.tokenService.guardar(resultado.token, calcularTiempo);
-          this._router.navigate(['contenedor']);
-        }
-      });
+      .subscribe();
   }
 
   get username() {

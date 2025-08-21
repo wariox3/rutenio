@@ -22,3 +22,23 @@ export interface enviarDatosUsuario {
 export interface UsuarioInformacionPerfil extends Partial<Usuario> {
   indicativoPais: string;
 }
+
+export interface ConfirmarInivitacion {
+  confirmar: boolean;
+}
+
+export interface TokenVerificacion {
+  verificacion: boolean;
+}
+
+export interface Verificacion {
+  codigoUsuario: string;
+  token: string;
+  vence: string;
+}
+
+export interface TokenReenviarValidacion {
+  verificacion: Verificacion;
+}
+
+

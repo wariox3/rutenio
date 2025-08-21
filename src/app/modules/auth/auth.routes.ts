@@ -15,8 +15,17 @@ export default [
     loadComponent: () => import('./components/register/register.component'),
   },
   {
+    path: 'login/:token',
+    loadComponent: () => import('./components/login/login.component'),
+  },
+  {
     path: 'reset-password',
     loadComponent: () =>
       import('./components/recover-password/recover-password.component'),
+  },
+  {
+    path: 'verificacion/:token',
+    loadComponent: () =>
+      import('./components/verificacion-cuenta/verificacion-cuenta.component'),
   },
 ] as Routes;
