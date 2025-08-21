@@ -20,6 +20,7 @@ import {
 } from '@angular/forms';
 import { General } from '../../../../common/clases/general';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
+import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
 
 @Component({
   selector: 'app-contenedor-invitar',
@@ -29,7 +30,8 @@ import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
     LabelComponent,
     AsyncPipe,
     ReactiveFormsModule,
-  ],
+    ButtonComponent
+],
   templateUrl: 'contenedor-invitar.component.html',
   styleUrl: './contenedor-invitar.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,6 +72,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
         switchMap((usuarioId) =>
           this._contenedorService.invitarUsuario({
             accion: 'invitar',
+            aplicacion: 'ruteo',
             contenedor_id: contenedorId,
             usuario_id: usuarioId,
             invitado: this.formularioInvitacionUsuario.controls.nombre.value,
