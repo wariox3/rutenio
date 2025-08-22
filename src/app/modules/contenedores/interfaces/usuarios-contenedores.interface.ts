@@ -10,3 +10,9 @@ export interface RespuestaConsultaContenedor {
     username: string
   }
   
+  export interface ContenedorInvitacionLista {
+    id: number,
+    usuario: number,
+    contenedor: number,
+    rol: string
+}
