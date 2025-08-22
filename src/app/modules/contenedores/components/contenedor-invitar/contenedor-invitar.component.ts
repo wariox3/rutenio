@@ -7,8 +7,8 @@ import {
 } from '@angular/core';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
-import { Contenedor } from '../../interfaces/contenedor.interface';
-import { Usuario } from '../../interfaces/usuarios-contenedores.interface';
+import { Contenedor, ContenedorLista } from '../../interfaces/contenedor.interface';
+import { ContenedorInvitacionLista, Usuario } from '../../interfaces/usuarios-contenedores.interface';
 import { ContenedorService } from '../../services/contenedor.service';
 import { map, Observable, switchMap, tap } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
@@ -37,7 +37,7 @@ import { ButtonComponent } from "../../../../common/components/ui/button/button.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContenedorInvitarComponent extends General implements OnInit {
-  @Input({ required: true }) contenedor: Contenedor;
+  @Input({ required: true }) contenedor: ContenedorLista;
 
   private _contenedorService = inject(ContenedorService);
   private _formBuilder = inject(FormBuilder);
@@ -45,7 +45,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   formularioInvitacionUsuario = this._formBuilder.group({
     nombre: ['', [Validators.email, Validators.required]],
   });
-  listaUsuarios$: Observable<Usuario[]>;
+  listaUsuarios$: Observable<ContenedorInvitacionLista[]>;
 
   constructor() {
     super();
@@ -58,7 +58,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   private _consultarContenedorUsuarios(contenedorId: number) {
     this.listaUsuarios$ = this._contenedorService
       .listaUsuarios(contenedorId)
-      .pipe(map((response) => response.usuarios));
+      .pipe(map((response) => response.results));
   }
 
   private _limpiarFormulario() {
