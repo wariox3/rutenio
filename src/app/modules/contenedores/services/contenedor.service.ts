@@ -1,32 +1,54 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import {
   ContenedorDetalle,
+  ContenedorLista,
   ListaContenedoresRespuesta,
 } from '../interfaces/contenedor.interface';
-import { RespuestaConsultaContenedor } from '../interfaces/usuarios-contenedores.interface';
+import { ContenedorInvitacionLista, RespuestaConsultaContenedor } from '../interfaces/usuarios-contenedores.interface';
 import {
   InvitarUsuario,
   RespuestaInvitacionUsuario,
 } from '../interfaces/invitar-contenedor.interface';
 import { Movimientos } from '../../facturacion/interfaces/Facturacion';
 import { TipoIdentificacionLista } from '../../../interfaces/identificacion/identificacion.interface';
+import { CookieService } from '../../../core/servicios/cookie.service';
+import { FilterTransformerService } from '../../../core/servicios/filter-transformer.service';
+import { map } from 'rxjs';
+import { RespuestaApi } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ContenedorService {
+  private _cookieService = inject(CookieService);
+  private _filterTransformService = inject(FilterTransformerService);
+  public totalItems = 0;
+
   constructor(private http: HttpClient) {}
 
-  lista(usuario_id: string) {
-    return this.http.post<ListaContenedoresRespuesta>(
-      `${environment.url_api}/contenedor/usuariocontenedor/consulta-usuario/`,
-      {
-        usuario_id,
-        ruteo: true,
-      }
-    );
+  lista(parametros: Record<string, any>) {
+    const params = this._filterTransformService.toQueryString({
+      ...parametros,
+      serializador: 'lista',
+      contenedor__ruteo: 'True',
+    });
+
+    return this.http
+      .get<RespuestaApi<ContenedorLista>>(
+        `${environment.url_api}/contenedor/usuariocontenedor/?${params}`
+      )
+      .pipe(
+        map((res) => {
+          // Store the total count for pagination
+          this.totalItems = res.count;
+          return {
+            ...res,
+            results: this._agregarPropiedades(res.results),
+          };
+        })
+      );
   }
 
   listaTipoIdentificacion() {
@@ -71,11 +93,8 @@ export class ContenedorService {
   }
 
   listaUsuarios(contenedorId: number) {
-    return this.http.post<RespuestaConsultaContenedor>(
-      `${environment.url_api}/contenedor/usuariocontenedor/consulta-contenedor/`,
-      {
-        contenedor_id: contenedorId,
-      }
+    return this.http.get<RespuestaApi<ContenedorInvitacionLista>>(
+      `${environment.url_api}/contenedor/usuariocontenedor/?contenedor_id=${contenedorId}`
     );
   }
 
@@ -98,7 +117,7 @@ export class ContenedorService {
     );
   }
 
-  detalle(codigoContenedor: string) {
+  detalle(codigoContenedor: number) {
     return this.http.get<ContenedorDetalle>(
       `${environment.url_api}/contenedor/contenedor/${codigoContenedor}/`
     );
@@ -120,5 +139,64 @@ export class ContenedorService {
         usuario_id,
       }
     );
+  }
+
+  private _isContenedorRestringido(
+    valorSaldo: number,
+    fechaLimitePago: string
+  ) {
+    // Si no hay fecha límite, no hay restricción
+    if (!fechaLimitePago) {
+      return false;
+    }
+
+    const fechaHoy = new Date();
+    const fechaLimite = new Date(fechaLimitePago);
+
+    // Normalizar las fechas para comparar solo año, mes y día
+    const hoy = new Date(
+      fechaHoy.getFullYear(),
+      fechaHoy.getMonth(),
+      fechaHoy.getDate()
+    );
+    const limite = new Date(
+      fechaLimite.getFullYear(),
+      fechaLimite.getMonth(),
+      fechaLimite.getDate()
+    );
+
+    // Si el saldo es mayor a 0 y la fecha límite ya pasó
+    if (valorSaldo > 0 && hoy > limite) {
+      return true; // Contenedor restringido
+    }
+
+    return false; // Contenedor no restringido
+  }
+
+  private _agregarPropiedades(contenedores: ContenedorLista[]) {
+    // Obtener el usuario de la cookie para verificar saldo y fecha límite
+    const usuarioCookie = this._cookieService?.get('usuario');
+    let valorSaldo = 0;
+    let fechaLimitePago = '';
+
+    if (usuarioCookie) {
+      try {
+        const usuario = JSON.parse(usuarioCookie);
+        valorSaldo = usuario.vr_saldo || 0;
+        fechaLimitePago = usuario.fecha_limite_pago || '';
+      } catch (error) {
+        console.error('Error al parsear la cookie de usuario:', error);
+      }
+    }
+
+    return contenedores.map((contenedor) => {
+      return {
+        ...contenedor,
+        acceso_restringido: this._isContenedorRestringido(
+          valorSaldo,
+          fechaLimitePago
+        ),
+      };
+    });
   }
 }

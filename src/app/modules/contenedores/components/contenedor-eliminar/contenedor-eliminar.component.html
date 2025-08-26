@@ -14,7 +14,7 @@
         <div class="pr-3 pl-3 text-sm">
           <span>Para confirmar, escriba: </span>
           <span class="text-slate-600 text-sm">{{
-            contenedor?.subdominio
+            contenedor?.contenedor__schema_name
           }}</span>
         </div>
       </div>
@@ -33,7 +33,7 @@
           color="danger"
           type="button"
           [estaDeshabilitado]="
-            formularioEliminar.controls.nombre.value !== contenedor?.subdominio
+            formularioEliminar.controls.nombre.value !== contenedor?.contenedor__schema_name
           "
           [estaCargando]="estaEliminandoContenedor$ | async"
           textoCargando="Eliminando..."

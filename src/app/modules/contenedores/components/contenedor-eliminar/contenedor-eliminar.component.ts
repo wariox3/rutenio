@@ -19,7 +19,7 @@ import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { Contenedor } from '../../interfaces/contenedor.interface';
+import { Contenedor, ContenedorLista } from '../../interfaces/contenedor.interface';
 import { ContenedorService } from '../../services/contenedor.service';
 
 @Component({
@@ -36,7 +36,7 @@ import { ContenedorService } from '../../services/contenedor.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContenedorEliminarComponent extends General {
-  @Input({ required: true }) contenedor: Contenedor;
+  @Input({ required: true }) contenedor: ContenedorLista;
   @Output() emitirEliminarContenedor: EventEmitter<any> = new EventEmitter();
   @Output() emitirModalCerrado: EventEmitter<any> = new EventEmitter();
 
@@ -54,7 +54,7 @@ export class ContenedorEliminarComponent extends General {
   eliminarContenedor() {
     if (
       this.formularioEliminar.get('nombre')?.value.trim() ===
-      this.contenedor.subdominio.trim()
+      this.contenedor.contenedor__schema_name.trim()
     ) {
       const contenedorId = this.contenedor.contenedor_id;
       this.estaEliminandoContenedor$.next(true);

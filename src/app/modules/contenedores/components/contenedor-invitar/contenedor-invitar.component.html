@@ -37,7 +37,7 @@
       <tbody>
         @for (usuario of listaUsuarios$ | async; track $index) {
         <tr>
-          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.usuario__username }}</td>
           <td>
             <span class="badge badge-outline badge-xs">{{ usuario.rol }}</span>
           </td>
