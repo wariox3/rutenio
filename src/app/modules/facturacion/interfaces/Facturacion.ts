@@ -2,7 +2,7 @@ export interface Factura {
   fecha: string;
   id: number;
   tipo: string;
-  vr_saldo_enmascarado: string;
+  descripcion: string;
   vr_afectado: number;
   vr_saldo: number;
   vr_total: number;
@@ -23,6 +23,8 @@ export interface Consumo {
 
 export interface Consumos {
   consumos: Consumo[];
+  plan_precio: number;
+  total_consumo: number;
 }
 
 export interface Movimiento {
