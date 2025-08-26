@@ -6,6 +6,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  signal,
   SimpleChanges,
 } from '@angular/core';
 import { General } from '../../../../common/clases/general';
@@ -29,6 +30,8 @@ import { CommonModule } from '@angular/common';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { DevuelveDigitoVerificacionService } from '../../../../common/services/devuelve-digito-verificacion.service';
 import { KTModal } from '../../../../../metronic/core';
+import { Autocompletar } from '../../../../core/types/api.type';
+import { CiudadAutocompletar } from '../../../../common/interfaces/general.interface';
 
 @Component({
   selector: 'app-informacion-facturacion',
@@ -47,8 +50,8 @@ import { KTModal } from '../../../../../metronic/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InformacionFacturacionComponent extends General implements OnInit {
-  public arrIdentificacion: TipoIdentificacion[];
-  public arrCiudades: any;
+  public tipoIdentificaciones = signal<Autocompletar[]>([]);
+  public ciudades = signal<CiudadAutocompletar[]>([]);
   codigoUsuario = 0;
   ciudadSeleccionada: string | null;
   @Input() informacionFacturacionId: string = '';
@@ -78,8 +81,8 @@ export class InformacionFacturacionComponent extends General implements OnInit {
       Validators.compose([Validators.required])
     ),
     direccion: new FormControl(null),
-    correo: new FormControl(null, Validators.compose([Validators.required])),
-    telefono: new FormControl(0),
+    correo: new FormControl(null, Validators.compose([Validators.required, Validators.email])),
+    telefono: new FormControl(null, Validators.compose([Validators.required, Validators.pattern('^[0-9]*$')])),
     nombre_corto: new FormControl(
       null,
       Validators.compose([Validators.maxLength(200), Validators.required])
@@ -136,8 +139,7 @@ export class InformacionFacturacionComponent extends General implements OnInit {
   private _consultarInformacion() {
     zip(this.contenedorService.listaTipoIdentificacion()).subscribe(
       (respuesta) => {
-        this.arrIdentificacion = respuesta[0].registros;
-        this.changeDetectorRef.detectChanges();
+        this.tipoIdentificaciones.set(respuesta[0].results);
       }
     );
   }
@@ -154,30 +156,18 @@ export class InformacionFacturacionComponent extends General implements OnInit {
   }
 
   consultarCiudad(nombre?: string) {
-    let arrFiltros = {
-      filtros: [
-        {
-          propiedad: 'nombre__icontains',
-          valor1: nombre,
-        },
-      ],
-      limite: 10,
-      desplazar: 0,
-      ordenamientos: [],
-      limite_conteo: 10000,
-      modelo: 'CtnCiudad',
-      serializador: 'ListaAutocompletar',
+    const parametros: Record<string, any> = {
     };
 
+    if (nombre) {
+      parametros['nombre__icontains'] = nombre;
+    }
+
     this.contenedorService
-      .listaCiudades(arrFiltros)
-      .pipe(
-        tap((respuesta) => {
-          this.arrCiudades = respuesta.registros;
-          this.changeDetectorRef.detectChanges();
-        })
-      )
-      .subscribe();
+      .listaCiudades(parametros)
+      .subscribe((respuesta) => {
+        this.ciudades.set(respuesta);
+      });
   }
 
   seleccionarCiudad(ciudad: any) {
@@ -238,7 +228,7 @@ export class InformacionFacturacionComponent extends General implements OnInit {
 
   resetearComponente() {
     this.formularioInformacionFacturacion.reset();
-    this.arrCiudades = null;
+    this.ciudades.set([]);
     this.ciudadSeleccionada = null;
     this.informacionFacturacionId = '';
   }
