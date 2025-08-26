@@ -90,9 +90,8 @@ export default class FacturacionComponent
         this.informacionFacturacionSeleccionada =
           this.arrFacturacionInformacion[0].id;
       }
-      respuesta[1].consumos.map((consumo: Consumo) => {
-        this.consumoTotal += consumo.vr_total;
-      });
+
+      this.consumoTotal = respuesta[1].total_consumo;
 
       this.facturas.forEach((factura) => {
         this.agregarRegistrosPagar(factura);
@@ -129,17 +128,18 @@ export default class FacturacionComponent
       (documento) => documento.id === item.id
     );
     let valorActualPagar = this.totalPagar.getValue();
+    const vrSaldo = `${item.vr_saldo}00`;
 
     if (index !== -1) {
       this.totalPagar.next(
-        valorActualPagar - parseInt(item.vr_saldo_enmascarado)
+        valorActualPagar - parseInt(vrSaldo)
       );
       this.arrFacturasSeleccionados.splice(index, 1);
       this.removerIdRegistrosSeleccionados(item.id);
       this.changeDetectorRef.detectChanges();
     } else {
       this.totalPagar.next(
-        valorActualPagar + parseInt(item.vr_saldo_enmascarado)
+        valorActualPagar + parseInt(vrSaldo)
       );
       this.arrFacturasSeleccionados.push(item);
       this.agregarIdARegistrosSeleccionados(item.id);
@@ -150,9 +150,9 @@ export default class FacturacionComponent
     referencia = this.arrFacturasSeleccionados
       .map((factura: Factura, index: number, array: Factura[]) => {
         if (index === array.length - 1) {
-          return factura.id;
+          return `P${factura.id}-${this.informacionFacturacionSeleccionada}`;
         } else {
-          return factura.id + '-';
+          return `P${factura.id}-${this.informacionFacturacionSeleccionada}_`;
         }
       })
       .join('');
