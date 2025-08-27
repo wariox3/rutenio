@@ -11,5 +11,10 @@ export interface RespuestaApi<T> {
 }
 
 export interface ParametrosApi {
-    [key: string]: string | number;
+  [key: string]: string | number;
+}
+
+export interface Autocompletar {
+  id: number;
+  nombre: string;
 }

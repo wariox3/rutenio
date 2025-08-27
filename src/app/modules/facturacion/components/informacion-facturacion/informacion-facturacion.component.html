@@ -30,9 +30,9 @@
           "
         >
           <option value="0">Seleccionar</option>
-          @for (identificacion of arrIdentificacion; track $index) {
-          <option [value]="identificacion.identificacion_id">
-            {{ identificacion.identificacion_nombre }}
+          @for (identificacion of tipoIdentificaciones(); track $index) {
+          <option [value]="identificacion.id">
+            {{ identificacion.nombre }}
           </option>
           }
         </select>
@@ -42,7 +42,7 @@
       <div>
         <app-label [required]="true">Ciudad</app-label>
         <ng-select
-          [items]="arrCiudades"
+          [items]="ciudades()"
           formControlName="ciudad"
           bindLabel="nombre"
           bindValue="id"
@@ -53,6 +53,15 @@
           (change)="seleccionarCiudad($event)"
           (keyup)="buscarCiudadPorNombre($event)"
         >
+        
+        <ng-template ng-label-tmp let-item="item">
+          {{ item.nombre }} - {{ item.estado__nombre }}
+        </ng-template>
+
+        <ng-template ng-option-tmp let-item="item">
+          {{ item.nombre }} - {{ item.estado__nombre }}
+        </ng-template>
+
         </ng-select>
         <ng-container
           class="flex flex-col"
@@ -82,7 +91,7 @@
     </div>
     <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mb-5">
       <div>
-        <app-label>Teléfono</app-label>
+        <app-label [required]="true">Teléfono</app-label>
         <app-input
           [control]="formularioInformacionFacturacion.controls.telefono"
           [maxLength]="50"
@@ -96,13 +105,13 @@
         ></app-input-email>
       </div>
     </div>
+    <div class="flex">
+      <app-button
+        texto="Guardar"
+        [estaDeshabilitado]="!formularioInformacionFacturacion.valid"
+        (emitirBotonClicked)="enviarFormulario()"
+      ></app-button>
+    </div>
   </form>
 </div>
 
-<div class="flex gap-2 mb-4">
-  <app-button
-    texto="Guardar"
-    [estaDeshabilitado]="!formularioInformacionFacturacion.valid"
-    (emitirBotonClicked)="enviarFormulario()"
-  ></app-button>
-</div>

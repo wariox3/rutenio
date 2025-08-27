@@ -32,6 +32,27 @@ export class AlertaService {
     };
   }
 
+  mensajeInformativo(title: string, text: string) {
+    Swal.fire({
+      title,
+      html: text,
+      icon: 'info',
+      position: 'bottom-right',
+      toast: true,
+      timer: 20000,
+      showConfirmButton: true,
+      timerProgressBar: true,
+      confirmButtonText: 'Cerrar',
+      //confirmButtonColor: '#d9214e',
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown',
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp',
+      },
+    });
+  }
+
   mensajeError(title: string, text: string) {
     Swal.fire({
       ...this.getBaseConfig(),

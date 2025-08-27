@@ -6,7 +6,10 @@ import {
   ContenedorLista,
   ListaContenedoresRespuesta,
 } from '../interfaces/contenedor.interface';
-import { ContenedorInvitacionLista, RespuestaConsultaContenedor } from '../interfaces/usuarios-contenedores.interface';
+import {
+  ContenedorInvitacionLista,
+  RespuestaConsultaContenedor,
+} from '../interfaces/usuarios-contenedores.interface';
 import {
   InvitarUsuario,
   RespuestaInvitacionUsuario,
@@ -16,7 +19,8 @@ import { TipoIdentificacionLista } from '../../../interfaces/identificacion/iden
 import { CookieService } from '../../../core/servicios/cookie.service';
 import { FilterTransformerService } from '../../../core/servicios/filter-transformer.service';
 import { map } from 'rxjs';
-import { RespuestaApi } from '../../../core/types/api.type';
+import { Autocompletar, RespuestaApi } from '../../../core/types/api.type';
+import { CiudadAutocompletar } from '../../../common/interfaces/general.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -52,16 +56,8 @@ export class ContenedorService {
   }
 
   listaTipoIdentificacion() {
-    return this.http.post<TipoIdentificacionLista>(
-      `${environment.url_api}/contenedor/funcionalidad/lista-autocompletar/`,
-      {
-        filtros: [],
-        limite: 10,
-        desplazar: 0,
-        ordenamientos: [],
-        limite_conteo: 10000,
-        modelo: 'CtnIdentificacion',
-      }
+    return this.http.get<RespuestaApi<Autocompletar>>(
+      `${environment.url_api}/contenedor/identificacion/?limit=10`
     );
   }
 
@@ -69,10 +65,14 @@ export class ContenedorService {
     return this.http.get<any[]>(`${environment.url_api}/contenedor/plan/`);
   }
 
-  listaCiudades(arrFiltros: any) {
-    return this.http.post<any>(
-      `${environment.url_api}/contenedor/funcionalidad/lista-autocompletar/`,
-      arrFiltros
+  listaCiudades(parametros: Record<string, any>) {
+    const params = this._filterTransformService.toQueryString({
+      ...parametros,
+      limit: 10,
+    });
+
+    return this.http.get<CiudadAutocompletar[]>(
+      `${environment.url_api}/contenedor/ciudad/seleccionar/?${params}`
     );
   }
 

@@ -33,3 +33,8 @@ export const usuarioActionActualizarIdioma = createAction(
   '[Usuario] actualizar idioma',
   props<{ idioma: string }>()
 );
+
+export const usuarioActionActualizarVrCredito = createAction(
+  '[Usuario] actualizar vr credito',
+  props<{ vr_credito: number }>()
+);
