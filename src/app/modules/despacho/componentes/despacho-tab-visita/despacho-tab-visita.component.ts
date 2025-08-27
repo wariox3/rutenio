@@ -107,7 +107,7 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
 
   exportarExcel() {
     this._generalService.descargarArchivo(`ruteo/visita`, {
-      ...this.baseParametrosConsulta,
+      ...this.getParametrosConsulta(),
       limit: 5000,
       serializador: 'excel',
     });
