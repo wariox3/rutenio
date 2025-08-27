@@ -11,6 +11,7 @@ import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { VISITA_TRAFICO_TAB_FILTERS } from '../../../visita/mapeos/visita-trafico-tab-mapeo';
+import { GeneralService } from '../../../../common/services/general.service';
 
 @Component({
   selector: 'app-despacho-tab-visita',
@@ -25,6 +26,7 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
   @Input() despachoId: number;
   private _destroy$ = new Subject<void>()
   private visitaService = inject(VisitaService)
+  private _generalService = inject(GeneralService)
   private _generalApiService = inject(GeneralApiService)
   public currentPage = signal(1);
   public totalPages = signal(1);
@@ -100,6 +102,14 @@ export class DespachoTabVisitaComponent extends General implements OnInit, OnDes
       error: (error) => {
         console.error('Error al cargar visitas:', error);
       }
+    });
+  }
+
+  exportarExcel() {
+    this._generalService.descargarArchivo(`ruteo/visita`, {
+      ...this.baseParametrosConsulta,
+      limit: 5000,
+      serializador: 'excel',
     });
   }
 }

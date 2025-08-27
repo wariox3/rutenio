@@ -11,6 +11,32 @@
     (pageChange)="onPageChange($event)"
     [totalItems]="cantidadRegistros"
   ></app-paginador>
+
+  
+  <div class="menu menu-default p-0" data-menu="true">
+    <div
+      class="menu-item"
+      data-menu-item-placement="bottom-start"
+      data-menu-item-toggle="dropdown"
+      data-menu-item-trigger="click"
+    >
+      <button
+        class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200"
+      >
+        <span class=""> Exportar </span>
+        <span class="menu-arrow">
+          <i class="ki-outline ki-down"> </i>
+        </span>
+      </button>
+      <div class="menu-dropdown w-48 py-2">
+        <div class="menu-item" data-menu-dismiss="true">
+          <button class="menu-link" (click)="exportarExcel()">
+            <span class="menu-title"> Excel </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <table class="table border border-gray-300 text-sm">
   <thead>
