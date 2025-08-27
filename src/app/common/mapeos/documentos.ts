@@ -62,7 +62,7 @@ export const mapeo: any = {
       },
       {
         encabezado: 'Franja',
-        campoNombre: 'franja_nombre',
+        campoNombre: 'franja_codigo',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: true,
