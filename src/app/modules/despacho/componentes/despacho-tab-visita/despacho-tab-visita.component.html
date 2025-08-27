@@ -11,80 +11,108 @@
     (pageChange)="onPageChange($event)"
     [totalItems]="cantidadRegistros"
   ></app-paginador>
+
+  
+  <div class="menu menu-default p-0" data-menu="true">
+    <div
+      class="menu-item"
+      data-menu-item-placement="bottom-start"
+      data-menu-item-toggle="dropdown"
+      data-menu-item-trigger="click"
+    >
+      <button
+        class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200"
+      >
+        <span class=""> Exportar </span>
+        <span class="menu-arrow">
+          <i class="ki-outline ki-down"> </i>
+        </span>
+      </button>
+      <div class="menu-dropdown w-48 py-2">
+        <div class="menu-item" data-menu-dismiss="true">
+          <button class="menu-link" (click)="exportarExcel()">
+            <span class="menu-title"> Excel </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<table class="table border border-gray-300 text-sm">
-  <thead>
-    <tr class="bg-gray-100">
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Id
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Fecha
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Número
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Documento
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Destinatario
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Dirección
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        Teléfono
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        E
-      </th>
-      <th
-        class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-      >
-        N
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let visita of visitas()" class="border-b border-gray-300">
-      <td class="px-4 py-2 border border-gray-300">{{ visita.id }}</td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.fecha | formatFecha : "Y-m-d" }}
-      </td>
-      <td class="px-4 py-2 border border-gray-300">{{ visita.numero }}</td>
-      <td class="px-4 py-2 border border-gray-300">{{ visita.documento }}</td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.destinatario }}
-      </td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.destinatario_direccion }}
-      </td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.destinatario_telefono }}
-      </td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.estado_entregado | validarBooleano }}
-      </td>
-      <td class="px-4 py-2 border border-gray-300">
-        {{ visita.estado_novedad | validarBooleano }}
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="overflow-auto max-h-[700px] border border-gray-300">
+  <table class="table border border-gray-300 text-sm w-full">
+    <thead class="sticky top-0 z-10">
+      <tr class="bg-gray-100">
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Id
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Fecha
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Número
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Documento
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Destinatario
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Dirección
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          Teléfono
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          E
+        </th>
+        <th
+          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        >
+          N
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let visita of visitas()" class="border-b border-gray-300">
+        <td class="px-4 py-2 border border-gray-300">{{ visita.id }}</td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.fecha | formatFecha : "Y-m-d" }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">{{ visita.numero }}</td>
+        <td class="px-4 py-2 border border-gray-300">{{ visita.documento }}</td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.destinatario }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.destinatario_direccion }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.destinatario_telefono }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.estado_entregado | validarBooleano }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">
+          {{ visita.estado_novedad | validarBooleano }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -140,9 +140,9 @@ export default class VisitaListaComponent extends General implements OnInit {
     }
   }
 
-  consultaLista(filtros: any) {
+  consultaLista(filtros: Record<string, any>) {
     this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', { limit: 50 })
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', { limit: 50, serializador: 'lista', ...filtros })
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
   }
@@ -300,6 +300,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     this._generalService.descargarArchivo(`ruteo/visita`, {
       ...this.arrParametrosConsulta,
       limit: 5000,
+      serializador: 'excel',
     });
   }
 
@@ -308,23 +309,25 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   filterChange(filters: Record<string, any>) {
-    this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-        limit: 50,
-        ...filters,
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+    // this._generalApiService
+    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+    //     limit: 50,
+    //     ...filters,
+    //   })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+    this.consultaLista(filters);
   }
 
   onPageChange(page: number): void {
-    this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-        limit: 50,
-        page,
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+    // this._generalApiService
+    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+    //     limit: 50,
+    //     page,
+    //   })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+    this.consultaLista({ page });
   }
 
 
