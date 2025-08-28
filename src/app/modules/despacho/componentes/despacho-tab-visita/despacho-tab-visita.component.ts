@@ -146,4 +146,10 @@ export class DespachoTabVisitaComponent
       serializador: 'excel',
     });
   }
+
+  imprimirOrdenEntrega(){
+    this._generalService.imprimir('imprimir-orden-entrega', {
+      despacho_id: this.despachoId,
+    })
+  }
 }
