@@ -75,6 +75,16 @@ export class GeneralService extends Subdomino {
     )
   }
 
+  public imprimir(endpoint: string, data: any): void {
+    this._alertaService.mensajaEspera('Cargando');
+    const query = this._filterTransformerService.toQueryString({
+      ...data,
+    });
+        this.http.descargarArchivoPorGet(
+      `${endpoint}/?${endpoint ? `&${query}` : ''}`,
+    )
+  }
+
   puntoOrigen() {
     const body = {
       campos: ['rut_latitud', 'rut_longitud'],
