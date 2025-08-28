@@ -148,7 +148,7 @@ export class DespachoTabVisitaComponent
   }
 
   imprimirOrdenEntrega(){
-    this._generalService.imprimir('imprimir-orden-entrega', {
+    this._generalService.imprimir('ruteo/despacho/imprimir-orden-entrega', {
       despacho_id: this.despachoId,
     })
   }
