@@ -75,6 +75,12 @@ export class GeneralService extends Subdomino {
     )
   }
 
+  public imprimir(endpoint: string, data: any): void {
+    this.http.descargarArchivoDominio(
+      endpoint, data
+    )
+  }
+
   puntoOrigen() {
     const body = {
       campos: ['rut_latitud', 'rut_longitud'],
