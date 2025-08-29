@@ -14,46 +14,56 @@
 
   <div class="menu menu-default p-0" data-menu="true">
     <div
-      class="menu-item"
-      data-menu-item-placement="bottom-start"
-      data-menu-item-toggle="dropdown"
-      data-menu-item-trigger="click"
+      class="dropdown"
+      data-dropdown="true"
+      data-dropdown-trigger="click"
+      data-dropdown-dismiss="true"
     >
       <button
-        class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200"
+        class="dropdown-toggle btn btn-secondary flex items-center rounded-r-none"
       >
         <span class=""> Imprimir </span>
         <span class="menu-arrow">
           <i class="ki-outline ki-down"> </i>
         </span>
       </button>
-      <div class="menu-dropdown w-48 py-2">
-        <div class="menu-item" data-menu-dismiss="true">
-          <button class="menu-link" (click)="imprimirOrdenEntrega()">
-            <span class="menu-title"> Orden de entrega </span>
-          </button>
+      <div class="dropdown-content w-full max-w-56 py-2">
+        <div class="menu menu-default flex flex-col w-full">
+          <div class="menu-item">
+            <button class="menu-link" (click)="imprimirOrdenEntrega()">
+              <span class="menu-icon">
+                <i class="ki-filled ki-document"></i>
+              </span>
+              <span class="menu-title">Orden de entrega</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
     <div
-      class="menu-item"
-      data-menu-item-placement="bottom-start"
-      data-menu-item-toggle="dropdown"
-      data-menu-item-trigger="click"
+      class="dropdown"
+      data-dropdown="true"
+      data-dropdown-trigger="click"
+      data-dropdown-dismiss="true"
     >
       <button
-        class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200"
+        class="dropdown-toggle btn btn-secondary flex items-center rounded-l-none"
       >
         <span class=""> Exportar </span>
         <span class="menu-arrow">
           <i class="ki-outline ki-down"> </i>
         </span>
       </button>
-      <div class="menu-dropdown w-48 py-2">
-        <div class="menu-item" data-menu-dismiss="true">
-          <button class="menu-link" (click)="exportarExcel()">
-            <span class="menu-title"> Excel </span>
-          </button>
+      <div class="dropdown-content w-full max-w-56 py-2">
+        <div class="menu menu-default flex flex-col w-full">
+          <div class="menu-item">
+            <button class="menu-link" (click)="exportarExcel()">
+              <span class="menu-icon">
+                <i class="ki-filled ki-document"></i>
+              </span>
+              <span class="menu-title">Excel</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
