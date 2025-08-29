@@ -12,9 +12,29 @@
     [totalItems]="cantidadRegistros"
   ></app-paginador>
 
-
   <div class="menu menu-default p-0" data-menu="true">
-      <button type="button" class="btn btn-primary me-2" (click)="imprimirOrdenEntrega()">Orden entrega</button>
+    <div
+      class="menu-item"
+      data-menu-item-placement="bottom-start"
+      data-menu-item-toggle="dropdown"
+      data-menu-item-trigger="click"
+    >
+      <button
+        class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200"
+      >
+        <span class=""> Imprimir </span>
+        <span class="menu-arrow">
+          <i class="ki-outline ki-down"> </i>
+        </span>
+      </button>
+      <div class="menu-dropdown w-48 py-2">
+        <div class="menu-item" data-menu-dismiss="true">
+          <button class="menu-link" (click)="imprimirOrdenEntrega()">
+            <span class="menu-title"> Orden de entrega </span>
+          </button>
+        </div>
+      </div>
+    </div>
     <div
       class="menu-item"
       data-menu-item-placement="bottom-start"
