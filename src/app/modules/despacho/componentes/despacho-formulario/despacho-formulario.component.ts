@@ -29,6 +29,7 @@ import { Vehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { RouterLink } from '@angular/router';
 import { FechasService } from '../../../../common/services/fechas.service';
 import { ParametrosApi } from '../../../../core/types/api.type';
+import { InputComponent } from "../../../../common/components/ui/form/input/input.component";
 
 @Component({
   selector: 'app-despacho-formulario',
@@ -40,7 +41,8 @@ import { ParametrosApi } from '../../../../core/types/api.type';
     LabelComponent,
     RouterLink,
     NgSelectModule,
-  ],
+    InputComponent
+],
   templateUrl: './despacho-formulario.component.html',
   styleUrl: './despacho-formulario.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +74,7 @@ export default class DespachoFormularioComponent extends General {
     visitas: new FormControl<number>(0, [Validators.min(0)]),
     visitas_entregadas: new FormControl<number>(0, [Validators.min(0)]),
     visitas_liberadas: new FormControl<number>(0, [Validators.min(0)]),
+    codigo_complemento: new FormControl<number>(0),
     vehiculo: new FormControl<number>(0, [Validators.required]),
     vehiculo__placa: new FormControl<string>('', [
       Validators.minLength(3),
@@ -84,7 +87,7 @@ export default class DespachoFormularioComponent extends General {
   ngOnInit(): void {
     if (this.isEditando) {
       this._initValoresFormulario();
-      this.getVehiculoByPlaca(this.despachoForm.get('vehiculo_placa').value);
+      this.getVehiculoByPlaca(this.despachoForm.get('vehiculo__placa').value);
     } else {
       this.despachoForm.patchValue({
         estado_aprobado: this.isAprobado
@@ -110,7 +113,7 @@ export default class DespachoFormularioComponent extends General {
   }
 
   private _initValoresFormulario() {
-    this.despachoForm.setValue({
+    this.despachoForm.patchValue({
       fecha: this.despacho.fecha,
       fecha_ubicacion: this.despacho.fecha_ubicacion,
       peso: this.despacho.peso,
@@ -121,10 +124,11 @@ export default class DespachoFormularioComponent extends General {
       visitas: this.despacho.visitas,
       visitas_entregadas: this.despacho.visitas_entregadas,
       visitas_liberadas: this.despacho.visitas_liberadas,
-      vehiculo: this.despacho.vehiculo_id,
+      vehiculo: this.despacho.vehiculo,
       vehiculo__placa: this.despacho.vehiculo__placa,
       estado_aprobado: this.despacho.estado_aprobado,
       estado_terminado: this.despacho.estado_terminado,
+      codigo_complemento: this.despacho.codigo_complemento
     });
   }
 
@@ -132,14 +136,14 @@ export default class DespachoFormularioComponent extends General {
     this.emitirFormulario.emit(this.despachoForm.value);
   }
 
-  seleccionarCiudad(vehiculo: Vehiculo) {
+  seleccionarVehiculo(vehiculo: Vehiculo) {
     if (!vehiculo) {
       this.getVehiculoByPlaca('');
       return;
     }
   }
 
-  buscarCiudadPorNombre(event?: any) {
+  buscarVehiculoPorPlaca(event?: any) {
     const excludedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
     if (excludedKeys.includes(event?.key)) {
       return;

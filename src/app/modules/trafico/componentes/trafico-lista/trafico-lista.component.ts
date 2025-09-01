@@ -165,7 +165,6 @@ export default class TraficoListaComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
         this.arrDespachos = this._traficoService.agregarEstadoDespacho(respuesta.results);
-        console.log(this.arrDespachos);
         this.changeDetectorRef.detectChanges();
       });
   }
