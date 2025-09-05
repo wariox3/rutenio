@@ -19,15 +19,18 @@ import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
+import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
 import { GeneralApiService } from '../../../../core';
+import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import {
   Despacho,
   DespachoDetalle,
 } from '../../../../interfaces/despacho/despacho.interface';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Ubicacion } from '../../../../interfaces/ubicacion/ubicacion.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
 import { VisitaAdicionarTraficoComponent } from '../../../despacho/componentes/despacho-adicionar-visita-trafico/despacho-adicionar-visita-trafico.component';
@@ -35,13 +38,10 @@ import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
+import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
-import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
-import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
-import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
-import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
 import { TraficoService } from '../../servicios/trafico.service';
 
 @Component({
@@ -61,16 +61,16 @@ import { TraficoService } from '../../servicios/trafico.service';
     ButtonComponent,
     VisitaAdicionarPendienteComponent,
     ModalStandardComponent,
-    DespachoTrasbordarComponent
-],
+    DespachoTrasbordarComponent,
+    PaginadorComponent
+  ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TraficoListaComponent
   extends General
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
@@ -93,7 +93,9 @@ export default class TraficoListaComponent
   public toggleModalUbicacion$ = new BehaviorSubject(false);
   public toggleModalTrasbordarTrafico$ = new BehaviorSubject(false);
   public actualizandoLista = signal<boolean>(false);
-
+  public currentPage = signal(1);
+  public totalPages = signal(1);
+  public cantidadRegistros: number = 0;
 
   customMarkers: any[] = [];
   mostrarMapaFlag = false;
@@ -111,12 +113,12 @@ export default class TraficoListaComponent
   };
 
   arrParametrosConsulta: ParametrosApi = {
-    limit : 50,
-    ordering : 'id',
-    serializador : 'trafico',
-    estado_aprobado : 'True',
-    estado_terminado : 'False',
-    estado_anulado : 'False',
+    ordering: 'id',
+    serializador: 'trafico',
+    estado_aprobado: 'True',
+    estado_terminado: 'False',
+    estado_anulado: 'False',
+    page: 1
   };
 
   arrDespachos: Despacho[] = [];
@@ -161,19 +163,20 @@ export default class TraficoListaComponent
 
   consultarLista() {
     this._generalApiService
-      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/',this.arrParametrosConsulta)
+      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', this.arrParametrosConsulta)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
         this.arrDespachos = this._traficoService.agregarEstadoDespacho(respuesta.results);
+        this.cantidadRegistros = respuesta.count
         this.changeDetectorRef.detectChanges();
       });
   }
 
   private consultarVisitas(despachoId: number) {
     const parametrosConsultaVisitas: ParametrosApi = {
-      limit : 50,
-      ordering : 'orden',
-      despacho_id : despachoId.toString(),
+      limit: 50,
+      ordering: 'orden',
+      despacho_id: despachoId.toString(),
     };
 
     return this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsultaVisitas).pipe(takeUntil(this.destroy$));
@@ -182,7 +185,7 @@ export default class TraficoListaComponent
   private consultarUbicacion(despachoId: number) {
     const parametrosConsultaUbicacion: ParametrosApi = {
       ordering: '-fecha',
-      despacho_id: despachoId.toString() 
+      despacho_id: despachoId.toString()
       // filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
       // limite: 25,
       // desplazar: 0,
@@ -192,7 +195,7 @@ export default class TraficoListaComponent
     };
 
     return this._generalApiService
-      .consultaApi<RespuestaApi<Ubicacion>>('ruteo/ubicacion/',parametrosConsultaUbicacion)
+      .consultaApi<RespuestaApi<Ubicacion>>('ruteo/ubicacion/', parametrosConsultaUbicacion)
       .pipe(takeUntil(this.destroy$));
   }
 
@@ -626,6 +629,22 @@ export default class TraficoListaComponent
   cerrarModalTrasbordar(selector: string) {
     this.toggleModalTrasbordarTrafico$.next(false);
     this.dismissModal(selector);
+    this.consultarLista();
+  }
+
+  onPageChange(page: number): void {
+    // this._generalApiService
+    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+    //     limit: 50,
+    //     page,
+    //   })
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+    //this.consultaLista({ page });
+    this.arrParametrosConsulta = {
+      ...this.arrParametrosConsulta,
+      page
+    }
     this.consultarLista();
   }
 }
