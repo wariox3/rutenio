@@ -15,7 +15,7 @@
 </div>
 } @if (isModal) {
 <form [formGroup]="despachoForm">
-  <div class="grid grid-cols-1 gap-4 mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
     <div>
       <div>
         <app-label [required]="true">Placa</app-label>
@@ -28,8 +28,8 @@
           placeholder="Selecciona un elemento"
           loadingText="Buscando..."
           class="select2Custom"
-          (change)="seleccionarCiudad($event)"
-          (keyup)="buscarCiudadPorNombre($event)"
+          (change)="seleccionarVehiculo($event)"
+          (keyup)="buscarVehiculoPorPlaca($event)"
         >
         </ng-select>
         <ng-container
@@ -46,6 +46,15 @@
             El campo es requerido.
           </span>
         </ng-container>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Código complemento</app-label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="despachoForm.controls.codigo_complemento"
+        ></app-input>
       </div>
     </div>
   </div>
@@ -79,8 +88,8 @@
               placeholder="Selecciona un elemento"
               loadingText="Buscando..."
               class="select2Custom"
-              (change)="seleccionarCiudad($event)"
-              (keyup)="buscarCiudadPorNombre($event)"
+              (change)="seleccionarVehiculo($event)"
+              (keyup)="buscarVehiculoPorPlaca($event)"
             >
             </ng-select>
             <ng-container

@@ -9,7 +9,7 @@ export interface Despacho {
   visitas_novedad: number;
   visitas_entregadas_esperadas: number;
   visitas_liberadas: number;
-  vehiculo_id: number;
+  vehiculo: number;
   vehiculo__placa: string;
   vehiculo__capacidad: number;
   estado_aprobado: boolean;
@@ -20,7 +20,7 @@ export interface Despacho {
   latitud: string;
   longitud: string;
   fecha_ubicacion: string;
-  codigo_complemento: string;
+  codigo_complemento: number;
   entrega_id: number;
   estado_terminado: boolean;
 }
@@ -38,11 +38,12 @@ export interface DespachoDetalle {
   visitas: number;
   visitas_entregadas: number;
   visitas_liberadas: number;
-  vehiculo_id: number;
+  vehiculo: number;
   vehiculo__placa: string;
   entrega_id: number;
   estado_aprobado: boolean;
   estado_terminado: boolean;
+  codigo_complemento: number;
 }
 
 export const despachoDetalleEmpty: DespachoDetalle = {
@@ -58,9 +59,10 @@ export const despachoDetalleEmpty: DespachoDetalle = {
   visitas: 0,
   visitas_entregadas: 0,
   visitas_liberadas: 0,
-  vehiculo_id: 0,
+  vehiculo: 0,
   vehiculo__placa: '',
   entrega_id: 0,
   estado_aprobado: false,
   estado_terminado: false,
+  codigo_complemento: 0
 };

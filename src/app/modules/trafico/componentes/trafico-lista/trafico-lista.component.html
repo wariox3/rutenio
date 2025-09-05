@@ -20,7 +20,7 @@
         <button
           class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
-          data-modal-toggle="#trafico-ubicacion-actual" 
+          data-modal-toggle="#trafico-ubicacion-actual"
         >
           <i class="ki-filled ki-delivery-time"></i>
           Ubicación actual
@@ -28,8 +28,17 @@
       </div>
     </div>
     <div class="card-table flex-1 overflow-auto">
+      <div class="flex justify-between items-center mx-8 my-2">
+        <app-paginador
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (pageChange)="onPageChange($event)"
+          [totalItems]="cantidadRegistros"
+        ></app-paginador>
+      </div>
+
       <table
-        class="table align-middle text-gray-700 font-medium text-sm w-full"
+        class="table align-middle text-gray-700 font-medium text-sm w-full "
       >
         <thead class="top-0 bg-white">
           <tr>
@@ -534,7 +543,7 @@
 </app-modal-default>
 
 <app-modal-default
-  size="small"
+  size="medium"
   [id]="'editar-despacho'"
   titulo="Editar despacho"
   (emitirModalCerrado)="cerrarModalAdicionar()"
