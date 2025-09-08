@@ -4,6 +4,7 @@ export const VISITA_RUTEAR_FILTERS: FilterField[] = [
   { name: 'numero', displayName: 'Número', type: 'number' },
   {
     name: 'franja_id', displayName: 'Franja', type: 'relation', relationConfig: {
+      preload: true,
       endpoint: 'ruteo/franja/seleccionar/',
       valueField: 'id',
       displayField: 'nombre',

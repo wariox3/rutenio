@@ -57,6 +57,7 @@
             [options]="getRelationOptions(condition.field)"
             [label]="'display'"
             [value]="'value'"
+            [selectedOptions]="condition.value"
             (selectionChange)="
               onRelationOptionSelectedMultiple(condition, {
                 value: $event,
