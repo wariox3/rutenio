@@ -30,7 +30,7 @@ import { PaginacionDefaultComponent } from '../../../../common/components/ui/pag
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralApiService } from '../../../../core';
-import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { EstadoPaginacion, ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
@@ -46,6 +46,7 @@ import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-co
 import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visita-resumen-pediente.component';
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
+import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -112,7 +113,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     estado_devolucion: 'False',
     limite: 50
     // filtros: [
-    //   { propiedad: 'estado_despacho', valor1: false },
+    //   { propiedad: 'estado_despacho', valor1: false, operador: 'exact' },
     //   { propiedad: 'estado_devolucion', valor1: false },
     // ],
     // limite: 50,
@@ -175,13 +176,21 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalFlotas$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
   public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS
-  public filtroKey = signal<string>('');
+  public filtroKey = signal<string>('filtro_visita_rutear');
+  private filtrosActivos = signal<ParametrosApi>({});
+  public estadoPaginacion = signal<EstadoPaginacion>({
+    paginaActual: 1,
+    itemsPorPagina: 30,
+    totalItems: 0,
+  });
+
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
   private _generalApiService = inject(GeneralApiService);
   private _visitaApiService = inject(VisitaApiService);
   private _franjaService = inject(FranjaService);
+  private _filterTransformerService = inject(FilterTransformerService);
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];
@@ -195,7 +204,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    // this._aplicarFiltrosPermanentes();
+    this._aplicarFiltrosPermanentes();
     this._initView();
     this._initListeners();
   }
@@ -204,35 +213,34 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this._filtroBaseService.myEvent.subscribe({});
   }
 
-  // private _aplicarFiltrosPermanentes() {
-  //   const filtroKey = this._filtroBaseService.construirFiltroKey();
-  //   let filtrosPermanentesKey = localStorage.getItem(filtroKey);
-  //   let parametrosConsulta = [];
+  private _aplicarFiltrosPermanentes() {
+    const filtroKey = this.filtroKey();
+    let filtrosStorage = localStorage.getItem(filtroKey);
 
-  //   if (filtrosPermanentesKey === null) {
-  //     return null;
-  //   }
+    if (filtrosStorage === null) {
+      return null;
+    }
 
-  //   parametrosConsulta = JSON.parse(filtrosPermanentesKey);
+    const filtrosParseados = JSON.parse(filtrosStorage);
+    const filtrosPost = this._filterTransformerService.transformToApiPostParams(filtrosParseados);
+    const filtrosTransformados = this._filterTransformerService.transformToApiParams(filtrosParseados);
+    this.valoresFiltrados = Object.values(filtrosTransformados)
+    .filter((value) => value)
+    .join(', ');
 
-  //   this.arrParametrosConsultaVisita = {
-  //     ...this.arrParametrosConsultaVisita,
-  //     filtros: [
-  //       ...this.arrParametrosConsultaVisita.filtros,
-  //       ...parametrosConsulta,
-  //     ],
-  //   };
 
-  //   this.arrParametrosConsultaResumen = {
-  //     ...this.arrParametrosConsultaResumen,
-  //     filtros: [
-  //       ...this.arrParametrosConsultaResumen.filtros,
-  //       ...parametrosConsulta,
-  //     ],
-  //   };
+    this.filtrosActivos.set(filtrosTransformados);
 
-  //   this._actualizarFiltrosParaMostrar(parametrosConsulta);
-  // }
+    this.arrParametrosConsultaResumen = {
+      ...this.arrParametrosConsultaResumen,
+      filtros: [
+        ...this.arrParametrosConsultaResumen.filtros,
+        ...filtrosPost,
+      ],
+    };
+
+    // this._actualizarFiltrosParaMostrar(parametrosConsulta);
+  }
 
   private _initView() {
     this._consultarResumen()
@@ -294,8 +302,15 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _consultarVisitas(parametros: ParametrosApi) {
+    const params = {
+      page: this.estadoPaginacion().paginaActual,
+      ...this.arrParametrosConsultaVisita,
+      ...this.filtrosActivos(),
+      ...parametros,
+
+    }
     this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametros)
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', params)
       .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta)
       );
   }
@@ -331,6 +346,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
+      // TODO: centralizar
+
     const parametrosConsulta: ParametrosApi = {
       ...this.arrParametrosConsultaVisita,
       limite: evento.limite,
@@ -755,26 +772,37 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   onPageChange(page: number): void {
-    this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-        limit: 50,
-        page,
-      }).subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
+      // TODO: centralizar
+      this.estadoPaginacion.update((estado) => ({
+        ...estado,
+        page
+      }));
+      this._consultarVisitas(this.filtrosActivos());
+    // this._generalApiService
+    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
+    //     limit: 50,
+    //     page,
+    //   }).subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
   }
 
     filterChange(filters: Record<string, any>) {
+      this.valoresFiltrados = Object.values(filters)
+              .filter((value) => value)
+              .join(', ');
+      // TODO: centralizar
+      this.filtrosActivos.set(filters);
       this._generalApiService
         .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
           ...filters,
-          ...this.arrParametrosConsultaVisita
+          // ...this.arrParametrosConsultaVisita
         })
-        .pipe(
-          tap(() => {
-            this.valoresFiltrados = Object.values(filters)
-              .filter((value) => value)
-              .join(', ');
-          })
-        )
+        // .pipe(
+        //   tap(() => {
+        //     this.valoresFiltrados = Object.values(filters)
+        //       .filter((value) => value)
+        //       .join(', ');
+        //   })
+        // )
         .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
 
         this.cerrarModalFiltrosPorId('#filtros-visita');
