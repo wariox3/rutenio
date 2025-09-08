@@ -6,7 +6,7 @@ import {
   QueryList,
   signal,
   ViewChild,
-  ViewChildren
+  ViewChildren,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
@@ -15,7 +15,14 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { BehaviorSubject, finalize, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  finalize,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ProgresoCircularComponent } from '../../../../common/components/charts/progreso-circular/progreso-circular.component';
@@ -24,13 +31,17 @@ import { FiltroBaseService } from '../../../../common/components/filtros/filtro-
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
 import { FullLoaderDefaultComponent } from '../../../../common/components/spinners/full-loader-default/full-loader-default.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
-import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralApiService } from '../../../../core';
-import { EstadoPaginacion, ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import {
+  EstadoPaginacion,
+  ParametrosApi,
+  RespuestaApi,
+} from '../../../../core/types/api.type';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
@@ -47,6 +58,7 @@ import { VisitaResumenPedienteComponent } from '../visita-resumen-pediente/visit
 import { AgregarFlotaComponent } from './components/agregar-flota/agregar-flota.component';
 import { VisitaRutearDetalleComponent } from './components/visita-detalle/visita-rutear-detalle.component';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
+import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
 
 @Component({
   selector: 'app-visita-rutear',
@@ -71,14 +83,15 @@ import { FilterTransformerService } from '../../../../core/servicios/filter-tran
     VisitaFormularioComponent,
     VisitaImportarPorComplementoComponent,
     PaginadorComponent,
-    FiltroComponent
-],
+    FiltroComponent,
+  ],
   templateUrl: './visita.rutear.component.html',
   styleUrl: './visita-rutear.component.css',
 })
 export default class VisitaRutearComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   @ViewChildren(MapMarker) mapMarkers!: QueryList<MapMarker>;
+  @ViewChild('filtroVisita') filtroVisita!: FiltroComponent;
 
   center: google.maps.LatLngLiteral = {
     lat: 6.200713725811437,
@@ -98,7 +111,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public totalPages = signal(1);
 
   arrParametrosConsultaFlota: ParametrosApi = {
-    ordering : 'prioridad'
+    ordering: 'prioridad',
     // filtros: [],
     // limite: 50,
     // desplazar: 0,
@@ -108,10 +121,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrParametrosConsultaVisita: ParametrosApi = {
-    ordering : 'estado_decodificado,-estado_decodificado_alerta,orden',
+    ordering: 'estado_decodificado,-estado_decodificado_alerta,orden',
     estado_despacho: 'False',
     estado_devolucion: 'False',
-    limite: 50
+    limite: 50,
     // filtros: [
     //   { propiedad: 'estado_despacho', valor1: false, operador: 'exact' },
     //   { propiedad: 'estado_devolucion', valor1: false },
@@ -126,7 +139,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     // limite_conteo: 10000,
     // modelo: 'RutVisita',
   };
-  
 
   arrParametrosConsultaResumen: ParametrosConsulta = {
     filtros: [],
@@ -175,7 +187,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
   public toggleModalFlotas$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
-  public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS
+  public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS;
   public filtroKey = signal<string>('filtro_visita_rutear');
   private filtrosActivos = signal<ParametrosApi>({});
   public estadoPaginacion = signal<EstadoPaginacion>({
@@ -183,7 +195,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     itemsPorPagina: 30,
     totalItems: 0,
   });
-
 
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
@@ -222,21 +233,21 @@ export default class VisitaRutearComponent extends General implements OnInit {
     }
 
     const filtrosParseados = JSON.parse(filtrosStorage);
-    const filtrosPost = this._filterTransformerService.transformToApiPostParams(filtrosParseados);
-    const filtrosTransformados = this._filterTransformerService.transformToApiParams(filtrosParseados);
+    const filtrosPost =
+      this._filterTransformerService.transformToApiPostParams(filtrosParseados);
+    const filtrosTransformados =
+      this._filterTransformerService.transformToApiParams(filtrosParseados);
     this.valoresFiltrados = Object.values(filtrosTransformados)
-    .filter((value) => value)
-    .join(', ');
+      .filter((value) => value)
+      .join(', ');
 
-
-    this.filtrosActivos.set(filtrosTransformados);
+    this.filtrosActivos.set({
+      ...filtrosTransformados,
+    });
 
     this.arrParametrosConsultaResumen = {
       ...this.arrParametrosConsultaResumen,
-      filtros: [
-        ...this.arrParametrosConsultaResumen.filtros,
-        ...filtrosPost,
-      ],
+      filtros: [...this.arrParametrosConsultaResumen.filtros, ...filtrosPost],
     };
 
     // this._actualizarFiltrosParaMostrar(parametrosConsulta);
@@ -303,22 +314,22 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   private _consultarVisitas(parametros: ParametrosApi) {
     const params = {
-      page: this.estadoPaginacion().paginaActual,
       ...this.arrParametrosConsultaVisita,
       ...this.filtrosActivos(),
       ...parametros,
-
-    }
+      page: this.estadoPaginacion().paginaActual,
+    };
     this._generalApiService
       .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', params)
-      .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta)
-      );
+      .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
   }
 
   consultarFranjas() {
-    this.franjas$ = this._franjaService.consultarFranjas().pipe(switchMap((respuesta)=> {
-      return of (respuesta.results)
-    }));
+    this.franjas$ = this._franjaService.consultarFranjas().pipe(
+      switchMap((respuesta) => {
+        return of(respuesta.results);
+      })
+    );
   }
 
   toggleMostrarFranjas() {
@@ -346,7 +357,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
-      // TODO: centralizar
+    // TODO: centralizar
 
     const parametrosConsulta: ParametrosApi = {
       ...this.arrParametrosConsultaVisita,
@@ -360,23 +371,23 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   private _calcularPorcentajeCapacidad() {
-      let porcentaje = 0;
-      if (this.capacidadTotal > 0) {
-        porcentaje = (this.pesoTotal / this.capacidadTotal) * 100;
-      }
+    let porcentaje = 0;
+    if (this.capacidadTotal > 0) {
+      porcentaje = (this.pesoTotal / this.capacidadTotal) * 100;
+    }
 
-      this.porcentajeCapacidad = porcentaje;
+    this.porcentajeCapacidad = porcentaje;
 
-      if (this.pesoTotal === 0) {
-        this.barraCapacidad = 0;
-        this.errorCapacidad = true;
-      } else if (porcentaje > 100) {
-        this.barraCapacidad = 100;
-        this.errorCapacidad = true;
-      } else {
-        this.barraCapacidad = porcentaje;
-        this.errorCapacidad = false;
-      }
+    if (this.pesoTotal === 0) {
+      this.barraCapacidad = 0;
+      this.errorCapacidad = true;
+    } else if (porcentaje > 100) {
+      this.barraCapacidad = 100;
+      this.errorCapacidad = true;
+    } else {
+      this.barraCapacidad = porcentaje;
+      this.errorCapacidad = false;
+    }
   }
 
   private _calcularPorcentajeTiempo() {
@@ -663,22 +674,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.consultarVisitas();
   }
 
-
-
   filtrosPersonalizados(filtros: any[], modalId: string) {
     if (filtros.length >= 1) {
-    //   this.arrParametrosConsultaVisita.filtros = [
-    //     { propiedad: 'estado_despacho', valor1: false },
-    //     { propiedad: 'estado_devolucion', valor1: false },
-    //     ...filtros,
-    //   ];
-    //   this.arrParametrosConsultaResumen.filtros = [...filtros];
-    // } else {
-    //   this.arrParametrosConsultaVisita.filtros = [
-    //     { propiedad: 'estado_despacho', valor1: false },
-    //     { propiedad: 'estado_devolucion', valor1: false },
-    //   ];
-    //   this.arrParametrosConsultaResumen.filtros = [];
+      //   this.arrParametrosConsultaVisita.filtros = [
+      //     { propiedad: 'estado_despacho', valor1: false },
+      //     { propiedad: 'estado_devolucion', valor1: false },
+      //     ...filtros,
+      //   ];
+      //   this.arrParametrosConsultaResumen.filtros = [...filtros];
+      // } else {
+      //   this.arrParametrosConsultaVisita.filtros = [
+      //     { propiedad: 'estado_despacho', valor1: false },
+      //     { propiedad: 'estado_devolucion', valor1: false },
+      //   ];
+      //   this.arrParametrosConsultaResumen.filtros = [];
     }
 
     this.consultarVisitas();
@@ -738,10 +747,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
     });
   }
 
-
   limpiarFiltros(event: Event) {
     event.stopPropagation();
     this.valoresFiltrados = '';
+    this.filtroVisita?.clearFiltersFromLocalStorage();
+    this.actualizarFiltros([]);
     this._initView();
   }
 
@@ -772,12 +782,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   onPageChange(page: number): void {
-      // TODO: centralizar
-      this.estadoPaginacion.update((estado) => ({
-        ...estado,
-        page
-      }));
-      this._consultarVisitas(this.filtrosActivos());
+    // TODO: centralizar
+    this.estadoPaginacion.update((estado) => ({
+      ...estado,
+      paginaActual: page,
+    }));
+    this._consultarVisitas(this.filtrosActivos());
     // this._generalApiService
     //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
     //     limit: 50,
@@ -785,46 +795,43 @@ export default class VisitaRutearComponent extends General implements OnInit {
     //   }).subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
   }
 
-    filterChange(filters: Record<string, any>) {
-      this.valoresFiltrados = Object.values(filters)
-              .filter((value) => value)
-              .join(', ');
-      // TODO: centralizar
-      this.filtrosActivos.set(filters);
-      this._generalApiService
-        .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-          ...filters,
-          // ...this.arrParametrosConsultaVisita
-        })
-        // .pipe(
-        //   tap(() => {
-        //     this.valoresFiltrados = Object.values(filters)
-        //       .filter((value) => value)
-        //       .join(', ');
-        //   })
-        // )
-        .subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
-
-        this.cerrarModalFiltrosPorId('#filtros-visita');
-    }
-
-  private _procesarRespuestaVisita(respuesta: RespuestaApi<Visita>): void {
-        this.limpiarMarkers();
-        this._limpiarBarraCapacidad();
-        this._limpiarBarraTiempo();
-        this.totalRegistrosVisitas = respuesta.count;
-
-        respuesta.results.forEach((visita) => {
-          const position = { lat: visita.latitud, lng: visita.longitud };
-          this.addMarker(position, visita);
-        });
-
-        this._calcularPorcentajeCapacidad();
-        this._calcularPorcentajeTiempo();
-        this.arrVisitas = respuesta.results;
-        this.cantidadRegistros = respuesta.count;
-        this.changeDetectorRef.detectChanges();
+  filterChange(filters: FilterCondition[]) {
+    this.actualizarFiltros(filters);
+    this.cerrarModalFiltrosPorId('#filtros-visita');
   }
 
+  actualizarFiltros(filters: FilterCondition[]) {
+    const filtrosTransformados =
+      this._filterTransformerService.transformToApiParams(filters);
+    this._actualizarFiltrosPost(filters);
+    this.valoresFiltrados = Object.values(filtrosTransformados)
+      .filter((value) => value)
+      .join(', ');
+    this.filtrosActivos.set(filtrosTransformados);
+    this.consultarVisitas();
+  }
 
+  private _actualizarFiltrosPost(filters: FilterCondition[]) {
+    const filtrosPost =
+      this._filterTransformerService.transformToApiPostParams(filters);
+    this.arrParametrosConsultaResumen.filtros = [...filtrosPost];
+  }
+
+  private _procesarRespuestaVisita(respuesta: RespuestaApi<Visita>): void {
+    this.limpiarMarkers();
+    this._limpiarBarraCapacidad();
+    this._limpiarBarraTiempo();
+    this.totalRegistrosVisitas = respuesta.count;
+
+    respuesta.results.forEach((visita) => {
+      const position = { lat: visita.latitud, lng: visita.longitud };
+      this.addMarker(position, visita);
+    });
+
+    this._calcularPorcentajeCapacidad();
+    this._calcularPorcentajeTiempo();
+    this.arrVisitas = respuesta.results;
+    this.cantidadRegistros = respuesta.count;
+    this.changeDetectorRef.detectChanges();
+  }
 }
