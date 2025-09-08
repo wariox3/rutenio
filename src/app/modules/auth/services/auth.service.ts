@@ -38,7 +38,7 @@ export class AuthService {
     return this.http.post<TokenVerificacion>(
       `${environment.url_api}/seguridad/usuario/verificar/`,
       { token },
-      { context: noRequiereToken() },
+      { context: noRequiereToken() }
     );
   }
 
@@ -46,10 +46,9 @@ export class AuthService {
     return this.http.post<TokenReenviarValidacion>(
       `${environment.url_api}/seguridad/verificacion/`,
       { codigoUsuario },
-      { context: noRequiereToken() },
+      { context: noRequiereToken() }
     );
   }
-
 
   logout() {
     localStorage.clear();
@@ -62,7 +61,15 @@ export class AuthService {
   recuperarClave(email: string) {
     return this.http.post(
       `${environment.url_api}/seguridad/usuario/cambio-clave-solicitar/`,
-      { username: email, accion: 'clave', 'aplicacion' : 'ruteo' },
+      { username: email, accion: 'clave', aplicacion: 'ruteo' },
+      { context: noRequiereToken() }
+    );
+  }
+
+  reiniciarClave(password: string, token: string) {
+    return this.http.post(
+      `${environment.url_api}/seguridad/usuario/cambio-clave-verificar/`,
+      { password, token },
       { context: noRequiereToken() }
     );
   }
