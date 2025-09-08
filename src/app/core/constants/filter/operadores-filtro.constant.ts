@@ -5,7 +5,7 @@ export const OPERADORES_FILTRO: Operator[] = [
   {
     symbol: '=',
     name: 'Igual',
-    types: ['string', 'number', 'date', 'boolean', 'relation'],
+    types: ['string', 'number', 'date', 'boolean'],
     default: true,
   },
   {
@@ -36,6 +36,6 @@ export const OPERADORES_FILTRO: Operator[] = [
     symbol: 'in',
     name: 'En',
     types: ['relation'],
-    default: false, // ⚠️ No debe ser default si ya tienes '=' como default
+    default: true, // ⚠️ No debe ser default si ya tienes '=' como default
   },
 ];

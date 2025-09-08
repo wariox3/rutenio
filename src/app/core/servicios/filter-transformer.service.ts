@@ -1,6 +1,7 @@
 // filter-transformer.service.ts
 import { Injectable } from '@angular/core';
 import { FilterCondition } from '../interfaces/filtro.interface';
+import { ParametrosApiPost } from '../types/api.type';
 
 @Injectable({
   providedIn: 'root'
@@ -27,6 +28,31 @@ export class FilterTransformerService {
       const transformedValue = this.transformValue(filter.value, filter.field);
 
       apiParams[apiKey] = transformedValue;
+    });
+
+    return apiParams;
+  }
+
+  transformToApiPostParams (filters: FilterCondition[]): ParametrosApiPost[] {
+    if (!filters || filters.length === 0) {
+      return [];
+    }
+
+    const apiParams: ParametrosApiPost[] = [];
+
+    filters.forEach(filter => {
+      if (!this.isValidFilter(filter)) {
+        return; // Saltar filtros inválidos
+      }
+
+      const operador = this.transformOperator(filter.operator);
+      // const transformedValue = this.transformValue(filter.value, filter.field);
+
+      apiParams.push({
+        propiedad: filter.field,
+        valor1: filter.value,
+        operador: operador
+      });
     });
 
     return apiParams;
@@ -80,6 +106,23 @@ export class FilterTransformerService {
 
     const operatorSuffix = operatorMap[operator] || '';
     return `${field}${operatorSuffix}`;
+  }
+
+  private transformOperator(operator: string): string {
+    const operatorMap: Record<string, string> = {
+      '=': 'exact',
+      '!=': 'ne',
+      '>': 'gt',
+      '<': 'lt',
+      '>=': 'gte',
+      '<=': 'lte',
+      'contains': 'icontains',
+      'startsWith': 'startswith',
+      'endsWith': 'endswith',
+      'in': 'in'
+    };
+
+    return operatorMap[operator] || operator;
   }
 
   /**
