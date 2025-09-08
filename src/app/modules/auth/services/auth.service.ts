@@ -62,7 +62,7 @@ export class AuthService {
   recuperarClave(email: string) {
     return this.http.post(
       `${environment.url_api}/seguridad/usuario/cambio-clave-solicitar/`,
-      { username: email, accion: 'clave' },
+      { username: email, accion: 'clave', 'aplicacion' : 'ruteo' },
       { context: noRequiereToken() }
     );
   }
