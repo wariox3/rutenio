@@ -33,6 +33,11 @@ export class FilterTransformerService {
     return apiParams;
   }
 
+  /**
+   * Transforma un array de condiciones de filtro a un array de parámetros para la API
+   * @param filters Array de condiciones de filtro
+   * @returns Array de parámetros para la API
+   */
   transformToApiPostParams (filters: FilterCondition[]): ParametrosApiPost[] {
     if (!filters || filters.length === 0) {
       return [];

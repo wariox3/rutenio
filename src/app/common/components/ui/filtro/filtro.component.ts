@@ -40,6 +40,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChildren('valueInputElement') valueInputElements!: QueryList<ElementRef>;
   @Input() availableFields: FilterField[] = [];
   @Output() filtersApply = new EventEmitter<Record<string, any>>();
+  @Output() filtersApplyCrudo = new EventEmitter<FilterCondition[]>();
   @Input() localStorageKey: string | null = null;
 
   public filterConditions: FilterCondition[] = []; // Inicializar como vacío, se poblará en ngOnInit
@@ -231,6 +232,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     const parametros =
       this._filterTransformerService.transformToApiParams(validFilters);
     this.filtersApply.emit(parametros);
+    this.filtersApplyCrudo.emit(validFilters);
     this._saveFiltersToLocalStorage(); // Guardar el estado actual de filterConditions al aplicar
   }
 
@@ -325,7 +327,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  clearAllFilters(): void {
+  clearFiltersFromLocalStorage(): void {
     this.filterConditions = [this.createEmptyCondition()];
     if (this.localStorageKey && typeof localStorage !== 'undefined') {
       try {
@@ -334,8 +336,13 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
         console.error('Error al eliminar filtros de localStorage:', error);
       }
     }
+  }
+
+  clearAllFilters(): void {
+    this.clearFiltersFromLocalStorage();
     // Emitir un filtro válido vacío o un array con una condición vacía para indicar reinicio
     this.filtersApply.emit([]); // O this.filtersApply.emit(this.filterConditions) si el padre espera al menos una fila
+    this.filtersApplyCrudo.emit([]);
   }
 
   private _saveFiltersToLocalStorage(): void {
