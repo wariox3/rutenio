@@ -10,7 +10,9 @@
   >
     <div class="flex justify-between items-center mb-4">
       <h5>Pendiente por pagar</h5>
-      <div id="wompiWidget"></div>
+      @if (!ocultarBotonWompi()) {
+        <div id="wompiWidget"></div>
+      }
     </div>
     <p class="mb-4 text-gray-600 text-sm">Seleccione las facturas para pago.</p>
 
@@ -21,6 +23,7 @@
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
             <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
+            <th class="px-6 py-3 text-left text-xs font-medium">Saldo</th>
             <th class="w-[60px]"></th>
           </tr>
         </thead>
@@ -29,6 +32,7 @@
           <tr>
             <td>{{ factura.fecha | formatFecha : "Y-m-d" }}</td>
             <td>{{ factura.tipo }}</td>
+            <td>{{ factura.vr_saldo | convertir_valor_moneda }}</td>
             <td class="w-[60px]">
               <input
                 class="checkbox checkbox-sm"

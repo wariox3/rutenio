@@ -56,13 +56,14 @@ export default class FacturacionComponent
   consumos: Consumo[] = [];
   active: number = 1;
   consumoTotal = 0;
-  codigoUsuario = "";
+  codigoUsuario = '';
 
   arrFacturasSeleccionados: any[] = [];
   arrFacturacionInformacion: any[] = [];
   totalPagar = new BehaviorSubject(0);
   public toggleModal$ = new BehaviorSubject(false);
   public informacionFacturacionSeleccionadaId: string;
+  public ocultarBotonWompi = signal(false);
   informacionFacturacionSeleccionada: number | null = null;
   public estaEditando = false;
   private destroy$ = new Subject<void>();
@@ -85,10 +86,13 @@ export default class FacturacionComponent
     ).subscribe((respuesta) => {
       this.facturas = respuesta[0].movimientos;
       this.consumos = respuesta[1].consumos;
+      this.totalPagar.next(0);
       this.arrFacturacionInformacion = respuesta[2].informaciones_facturacion;
       if (this.arrFacturacionInformacion.length > 0) {
         this.informacionFacturacionSeleccionada =
           this.arrFacturacionInformacion[0].id;
+      } else {
+        this.informacionFacturacionSeleccionada = null;
       }
 
       this.consumoTotal = respuesta[1].total_consumo;
@@ -108,6 +112,11 @@ export default class FacturacionComponent
     this.registrosSeleccionados().push(id);
   }
 
+  public limpiarRegistrosSeleccionados() {
+    this.registrosSeleccionados.set([]);
+    this.arrFacturasSeleccionados = [];
+  }
+
   public removerIdRegistrosSeleccionados(id: number) {
     const itemsFiltrados = this.registrosSeleccionados().filter(
       (item) => item !== id
@@ -121,7 +130,9 @@ export default class FacturacionComponent
         'Error',
         'Debe seleccionar la información de facturación antes de realizar el pago'
       );
-      return;
+      this.ocultarBotonWompi.set(true);
+    } else {
+      this.ocultarBotonWompi.set(false);
     }
 
     const index = this.arrFacturasSeleccionados.findIndex(
@@ -131,23 +142,38 @@ export default class FacturacionComponent
     const vrSaldo = `${item.vr_saldo}00`;
 
     if (index !== -1) {
-      this.totalPagar.next(
-        valorActualPagar - parseInt(vrSaldo)
-      );
+      this.totalPagar.next(valorActualPagar - parseInt(vrSaldo));
       this.arrFacturasSeleccionados.splice(index, 1);
       this.removerIdRegistrosSeleccionados(item.id);
       this.changeDetectorRef.detectChanges();
     } else {
-      this.totalPagar.next(
-        valorActualPagar + parseInt(vrSaldo)
-      );
+      this.totalPagar.next(valorActualPagar + parseInt(vrSaldo));
       this.arrFacturasSeleccionados.push(item);
       this.agregarIdARegistrosSeleccionados(item.id);
       this.changeDetectorRef.detectChanges();
     }
 
     let referencia = '';
-    referencia = this.arrFacturasSeleccionados
+    referencia = this._constuirReferencia(this.arrFacturasSeleccionados);
+
+    if (referencia !== '') {
+      this._generarIntegridad(referencia, `${this.totalPagar.getValue()}`);
+    }
+  }
+  
+  private _generarIntegridad(referencia: string, monto: string) {
+    this.contenedorServices
+    .contenedorGenerarIntegridad({
+      referencia,
+      monto,
+    })
+    .subscribe((respuesta) => {
+      this.habitarBtnWompi(respuesta.hash, referencia);
+    });
+  }
+
+  private _constuirReferencia(facturasSeleccionados: Factura[]): string {
+    return facturasSeleccionados
       .map((factura: Factura, index: number, array: Factura[]) => {
         if (index === array.length - 1) {
           return `P${factura.id}-${this.informacionFacturacionSeleccionada}`;
@@ -156,17 +182,6 @@ export default class FacturacionComponent
         }
       })
       .join('');
-
-    if (referencia !== '') {
-      this.contenedorServices
-        .contenedorGenerarIntegridad({
-          referencia,
-          monto: `${this.totalPagar.getValue()}`,
-        })
-        .subscribe((respuesta) => {
-          this.habitarBtnWompi(respuesta.hash, referencia);
-        });
-    }
   }
 
   getIdentificacionPrefix(id: number): string {
@@ -240,6 +255,8 @@ export default class FacturacionComponent
 
   seleccionarInformacion(id: number) {
     this.informacionFacturacionSeleccionada = id;
+    const referencia = this._constuirReferencia(this.arrFacturasSeleccionados);
+    this._generarIntegridad(referencia, `${this.totalPagar.getValue()}`);
   }
 
   ngOnDestroy(): void {
@@ -271,16 +288,19 @@ export default class FacturacionComponent
   }
 
   consultarDetalle() {
-    this.facturacionService
-      .informacionFacturacion(this.codigoUsuario)
-      .subscribe((respuesta) => {
-        this.arrFacturacionInformacion = respuesta.informaciones_facturacion;
-        if (this.arrFacturacionInformacion.length > 0) {
-          this.informacionFacturacionSeleccionada =
-            this.arrFacturacionInformacion[0].id;
-        }
-        this.changeDetectorRef.detectChanges();
-      });
+    // this.ocultarBotonWompi.set(false);
+    // this.facturacionService
+    //   .informacionFacturacion(this.codigoUsuario)
+    //   .subscribe((respuesta) => {
+    //     this.arrFacturacionInformacion = respuesta.informaciones_facturacion;
+    //     if (this.arrFacturacionInformacion.length > 0) {
+    //       this.informacionFacturacionSeleccionada =
+    //         this.arrFacturacionInformacion[0].id;
+    //     }
+    //     this.changeDetectorRef.detectChanges();
+    //   });
+    this.limpiarRegistrosSeleccionados();
+    this.consultarInformacion();
   }
 
   eliminarInformacion(id: number) {
@@ -297,24 +317,26 @@ export default class FacturacionComponent
             .subscribe((respuesta) => {
               if (respuesta) {
                 this.alertaService.mensajaExitoso(
-                  'Se ha eliminado correctamente la información de facturación',
+                  'Se ha eliminado correctamente la información de facturación'
                 );
               }
-              
+
               // Agregamos la misma lógica de validación
-              this.facturacionService
-                .informacionFacturacion(this.codigoUsuario)
-                .subscribe((respuesta) => {
-                  this.arrFacturacionInformacion =
-                    respuesta.informaciones_facturacion;
-                  if (this.arrFacturacionInformacion.length > 0) {
-                    this.informacionFacturacionSeleccionada =
-                      this.arrFacturacionInformacion[0].id;
-                  } else {
-                    this.informacionFacturacionSeleccionada = null;
-                  }
-                  this.changeDetectorRef.detectChanges();
-                });
+              // this.facturacionService
+              //   .informacionFacturacion(this.codigoUsuario)
+              //   .subscribe((respuesta) => {
+              //     this.arrFacturacionInformacion =
+              //       respuesta.informaciones_facturacion;
+              //     if (this.arrFacturacionInformacion.length > 0) {
+              //       this.informacionFacturacionSeleccionada =
+              //         this.arrFacturacionInformacion[0].id;
+              //     } else {
+              //       this.informacionFacturacionSeleccionada = null;
+              //     }
+              // this.changeDetectorRef.detectChanges();
+              // });
+              this.limpiarRegistrosSeleccionados();
+              this.consultarInformacion();
             });
         }
       });
