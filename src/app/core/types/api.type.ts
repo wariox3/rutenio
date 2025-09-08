@@ -18,3 +18,17 @@ export interface Autocompletar {
   id: number;
   nombre: string;
 }
+
+export interface EstadoPaginacion {
+  paginaActual: number;
+  itemsPorPagina: number;
+  totalItems: number;
+  totalPaginas?: number;
+}
+
+export interface ParametrosApiPost {
+  operador: string;
+  propiedad: string;
+  valor1: string;
+  valor2?: string;
+}

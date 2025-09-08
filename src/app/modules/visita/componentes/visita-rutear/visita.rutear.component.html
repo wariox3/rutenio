@@ -573,7 +573,8 @@
 >
   <section modal-body>
     <app-filtro
-      (filtersApply)="filterChange($event)"
+       #filtroVisita
+      (filtersApplyCrudo)="filterChange($event)"
       [availableFields]="VISITA_RUTEAR_FILTERS"
       [localStorageKey]="filtroKey()"
     ></app-filtro>
