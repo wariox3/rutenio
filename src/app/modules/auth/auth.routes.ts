@@ -28,4 +28,9 @@ export default [
     loadComponent: () =>
       import('./components/verificacion-cuenta/verificacion-cuenta.component'),
   },
+  {
+    path: 'clave/cambiar/:token',
+    loadComponent: () =>
+      import('./components/reiniciar-clave/reiniciar-clave.component'),
+  },
 ] as Routes;
