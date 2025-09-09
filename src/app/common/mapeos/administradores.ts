@@ -37,9 +37,9 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
-        encabezado: 'Franja Código',
-        campoNombre: 'franja_codigo',
-        campoTipo: 'CharField',
+        encabezado: 'Franjas',
+        campoNombre: 'franjas',
+        campoTipo: 'ArrayField',
         visibleTabla: true,
         visibleFiltro: false,
         ordenable: false,
@@ -67,7 +67,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
-      }
+      },
     ],
   },
   Contacto: {
