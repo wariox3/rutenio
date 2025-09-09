@@ -1,16 +1,29 @@
 <form [formGroup]="formularioVisitaRutear">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="mb-5">
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
+          Número
+        </label>
+        <app-input
+          [control]="formularioVisitaRutear.controls.numero"
+        ></app-input>
+      </div>
+    </div>
     <div class="mb-5">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
-          Documento
+          Documento cliente
         </label>
         <app-input
           [control]="formularioVisitaRutear.controls.documento"
         ></app-input>
       </div>
     </div>
-    <div class="mb-5">
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="mb-5">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
           Destinatario
@@ -21,9 +34,6 @@
         ></app-input>
       </div>
     </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
     <div class="mb-5">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
@@ -51,6 +61,16 @@
     <div class="mb-5 flex gap-2">
       <div>
         <label class="form-label flex items-center gap-1 text-gray-900">
+          Unidades
+          <span class="text-danger"> * </span>
+        </label>
+        <app-input
+          [soloNumeros]="true"
+          [control]="formularioVisitaRutear.controls.unidades"
+        ></app-input>
+      </div>
+      <div>
+        <label class="form-label flex items-center gap-1 text-gray-900">
           Peso
           <span class="text-danger"> * </span>
         </label>
@@ -67,16 +87,6 @@
         <app-input
           [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.volumen"
-        ></app-input>
-      </div>
-    </div>
-    <div class="mb-5">
-      <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Número
-        </label>
-        <app-input
-          [control]="formularioVisitaRutear.controls.numero"
         ></app-input>
       </div>
     </div>

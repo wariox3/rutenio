@@ -1,5 +1,6 @@
 export interface VisitaResumen {
   resumen: {
+    unidades: number;
     cantidad: number;
     peso: number;
     tiempo_servicio: number;

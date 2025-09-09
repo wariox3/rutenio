@@ -1,3 +1,5 @@
+import { ListaFranja } from "../vehiculo/vehiculo.interface";
+
 export interface Flota {}
 
 export interface ListaFlota {
@@ -10,4 +12,7 @@ export interface ListaFlota {
   vehiculo_tiempo: number;
   vehiculo_estado_asignado: boolean;
   vehiculo_prioridad: number;
+  vehiculo_franjas: ListaFranja[];
 }
+
+
