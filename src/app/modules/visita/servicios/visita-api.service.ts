@@ -5,7 +5,7 @@ import {
   ParametrosDireccionAlternativa,
   VisitaResumen,
 } from '../../../interfaces/visita/rutear.interface';
-import { ParametrosApi } from '../../../core/types/api.type';
+import { ParametrosApi, ParametrosApiPost } from '../../../core/types/api.type';
 
 @Injectable({
   providedIn: 'root',
@@ -64,8 +64,10 @@ export class VisitaApiService {
     );
   }
 
-  ordenar(parametros?: ParametrosApi) {
-    return this._httpService.post<any[]>(`ruteo/visita/ordenar/`, parametros);
+  ordenar(filtros: ParametrosApiPost[]) {
+    return this._httpService.post<any[]>(`ruteo/visita/ordenar/`, {
+      filtros,
+    });
   }
 
   rutear(parametros?: ParametrosConsulta) {

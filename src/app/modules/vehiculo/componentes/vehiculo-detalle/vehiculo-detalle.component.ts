@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { switchMap, tap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 
 @Component({
   selector: 'app-vehiculo-detalle',
@@ -19,12 +20,7 @@ import { General } from '../../../../common/clases/general';
 export default class VehiculoDetalleComponent extends General implements OnInit { 
   private vehiculoService = inject(VehiculoService)
 
-  vehiculo: any = {
-    placa: '',
-    capacidad: 0,
-    franja_codigo: '',
-    tiempo: 0,
-  }
+  vehiculo = signal<ListaVehiculo | null>(null)
 
 ngOnInit(): void {
   this.activatedRoute.params.pipe(
@@ -32,8 +28,7 @@ ngOnInit(): void {
       return this.vehiculoService.consultarDetalle(respuestaParametros.id)
     }),
     tap((respuestaConsultaDetalle)=>{
-      this.vehiculo = respuestaConsultaDetalle
-      this.changeDetectorRef.detectChanges();
+      this.vehiculo.set(respuestaConsultaDetalle)
     })
   ).subscribe();
 }

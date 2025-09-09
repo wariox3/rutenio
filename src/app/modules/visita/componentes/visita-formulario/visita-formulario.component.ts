@@ -66,6 +66,7 @@ export default class VisitaFormularioComponent
     destinatario_direccion: new FormControl('', [Validators.required]),
     destinatario_telefono: new FormControl(null),
     destinatario_correo: new FormControl(null),
+    unidades: new FormControl('', [Validators.required, Validators.min(1)]),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
     tiempo_servicio: new FormControl('', [Validators.required, Validators.min(1)]),

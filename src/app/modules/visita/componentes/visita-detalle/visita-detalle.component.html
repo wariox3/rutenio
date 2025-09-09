@@ -40,6 +40,14 @@
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ visita().fecha | formatFecha : "Y-m-d" }}
               </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Unidades
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().unidades }}
+              </td>
             </tr>
             <tr class="border-b border-gray-300">
               <td
@@ -57,6 +65,14 @@
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ visita().destinatario_direccion }}
+              </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Peso
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().peso }}
               </td>
             </tr>
             <tr class="border-b border-gray-300">
@@ -76,6 +92,14 @@
               <td class="px-4 py-3 border-r border-gray-300">
                 {{ visita().destinatario_correo }}
               </td>
+              <td
+                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+              >
+                Volumen
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300">
+                {{ visita().volumen }}
+              </td>
             </tr>
             <tr class="border-b border-gray-300">
               <td
@@ -92,25 +116,15 @@
                 Franja
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ visita().franja_nombre }}
-              </td>
-            </tr>
-            <tr class="border-b border-gray-300">
-              <td
-                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-              >
-                Peso
-              </td>
-              <td class="px-4 py-3 border-r border-gray-300">
-                {{ visita().peso }}
+                {{ visita().franja_codigo }}
               </td>
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
               >
-                Volumen
+                Cobro
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ visita().volumen }}
+                {{ visita().cobro }}
               </td>
             </tr>
             <tr>
@@ -122,9 +136,14 @@
               <td class="px-4 py-3 border-r border-gray-300" colspan="3">
                 <ul>
                   <li>Recibe : {{ visita().datos_entrega?.recibe }}</li>
-                  <li>Parentesco: {{ visita().datos_entrega?.recibeParentesco }}</li>
+                  <li>
+                    Parentesco: {{ visita().datos_entrega?.recibeParentesco }}
+                  </li>
                   <li>Celular: {{ visita().datos_entrega?.recibeCelular }}</li>
-                  <li>Número identificación: {{ visita().datos_entrega?.recibeNumeroIdentificacion }}</li>
+                  <li>
+                    Número identificación:
+                    {{ visita().datos_entrega?.recibeNumeroIdentificacion }}
+                  </li>
                 </ul>
               </td>
             </tr>

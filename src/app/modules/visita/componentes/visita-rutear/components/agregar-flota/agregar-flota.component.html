@@ -94,7 +94,11 @@
               <td>
                 <div class="flex items-center gap-1.5">
                   <span class="leading-none text-gray-700">
-                    {{ vehiculo.franja_codigo }}
+                    @for (franja of vehiculo.franjas; track franja.id) {
+                      <span class="badge badge-sm badge-outline badge-primary mr-1">
+                        {{ franja.nombre }}
+                      </span>
+                    }
                   </span>
                 </div>
               </td>

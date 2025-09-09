@@ -27,6 +27,7 @@ import { GeneralService } from '../../../../common/services/general.service';
 import { AutocompletarFranja } from '../../../../interfaces/general/autocompletar.interface';
 import { MultiSelectComponent } from "../../../../common/components/ui/form/multi-select/multi-select.component";
 import { RespuestaApi } from '../../../../core/types/api.type';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 
 @Component({
   selector: 'app-vehiculo-formulario',
@@ -49,7 +50,7 @@ import { RespuestaApi } from '../../../../core/types/api.type';
 export default class VehiculoFormularioComponent
   extends General
   implements OnInit {
-  @Input() informacionVehiculo: any;
+  @Input() informacionVehiculo: ListaVehiculo;
   @Input({ required: true }) formularioTipo: 'editar' | 'crear';
   @Output() dataFormulario: EventEmitter<any> = new EventEmitter();
 
@@ -62,7 +63,7 @@ export default class VehiculoFormularioComponent
       Validators.compose([Validators.required, Validators.maxLength(6)])
     ),
     capacidad: new FormControl(
-      '',
+      0,
       Validators.compose([Validators.required, Validators.pattern('^[0-9]*$')])
     ),
     estado_activo: new FormControl(true),
@@ -83,6 +84,7 @@ export default class VehiculoFormularioComponent
   }
 
   private _poblarFormulario() {
+    const franjasAdapter = this._franjasAdapter();
     this.formularioVehiculo.patchValue({
       placa: this.informacionVehiculo.placa,
       tiempo: this.informacionVehiculo.tiempo,
@@ -90,9 +92,13 @@ export default class VehiculoFormularioComponent
       estado_activo: this.informacionVehiculo.estado_activo,
       estado_asignado: this.informacionVehiculo.estado_asignado,
       usuario_app: this.informacionVehiculo.usuario_app,
-      franja_id: this.informacionVehiculo.franja_id,
-      franja_codigo: this.informacionVehiculo.franja_codigo,
+      franja_codigo: franjasAdapter
     });
+    
+  }
+
+  private _franjasAdapter() {
+    return this.informacionVehiculo.franjas.map((franja) => franja.id);
   }
 
   private _transformarPlacaMayusculas() {

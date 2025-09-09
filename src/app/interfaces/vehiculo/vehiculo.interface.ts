@@ -15,13 +15,18 @@ export interface ListaVehiculo {
   id: number;
   placa: string;
   capacidad: number;
-  franja_codigo: string;
-  franja_nombre: string;
+  franjas: ListaFranja[];
   estado_activo: boolean;
   estado_asignado: boolean;
   tiempo: number;
   usuario_app: string;
   prioridad: number;
+}
+
+export interface ListaFranja {
+  codigo: string;
+  nombre: string;
+  id: number;
 }
 
 export const vehiculoEmpty: Vehiculo = {

@@ -13,7 +13,7 @@
 <div class="card">
   <div class="card-table">
     <div class="card-header">
-      <h3 class="card-title">Detalle vehículo - {{ vehiculo.placa }}</h3>
+      <h3 class="card-title">Detalle vehículo - {{ vehiculo()?.placa }}</h3>
     </div>
     <div class="card-body">
       <div class="overflow-x-auto">
@@ -26,23 +26,25 @@
                 Placa
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ vehiculo.placa }}
+                {{ vehiculo()?.placa }}
               </td>
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
               >
                 Capacidad
               </td>
-              <td class="px-4 py-3">{{ vehiculo.capacidad }}</td>
+              <td class="px-4 py-3">{{ vehiculo()?.capacidad }}</td>
             </tr>
             <tr class="border-b border-gray-300">
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
               >
-                Franja
+                Franjas
               </td>
               <td class="px-4 py-3 border-r border-gray-300">
-                {{ vehiculo.franja_codigo }}
+                @for(franja of vehiculo()?.franjas; track $index){
+                  <span class="badge badge-primary badge-outline badge-sm mr-1">{{ franja.nombre }}</span>
+                }
               </td>
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
@@ -50,7 +52,7 @@
                 Tiempo
               </td>
               <td class="px-4 py-3">
-                {{ vehiculo.tiempo }}
+                {{ vehiculo()?.tiempo }}
               </td>
             </tr>
           </tbody>
