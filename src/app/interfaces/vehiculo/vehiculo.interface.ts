@@ -26,6 +26,7 @@ export interface ListaVehiculo {
 export interface ListaFranja {
   codigo: string;
   nombre: string;
+  id: number;
 }
 
 export const vehiculoEmpty: Vehiculo = {
