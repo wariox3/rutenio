@@ -127,14 +127,11 @@ export class VisitaApiService {
     );
   }
 
-  resumenPendiente() {
+  resumenPendiente(filtros: any[]) {
     return this._httpService.post<VisitaResumen>(
       'ruteo/visita/resumen-pendiente/',
       {
-        filtros: [
-          { propiedad: 'estado_despacho', valor1: false },
-          { propiedad: 'estado_devolucion', valor1: false },
-        ],
+        filtros,
         limite: 50,
         desplazar: 0,
         ordenamientos: [
