@@ -82,13 +82,14 @@
       <td class="px-4 py-3 border-r border-gray-300">
         {{ visita.destinatario_direccion_formato }}
       </td>
+
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Peso
+        Unidades
       </td>
       <td class="px-4 py-3">
-        {{ visita.peso }}
+        {{ visita.unidades }}
       </td>
     </tr>
 
@@ -104,9 +105,11 @@
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >
-        Volumen
+        Peso
       </td>
-      <td class="px-4 py-3">{{ visita.volumen }}</td>
+      <td class="px-4 py-3">
+        {{ visita.peso }}
+      </td>
     </tr>
 
     <tr class="border-b border-gray-300">
@@ -118,6 +121,18 @@
       <td class="px-4 py-3 border-r border-gray-300">
         {{ visita.franja_codigo }} - {{ visita.franja_nombre }}
       </td>
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      >
+        Volumen
+      </td>
+      <td class="px-4 py-3">{{ visita.volumen }}</td>
+    </tr>
+    <tr class="border-b border-gray-300">
+      <td
+        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+      ></td>
+      <td class="px-4 py-3 border-r border-gray-300"></td>
       <td
         class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
       >

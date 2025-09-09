@@ -170,6 +170,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public cantidadAlertas: number = 0;
   public cantidadNovedades: number = 0;
   public visitasTotales: number = 0;
+  public unidadesTotales: number = 0;
   public totalRegistrosVisitas: number = 0;
   public mapeo = visitaRutearMapeo;
   public valoresFiltrados: string = '';
@@ -287,6 +288,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .resumen(this.arrParametrosConsultaResumen)
       .pipe(
         switchMap((response) => {
+          this.unidadesTotales = response?.resumen?.unidades;
           this.visitasTotales = response?.resumen?.cantidad;
           this.cantidadErrores = response?.errores?.cantidad;
           this.cantidadAlertas = response?.alertas?.cantidad;
