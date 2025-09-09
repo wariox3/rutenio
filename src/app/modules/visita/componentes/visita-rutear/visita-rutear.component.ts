@@ -357,8 +357,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
-    // TODO: centralizar
-
     const parametrosConsulta: ParametrosApi = {
       ...this.arrParametrosConsultaVisita,
       limite: evento.limite,
@@ -447,7 +445,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
         })
       )
       .subscribe(() => {
-        this.consultarLista();
+        this.consultarFlotas(this.arrParametrosConsultaFlota);
+        this.consultarVisitas();
         this.alerta.mensajaExitoso('Se ha ordenado correctamente');
       });
   }
