@@ -8,8 +8,10 @@ export interface Visita {
   ciudad_id: number;
   destinatario_telefono: string;
   destinatario_correo: any;
+  unidades: number;
   peso: number;
   volumen: number;
+  cobro: number;
   estado_decodificado: boolean;
   latitud: number;
   estado_entregado: boolean;

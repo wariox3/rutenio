@@ -87,10 +87,22 @@
             >
           </div>
           <div>
+            <p class="text-xs text-slate-600">Unidades</p>
+            <span class="font-semibold">
+              <i class="ki-filled ki-cube-2"></i>
+              {{ unidadesTotales || 0 }}</span
+            >
+          </div>
+          <div>
             <p class="text-xs text-slate-600">Capacidad</p>
             <span class="font-semibold">
-              <i class="ki-filled ki-package" data-tooltip="#tooltip_capacidad"></i>
-              {{ pesoTotal | number:'1.0-0' }}/{{ capacidadTotal | number:'1.0-0' }}
+              <i
+                class="ki-filled ki-package"
+                data-tooltip="#tooltip_capacidad"
+              ></i>
+              {{ pesoTotal | number : "1.0-0" }}/{{
+                capacidadTotal | number : "1.0-0"
+              }}
             </span>
           </div>
           <div>
@@ -105,7 +117,9 @@
             <p class="text-xs text-slate-600">Tiempo</p>
             <span class="font-semibold">
               <i class="ki-filled ki-timer" data-tooltip="#tooltip_tiempo"></i>
-              {{ servicio() | number:'1.0-0' }}/{{ tiempoTotal() | number:'1.0-0' }}
+              {{ servicio() | number : "1.0-0" }}/{{
+                tiempoTotal() | number : "1.0-0"
+              }}
             </span>
           </div>
           <div>
@@ -142,12 +156,16 @@
       <section class="flex gap-2 items-center">
         <h3 class="card-title">Visita</h3>
         @if(valoresFiltrados.length > 0){
-          <span class="text-sm text-slate-500">[ {{ valoresFiltrados }} ]</span>
+        <span class="text-sm text-slate-500">[ {{ valoresFiltrados }} ]</span>
         }
       </section>
       <section class="flex items-center">
         @if (valoresFiltrados) {
-        <button class="btn" (click)="limpiarFiltros($event)" title="Limpiar filtros">
+        <button
+          class="btn"
+          (click)="limpiarFiltros($event)"
+          title="Limpiar filtros"
+        >
           <i class="ki-filled ki-filter-tick mr-4 text-xl relative">
             <i
               class="ki-solid ki-cross-circle text-red-500 absolute text-sm clear-icon"
@@ -306,7 +324,9 @@
                 </div>
                 <div class="flex justify-between text-xs mt-1">
                   <div class="flex items-center space-x-1">
-                    <i class="ki-filled ki-parcel"></i>
+                    <i class="ki-filled ki-cube-2"></i>
+                    <span>Und: {{ visita.unidades }} kg</span>
+                    <i class="ki-filled ki-pad"></i>
                     <span>Peso: {{ visita.peso }} kg</span>
                     <i class="ki-filled ki-time"></i>
                     <span
@@ -573,7 +593,7 @@
 >
   <section modal-body>
     <app-filtro
-       #filtroVisita
+      #filtroVisita
       (filtersApplyCrudo)="filterChange($event)"
       [availableFields]="VISITA_RUTEAR_FILTERS"
       [localStorageKey]="filtroKey()"
@@ -661,9 +681,9 @@
               <td>{{ vehiculo.vehiculo_tiempo }}</td>
               <td>
                 @for (franja of vehiculo.vehiculo_franjas; track franja.id) {
-                  <span class="badge badge-sm badge-outline badge-primary mr-1">
-                    {{ franja.nombre }}
-                  </span>
+                <span class="badge badge-sm badge-outline badge-primary mr-1">
+                  {{ franja.nombre }}
+                </span>
                 }
               </td>
               <td>

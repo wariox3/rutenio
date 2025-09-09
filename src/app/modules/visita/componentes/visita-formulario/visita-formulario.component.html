@@ -102,6 +102,21 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
     <div class="mb-5">
       <div>
+        <app-label [required]="true">Unidades</app-label>
+        <app-input
+          [control]="formularioVisita.controls.unidades"
+          [soloNumeros]="true"
+          [mayorACero]="true"
+        ></app-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
         <app-label [required]="true">Peso</app-label>
         <app-input
           [control]="formularioVisita.controls.peso"
@@ -234,6 +249,21 @@
               [control]="formularioVisita.controls.destinatario_correo"
             ></app-input-email>
           </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+        <div class="mb-5">
+          <div>
+            <app-label [required]="true">Unidades</app-label>
+            <app-input
+              [control]="formularioVisita.controls.unidades"
+              [soloNumeros]="true"
+              [mayorACero]="true"
+            ></app-input>
+          </div>
+        </div>
+        <div class="mb-5">
+          <div></div>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
