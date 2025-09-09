@@ -647,9 +647,9 @@
               <th>Placa</th>
               <th>Capacidad</th>
               <th>Tiempo</th>
-              <th>Franja</th>
+              <th style="width: 180px">Franja</th>
               <th>Asignado</th>
-              <th class="w-25">Prioridad</th>
+              <th style="width: 150px">Prioridad</th>
               <th></th>
             </tr>
           </thead>
@@ -659,7 +659,13 @@
               <td>{{ vehiculo.vehiculo_placa }}</td>
               <td>{{ vehiculo.vehiculo_capacidad }}</td>
               <td>{{ vehiculo.vehiculo_tiempo }}</td>
-              <td>{{ vehiculo.vehiculo_franja_codigo }}</td>
+              <td>
+                @for (franja of vehiculo.vehiculo_franjas; track franja.id) {
+                  <span class="badge badge-sm badge-outline badge-primary mr-1">
+                    {{ franja.nombre }}
+                  </span>
+                }
+              </td>
               <td>
                 <span
                   *ngIf="!vehiculo.vehiculo_estado_asignado"
