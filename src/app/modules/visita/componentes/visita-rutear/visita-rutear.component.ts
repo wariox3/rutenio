@@ -739,7 +739,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   resumen() {
-    this._visitaApiService.resumenPendiente().subscribe({
+    const filtros = this.arrParametrosConsultaResumen.filtros;
+    this._visitaApiService.resumenPendiente(filtros).subscribe({
       next: (response) => {
         this.visitaResumen = response.resumen;
         this.changeDetectorRef.detectChanges();
