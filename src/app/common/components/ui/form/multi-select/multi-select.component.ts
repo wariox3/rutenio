@@ -47,7 +47,12 @@ export class MultiSelectComponent {
     if (!selectedOptions) {
       return [];
     }
-    return selectedOptions.split(',').map((option) => Number(option));
+
+    if (typeof selectedOptions === 'string') {
+      return selectedOptions.split(',').map((option) => Number(option));
+    }
+    
+    return selectedOptions;
   }
 
   emitirSeleccion() {
