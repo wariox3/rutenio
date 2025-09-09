@@ -438,8 +438,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   ordenar() {
     this.mostarVistaCargando$.next(true);
+    const filtros = this.arrParametrosConsultaResumen.filtros;
     this._visitaApiService
-      .ordenar(this.arrParametrosConsultaVisita)
+      .ordenar(filtros)
       .pipe(
         finalize(() => {
           this.mostarVistaCargando$.next(false);
@@ -783,17 +784,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   onPageChange(page: number): void {
-    // TODO: centralizar
     this.estadoPaginacion.update((estado) => ({
       ...estado,
       paginaActual: page,
     }));
     this._consultarVisitas(this.filtrosActivos());
-    // this._generalApiService
-    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-    //     limit: 50,
-    //     page,
-    //   }).subscribe((respuesta) => this._procesarRespuestaVisita(respuesta));
   }
 
   filterChange(filters: FilterCondition[]) {
@@ -809,7 +804,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .filter((value) => value)
       .join(', ');
     this.filtrosActivos.set(filtrosTransformados);
-    this.consultarVisitas();
+    this.ordenar();
   }
 
   private _actualizarFiltrosPost(filters: FilterCondition[]) {

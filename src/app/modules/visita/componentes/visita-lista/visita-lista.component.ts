@@ -163,14 +163,6 @@ export default class VisitaListaComponent extends General implements OnInit {
     });
   }
 
-  ordenar() {
-    this._visitaApiService.ordenar().subscribe((respuesta: any) => {
-      this.arrGuiasOrdenadas = respuesta.visitas_ordenadas;
-      this.consultaLista(this.arrParametrosConsulta);
-      this.alerta.mensajaExitoso('Se ha ordenado correctamente');
-    });
-  }
-
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
