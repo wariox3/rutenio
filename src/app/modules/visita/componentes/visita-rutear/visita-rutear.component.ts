@@ -124,7 +124,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     ordering: 'estado_decodificado,-estado_decodificado_alerta,orden',
     estado_despacho: 'False',
     estado_devolucion: 'False',
-    limite: 50,
+    // limite: 50,
     // filtros: [
     //   { propiedad: 'estado_despacho', valor1: false, operador: 'exact' },
     //   { propiedad: 'estado_devolucion', valor1: false },
@@ -140,9 +140,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
     // modelo: 'RutVisita',
   };
 
-  arrParametrosConsultaResumen: ParametrosConsulta = {
+  arrParametrosConsultaResumen: any = {
     filtros: [],
-    limite: 50,
+    // limite: 50,
     desplazar: 0,
     ordenamientos: [
       'estado_decodificado',
