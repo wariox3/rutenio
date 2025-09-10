@@ -4,21 +4,25 @@ import {
   Component,
   inject,
   OnInit,
+  signal,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { General } from '../../../../common/clases/general';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
-import { mapeo } from '../../../../common/mapeos/administradores';
-import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
-import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
-import { VehiculoService } from '../../servicios/vehiculo.service';
+import { RouterLink } from '@angular/router';
 import { finalize, Observable } from 'rxjs';
+import { General } from '../../../../common/clases/general';
+import { FileUploadComponent } from '../../../../common/components/file-upload/file-upload.component';
+import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
-import { FileUploadComponent } from '../../../../common/components/file-upload/file-upload.component';
+import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { mapeo } from '../../../../common/mapeos/administradores';
 import { GeneralApiService } from '../../../../core';
-import { RespuestaApi } from '../../../../core/types/api.type';
+import { EstadoPaginacion, ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
+import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { VEHICULO_LISTA_FILTERS } from '../../mapeos/vehiculos-lista-mapeo';
+import { VehiculoService } from '../../servicios/vehiculo.service';
+import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 
 @Component({
   selector: 'app-vehiculo-lista',
@@ -30,6 +34,8 @@ import { RespuestaApi } from '../../../../core/types/api.type';
     TablaComunComponent,
     ModalStandardComponent,
     FileUploadComponent,
+    FiltroComponent,
+    PaginadorComponent
   ],
   templateUrl: './vehiculo-lista.component.html',
   styleUrl: './vehiculo-lista.component.css',
@@ -49,23 +55,37 @@ export default class VehiculoListaComponent extends General implements OnInit {
   encabezados: any[];
   public mapeoAdministrador = mapeo;
   private _listaItemsEliminar: number[] = [];
+  private _filtrosActivos = signal<ParametrosApi>({});
+
   private vehiculoService = inject(VehiculoService);
   private _modalService = inject(ModalService);
   private _generalApiService = inject(GeneralApiService);
+  public VEHICULO_LISTA_FILTERS = VEHICULO_LISTA_FILTERS;
+  public estadoPaginacion = signal<EstadoPaginacion>({
+    paginaActual: 1,
+    itemsPorPagina: 30,
+    totalItems: 0,
+  });
 
   ngOnInit(): void {
     this.consultarLista();
+
     this.encabezados = mapeo.Vehiculo.datos
       .filter((dato) => dato.visibleTabla === true)
       .map((dato) => dato.nombre);
   }
 
   consultarLista() {
+
+    const parametros: ParametrosApi = {
+      page: this.estadoPaginacion().paginaActual,
+      ...this._filtrosActivos(),
+    };
+
     this._generalApiService
-      .consultaApi<RespuestaApi<ListaVehiculo>>('ruteo/vehiculo/', {
-      })
+      .consultaApi<RespuestaApi<ListaVehiculo>>('ruteo/vehiculo/', parametros)
       .subscribe((respuesta) => {
-        this.cantidad_registros = respuesta.count;
+        this.actualizarPaginacion(respuesta.count);
         this.arrVehiculos = respuesta.results;
         this.changeDetectorRef.detectChanges();
       });
@@ -130,5 +150,32 @@ export default class VehiculoListaComponent extends General implements OnInit {
 
   handleUploadError(event: any) {
     this.alerta.mensajeError('Error al importar vehículos', event.error);
+  }
+
+  filterChange(filters: Record<string, any>) {
+    this._filtrosActivos.set(filters);
+    this.estadoPaginacion.update(estado => ({
+      ...estado,
+      paginaActual: 1,
+    }));
+
+    this.consultarLista();
+  }
+
+  onPageChange(nuevaPagina: number): void {
+    this.estadoPaginacion.update(estado => ({
+      ...estado,
+      paginaActual: nuevaPagina,
+    }));
+
+    this.consultarLista();
+  }
+
+  private actualizarPaginacion(count: number) {
+    this.estadoPaginacion.update(estado => ({
+      ...estado,
+      totalItems: count,
+      totalPaginas: Math.ceil(count / estado.itemsPorPagina),
+    }));
   }
 }
