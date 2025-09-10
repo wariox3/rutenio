@@ -1,3 +1,15 @@
+<div class="card mb-5">
+  <div class="card-header">
+    <h3 class="card-title">Filtros</h3>
+  </div>
+  <div class="card-body">
+    <app-filtro
+      (filtersApply)="filterChange($event)"
+      [availableFields]="VEHICULO_LISTA_FILTERS"
+    ></app-filtro>
+  </div>
+</div>
+
 <div class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Vehículos</h3>
@@ -7,54 +19,66 @@
       texto="Nuevo"
     ></app-button>
   </div>
-
-  <div class="flex justify-end items-center mx-8">
-    <div class="inline-flex rounded-md shadow-s my-5">
-      <div class="menu menu-default p-0" data-menu="true">
-        <button class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg" (click)="abrirModal('importarVehiculos')">Importar</button>
-        <div
-          class="menu-item"
-          data-menu-item-placement="bottom-start"
-          data-menu-item-toggle="dropdown"
-          data-menu-item-trigger="click"
-        >
-          <button
-            class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
-          >
-            <span class=""> Acciones </span>
-            <span class="menu-arrow">
-              <i class="ki-outline ki-down"> </i>
-            </span>
-          </button>
-          <div class="menu-dropdown w-48 py-2">
-            <div class="menu-item" data-menu-dismiss="true">
-              <button class="menu-link" (click)="eliminarItemsSeleccionados()">
-                <span class="menu-title">
-                  Eliminar
+  <div >
+    <div class="flex justify-between items-center mx-8">
+      <app-paginador
+        [totalItems]="estadoPaginacion().totalItems"
+        [itemsPerPage]="estadoPaginacion().itemsPorPagina"
+        (pageChange)="onPageChange($event)"
+      ></app-paginador>
+      <div class="flex justify-end items-center mx-8">
+        <div class="inline-flex rounded-md shadow-s my-5">
+          <div class="menu menu-default p-0" data-menu="true">
+            <button
+              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
+              (click)="abrirModal('importarVehiculos')"
+            >
+              Importar
+            </button>
+            <div
+              class="menu-item"
+              data-menu-item-placement="bottom-start"
+              data-menu-item-toggle="dropdown"
+              data-menu-item-trigger="click"
+            >
+              <button
+                class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
+              >
+                <span class=""> Acciones </span>
+                <span class="menu-arrow">
+                  <i class="ki-outline ki-down"> </i>
                 </span>
               </button>
+              <div class="menu-dropdown w-48 py-2">
+                <div class="menu-item" data-menu-dismiss="true">
+                  <button
+                    class="menu-link"
+                    (click)="eliminarItemsSeleccionados()"
+                  >
+                    <span class="menu-title"> Eliminar </span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <app-tabla-comun
-    campoMapeo="Vehiculo"
-    [mapeo]="mapeoAdministrador"
-    [datos]="arrVehiculos"
-    (emitirEditarItem)="editarVehiculo($event)"
-    (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
-    (emitirDetalleItem)="detalleVehiculo($event)"
-  ></app-tabla-comun>
-</div>
+    <app-tabla-comun
+      campoMapeo="Vehiculo"
+      [mapeo]="mapeoAdministrador"
+      [datos]="arrVehiculos"
+      (emitirEditarItem)="editarVehiculo($event)"
+      (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
+      (emitirDetalleItem)="detalleVehiculo($event)"
+    ></app-tabla-comun>
+  </div>
 
 <app-modal-standard
   title="Importar vehículos"
   size="md"
   modalId="importarVehiculos"
-  
 >
   @if (getModalInstaceState('importarVehiculos') | async) {
   <app-file-upload
