@@ -92,7 +92,9 @@
                       class="flex justify-between text-gray-500 text-xs mt-1"
                     >
                       <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
+                        <i class="ki-filled ki-cube-2"></i>
+                        <span>Und: {{ despacho.unidades }}</span>
+                        <i class="ki-filled ki-pad"></i>
                         <span>Peso: {{ despacho.peso }} kg</span>
                         <i class="ki-filled ki-package"></i>
                         <span>Volumen: {{ despacho.volumen }}</span>
@@ -263,7 +265,9 @@
                       class="flex justify-between text-gray-500 text-xs mt-1"
                     >
                       <div class="flex items-center space-x-1">
-                        <i class="ki-filled ki-parcel"></i>
+                        <i class="ki-filled ki-cube-2"></i>
+                        <span>Und: {{ visita.unidades }}</span>
+                        <i class="ki-filled ki-pad"></i>
                         <span>Peso: {{ visita.peso }} kg</span>
                         <i class="ki-filled ki-time"></i>
                         <span
@@ -365,7 +369,11 @@
               </div>
               <div class="mt-2 flex gap-2 items-center">
                 <div>
-                  <i class="ki-filled ki-package"></i>
+                  <i class="ki-filled ki-cube-2"></i>
+                  <span class="ml-1">{{ visitaSeleccionada?.unidades }}</span>
+                </div>
+                <div>
+                  <i class="ki-filled ki-pad"></i>
                   <span class="ml-1">{{ visitaSeleccionada?.peso }}</span>
                 </div>
                 <div>
