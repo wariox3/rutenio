@@ -141,6 +141,12 @@ export class ContenedorService {
     );
   }
 
+  eliminarEmpresaUsuario(usuario_id: Number) {
+    return this.http.delete(
+      `${environment.url_api}/contenedor/usuariocontenedor/${usuario_id}/`,
+    );
+  }
+
   private _isContenedorRestringido(
     valorSaldo: number,
     fechaLimitePago: string
