@@ -23,6 +23,7 @@ import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interfac
 import { VEHICULO_LISTA_FILTERS } from '../../mapeos/vehiculos-lista-mapeo';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { ImportarComponent } from "../../../../common/components/importar/importar.component";
 
 @Component({
   selector: 'app-vehiculo-lista',
@@ -35,8 +36,9 @@ import { PaginadorComponent } from "../../../../common/components/ui/paginacion/
     ModalStandardComponent,
     FileUploadComponent,
     FiltroComponent,
-    PaginadorComponent
-  ],
+    PaginadorComponent,
+    ImportarComponent
+],
   templateUrl: './vehiculo-lista.component.html',
   styleUrl: './vehiculo-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
