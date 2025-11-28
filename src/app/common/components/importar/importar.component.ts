@@ -21,6 +21,7 @@ import { General } from '../../clases/general';
 import { GeneralService } from '../../services/general.service';
 import { ButtonComponent } from '../ui/button/button.component';
 import { ModalDefaultService } from '../ui/modals/modal-default/modal-default.service';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-importar',
@@ -33,12 +34,16 @@ import { ModalDefaultService } from '../ui/modals/modal-default/modal-default.se
 export class ImportarComponent extends General {
   @Output() emitirCerrarModal: EventEmitter<boolean>;
   @Output() emitirConsultarLista: EventEmitter<void>;
+  @Output() exampleDownloadError: EventEmitter<any> = new EventEmitter<any>();
   @Input() archivosAdmitidos: string = '';
   @Input() url: string = '';
   @Input() archivoEjemplo: { nombre: string; ruta: string };
+  @Input() exampleFileUrl: string = '';
+  @Input() exampleFileName: string = '';
 
   private _generalService = inject(GeneralService);
   private _modalDefaultService = inject(ModalDefaultService);
+  private _httpService = inject(HttpService);
 
   public erroresImportar: any[] = [];
   public selectedFile: File | null = null;
@@ -46,6 +51,8 @@ export class ImportarComponent extends General {
   public fileName: string = '';
   public fileSize: string = '';
   public estaImportando$: BehaviorSubject<boolean>;
+  public isDownloadingExample$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public errorMessage: string = '';
 
   constructor() {
     super();
@@ -148,9 +155,9 @@ export class ImportarComponent extends General {
         .subscribe((response) => {
           if (response?.mensaje) {
             this.alerta.mensajaExitoso(response?.mensaje);
-            this.emitirConsultarLista.emit();
-            this.emitirCerrarModal.emit();
           }
+          this.emitirCerrarModal.emit();
+          this.emitirConsultarLista.emit();
         });
     } else {
       this.alerta.mensajeError('No se ha seleccionado ningún archivo', 'Error');
@@ -176,10 +183,61 @@ export class ImportarComponent extends General {
     saveAs(data, nombreArchivo);
   }
 
+  /**
+   * Descarga el archivo de ejemplo
+   * Soporta tanto URLs locales como externas
+   */
   descargarEjemploImportar() {
-    this._generalService.descargarArchivoLocal(
-      this.archivoEjemplo.ruta,
-      this.archivoEjemplo.nombre
-    );
+    // Si se proporciona una URL externa, usamos esa primero
+    if (this.exampleFileUrl) {
+      this.downloadExampleFile();
+      return;
+    }
+    
+    // Si no hay URL externa, usamos el método local tradicional
+    if (this.archivoEjemplo?.ruta) {
+      this._generalService.descargarArchivoLocal(
+        this.archivoEjemplo.ruta,
+        this.archivoEjemplo.nombre
+      );
+    } else {
+      this.errorMessage = 'No se ha configurado una ruta para el archivo de ejemplo';
+      this.alerta.mensajeError('Error', 'No se ha configurado una ruta para el archivo de ejemplo');
+    }
+  }
+
+  /**
+   * Descarga el archivo de ejemplo desde una URL externa
+   */
+  downloadExampleFile(): void {
+    if (!this.exampleFileUrl) {
+      this.errorMessage = 'No se ha configurado una URL para el archivo de ejemplo';
+      return;
+    }
+
+    this.isDownloadingExample$.next(true);
+    
+    try {
+      // Si la URL es relativa, usamos el servicio HTTP para descargar
+      if (!this.exampleFileUrl.startsWith('http')) {
+        this._httpService.descargarArchivo(this.exampleFileUrl, {});
+        this.isDownloadingExample$.next(false);
+      } else {
+        // Si es una URL absoluta, creamos un enlace y simulamos un clic
+        const link = document.createElement('a');
+        link.href = this.exampleFileUrl;
+        link.target = '_blank';
+        link.download = this.exampleFileName || 'ejemplo.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.isDownloadingExample$.next(false);
+      }
+    } catch (error) {
+      this.isDownloadingExample$.next(false);
+      this.exampleDownloadError.emit(error);
+      this.errorMessage = 'Error al descargar el archivo de ejemplo';
+      this.alerta.mensajeError('Error', 'No se pudo descargar el archivo de ejemplo');
+    }
   }
 }

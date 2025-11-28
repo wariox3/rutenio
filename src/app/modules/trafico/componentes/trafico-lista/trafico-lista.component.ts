@@ -43,6 +43,7 @@ import { DespachoApiService } from '../../../despacho/servicios/despacho-api.ser
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
+import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -80,6 +81,7 @@ export default class TraficoListaComponent
   private destroy$ = new Subject<void>();
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
+  private _filterTransformerService = inject(FilterTransformerService);
 
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
@@ -366,7 +368,7 @@ export default class TraficoListaComponent
 
   private _consultarNovedadesPorId(id: number) {
     const parametros = {
-      filtros: [{ propiedad: 'visita_id', valor1: id.toString() }],
+      visita_id: id.toString(),
       limite: 50,
       desplazar: 0,
       ordenamientos: ['fecha'],

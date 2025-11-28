@@ -2,6 +2,7 @@ export interface Despacho {
   id: number;
   fecha: string;
   estado?: 'tiempo' | 'retrazado';
+  unidades: number;
   peso: number;
   volumen: number;
   visitas: number;
