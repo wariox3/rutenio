@@ -44,6 +44,9 @@ import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
+import { TRAFICO_LISTA_FILTERS } from '../../mapeos/trafico-lista-mapeo';
+import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -63,8 +66,9 @@ import { FilterTransformerService } from '../../../../core/servicios/filter-tran
     VisitaAdicionarPendienteComponent,
     ModalStandardComponent,
     DespachoTrasbordarComponent,
-    PaginadorComponent
-  ],
+    PaginadorComponent,
+    FiltroComponent
+],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,6 +86,8 @@ export default class TraficoListaComponent
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
   private _filterTransformerService = inject(FilterTransformerService);
+  private _filtroBaseService = inject(FiltroBaseService);
+  public TRAFICO_LISTA_FILTERS = TRAFICO_LISTA_FILTERS
 
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
@@ -98,6 +104,8 @@ export default class TraficoListaComponent
   public currentPage = signal(1);
   public totalPages = signal(1);
   public cantidadRegistros: number = 0;
+  public filtroKey = signal<string>('');
+  public nombreFiltro = '';
 
   customMarkers: any[] = [];
   mostrarMapaFlag = false;
@@ -147,8 +155,22 @@ export default class TraficoListaComponent
   }
 
   ngOnInit(): void {
-    this.consultarLista();
+    this._construirFiltros();
+    this.filtroKey.set(
+      'trafico_lista_filtro'
+    );
+    this.consultarLista(this.arrParametrosConsulta);
   }
+
+  private _construirFiltros() {
+    this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
+    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
+    if (filtroGuardado !== null) {
+      const filtros = JSON.parse(filtroGuardado);
+      //this.arrParametrosConsulta.filtros = [...filtros];
+    }
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -163,9 +185,9 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  consultarLista() {
+  consultarLista(filtros: Record<string, any> = {}) {
     this._generalApiService
-      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', this.arrParametrosConsulta)
+      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', {...this.arrParametrosConsulta, ...filtros})
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
         this.arrDespachos = this._traficoService.agregarEstadoDespacho(respuesta.results);
@@ -648,5 +670,12 @@ export default class TraficoListaComponent
       page
     }
     this.consultarLista();
+  }
+
+
+  filterChange(filters: Record<string, any>) {
+    console.log(filters);
+    
+    this.consultarLista(filters);
   }
 }

@@ -1,3 +1,16 @@
+<div class="card mb-5">
+  <div class="card-header">
+    <h3 class="card-title">Filtros</h3>
+  </div>
+  <div class="card-body">
+    <app-filtro
+      (filtersApply)="filterChange($event)"
+      [availableFields]="TRAFICO_LISTA_FILTERS"
+      [localStorageKey]="filtroKey()"
+    ></app-filtro>
+  </div>
+</div>
+
 <div class="h-[70vh] flex flex-col p-1">
   <div class="card flex-1 flex flex-col min-h-0">
     <div class="card-header flex justify-between items-center">
