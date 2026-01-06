@@ -29,7 +29,7 @@ import { RespuestaLogin } from '../../types/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../services/token.service';
-import { NgxTurnstileModule } from 'ngx-turnstile';
+// import { NgxTurnstileModule } from 'ngx-turnstile';
 import { ConfirmarInivitacion } from '../../types/informacion-perfil.type';
 
 @Component({
@@ -42,7 +42,7 @@ import { ConfirmarInivitacion } from '../../types/informacion-perfil.type';
     InputEmailComponent,
     ButtonComponent,
     RouterLink,
-    NgxTurnstileModule,
+    // NgxTurnstileModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -52,13 +52,13 @@ export default class LoginComponent extends General implements OnInit {
   private tokenService = inject(TokenService);
   private authService = inject(AuthService);
   private _router = inject(Router);
-  turnstileToken: string = '';
-  turnstileSiteKey: string = environment.turnstileSiteKey;
+  // turnstileToken: string = '';
+  // turnstileSiteKey: string = environment.turnstileSiteKey;
   public isLoading$ = new BehaviorSubject<boolean>(false);
   isProduction: boolean = environment.production;
 
   formularioLogin = new FormGroup({
-    cf_turnstile_response: new FormControl(''),
+    // cf_turnstile_response: new FormControl(''),
     proyecto: new FormControl('RUTEO'),
     username: new FormControl('', [Validators.email, Validators.required]),
     password: new FormControl(
@@ -72,18 +72,18 @@ export default class LoginComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.isProduction) {
-      this.formularioLogin
-        .get('cf_turnstile_response')
-        ?.addValidators([Validators.required]);
-    }
+    // if (this.isProduction) {
+    //   this.formularioLogin
+    //     .get('cf_turnstile_response')
+    //     ?.addValidators([Validators.required]);
+    // }
   }
 
-  onTurnstileSuccess(token: string): void {
-    this.turnstileToken = token;
-    this.formularioLogin.get('cf_turnstile_response')?.setValue(token);
-    this.changeDetectorRef.detectChanges();
-  }
+  // onTurnstileSuccess(token: string): void {
+  //   this.turnstileToken = token;
+  //   this.formularioLogin.get('cf_turnstile_response')?.setValue(token);
+  //   this.changeDetectorRef.detectChanges();
+  // }
 
   enviar() {
     if (this.formularioLogin.invalid) {
