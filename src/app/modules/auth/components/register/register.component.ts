@@ -23,7 +23,7 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { General } from '../../../../common/clases/general';
 import { environment } from '../../../../../environments/environment.development';
-import { NgxTurnstileModule } from 'ngx-turnstile';
+// import { NgxTurnstileModule } from 'ngx-turnstile';
 
 @Component({
   selector: 'app-register',
@@ -35,7 +35,7 @@ import { NgxTurnstileModule } from 'ngx-turnstile';
     InputEmailComponent,
     InputPasswordComponent,
     RouterLink,
-    NgxTurnstileModule,
+    // NgxTurnstileModule,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -45,13 +45,13 @@ export default class RegisterComponent extends General implements OnInit {
   private authService = inject(AuthService);
   private _router = inject(Router);
   public registrando$ = new BehaviorSubject<boolean>(false);
-  turnstileToken: string = '';
-  turnstileSiteKey: string = environment.turnstileSiteKey;
+  // turnstileToken: string = '';
+  // turnstileSiteKey: string = environment.turnstileSiteKey;
   isProduction: boolean = environment.production;
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
   formulario = new FormGroup({
-    turnstileToken: new FormControl(''),
+    // turnstileToken: new FormControl(''),
     username: new FormControl('', Validators.required),
     password: new FormControl(
       '',
@@ -72,11 +72,11 @@ export default class RegisterComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.isProduction) {
-      this.formulario
-        .get('cf_turnstile_response')
-        ?.addValidators([Validators.required]);
-    }
+    // if (this.isProduction) {
+    //   this.formulario
+    //     .get('cf_turnstile_response')
+    //     ?.addValidators([Validators.required]);
+    // }
   }
 
   validarContrasena(): ValidatorFn {
@@ -88,11 +88,11 @@ export default class RegisterComponent extends General implements OnInit {
     };
   }
 
-  onTurnstileSuccess(token: string): void {
-    this.turnstileToken = token;
-    this.formulario.get('turnstileToken')?.setValue(token);
-    this.changeDetectorRef.detectChanges();
-  }
+  // onTurnstileSuccess(token: string): void {
+  //   this.turnstileToken = token;
+  //   this.formulario.get('turnstileToken')?.setValue(token);
+  //   this.changeDetectorRef.detectChanges();
+  // }
 
   enviar() {
     this.registrando$.next(true);
