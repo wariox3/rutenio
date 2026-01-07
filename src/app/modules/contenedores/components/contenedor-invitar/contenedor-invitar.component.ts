@@ -93,7 +93,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   eliminarInvitado(usuario_id: Number) {
     this._alertaService
       .mensajeValidacion(
-        'Eliminar usuario de esta contenedor',
+        'Eliminar usuario de este contenedor',
         'Este proceso no tiene reversa',
         'warning',
       )
