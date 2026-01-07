@@ -18,9 +18,9 @@ import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { EffectsApp, StoreApp } from './redux';
-import { tokenInterceptor } from './common/interceptors/token.interceptor';
 import { httpErrorInterceptor } from './common/interceptors/http-error.interceptor';
 import { CORE_PROVIDERS } from './providers/core.providers';
+import { authInterceptor } from './common/interceptors/token.interceptor';
 
 registerLocaleData(en);
 
@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([tokenInterceptor, httpErrorInterceptor]),
+      withInterceptors([authInterceptor, httpErrorInterceptor]),
       withInterceptorsFromDi()
     ),
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -43,6 +43,5 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
     provideHttpClient(),
-    ...CORE_PROVIDERS,
   ],
 };
