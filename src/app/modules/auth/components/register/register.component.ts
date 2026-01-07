@@ -23,7 +23,8 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { General } from '../../../../common/clases/general';
 import { environment } from '../../../../../environments/environment.development';
-// import { NgxTurnstileModule } from 'ngx-turnstile';
+import { NgxTurnstileModule, NgxTurnstileComponent } from 'ngx-turnstile';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -35,7 +36,7 @@ import { environment } from '../../../../../environments/environment.development
     InputEmailComponent,
     InputPasswordComponent,
     RouterLink,
-    // NgxTurnstileModule,
+    NgxTurnstileModule,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
@@ -45,13 +46,15 @@ export default class RegisterComponent extends General implements OnInit {
   private authService = inject(AuthService);
   private _router = inject(Router);
   public registrando$ = new BehaviorSubject<boolean>(false);
-  // turnstileToken: string = '';
-  // turnstileSiteKey: string = environment.turnstileSiteKey;
+  @ViewChild(NgxTurnstileComponent) turnstileComponent!: NgxTurnstileComponent;
+  turnstileToken: string = '';
+  turnstileSiteKey: string = environment.turnstileSiteKey;
   isProduction: boolean = environment.production;
+  enableTurnstile: boolean = environment.enableTurnstile;
   public isLoading$ = new BehaviorSubject<boolean>(false);
 
   formulario = new FormGroup({
-    // turnstileToken: new FormControl(''),
+    cf_turnstile_response: new FormControl(''),
     username: new FormControl('', Validators.required),
     password: new FormControl(
       '',
@@ -72,11 +75,11 @@ export default class RegisterComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    // if (this.isProduction) {
-    //   this.formulario
-    //     .get('cf_turnstile_response')
-    //     ?.addValidators([Validators.required]);
-    // }
+    if (this.enableTurnstile) {
+      this.formulario
+        .get('cf_turnstile_response')
+        ?.addValidators([Validators.required]);
+    }
   }
 
   validarContrasena(): ValidatorFn {
@@ -88,16 +91,24 @@ export default class RegisterComponent extends General implements OnInit {
     };
   }
 
-  // onTurnstileSuccess(token: string): void {
-  //   this.turnstileToken = token;
-  //   this.formulario.get('turnstileToken')?.setValue(token);
-  //   this.changeDetectorRef.detectChanges();
-  // }
+  onTurnstileSuccess(token: string): void {
+    this.turnstileToken = token;
+    this.formulario.get('cf_turnstile_response')?.setValue(token);
+    this.changeDetectorRef.detectChanges();
+  }
 
   enviar() {
     this.registrando$.next(true);
+    
+    const registroData = { ...this.formulario.value };
+    
+    // Solo incluir cf_turnstile_response si Turnstile está habilitado
+    if (!this.enableTurnstile) {
+      delete registroData.cf_turnstile_response;
+    }
+    
     this.authService
-      .registro(this.formulario.value)
+      .registro(registroData)
       .pipe(finalize(() => this.registrando$.next(false)))
       .subscribe((resultado: RespuestaRegistro) => {
         if (resultado.usuario.id) {
