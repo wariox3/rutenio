@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { removeCookie } from 'typescript-cookie';
 import { environment } from '../../../../environments/environment.development';
 import { noRequiereToken } from '../../../common/interceptors/token.interceptor';
@@ -11,11 +11,17 @@ import {
   TokenVerificacion,
   UsuarioInformacionPerfil,
 } from '../types/informacion-perfil.type';
+import { AuthState } from '../state/auth.state';
+import { catchError, of, tap } from 'rxjs';
+import { RespuestaLogin } from '../types/auth.interface';
+import { Usuario } from '../../../interfaces/user/user.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private state = inject(AuthState)
+
   constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   registro(parametros: any) {
@@ -26,11 +32,27 @@ export class AuthService {
     );
   }
 
+   loadUser() {
+    return this.http.get('/auth/me', {
+      withCredentials: true,
+    }).pipe(
+      tap((user: Usuario) => this.state.setUser(user)),
+      catchError(() => {
+        this.state.clear();
+        return of(null);
+      })
+    );
+  }
+
   login(parametros: any) {
-    return this.http.post<any>(
+    return this.http.post<RespuestaLogin>(
       `${environment.url_api}/seguridad/login/`,
       parametros,
       { context: noRequiereToken() }
+    ).pipe(
+      tap((response) => {
+        this.state.setUser(response.user);
+      })
     );
   }
 

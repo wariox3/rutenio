@@ -1,6 +1,8 @@
-import { HttpContext, HttpContextToken, HttpHandlerFn, type HttpInterceptorFn } from '@angular/common/http';
+import { HttpContext, HttpContextToken, type HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { TokenService } from '../../modules/auth/services/token.service';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
+import { AuthState } from '../../modules/auth/state/auth.state';
 
   const requiereToken = new HttpContextToken<boolean>(()=> true)
   
@@ -9,31 +11,21 @@ import { TokenService } from '../../modules/auth/services/token.service';
   }
 
 
-export const tokenInterceptor: HttpInterceptorFn = (request, next: HttpHandlerFn) => {
-  const authService = inject(TokenService);
-  if (request.context.get(requiereToken)) {
-    //validar vigencia
-    const tokenValido = authService.validarToken();
-    if (tokenValido) {
-      return adicionarToken(request, next);
-    } else {
-      // return this.actualizarTokenPorVencimiento(request, next);
-    }
-  }
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const router = inject(Router);
+  const state = inject(AuthState);
 
-  return next(request);
+  const request = req.clone({
+    withCredentials: true,
+  });
+
+  return next(request).pipe(
+    catchError(err => {
+      if (err.status === 401 && state.isAuthenticated()) {
+        state.clear();
+        router.navigate(['/auth/login']);
+      }
+      return throwError(() => err);
+    })
+  );
 };
-
-const adicionarToken = (request: any, next: HttpHandlerFn) => {
-  const authService = inject(TokenService);  
-  if (request.context.get(requiereToken)) {
-    const token = authService.obtener();
-    if (token) {
-      const authReq = request.clone({
-        headers: request.headers.set('Authorization', `Bearer ${token}`),
-      });
-      return next(authReq);
-    }
-  }
-  return next(request);
-}
