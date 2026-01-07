@@ -1,16 +1,15 @@
 import { inject } from '@angular/core';
 import { Router, type CanMatchFn } from '@angular/router';
 import { TokenService } from '../../modules/auth/services/token.service';
+import { AuthState } from '../../modules/auth/state/auth.state';
 
 export const authGuard: CanMatchFn = (route, segments) => {
-  const tokenValido = inject(TokenService).validarToken();
-
+  const state = inject(AuthState);
   const router = inject(Router);
 
-  if (tokenValido) {
+  if (state.isAuthenticated()) {
     return true;
   }
 
-  router.navigate(['/auth']);
-  return false;
+  return router.parseUrl('/auth/login');
 };
