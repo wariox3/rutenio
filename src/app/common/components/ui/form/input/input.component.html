@@ -14,19 +14,19 @@
 
 <ng-container class="flex flex-col" *ngIf="control.invalid && control.touched">
   <span *ngIf="control.hasError('required')" class="text-danger text-xs block">
-    El campo es requerido.
+    {{ fieldName }} es requerido.
   </span>
   <span *ngIf="control.hasError('minlength')" class="text-danger text-xs block">
-    El campo debe tener un mínimo de caracteres de {{ minLength }}.
+    {{ fieldName }} debe tener un mínimo de {{ minLength }} caracteres.
   </span>
   <span *ngIf="control.hasError('maxlength')" class="text-danger text-xs block">
-    El campo debe tener un máximo de caracteres de {{ maxLength }}.
+    {{ fieldName }} debe tener un máximo de {{ maxLength }} caracteres.
   </span>
   <span *ngIf="control.hasError('pattern')" class="text-danger text-xs block">
-    Formato inválido.
+    {{ fieldName }} tiene un formato inválido.
   </span>
   <span *ngIf="control.hasError('min')" class="text-danger text-xs block">
-    El valor debe ser mayor a cero.
+    {{ fieldName }} debe ser mayor a cero.
   </span>
 </ng-container>
 <ng-container *ngIf="errorTemplate">

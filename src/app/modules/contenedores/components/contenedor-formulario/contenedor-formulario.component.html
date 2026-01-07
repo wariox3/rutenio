@@ -6,7 +6,7 @@
                 *
             </span>
         </label>
-        <app-input (keyup)="modificarCampoFormulario('subdominio', $event)"
+        <app-input [fieldName]="'El nombre'" (keyup)="modificarCampoFormulario('subdominio', $event)"
             [control]="formularioContenedor.controls.nombre" [minLength]='3' [maxLength]="100"></app-input>
         <!-- <span *ngIf="nombreEmpresa !== ''" class="form-hint cursor-pointer hover:text-blue-300"
             (click)="editarSubdominio()">
@@ -50,7 +50,7 @@
                         *
                     </span>
                 </label>
-                <app-input [control]="formularioContenedor.controls.telefono" [minLength]='10'
+                <app-input [fieldName]="'El teléfono'" [control]="formularioContenedor.controls.telefono" [minLength]='10'
                     [maxLength]="15"></app-input>
             </div>
         </div>

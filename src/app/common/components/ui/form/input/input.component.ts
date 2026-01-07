@@ -25,6 +25,7 @@ export class InputComponent {
   @Input() mayorACero = false;
   @Input({ required: true }) control = new FormControl();
   @Input() errorTemplate?: TemplateRef<any>;
+  @Input() fieldName = 'El campo';
 
   public value: string = '';
   public isDisabled: boolean = false;
