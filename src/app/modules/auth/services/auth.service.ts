@@ -33,7 +33,7 @@ export class AuthService {
   }
 
    loadUser() {
-    return this.http.get('/auth/me', {
+    return this.http.get('/seguridad/verify/', {
       withCredentials: true,
     }).pipe(
       tap((user: Usuario) => this.state.setUser(user)),

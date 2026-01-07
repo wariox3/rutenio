@@ -1,11 +1,9 @@
 import { Routes } from '@angular/router';
-import { authGuard } from '../common/guards/auth.guard';
 import { contenedorGuard } from '../common/guards/contenedor.guard';
 
 export default [
   {
     path: 'contenedor',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('./contenedor-layout/contenedor-layout.component'),
     children: [
@@ -17,7 +15,6 @@ export default [
   },
   {
     path: 'facturacion',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('./facturacion-layout/facturacion-layout.component'),
     children: [
@@ -29,7 +26,6 @@ export default [
   },
   {
     path: 'perfil',
-    canActivate: [authGuard],
     loadComponent: () => import('./facturacion-layout/facturacion-layout.component'),
     children: [
       {
@@ -40,7 +36,6 @@ export default [
   },
   {
     path: 'configuracion',
-    canActivate: [authGuard],
     loadComponent: () => import('./facturacion-layout/facturacion-layout.component'),
     children: [
       {
@@ -51,7 +46,6 @@ export default [
   },
   {
     path: 'estado',
-    canActivate: [authGuard],
     loadComponent: () =>
       import('./facturacion-layout/facturacion-layout.component'),
     children: [
@@ -65,7 +59,7 @@ export default [
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () =>
       import('./admin-layout/admin-layout.component'),
     children: [
@@ -77,7 +71,7 @@ export default [
   },
   {
     path: 'rutear',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () =>
       import('./admin-layout/admin-layout.component'),
     children: [
@@ -92,7 +86,7 @@ export default [
   },
   {
     path: 'diseno-ruta',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () =>
       import('./admin-layout/admin-layout.component'),
     children: [
@@ -104,7 +98,7 @@ export default [
   },
   {
     path: 'trafico',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () =>
       import('./admin-layout/admin-layout.component'),
     children: [
@@ -116,7 +110,7 @@ export default [
   },
   {
     path: 'complemento',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () =>
       import('./admin-layout/admin-layout.component'),
     children: [
@@ -129,7 +123,7 @@ export default [
   },
   {
     path: 'administracion',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),
     children: [
       {
@@ -148,7 +142,7 @@ export default [
   },
   {
     path: 'proceso',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),
     children: [
       {
@@ -159,7 +153,7 @@ export default [
   },
   {
     path: 'movimiento',
-    canActivate: [authGuard, contenedorGuard],
+    canActivate: [contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),
     children: [
       {
