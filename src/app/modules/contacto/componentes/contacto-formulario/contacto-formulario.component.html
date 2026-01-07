@@ -27,14 +27,22 @@
             class="select mt-1"
             name="select"
             [formControl]="formularioContacto.controls.tipo_persona"
+            [ngClass]="{
+              'border-danger': formularioContacto.controls.tipo_persona.touched && formularioContacto.controls.tipo_persona.invalid,
+              'border-success': formularioContacto.controls.tipo_persona.touched && formularioContacto.controls.tipo_persona.valid
+            }"
           >
-            <option value="0">Seleccionar</option>
             @for (tipoPersona of arrTipoPersona; track $index) {
             <option [value]="tipoPersona.id">
               {{ tipoPersona.nombre }}
             </option>
             }
           </select>
+          <ng-container *ngIf="formularioContacto.controls.tipo_persona.invalid && formularioContacto.controls.tipo_persona.touched">
+            <span *ngIf="formularioContacto.controls.tipo_persona.hasError('required')" class="text-danger text-xs block">
+              El tipo de persona es requerido.
+            </span>
+          </ng-container>
         </div>
         <div></div>
       </div>
@@ -44,13 +52,15 @@
           <section>
             <app-label [required]="true">Número de identificación</app-label>
             <app-input
+              [fieldName]="'El número de identificación'"
               [control]="formularioContacto.controls.numero_identificacion"
               [maxLength]="20"
             ></app-input>
           </section>
           <section>
-            <app-label [required]="true">Digito verificación</app-label>
+            <app-label [required]="true">Dígito verificación</app-label>
             <app-input
+              [fieldName]="'El dígito verificación'"
               [control]="formularioContacto.controls.digito_verificacion"
               [maxLength]="1"
             ></app-input>
@@ -62,14 +72,22 @@
             class="select mt-1"
             name="select"
             [formControl]="formularioContacto.controls.identificacion"
+            [ngClass]="{
+              'border-danger': formularioContacto.controls.identificacion.touched && formularioContacto.controls.identificacion.invalid,
+              'border-success': formularioContacto.controls.identificacion.touched && formularioContacto.controls.identificacion.valid
+            }"
           >
-            <option value="0">Seleccionar</option>
             @for (identificacion of arrIdentificacion; track $index) {
             <option [value]="identificacion.id">
               {{ identificacion.nombre }}
             </option>
             }
           </select>
+          <ng-container *ngIf="formularioContacto.controls.identificacion.invalid && formularioContacto.controls.identificacion.touched">
+            <span *ngIf="formularioContacto.controls.identificacion.hasError('required')" class="text-danger text-xs block">
+              El tipo de identificación es requerido.
+            </span>
+          </ng-container>
         </div>
       </div>
 
@@ -111,6 +129,7 @@
         <div>
           <app-label [required]="true">Teléfono</app-label>
           <app-input
+            [fieldName]="'El teléfono'"
             [control]="formularioContacto.controls.telefono"
             [maxLength]="50"
             [minLength]="3"
@@ -119,6 +138,7 @@
         <div>
           <app-label [required]="true">Celular</app-label>
           <app-input
+            [fieldName]="'El celular'"
             [control]="formularioContacto.controls.celular"
             [maxLength]="50"
             [minLength]="3"
@@ -153,13 +173,14 @@
               *ngIf="formularioContacto.controls.ciudad.hasError('required')"
               class="text-danger text-xs block"
             >
-              El campo es requerido.
+              La ciudad es requerida.
             </span>
           </ng-container>
         </div>
         <div>
           <app-label [required]="true">Dirección</app-label>
           <app-input
+            [fieldName]="'La dirección'"
             [control]="formularioContacto.controls.direccion"
           ></app-input>
         </div>
@@ -185,14 +206,22 @@
             class="select mt-1"
             name="select"
             [formControl]="formularioContacto.controls.regimen"
+            [ngClass]="{
+              'border-danger': formularioContacto.controls.regimen.touched && formularioContacto.controls.regimen.invalid,
+              'border-success': formularioContacto.controls.regimen.touched && formularioContacto.controls.regimen.valid
+            }"
           >
-            <option value="0">Seleccionar</option>
             @for (regimen of arrRegimen; track $index) {
             <option [value]="regimen.id">
               {{ regimen.nombre }}
             </option>
             }
           </select>
+          <ng-container *ngIf="formularioContacto.controls.regimen.invalid && formularioContacto.controls.regimen.touched">
+            <span *ngIf="formularioContacto.controls.regimen.hasError('required')" class="text-danger text-xs block">
+              El régimen es requerido.
+            </span>
+          </ng-container>
         </div>
         <div>
           <app-label> Código CIUU </app-label>
@@ -218,14 +247,22 @@
             class="select mt-1"
             name="select"
             [formControl]="formularioContacto.controls.plazo_pago"
+            [ngClass]="{
+              'border-danger': formularioContacto.controls.plazo_pago.touched && formularioContacto.controls.plazo_pago.invalid,
+              'border-success': formularioContacto.controls.plazo_pago.touched && formularioContacto.controls.plazo_pago.valid
+            }"
           >
-            <option value="0">Seleccionar</option>
             @for (plazoPago of arrPlazoPagos; track $index) {
             <option [value]="plazoPago.id">
               {{ plazoPago.nombre }}
             </option>
             }
           </select>
+          <ng-container *ngIf="formularioContacto.controls.plazo_pago.invalid && formularioContacto.controls.plazo_pago.touched">
+            <span *ngIf="formularioContacto.controls.plazo_pago.hasError('required')" class="text-danger text-xs block">
+              El plazo de pago es requerido.
+            </span>
+          </ng-container>
         </div>
         <div></div>
       </div>
