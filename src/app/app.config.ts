@@ -20,7 +20,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { EffectsApp, StoreApp } from './redux';
 import { tokenInterceptor } from './common/interceptors/token.interceptor';
 import { httpErrorInterceptor } from './common/interceptors/http-error.interceptor';
-import { CORE_PROVIDERS } from './providers/core.providers';
 
 registerLocaleData(en);
 
@@ -43,6 +42,5 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
     provideHttpClient(),
-    ...CORE_PROVIDERS,
   ],
 };
