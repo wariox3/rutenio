@@ -5,6 +5,7 @@
         <div>
           <app-label [required]="true">Nombre</app-label>
           <app-input
+            [fieldName]="'El nombre corto'"
             [control]="formularioInformacionFacturacion.controls.nombre_corto"
           ></app-input>
         </div>
@@ -14,6 +15,7 @@
       <div>
         <app-label [required]="true">Número de identificación</app-label>
         <app-input
+          [fieldName]="'El número de identificación'"
           [control]="
             formularioInformacionFacturacion.controls.numero_identificacion
           "
@@ -29,7 +31,6 @@
             formularioInformacionFacturacion.controls.identificacion
           "
         >
-          <option value="0">Seleccionar</option>
           @for (identificacion of tipoIdentificaciones(); track $index) {
           <option [value]="identificacion.id">
             {{ identificacion.nombre }}
@@ -78,7 +79,7 @@
             "
             class="text-danger text-xs block"
           >
-            El campo es requerido.
+            La ciudad es requerido.
           </span>
         </ng-container>
       </div>
@@ -93,6 +94,7 @@
       <div>
         <app-label [required]="true">Teléfono</app-label>
         <app-input
+          [fieldName]="'El teléfono'"
           [control]="formularioInformacionFacturacion.controls.telefono"
           [maxLength]="50"
           [minLength]="3"

@@ -30,6 +30,7 @@
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [fieldName]="'El destinatario'"
           [control]="formularioVisitaRutear.controls.destinatario"
         ></app-input>
       </div>
@@ -41,6 +42,7 @@
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [fieldName]="'La dirección'"
           [control]="formularioVisitaRutear.controls.destinatario_direccion"
         ></app-input>
       </div>
@@ -65,6 +67,7 @@
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [fieldName]="'Las unidades'"
           [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.unidades"
         ></app-input>
@@ -75,6 +78,7 @@
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [fieldName]="'El peso'"
           [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.peso"
         ></app-input>
@@ -85,6 +89,7 @@
           <span class="text-danger"> * </span>
         </label>
         <app-input
+          [fieldName]="'El volumen'"
           [soloNumeros]="true"
           [control]="formularioVisitaRutear.controls.volumen"
         ></app-input>

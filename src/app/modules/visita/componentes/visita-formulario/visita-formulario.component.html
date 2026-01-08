@@ -53,6 +53,7 @@
       <div>
         <app-label [required]="true">Dirección</app-label>
         <app-input
+          [fieldName]="'La dirección'"
           [control]="formularioVisita.controls.destinatario_direccion"
         ></app-input>
       </div>
@@ -84,7 +85,7 @@
           *ngIf="formularioVisita.controls.ciudad.hasError('required')"
           class="text-danger text-xs block"
         >
-          El campo es requerido.
+          La ciudad es requerida.
         </span>
       </ng-container>
     </div>
@@ -104,6 +105,7 @@
       <div>
         <app-label [required]="true">Unidades</app-label>
         <app-input
+          [fieldName]="'Las unidades'"
           [control]="formularioVisita.controls.unidades"
           [soloNumeros]="true"
           [mayorACero]="true"
@@ -119,6 +121,7 @@
       <div>
         <app-label [required]="true">Peso</app-label>
         <app-input
+          [fieldName]="'El peso'"
           [control]="formularioVisita.controls.peso"
           [soloNumeros]="true"
           [mayorACero]="true"
@@ -129,6 +132,7 @@
       <div>
         <app-label [required]="true">Volumen</app-label>
         <app-input
+          [fieldName]="'El volumen'"
           [control]="formularioVisita.controls.volumen"
           [soloNumeros]="true"
           [mayorACero]="true"
@@ -141,6 +145,7 @@
       <div>
         <app-label [required]="true">Timpo servicio</app-label>
         <app-input
+          [fieldName]="'El tiempo de servicio'"
           [control]="formularioVisita.controls.tiempo_servicio"
           [soloNumeros]="true"
           [mayorACero]="true"
@@ -205,6 +210,7 @@
           <div>
             <app-label [required]="true">Dirección</app-label>
             <app-input
+              [fieldName]="'La dirección'"
               [control]="formularioVisita.controls.destinatario_direccion"
             ></app-input>
           </div>
@@ -256,6 +262,7 @@
           <div>
             <app-label [required]="true">Unidades</app-label>
             <app-input
+              [fieldName]="'Las unidades'"
               [control]="formularioVisita.controls.unidades"
               [soloNumeros]="true"
               [mayorACero]="true"
@@ -271,6 +278,7 @@
           <div>
             <app-label [required]="true">Peso</app-label>
             <app-input
+              [fieldName]="'El peso'"
               [control]="formularioVisita.controls.peso"
               [soloNumeros]="true"
               [mayorACero]="true"
@@ -281,6 +289,7 @@
           <div>
             <app-label [required]="true">Volumen</app-label>
             <app-input
+              [fieldName]="'El volumen'"
               [control]="formularioVisita.controls.volumen"
               [soloNumeros]="true"
               [mayorACero]="true"
@@ -293,6 +302,7 @@
           <div>
             <app-label [required]="true">Timpo servicio</app-label>
             <app-input
+              [fieldName]="'El tiempo de servicio'"
               [control]="formularioVisita.controls.tiempo_servicio"
               [soloNumeros]="true"
               [mayorACero]="true"
