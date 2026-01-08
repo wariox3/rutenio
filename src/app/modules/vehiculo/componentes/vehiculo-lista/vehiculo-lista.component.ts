@@ -105,31 +105,45 @@ export default class VehiculoListaComponent extends General implements OnInit {
     this._listaItemsEliminar = items;
   }
 
-  eliminarItemsSeleccionados() {
+  async eliminarItemsSeleccionados() {
     if (this._listaItemsEliminar.length === 0) {
       return;
     }
 
-    this.vehiculoService
-      .eliminarVehiculos(this._listaItemsEliminar)
-      .pipe(
-        finalize(() => {
-          this._listaItemsEliminar = [];
-          this.consultarLista();
-          this.changeDetectorRef.detectChanges();
-        })
-      )
-      .subscribe({
-        next: () => {
-          this.alerta.mensajaExitoso('Se han eliminado los registros');
-        },
-        error: (error) => {
-          this.alerta.mensajeError(
-            'Error al eliminar',
-            'No se han eliminado algunos de los registros'
-          );
-        },
-      });
+    const cantidadVehiculos = this._listaItemsEliminar.length;
+    const textoConfirmacion = cantidadVehiculos === 1 
+      ? '¿Estás seguro de que deseas eliminar este vehículo?' 
+      : `¿Estás seguro de que deseas eliminar estos ${cantidadVehiculos} vehículos?`;
+
+    const resultado = await this.alerta.confirmar({
+      titulo: 'Confirmar eliminación',
+      texto: textoConfirmacion,
+      textoBotonCofirmacion: 'Sí, eliminar',
+      colorConfirmar: '#d33'
+    });
+
+    if (resultado.isConfirmed) {
+      this.vehiculoService
+        .eliminarVehiculos(this._listaItemsEliminar)
+        .pipe(
+          finalize(() => {
+            this._listaItemsEliminar = [];
+            this.consultarLista();
+            this.changeDetectorRef.detectChanges();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.alerta.mensajaExitoso('Se han eliminado los registros');
+          },
+          error: (error) => {
+            this.alerta.mensajeError(
+              'Error al eliminar',
+              'No se han eliminado algunos de los registros'
+            );
+          },
+        });
+    }
   }
 
   abrirModal(id: string) {
