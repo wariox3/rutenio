@@ -64,10 +64,20 @@ export default class VehiculoFormularioComponent
     ),
     capacidad: new FormControl(
       0,
-      Validators.compose([Validators.required, Validators.pattern('^[0-9]*$')])
+      Validators.compose([
+        Validators.required,
+        Validators.min(1),
+        Validators.max(50000),
+        Validators.pattern('^[0-9]+$')
+      ])
     ),
     estado_activo: new FormControl(true),
-    tiempo: new FormControl(0, [Validators.required]),
+    tiempo: new FormControl(0, [
+      Validators.required,
+      Validators.min(1),
+      Validators.max(1440),
+      Validators.pattern('^[0-9]+$')
+    ]),
     estado_asignado: new FormControl(false),
     usuario_app: new FormControl(null),
     franja_id: new FormControl([]),

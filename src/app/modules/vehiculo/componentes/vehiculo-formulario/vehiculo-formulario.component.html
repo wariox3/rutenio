@@ -52,12 +52,19 @@
               [fieldName]="'La capacidad'"
               [control]="formularioVehiculo.controls.capacidad"
               placeholder="1000"
+              [soloNumeros]="true"
+              type="number"
               ></app-input>
           </div>
         </div>
         <div>
           <app-label [required]="true">Tiempo (min)</app-label>
-          <app-input [fieldName]="'El tiempo'" [control]="formularioVehiculo.controls.tiempo" placeholder="480"></app-input>
+          <app-input 
+            [fieldName]="'El tiempo'" 
+            [control]="formularioVehiculo.controls.tiempo" 
+            placeholder="480"
+            [soloNumeros]="true"
+            type="number"></app-input>
         </div>
       </div>
 
