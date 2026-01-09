@@ -81,19 +81,33 @@ export default class FranjaEditarComponent extends General {
   actualizarFranja() {
     this.actualizandoFranja$.next(true);
     const color = this.formularioFranja.get('color').value;
-    this.formularioFranja.patchValue({
-      color: color.slice(1),
-    });
+    const colorOriginal = color;
+    
+    // Crear una copia de los datos del formulario para el envío
+    const datosParaEnvio = {
+      ...this.formularioFranja.value,
+      color: color.slice(1), // Remover el # solo para el envío
+    };
+    
     this._franjaService
-      .actualizarFranja(this.franja.id, this.formularioFranja.value)
+      .actualizarFranja(this.franja.id, datosParaEnvio)
       .pipe(
         finalize(() => {
           this.actualizandoFranja$.next(false);
         })
       )
-      .subscribe(() => {
-        this.alerta.mensajaExitoso('Se ha actualizado la franja exitosamente.');
-        this.emitirCerrarModal.emit();
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Se ha actualizado la franja exitosamente.');
+          this.emitirCerrarModal.emit();
+        },
+        error: (error) => {
+          // Restaurar el color original en caso de error
+          this.formularioFranja.patchValue({
+            color: colorOriginal,
+          });
+          this.alerta.mensajeError('Error al actualizar la franja', 'Por favor intente nuevamente.');
+        }
       });
   }
 
