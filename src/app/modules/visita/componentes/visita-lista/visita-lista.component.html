@@ -196,8 +196,7 @@
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
-      archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-      url="ruteo/visita/importar-excel/"
+      archivosAdmitidos='.xls,.xlsx'
       [archivoEjemplo]="{
         nombre: 'estructuraVisita',
         ruta: 'assets/ejemplos/modelo/estructuraVisita.xlsx'
