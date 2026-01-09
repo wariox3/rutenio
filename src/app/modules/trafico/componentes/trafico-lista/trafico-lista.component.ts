@@ -14,14 +14,20 @@ import {
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
-import { BehaviorSubject, finalize, Observable, Subject, takeUntil } from 'rxjs';
+import {
+  BehaviorSubject,
+  finalize,
+  Observable,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { ModalStandardComponent } from "../../../../common/components/ui/modals/modal-standard/modal-standard.component";
+import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
-import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 import { FormatFechaPipe } from '../../../../common/pipes/formatear_fecha';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { GeneralService } from '../../../../common/services/general.service';
@@ -38,15 +44,16 @@ import { VisitaAdicionarPendienteComponent } from '../../../despacho/componentes
 import DespachoFormularioComponent from '../../../despacho/componentes/despacho-formulario/despacho-formulario.component';
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
-import { DespachoTrasbordarComponent } from "../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component";
+import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
 import { TRAFICO_LISTA_FILTERS } from '../../mapeos/trafico-lista-mapeo';
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
+import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
+import { HttpService } from '../../../../common/services/http.service';
 
 @Component({
   selector: 'app-trafico-lista',
@@ -67,15 +74,16 @@ import { FiltroBaseService } from '../../../../common/components/filtros/filtro-
     ModalStandardComponent,
     DespachoTrasbordarComponent,
     PaginadorComponent,
-    FiltroComponent
-],
+    FiltroComponent,
+  ],
   templateUrl: './trafico-lista.component.html',
   styleUrl: './trafico-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class TraficoListaComponent
   extends General
-  implements OnInit, OnDestroy {
+  implements OnInit, OnDestroy
+{
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
@@ -83,11 +91,12 @@ export default class TraficoListaComponent
   private directionsService = inject(MapDirectionsService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
+  private _httpService = inject(HttpService);
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
   private _filterTransformerService = inject(FilterTransformerService);
   private _filtroBaseService = inject(FiltroBaseService);
-  public TRAFICO_LISTA_FILTERS = TRAFICO_LISTA_FILTERS
+  public TRAFICO_LISTA_FILTERS = TRAFICO_LISTA_FILTERS;
 
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
@@ -128,7 +137,7 @@ export default class TraficoListaComponent
     estado_aprobado: 'True',
     estado_terminado: 'False',
     estado_anulado: 'False',
-    page: 1
+    page: 1,
   };
 
   arrDespachos: Despacho[] = [];
@@ -156,9 +165,7 @@ export default class TraficoListaComponent
 
   ngOnInit(): void {
     this._construirFiltros();
-    this.filtroKey.set(
-      'trafico_lista_filtro'
-    );
+    this.filtroKey.set('trafico_lista_filtro');
     this.consultarLista(this.arrParametrosConsulta);
   }
 
@@ -170,7 +177,6 @@ export default class TraficoListaComponent
       //this.arrParametrosConsulta.filtros = [...filtros];
     }
   }
-
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -187,11 +193,16 @@ export default class TraficoListaComponent
 
   consultarLista(filtros: Record<string, any> = {}) {
     this._generalApiService
-      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', {...this.arrParametrosConsulta, ...filtros})
+      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', {
+        ...this.arrParametrosConsulta,
+        ...filtros,
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => {
-        this.arrDespachos = this._traficoService.agregarEstadoDespacho(respuesta.results);
-        this.cantidadRegistros = respuesta.count
+        this.arrDespachos = this._traficoService.agregarEstadoDespacho(
+          respuesta.results
+        );
+        this.cantidadRegistros = respuesta.count;
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -203,13 +214,18 @@ export default class TraficoListaComponent
       despacho_id: despachoId.toString(),
     };
 
-    return this._generalApiService.consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsultaVisitas).pipe(takeUntil(this.destroy$));
+    return this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>(
+        'ruteo/visita/',
+        parametrosConsultaVisitas
+      )
+      .pipe(takeUntil(this.destroy$));
   }
 
   private consultarUbicacion(despachoId: number) {
     const parametrosConsultaUbicacion: ParametrosApi = {
       ordering: '-fecha',
-      despacho_id: despachoId.toString()
+      despacho_id: despachoId.toString(),
       // filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
       // limite: 25,
       // desplazar: 0,
@@ -219,7 +235,10 @@ export default class TraficoListaComponent
     };
 
     return this._generalApiService
-      .consultaApi<RespuestaApi<Ubicacion>>('ruteo/ubicacion/', parametrosConsultaUbicacion)
+      .consultaApi<RespuestaApi<Ubicacion>>(
+        'ruteo/ubicacion/',
+        parametrosConsultaUbicacion
+      )
       .pipe(takeUntil(this.destroy$));
   }
 
@@ -241,7 +260,7 @@ export default class TraficoListaComponent
   }
 
   descargarPlanoSemantica(id: number) {
-    this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
+    this._httpService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,
     });
   }
@@ -367,10 +386,7 @@ export default class TraficoListaComponent
       : 'bg-green-500';
   }
 
-  obtenerAnchoProgreso(
-    entregadas: number,
-    totales: number
-  ): string {
+  obtenerAnchoProgreso(entregadas: number, totales: number): string {
     if (totales === 0) return '0%';
     return `${Math.min((entregadas / totales) * 100, 100)}%`;
   }
@@ -667,15 +683,14 @@ export default class TraficoListaComponent
     //this.consultaLista({ page });
     this.arrParametrosConsulta = {
       ...this.arrParametrosConsulta,
-      page
-    }
+      page,
+    };
     this.consultarLista();
   }
 
-
   filterChange(filters: Record<string, any>) {
     console.log(filters);
-    
+
     this.consultarLista(filters);
   }
 }
