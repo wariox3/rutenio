@@ -51,7 +51,7 @@ export class GeneralService extends Subdomino {
   }
 
   importar(url: string, data: any) {
-    return this.http.post<{ mensaje: string }>(url, data);
+    return this.http.post<{ registros_importados: number }>(url, data);
   }
 
   public descargarArchivoLocal(fileUrl: string, nombreArchivo: string) {
