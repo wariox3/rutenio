@@ -38,6 +38,7 @@ import { VisitaRutearDetalleComponent } from '../../../visita/componentes/visita
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { HttpService } from '../../../../common/services/http.service';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -72,6 +73,7 @@ export default class DisenoRutaListaComponent
   private _visitaApiService = inject(VisitaApiService);
   private _generalApiService = inject(GeneralApiService);
   private _generalService = inject(GeneralService);
+  private _httpService = inject(HttpService);
   private _modalService = inject(ModalService);
   private ultimoDespachoSeleccionadoId: number | null = null;
 
@@ -425,7 +427,7 @@ export default class DisenoRutaListaComponent
   }
 
   descargarPlanoSemantica(id: number) {
-    this._generalService.descargarArchivo('ruteo/despacho/plano-semantica/', {
+    this._httpService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,
     });
   }
