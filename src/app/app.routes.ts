@@ -14,5 +14,8 @@ export const routes: Routes = [
     path: '',
     loadChildren: () => import('./pages/pages.routes'),
   },
-  { path: '**', redirectTo: 'auth' },
+  { 
+    path: '**', 
+    loadComponent: () => import('./pages/not-found/not-found.component')
+  },
 ];
