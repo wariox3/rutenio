@@ -20,7 +20,11 @@
     <div class="mb-5">
       <div>
         <app-label [required]="false">Número</app-label>
-        <app-input [control]="formularioVisita.controls.numero"></app-input>
+        <app-input
+          fieldName="El número "
+          [control]="formularioVisita.controls.numero"
+          [maxLength]="2147483647"
+        ></app-input>
       </div>
     </div>
     <div class="mb-5">
@@ -175,7 +179,16 @@
         <div class="mb-5">
           <div>
             <app-label [required]="false">Número</app-label>
-            <app-input [control]="formularioVisita.controls.numero"></app-input>
+            <ui-input
+              type="number"
+              placeholder=""
+              formControlName="numero"
+              [control]="formularioVisita.get('numero')"
+              [errors]="{
+                min: 'Ingresa un número mayor a 0',
+                max: 'Ingresa un número menor a 2147483647',
+              }"
+            ></ui-input>
           </div>
         </div>
         <div class="mb-5">
@@ -190,7 +203,7 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
         <div class="mb-5">
           <div>
-            <app-label [required]="false">Destinatario</app-label>
+            <app-label [required]="true">Destinatario</app-label>
             <app-input
               [control]="formularioVisita.controls.destinatario"
             ></app-input>

@@ -26,6 +26,9 @@ import { LabelComponent } from '../../../../common/components/ui/form/label/labe
 import { GeneralApiService } from '../../../../core';
 import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
 import { VisitaApiService } from '../../servicios/visita-api.service';
+import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
+import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
+
 
 @Component({
   selector: 'app-visita-formulario',
@@ -39,6 +42,7 @@ import { VisitaApiService } from '../../servicios/visita-api.service';
     InputEmailComponent,
     LabelComponent,
     NgSelectModule,
+    InputUiComponent,
   ],
   templateUrl: 'visita-formulario.component.html',
   styleUrl: './visita-formulario.component.css',
@@ -60,7 +64,7 @@ export default class VisitaFormularioComponent
   private destroy$ = new Subject<void>();
 
   public formularioVisita = new FormGroup({
-    numero: new FormControl(''),
+    numero: new FormControl(null, [cambiarVacioPorNulo.validar, Validators.min(1), Validators.max(2147483647)]),
     documento: new FormControl(null),
     destinatario: new FormControl('', [Validators.required]),
     destinatario_direccion: new FormControl('', [Validators.required]),
