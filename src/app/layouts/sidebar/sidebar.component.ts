@@ -1,9 +1,10 @@
-import { Component, HostBinding } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, HostBinding, OnInit } from '@angular/core';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { SidebarMenu } from '../../interfaces/general/sidebar/menu.interface';
 import { RouterLinkActive } from '@angular/router';
 import { General } from '../../common/clases/general';
 import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
-export class SidebarComponent extends General {
+export class SidebarComponent extends General implements OnInit {
   @HostBinding('class') hostClass =
     'sidebar dark:bg-coal-600 bg-light border-r border-r-gray-200 dark:border-r-coal-100 fixed z-20 hidden lg:flex flex-col items-stretch shrink-0';
   @HostBinding('attr.data-drawer') drawer = 'true';
@@ -20,6 +21,8 @@ export class SidebarComponent extends General {
     'drawer drawer-start top-0 bottom-0';
   @HostBinding('attr.data-drawer-enable') drawerEnable = 'true|lg:false';
   @HostBinding('attr.id') id = 'sidebar';
+
+  public accordionStates: { [key: string]: boolean } = {};
 
   public sidebarMenu: SidebarMenu[] = [
     {
@@ -113,7 +116,49 @@ export class SidebarComponent extends General {
     },
   ];
 
+  ngOnInit(): void {
+    this.initializeAccordionStates();
+    this.subscribeToRouteChanges();
+  }
+
+  private initializeAccordionStates(): void {
+    this.sidebarMenu.forEach(menu => {
+      if (menu.tipoAcordion) {
+        this.accordionStates[menu.nombre] = this.isParentMenuActive(menu);
+      }
+    });
+  }
+
+  private subscribeToRouteChanges(): void {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateAccordionStates();
+      });
+  }
+
+  private updateAccordionStates(): void {
+    this.sidebarMenu.forEach(menu => {
+      if (menu.tipoAcordion) {
+        this.accordionStates[menu.nombre] = this.isParentMenuActive(menu);
+      }
+    });
+  }
+
   isActive(link: string): boolean {
     return this.router.url === link;
+  }
+
+  isParentMenuActive(menu: SidebarMenu): boolean {
+    if (!menu.children) return false;
+    return menu.children.some(child => this.router.url.startsWith(child.link));
+  }
+
+  toggleAccordion(menuName: string): void {
+    this.accordionStates[menuName] = !this.accordionStates[menuName];
+  }
+
+  isAccordionOpen(menuName: string): boolean {
+    return this.accordionStates[menuName] || false;
   }
 }
