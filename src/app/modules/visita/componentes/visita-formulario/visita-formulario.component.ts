@@ -27,6 +27,7 @@ import { GeneralApiService } from '../../../../core';
 import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
+import { NoSoloEspacios } from '../../../../common/validaciones/no-solo-espacios.validator';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
 
 
@@ -65,11 +66,16 @@ export default class VisitaFormularioComponent
 
   public formularioVisita = new FormGroup({
     numero: new FormControl(null, [cambiarVacioPorNulo.validar, Validators.min(1), Validators.max(2147483647)]),
-    documento: new FormControl(null),
-    destinatario: new FormControl('', [Validators.required]),
-    destinatario_direccion: new FormControl('', [Validators.required]),
-    destinatario_telefono: new FormControl(null),
-    destinatario_correo: new FormControl(null),
+    documento: new FormControl(null, [NoSoloEspacios.validar]),
+    destinatario: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
+    destinatario_direccion: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
+    destinatario_telefono: new FormControl(null, [
+      Validators.pattern(/^[0-9+\-\s()]+$/),
+      Validators.minLength(7),
+      Validators.maxLength(15),
+      NoSoloEspacios.validar,
+    ]),
+    destinatario_correo: new FormControl(null, [Validators.email]),
     unidades: new FormControl('', [Validators.required, Validators.min(1)]),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),

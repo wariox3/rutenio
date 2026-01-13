@@ -194,9 +194,14 @@
         <div class="mb-5">
           <div>
             <app-label [required]="false">Documento cliente</app-label>
-            <app-input
-              [control]="formularioVisita.controls.documento"
-            ></app-input>
+           <ui-input
+              placeholder=""
+              formControlName="documento"
+              [control]="formularioVisita.get('documento')"
+              [errors]="{
+                soloEspacios: 'El documento no puede contener solo espacios',
+              }"
+            ></ui-input>
           </div>
         </div>
       </div>
@@ -204,17 +209,31 @@
         <div class="mb-5">
           <div>
             <app-label [required]="true">Destinatario</app-label>
-            <app-input
-              [control]="formularioVisita.controls.destinatario"
-            ></app-input>
+            <ui-input
+              placeholder=""
+              formControlName="destinatario"
+              [control]="formularioVisita.get('destinatario')"
+              [errors]="{
+                soloEspacios: 'El destinatario no puede contener solo espacios',
+                required: 'El destinatario es requerido',
+              }"
+            ></ui-input>
           </div>
         </div>
         <div class="mb-5">
           <div>
             <app-label [required]="false">Teléfono</app-label>
-            <app-input
-              [control]="formularioVisita.controls.destinatario_telefono"
-            ></app-input>
+           <ui-input
+              placeholder=""
+              formControlName="destinatario_telefono"
+              [control]="formularioVisita.get('destinatario_telefono')"
+              [errors]="{
+                soloEspacios: 'El teléfono no puede contener solo espacios',
+                pattern: 'El teléfono debe contener solo números',
+                minLength: 'El teléfono debe tener al menos 7 caracteres',
+                maxLength: 'El teléfono debe tener menos de 15 caracteres'
+              }"
+            ></ui-input>
           </div>
         </div>
       </div>
@@ -222,10 +241,15 @@
         <div class="mb-5">
           <div>
             <app-label [required]="true">Dirección</app-label>
-            <app-input
-              [fieldName]="'La dirección'"
-              [control]="formularioVisita.controls.destinatario_direccion"
-            ></app-input>
+           <ui-input
+              placeholder=""
+              formControlName="destinatario_direccion"
+              [control]="formularioVisita.get('destinatario_direccion')"
+              [errors]="{
+                required: 'La dirección es requerida',
+                soloEspacios: 'La dirección no puede contener solo espacios'
+              }"
+            ></ui-input>
           </div>
         </div>
         <div>
@@ -264,9 +288,15 @@
         <div class="mb-5">
           <div>
             <app-label [required]="false">Correo</app-label>
-            <app-input-email
-              [control]="formularioVisita.controls.destinatario_correo"
-            ></app-input-email>
+             <ui-input
+              placeholder="jhon.doe@example.com"
+              formControlName="destinatario_correo"
+              [control]="formularioVisita.get('destinatario_correo')"
+              [errors]="{
+                required: 'El correo es requerido',
+                email: 'El correo es invalido',
+              }"
+            ></ui-input>
           </div>
         </div>
       </div>
@@ -274,12 +304,16 @@
         <div class="mb-5">
           <div>
             <app-label [required]="true">Unidades</app-label>
-            <app-input
-              [fieldName]="'Las unidades'"
-              [control]="formularioVisita.controls.unidades"
-              [soloNumeros]="true"
-              [mayorACero]="true"
-            ></app-input>
+             <ui-input
+              type="number"
+              placeholder=""
+              formControlName="unidades"
+              [control]="formularioVisita.get('unidades')"
+              [errors]="{
+                min: 'Ingresa un número mayor a 0',
+                required: 'Las unidades son requeridas',
+              }"
+            ></ui-input>
           </div>
         </div>
         <div class="mb-5">
@@ -290,23 +324,31 @@
         <div class="mb-5">
           <div>
             <app-label [required]="true">Peso</app-label>
-            <app-input
-              [fieldName]="'El peso'"
-              [control]="formularioVisita.controls.peso"
-              [soloNumeros]="true"
-              [mayorACero]="true"
-            ></app-input>
+             <ui-input
+              type="number"
+              placeholder=""
+              formControlName="peso"
+              [control]="formularioVisita.get('peso')"
+              [errors]="{
+                min: 'Ingresa un número mayor a 0',
+                required: 'El peso es requerido',
+              }"
+            ></ui-input>
           </div>
         </div>
         <div class="mb-5">
           <div>
             <app-label [required]="true">Volumen</app-label>
-            <app-input
-              [fieldName]="'El volumen'"
-              [control]="formularioVisita.controls.volumen"
-              [soloNumeros]="true"
-              [mayorACero]="true"
-            ></app-input>
+            <ui-input
+              type="number"
+              placeholder=""
+              formControlName="volumen"
+              [control]="formularioVisita.get('volumen')"
+              [errors]="{
+                min: 'Ingresa un número mayor a 0',
+                required: 'El volumen es requerido',
+              }"
+            ></ui-input>
           </div>
         </div>
       </div>
@@ -314,12 +356,16 @@
         <div class="mb-5">
           <div>
             <app-label [required]="true">Timpo servicio</app-label>
-            <app-input
-              [fieldName]="'El tiempo de servicio'"
-              [control]="formularioVisita.controls.tiempo_servicio"
-              [soloNumeros]="true"
-              [mayorACero]="true"
-            ></app-input>
+            <ui-input
+              type="number"
+              placeholder=""
+              formControlName="tiempo_servicio"
+              [control]="formularioVisita.get('tiempo_servicio')"
+              [errors]="{
+                min: 'Ingresa un número mayor a 0',
+                required: 'El tiempo servicio es requerido',
+              }"
+            ></ui-input>
           </div>
         </div>
         <div class="mb-5">
