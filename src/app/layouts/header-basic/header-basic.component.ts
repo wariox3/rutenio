@@ -6,11 +6,12 @@ import { obtenerUsuario, obtenerUsuarioNombreCorto } from '../../redux/selectors
 import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
 import { MenuComponent } from '../menu/menu.component';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header-basic',
   standalone: true,
-  imports: [CommonModule, MenuComponent],
+  imports: [CommonModule, MenuComponent, RouterLink],
   templateUrl: './header-basic.component.html',
   styleUrl: './header-basic.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
