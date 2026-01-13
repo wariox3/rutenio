@@ -28,6 +28,9 @@
   <span *ngIf="control.hasError('min')" class="text-danger text-xs block">
     {{ fieldName }} debe ser mayor a cero.
   </span>
+  <span *ngIf="control.hasError('soloEspacios')" class="text-danger text-xs block">
+    {{ fieldName }} no puede contener solo espacios en blanco.
+  </span>
 </ng-container>
 <ng-container *ngIf="errorTemplate">
   <ng-container
