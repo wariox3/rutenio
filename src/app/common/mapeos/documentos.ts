@@ -78,7 +78,7 @@ export const mapeo: any = {
         tooltip: 'Unidades',
       },
       {
-        encabezado: 'Pes',
+        encabezado: 'Peso',
         campoNombre: 'peso',
         campoTipo: 'IntegerField',
         visibleTabla: true,
