@@ -56,11 +56,12 @@
         id="sidebar_menu"
       >
         @for (menu of sidebarMenu; track $index) { @if (!menu.tipoAcordion) {
-        <div class="menu-item">
+        <div class="menu-item" data-menu-item-trigger="click">
           <div
             class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent"
             [routerLink]="menu.link"
             routerLinkActive="bg-slate-100 text-white rounded-lg"
+            (click)="onMenuClick(menu)"
             tabindex="0"
           >
             <span
@@ -130,6 +131,7 @@
                   'bg-secondary-active rounded-lg': isActive(subMenu.link),
                   'text-gray-700': !isActive(subMenu.link)
                 }"
+                (click)="onSubMenuClick(subMenu)"
                 tabindex="0"
               >
                 <span
