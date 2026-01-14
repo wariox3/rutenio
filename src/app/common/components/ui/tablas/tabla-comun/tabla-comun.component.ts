@@ -26,6 +26,7 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
   @Input({ required: true }) campoMapeo: string;
   @Input({ required: true }) mapeo: any[];
   @Input() datos: any[] = [];
+  @Input() ocultarEditar: boolean = false;
   @Output() emitirEditarItem: EventEmitter<number>;
   @Output() emitirDetalleItem: EventEmitter<number>;
   @Output() emitirItemsSeleccionados: EventEmitter<number[]>;

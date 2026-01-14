@@ -67,6 +67,7 @@ export default class VisitaFormularioComponent
     documento: new FormControl(null, [NoSoloEspacios.validar]),
     destinatario: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
     destinatario_direccion: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
+    fecha: new FormControl(new Date(), [Validators.required]),
     destinatario_telefono: new FormControl(null, [
       Validators.pattern(/^[0-9+\-\s()]+$/),
       Validators.minLength(7),
@@ -97,6 +98,7 @@ export default class VisitaFormularioComponent
         peso: this.informacionVisita.peso,
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
+        fecha: this.informacionVisita.fecha,
       });
       this.ciudadSeleccionada = {
         id: this.informacionVisita.ciudad,
@@ -110,6 +112,18 @@ export default class VisitaFormularioComponent
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private getCurrentDateTime(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
   enviar() {
