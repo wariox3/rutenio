@@ -39,8 +39,6 @@ import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components'
     ButtonComponent,
     ReactiveFormsModule,
     RouterLink,
-    InputComponent,
-    InputEmailComponent,
     LabelComponent,
     NgSelectModule,
     InputUiComponent,
@@ -93,13 +91,16 @@ export default class VisitaFormularioComponent
         destinatario_direccion: this.informacionVisita.destinatario_direccion,
         destinatario_telefono: this.informacionVisita.destinatario_telefono,
         destinatario_correo: this.informacionVisita.destinatario_correo,
-        ciudad: this.informacionVisita.ciudad_id,
-        ciudad_nombre: this.informacionVisita.ciudad_nombre,
-        tiempo_servicio: this.informacionVisita.tiempo_visita,
+        ciudad: this.informacionVisita.ciudad,
+        ciudad_nombre: this.informacionVisita.ciudad__nombre,
+        tiempo_servicio: this.informacionVisita.tiempo_servicio,
+        peso: this.informacionVisita.peso,
+        volumen: this.informacionVisita.volumen,
+        unidades: this.informacionVisita.unidades,
       });
       this.ciudadSeleccionada = {
-        id: this.informacionVisita.ciudad_id,
-        nombre: this.informacionVisita.ciudad_nombre,
+        id: this.informacionVisita.ciudad,
+        nombre: this.informacionVisita.ciudad__nombre,
       };
     }
 
