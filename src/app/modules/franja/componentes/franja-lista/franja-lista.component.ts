@@ -24,6 +24,7 @@ import { KTModal } from '../../../../../metronic/core';
 import FranjaEditarComponent from '../franja-editar/franja-editar.component';
 import { GeneralService } from '../../../../common/services/general.service';
 import { RespuestaApi } from '../../../../core/types/api.type';
+import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 
 @Component({
   selector: 'app-franja-lista',
@@ -35,6 +36,7 @@ import { RespuestaApi } from '../../../../core/types/api.type';
     FranjaImportarPorKmlComponent,
     ModalDefaultComponent,
     FranjaEditarComponent,
+    TruncatePipe,
   ],
   templateUrl: './franja-lista.component.html',
   styleUrl: './franja-lista.component.css',

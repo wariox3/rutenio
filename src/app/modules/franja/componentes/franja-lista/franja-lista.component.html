@@ -41,8 +41,10 @@
             <td class="p-3 w-full flex items-center justify-between">
               <section class="w-full">
                 <div class="flex items-center justify-between space-y-1">
-                  <span class="font-semibold text-gray-800 text-sm">
-                    {{ franja.nombre }}
+                  <span 
+                    class="font-semibold text-gray-800 text-sm"
+                  >
+                    {{ franja.nombre | truncate:25:true }}
                   </span>
                   <span
                     class="badge badge-xs text-white w-20"
@@ -176,3 +178,13 @@
     ></app-franja-editar>
   </div>
 </app-modal-default>
+
+<!-- Tooltips para nombres de franjas -->
+@for (franja of franjas$ | async; track $index) {
+<div
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  [id]="'tooltip_franja_' + franja.id"
+>
+  {{ franja.nombre }}
+</div>
+}
