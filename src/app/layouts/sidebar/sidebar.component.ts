@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ElementRef } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { SidebarMenu } from '../../interfaces/general/sidebar/menu.interface';
 import { RouterLinkActive } from '@angular/router';
@@ -23,6 +23,10 @@ export class SidebarComponent extends General implements OnInit {
   @HostBinding('attr.id') id = 'sidebar';
 
   public accordionStates: { [key: string]: boolean } = {};
+
+  constructor(private elementRef: ElementRef) {
+    super();
+  }
 
   public sidebarMenu: SidebarMenu[] = [
     {
@@ -160,5 +164,31 @@ export class SidebarComponent extends General implements OnInit {
 
   isAccordionOpen(menuName: string): boolean {
     return this.accordionStates[menuName] || false;
+  }
+
+  onMenuClick(menu: SidebarMenu): void {
+    if (menu.link && menu.link !== '') {
+      this.hideDrawerOnMobile();
+    }
+  }
+
+  onSubMenuClick(subMenu: any): void {
+    if (subMenu.link && subMenu.link !== '') {
+      this.hideDrawerOnMobile();
+    }
+  }
+
+  private hideDrawerOnMobile(): void {
+    // Solo ocultar en dispositivos móviles donde el drawer está activo
+    const drawerElement = this.elementRef.nativeElement;
+    if (drawerElement && drawerElement.classList.contains('open')) {
+      // Importar dinámicamente la clase KTDrawer
+      import('../../../metronic/core/components/drawer/drawer').then(({ KTDrawer }) => {
+        const drawer = KTDrawer.getInstance(drawerElement);
+        if (drawer && drawer.isOpen()) {
+          drawer.hide();
+        }
+      });
+    }
   }
 }
