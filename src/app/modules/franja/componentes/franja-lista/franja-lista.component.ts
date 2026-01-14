@@ -158,6 +158,22 @@ export default class FranjaListaComponent extends General implements OnInit {
     this.estaCreando = !this.estaCreando;
   }
 
+  cancelarDibujo() {
+    this.alerta
+      .confirmar({
+        titulo: '¿Cancelar dibujo?',
+        texto: 'Se perderán todos los puntos trazados. ¿Estás seguro?',
+        textoBotonCofirmacion: 'Sí, cancelar',
+        colorConfirmar: '#d33'
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.resetCrearPoligono();
+          this.limpiarMapa();
+        }
+      });
+  }
+
   confirmarEliminarFranja(item: any) {
     this.alerta
       .confirmar({
