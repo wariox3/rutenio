@@ -326,6 +326,10 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.router.navigateByUrl(`/movimiento/visita/detalle/${id}`);
   }
 
+  editarVisita(id: number) {
+    this.router.navigateByUrl(`/movimiento/visita/editar/${id}`);
+  }
+
   filterChange(filters: Record<string, any>) {
     // this._generalApiService
     //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
