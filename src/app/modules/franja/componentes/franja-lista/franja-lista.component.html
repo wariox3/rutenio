@@ -10,12 +10,20 @@
           type="button"
           texto="Importar"
         ></app-button>
+        @if(estaCreando) {
         <app-button
-          routerLink="/administracion/vehiculo/nuevo"
+          type="button"
+          texto="Cancelar"
+          color="secondary"
+          (click)="cancelarDibujo()"
+        ></app-button>
+        } @else {
+        <app-button
           type="button"
           texto="Nuevo"
           (click)="toggleEstaCreando()"
         ></app-button>
+        }
       </section>
     </div>
     <div class="card-table overflow-y-auto scrollable max-h-[37rem]">
