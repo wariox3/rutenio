@@ -179,7 +179,7 @@ export default class FranjaListaComponent extends General implements OnInit {
   confirmarEliminarFranja(item: any) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })

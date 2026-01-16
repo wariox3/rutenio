@@ -268,7 +268,7 @@ export default class TraficoListaComponent
   confirmarTerminarDespacho(id: number) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, terminar',
       })
@@ -589,7 +589,7 @@ export default class TraficoListaComponent
   confirmarAnularDespacho(id: number) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, anular',
       })
