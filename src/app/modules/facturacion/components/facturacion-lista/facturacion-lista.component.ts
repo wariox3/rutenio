@@ -306,7 +306,7 @@ export default class FacturacionComponent
   eliminarInformacion(id: number) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })

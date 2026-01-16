@@ -570,7 +570,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -584,7 +584,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarErrores() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta acción elimina las visitas con errores',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -717,7 +717,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarVisita(id: number) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })

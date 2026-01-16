@@ -166,7 +166,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })
