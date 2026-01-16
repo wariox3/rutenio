@@ -20,11 +20,12 @@ import { VisitaApiService } from '../../servicios/visita-api.service';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
 import { SoloNumerosDirective } from "../../../../common/directivas/solo-numeros.directive";
 import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
+import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
 
 @Component({
   selector: 'app-visita-editar-rutear',
   standalone: true,
-  imports: [ButtonComponent, ReactiveFormsModule, LabelComponent, InputUiComponent, SoloNumerosDirective],
+  imports: [ButtonComponent, ReactiveFormsModule, LabelComponent, InputUiComponent],
   templateUrl: './visita-editar-rutear.component.html',
   styleUrl: './visita-editar-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +38,7 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
 
   public formularioVisitaRutear = new FormGroup({
     id: new FormControl(''),
-    numero: new FormControl(''),
+    numero: new FormControl('', [cambiarVacioPorNulo.validar]),
     documento: new FormControl(''),
     destinatario: new FormControl('', [Validators.required]),
     destinatario_direccion: new FormControl('', [Validators.required]),
