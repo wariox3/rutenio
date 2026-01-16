@@ -1,102 +1,135 @@
 <form [formGroup]="formularioVisitaRutear">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div class="mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Número
-        </label>
-        <app-input
-          [control]="formularioVisitaRutear.controls.numero"
-        ></app-input>
+        <app-label [required]="false">Número</app-label>
+        <ui-input
+          type="number"
+          placeholder=""
+          formControlName="numero"
+          [control]="formularioVisitaRutear.get('numero')"
+          [errors]="{
+            min: 'Ingresa un número mayor a 0',
+            max: 'Ingresa un número menor a 2147483647',
+          }"
+          (keydown)="onKeyDown($event)"
+        ></ui-input>
       </div>
     </div>
     <div class="mb-5">
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Documento cliente
-        </label>
-        <app-input
-          [control]="formularioVisitaRutear.controls.documento"
-        ></app-input>
+        <app-label [required]="false">Documento cliente</app-label>
+        <ui-input
+          placeholder=""
+          formControlName="documento"
+          [control]="formularioVisitaRutear.get('documento')"
+          [errors]="{
+            soloEspacios: 'El documento no puede contener solo espacios',
+          }"
+        ></ui-input>
       </div>
     </div>
   </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div class="mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Destinatario
-          <span class="text-danger"> * </span>
-        </label>
-        <app-input
-          [fieldName]="'El destinatario'"
-          [control]="formularioVisitaRutear.controls.destinatario"
-        ></app-input>
+        <app-label [required]="true">Destinatario</app-label>
+        <ui-input
+          placeholder=""
+          formControlName="destinatario"
+          [control]="formularioVisitaRutear.get('destinatario')"
+          [errors]="{
+            soloEspacios: 'El destinatario no puede contener solo espacios',
+            required: 'El destinatario es requerido',
+          }"
+        ></ui-input>
       </div>
     </div>
     <div class="mb-5">
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Dirección
-          <span class="text-danger"> * </span>
-        </label>
-        <app-input
-          [fieldName]="'La dirección'"
-          [control]="formularioVisitaRutear.controls.destinatario_direccion"
-        ></app-input>
-      </div>
-    </div>
-    <div class="mb-5">
-      <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Teléfono
-        </label>
-        <app-input
-          [control]="formularioVisitaRutear.controls.destinatario_telefono"
-        ></app-input>
+        <app-label [required]="false">Teléfono</app-label>
+        <ui-input
+          placeholder=""
+          formControlName="destinatario_telefono"
+          [control]="formularioVisitaRutear.get('destinatario_telefono')"
+          [errors]="{
+            soloEspacios: 'El teléfono no puede contener solo espacios',
+            pattern: 'El teléfono debe contener solo números',
+            minLength: 'El teléfono debe tener al menos 7 caracteres',
+            maxLength: 'El teléfono debe tener menos de 15 caracteres'
+          }"
+        ></ui-input>
       </div>
     </div>
   </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="true">Dirección</app-label>
+        <ui-input
+          placeholder=""
+          formControlName="destinatario_direccion"
+          [control]="formularioVisitaRutear.get('destinatario_direccion')"
+          [errors]="{
+            required: 'La dirección es requerida',
+            soloEspacios: 'La dirección no puede contener solo espacios'
+          }"
+        ></ui-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div></div>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
     <div class="mb-5 flex gap-2">
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Unidades
-          <span class="text-danger"> * </span>
-        </label>
-        <app-input
-          [fieldName]="'Las unidades'"
-          [soloNumeros]="true"
-          [control]="formularioVisitaRutear.controls.unidades"
-        ></app-input>
+        <app-label [required]="true">Unidades</app-label>
+        <ui-input
+          type="number"
+          placeholder=""
+          formControlName="unidades"
+          [control]="formularioVisitaRutear.get('unidades')"
+          [errors]="{
+            min: 'Ingresa un número mayor a 0',
+            required: 'Las unidades son requeridas',
+          }"
+          (keydown)="onKeyDown($event)"
+        ></ui-input>
       </div>
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Peso
-          <span class="text-danger"> * </span>
-        </label>
-        <app-input
-          [fieldName]="'El peso'"
-          [soloNumeros]="true"
-          [control]="formularioVisitaRutear.controls.peso"
-        ></app-input>
+        <app-label [required]="true">Peso</app-label>
+        <ui-input
+          type="number"
+          placeholder=""
+          formControlName="peso"
+          [control]="formularioVisitaRutear.get('peso')"
+          [errors]="{
+            min: 'Ingresa un número mayor a 0',
+            required: 'El peso es requerido',
+          }"
+          (keydown)="onKeyDown($event)"
+        ></ui-input>
       </div>
       <div>
-        <label class="form-label flex items-center gap-1 text-gray-900">
-          Volumen
-          <span class="text-danger"> * </span>
-        </label>
-        <app-input
-          [fieldName]="'El volumen'"
-          [soloNumeros]="true"
-          [control]="formularioVisitaRutear.controls.volumen"
-        ></app-input>
+        <app-label [required]="true">Volumen</app-label>
+        <ui-input
+          type="number"
+          placeholder=""
+          formControlName="volumen"
+          [control]="formularioVisitaRutear.get('volumen')"
+          [errors]="{
+            min: 'Ingresa un número mayor a 0',
+            required: 'El volumen es requerido',
+          }"
+          (keydown)="onKeyDown($event)"
+        ></ui-input>
       </div>
     </div>
+    <div class="mb-5">
+      <div></div>
+    </div>
   </div>
-
   <div class="flex justify-end">
     <app-button
       type="button"
