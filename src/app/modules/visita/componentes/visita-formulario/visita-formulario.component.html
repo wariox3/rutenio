@@ -23,6 +23,7 @@
         <ui-input
           type="number"
           placeholder=""
+          (keydown)="onKeyDown($event)"
           formControlName="numero"
           [control]="formularioVisita.get('numero')"
           [errors]="{
@@ -235,6 +236,7 @@
             <ui-input
               type="number"
               placeholder=""
+              (keydown)="onKeyDown($event)"
               formControlName="numero"
               [control]="formularioVisita.get('numero')"
               [errors]="{

@@ -20,8 +20,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject, takeUntil, tap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { GeneralApiService } from '../../../../core';
 import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
@@ -29,7 +27,7 @@ import { VisitaApiService } from '../../servicios/visita-api.service';
 import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
 import { NoSoloEspacios } from '../../../../common/validaciones/no-solo-espacios.validator';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
-
+import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
 
 @Component({
   selector: 'app-visita-formulario',
@@ -63,10 +61,20 @@ export default class VisitaFormularioComponent
   private destroy$ = new Subject<void>();
 
   public formularioVisita = new FormGroup({
-    numero: new FormControl(null, [cambiarVacioPorNulo.validar, Validators.min(1), Validators.max(2147483647)]),
+    numero: new FormControl(null, [
+      cambiarVacioPorNulo.validar,
+      Validators.min(1),
+      Validators.max(2147483647),
+    ]),
     documento: new FormControl(null, [NoSoloEspacios.validar]),
-    destinatario: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
-    destinatario_direccion: new FormControl('', [Validators.required, NoSoloEspacios.validar]),
+    destinatario: new FormControl('', [
+      Validators.required,
+      NoSoloEspacios.validar,
+    ]),
+    destinatario_direccion: new FormControl('', [
+      Validators.required,
+      NoSoloEspacios.validar,
+    ]),
     fecha: new FormControl(new Date(), [Validators.required]),
     destinatario_telefono: new FormControl(null, [
       Validators.pattern(/^[0-9+\-\s()]+$/),
@@ -78,7 +86,10 @@ export default class VisitaFormularioComponent
     unidades: new FormControl('', [Validators.required, Validators.min(1)]),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
-    tiempo_servicio: new FormControl('', [Validators.required, Validators.min(1)]),
+    tiempo_servicio: new FormControl('', [
+      Validators.required,
+      Validators.min(1),
+    ]),
     ciudad_nombre: new FormControl(''),
     ciudad: new FormControl(null, [Validators.required]),
   });
@@ -122,7 +133,7 @@ export default class VisitaFormularioComponent
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
-    
+
     return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
   }
 
@@ -197,5 +208,9 @@ export default class VisitaFormularioComponent
       ...formData,
       destinatario_direccion: direccionCompleta,
     };
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    InputNumericoValidator.onKeyDown(event);
   }
 }

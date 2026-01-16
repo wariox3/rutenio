@@ -15,13 +15,16 @@ import {
 } from '@angular/forms';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
+import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { VisitaApiService } from '../../servicios/visita-api.service';
+import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
+import { SoloNumerosDirective } from "../../../../common/directivas/solo-numeros.directive";
+import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
 
 @Component({
   selector: 'app-visita-editar-rutear',
   standalone: true,
-  imports: [InputComponent, ButtonComponent, ReactiveFormsModule],
+  imports: [ButtonComponent, ReactiveFormsModule, LabelComponent, InputUiComponent, SoloNumerosDirective],
   templateUrl: './visita-editar-rutear.component.html',
   styleUrl: './visita-editar-rutear.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,6 +61,10 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
       peso: this.visita?.peso,
       volumen: this.visita?.volumen,
     });
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    InputNumericoValidator.onKeyDown(event);
   }
 
   enviar() {
