@@ -44,9 +44,9 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
     destinatario_direccion: new FormControl('', [Validators.required]),
     destinatario_telefono: new FormControl(''),
     destinatario_correo: new FormControl(''),
-    unidades: new FormControl('', [Validators.required]),
-    peso: new FormControl('', [Validators.required]),
-    volumen: new FormControl('', [Validators.required]),
+    unidades: new FormControl('', [Validators.required, Validators.min(1)]),
+    peso: new FormControl('', [Validators.required, Validators.min(1)]),
+    volumen: new FormControl('', [Validators.required, Validators.min(1)]),
   });
 
   ngOnInit(): void {
