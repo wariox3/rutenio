@@ -398,7 +398,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       total = (this.servicio() / this.tiempoTotal()) * 100;
     }
 
-    this.porcentajeTiempo = total;
+    // Redondear a 2 decimales para evitar problemas de UI
+    this.porcentajeTiempo = Math.round(total * 100) / 100;
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
