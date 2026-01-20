@@ -72,7 +72,7 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
     this._visitaApiService
       .actualizarDireccion(this.formularioVisitaRutear.value)
       .subscribe((response) => {
-        this.alerta.mensajaExitoso(response.mensaje);
+        this.alerta.mensajaExitoso("Se actualizó la visita");
         this.emitirCerrarModal.emit();
       });
   }
