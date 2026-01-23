@@ -20,7 +20,7 @@ export class AuthService {
 
   registro(parametros: any) {
     return this.http.post<any>(
-      `${environment.url_api}/seguridad/usuario/nuevo/`,
+      `${environment.url_api}/contenedor/usuario/nuevo/`,
       { ...parametros, aplicacion: 'ruteo' },
       { context: noRequiereToken() }
     );
@@ -36,7 +36,7 @@ export class AuthService {
 
   validacion(token: string) {
     return this.http.post<TokenVerificacion>(
-      `${environment.url_api}/seguridad/usuario/verificar/`,
+      `${environment.url_api}/contenedor/usuario/verificar/`,
       { token },
       { context: noRequiereToken() }
     );
@@ -44,7 +44,7 @@ export class AuthService {
 
   reenviarValidacion(codigoUsuario: number) {
     return this.http.post<TokenReenviarValidacion>(
-      `${environment.url_api}/seguridad/verificacion/`,
+      `${environment.url_api}/contenedor/verificacion/`,
       { codigoUsuario },
       { context: noRequiereToken() }
     );
@@ -60,7 +60,7 @@ export class AuthService {
 
   recuperarClave(email: string) {
     return this.http.post(
-      `${environment.url_api}/seguridad/usuario/cambio-clave-solicitar/`,
+      `${environment.url_api}/contenedor/usuario/cambio-clave-solicitar/`,
       { username: email, accion: 'clave', aplicacion: 'ruteo' },
       { context: noRequiereToken() }
     );
@@ -68,7 +68,7 @@ export class AuthService {
 
   reiniciarClave(password: string, token: string) {
     return this.http.post(
-      `${environment.url_api}/seguridad/usuario/cambio-clave-verificar/`,
+      `${environment.url_api}/contenedor/usuario/cambio-clave-verificar/`,
       { password, token },
       { context: noRequiereToken() }
     );
@@ -78,7 +78,7 @@ export class AuthService {
     return this.http.post<{
       cargar: boolean;
       imagen: string;
-    }>(`${environment.url_api}/seguridad/usuario/cargar-imagen/`, {
+    }>(`${environment.url_api}/contenedor/usuario/cargar-imagen/`, {
       usuario_id,
       imagenB64,
     });
@@ -88,14 +88,14 @@ export class AuthService {
     return this.http.post<{
       limpiar: boolean;
       imagen: string;
-    }>(`${environment.url_api}/seguridad/usuario/limpiar-imagen/`, {
+    }>(`${environment.url_api}/contenedor/usuario/limpiar-imagen/`, {
       usuario_id,
     });
   }
 
   actualizarInformacion(data: enviarDatosUsuario) {
     return this.http.put<UsuarioInformacionPerfil>(
-      `${environment.url_api}/seguridad/usuario/${data.id}/`,
+      `${environment.url_api}/contenedor/usuario/${data.id}/`,
       {
         nombre: data.nombre,
         apellido: data.apellido,
@@ -119,7 +119,7 @@ export class AuthService {
 
   perfil(codigoUsuario: string) {
     return this.http.get<UsuarioInformacionPerfil>(
-      `${environment.url_api}/seguridad/usuario/${codigoUsuario}/`
+      `${environment.url_api}/contenedor/usuario/${codigoUsuario}/`
     );
   }
 }
