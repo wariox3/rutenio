@@ -40,11 +40,11 @@ export class HeaderComponent extends General implements OnInit {
       icono: 'ki-filled ki-abstract-26',
       link: '/contenedor/lista',
     },
-    {
-      titulo: 'Facturación',
-      icono: 'ki-cheque ki-abstract-26',
-      link: '/facturacion/lista',
-    },
+    // {
+    //   titulo: 'Facturación',
+    //   icono: 'ki-cheque ki-abstract-26',
+    //   link: '/facturacion/lista',
+    // },
     {
       titulo: 'Configuración',
       icono: 'ki-filled ki-setting-2',
