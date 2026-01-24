@@ -141,6 +141,14 @@ export class ContenedorService {
     );
   }
 
+  buscarUsuario(queries: Record<string, any>) {
+    const params = this._filterTransformService.toQueryString({
+      ...queries,
+    });
+    
+    return this.http.get(`${environment.url_api}/contenedor/usuario/seleccionar/?${params}`);
+  }
+
   eliminarEmpresaUsuario(usuario_id: Number) {
     return this.http.delete(
       `${environment.url_api}/contenedor/usuariocontenedor/${usuario_id}/`,

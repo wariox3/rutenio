@@ -6,9 +6,19 @@
     <form [formGroup]="formularioInvitacionUsuario">
       <div class="mb-5">
         <app-label [required]="true"> Email </app-label>
-        <app-input-email
-          [control]="formularioInvitacionUsuario.controls.nombre"
-        ></app-input-email>
+        <ng-select
+          [items]="listaUsuariosOpciones()"
+          bindLabel="username"
+          bindValue="username"
+          formControlName="nombre"
+          notFoundText="Sin elementos"
+          placeholder="Buscar usuario por email..."
+          loadingText="Buscando..."
+          class="select2Custom"
+          (change)="seleccionarUsuario($event)"
+          (keyup)="buscarUsuarioPorEmail($event)"
+        >
+        </ng-select>
       </div>
     </form>
   </div>

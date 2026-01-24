@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -12,12 +11,13 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import { map, switchMap, tap } from 'rxjs';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { debounceTime, distinctUntilChanged, map, Subject, switchMap, tap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from "../../../../common/components/ui/button/button.component";
-import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { GeneralService } from '../../../../common/services/general.service';
 import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorLista } from '../../interfaces/contenedor.interface';
 import { ContenedorInvitacionLista } from '../../interfaces/usuarios-contenedores.interface';
@@ -27,11 +27,10 @@ import { ContenedorService } from '../../services/contenedor.service';
   selector: 'app-contenedor-invitar',
   standalone: true,
   imports: [
-    InputEmailComponent,
     LabelComponent,
-    AsyncPipe,
     ReactiveFormsModule,
-    ButtonComponent
+    ButtonComponent,
+    NgSelectModule
   ],
   templateUrl: 'contenedor-invitar.component.html',
   styleUrl: './contenedor-invitar.component.css',
@@ -43,11 +42,15 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   private _contenedorService = inject(ContenedorService);
   private _alertaService = inject(AlertaService);
   private _formBuilder = inject(FormBuilder);
+  private _generalService = inject(GeneralService);
 
   formularioInvitacionUsuario = this._formBuilder.group({
     nombre: ['', [Validators.email, Validators.required]],
   });
   listaUsuarios = signal<ContenedorInvitacionLista[]>([]);
+  listaUsuariosOpciones = signal<any[]>([]);
+
+  private _busquedaUsuarioSubject$ = new Subject<string>();
 
   constructor() {
     super();
@@ -55,6 +58,18 @@ export class ContenedorInvitarComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
+    this._buscarUsuarios();
+    this._inicializarBusquedaUsuarios();
+  }
+
+  private _inicializarBusquedaUsuarios() {
+    this._busquedaUsuarioSubject$
+      .pipe(
+        debounceTime(300), // Espera 300ms después de que el usuario deje de escribir
+        distinctUntilChanged(), // Solo emite si el valor cambió
+        tap((email) => this._buscarUsuarios(email))
+      )
+      .subscribe();
   }
 
   private _consultarContenedorUsuarios(contenedorId: number) {
@@ -110,5 +125,40 @@ export class ContenedorInvitarComponent extends General implements OnInit {
             .subscribe();
         }
       });
+  }
+
+  seleccionarUsuario(usuario: any) {
+    if (!usuario) {
+      this._buscarUsuarios('');
+      return;
+    }
+  }
+
+  buscarUsuarioPorEmail(event?: any) {
+    const excludedKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+
+    if (excludedKeys.includes(event?.key)) {
+      return;
+    }
+
+    const email = event?.target.value || '';
+    this._busquedaUsuarioSubject$.next(email);
+  }
+
+  private _buscarUsuarios(email?: string) {
+    const arrFiltros = {
+      'username__icontains': email,
+    };
+
+    this._contenedorService.buscarUsuario({
+      ...arrFiltros
+    }).subscribe({
+      next: (response: any) => {
+        this.listaUsuariosOpciones.set(response);
+      },
+      error: (error) => {
+        console.error('Error al buscar usuarios:', error);
+      }
+    });
   }
 }
