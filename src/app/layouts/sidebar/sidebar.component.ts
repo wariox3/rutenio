@@ -85,10 +85,10 @@ export class SidebarComponent extends General implements OnInit {
           nombre: 'Vehículos',
           link: '/administracion/vehiculo/lista',
         },
-        {
-          nombre: 'Contactos',
-          link: '/administracion/contacto/lista',
-        },
+        // {
+        //   nombre: 'Contactos',
+        //   link: '/administracion/contacto/lista',
+        // },
         {
           nombre: 'Franjas',
           link: '/administracion/franja/lista',
