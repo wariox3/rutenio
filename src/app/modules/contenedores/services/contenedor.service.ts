@@ -100,13 +100,11 @@ export class ContenedorService {
 
   invitarUsuario(payload: InvitarUsuario) {
     return this.http.post<RespuestaInvitacionUsuario>(
-      `${environment.url_api}/contenedor/usuariocontenedor/invitar/`,
+      `${environment.url_api}/contenedor/usuariocontenedor/nuevo/`,
       {
-        accion: payload.accion,
-        aplicacion: payload.aplicacion,
-        contenedor_id: payload.contenedor_id,
-        usuario_id: payload.usuario_id,
-        invitado: payload.invitado,
+        contenedor_id: payload.contenedorId,
+        usuario_id: payload.usuarioId,
+        usuario_invitado_id: payload.usuarioInvitadoId,
       }
     );
   }

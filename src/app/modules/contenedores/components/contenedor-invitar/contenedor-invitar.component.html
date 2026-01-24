@@ -1,16 +1,16 @@
 <div class="card mb-6">
   <div class="card-header">
-    <h3 class="card-title">Enviar invitación a</h3>
+    <h3 class="card-title">Agregar usuario</h3>
   </div>
   <div class="card-body">
     <form [formGroup]="formularioInvitacionUsuario">
       <div class="mb-5">
-        <app-label [required]="true"> Email </app-label>
+        <app-label [required]="true"> Usuario </app-label>
         <ng-select
           [items]="listaUsuariosOpciones()"
           bindLabel="username"
-          bindValue="username"
-          formControlName="nombre"
+          bindValue="id"
+          formControlName="id"
           notFoundText="Sin elementos"
           placeholder="Buscar usuario por email..."
           loadingText="Buscando..."

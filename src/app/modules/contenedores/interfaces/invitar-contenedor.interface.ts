@@ -1,9 +1,7 @@
 export interface InvitarUsuario {
-  contenedor_id: number;
-  aplicacion: string;
-  usuario_id: string;
-  invitado: string;
-  accion: 'invitar';
+  contenedorId: number;
+  usuarioId: string;
+  usuarioInvitadoId: string;
 }
 
 export interface RespuestaInvitacionUsuario {

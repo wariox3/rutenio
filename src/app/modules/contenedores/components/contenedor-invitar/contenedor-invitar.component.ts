@@ -45,7 +45,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   private _generalService = inject(GeneralService);
 
   formularioInvitacionUsuario = this._formBuilder.group({
-    nombre: ['', [Validators.email, Validators.required]],
+    id: [null, [Validators.required]],
   });
   listaUsuarios = signal<ContenedorInvitacionLista[]>([]);
   listaUsuariosOpciones = signal<any[]>([]);
@@ -90,11 +90,9 @@ export class ContenedorInvitarComponent extends General implements OnInit {
       .pipe(
         switchMap((usuarioId) =>
           this._contenedorService.invitarUsuario({
-            accion: 'invitar',
-            aplicacion: 'ruteo',
-            contenedor_id: contenedorId,
-            usuario_id: usuarioId,
-            invitado: this.formularioInvitacionUsuario.controls.nombre.value,
+            contenedorId: contenedorId,
+            usuarioId: usuarioId,
+            usuarioInvitadoId: this.formularioInvitacionUsuario.controls.id.value,
           })
         ),
         tap(() => {
@@ -102,7 +100,11 @@ export class ContenedorInvitarComponent extends General implements OnInit {
           this._limpiarFormulario();
         })
       )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
+        }
+      });
   }
 
   eliminarInvitado(usuario_id: Number) {
