@@ -13,8 +13,9 @@
   </svg>
   <div
     [ngClass]="{ 'text-red-500': error }"
-    class="text-green-500 absolute text-xs font-bold"
+    class="text-green-500 absolute font-bold"
+    [class]="'text-green-500 absolute font-bold ' + fontSizeClass"
   >
-    {{ progress | number : "1.0-0" }}%
+    {{ formattedProgress }}
   </div>
 </div>

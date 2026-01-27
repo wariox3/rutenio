@@ -400,6 +400,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     // Redondear a 2 decimales para evitar problemas de UI
     this.porcentajeTiempo = Math.round(total * 100) / 100;
+    this.porcentajeTiempo = 200
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
