@@ -1,0 +1,186 @@
+<div class="">
+  <div class="flex flex-wrap items-center lg:items-end justify-between gap-5 pb-7.5">
+    <div class="flex flex-col justify-center gap-2">
+      <h1 class="text-xl font-semibold leading-none text-gray-900">
+        Decodificar dirección
+      </h1>
+      <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
+        Ingrese una dirección para decodificar
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="">
+  <div class="grid gap-5 lg:gap-7.5">
+    <div class="card">
+      <div class="card-body">
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-2">
+            <label class="form-label text-gray-900">Dirección</label>
+            <input
+              type="text"
+              class="input"
+              placeholder="Ingrese la dirección a decodificar"
+              [formControl]="direccionControl"
+              [disabled]="estaCargando$()"
+            />
+          </div>
+
+          <div class="flex gap-3">
+            <button
+              type="button"
+              class="btn btn-primary"
+              [disabled]="estaCargando$() || direccionControl.invalid"
+              (click)="buscar()"
+            >
+              @if (estaCargando$()) {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+              }
+              Buscar
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-light"
+              [disabled]="estaCargando$()"
+              (click)="limpiar()"
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (resultado$()?.datos) {
+      <div class="card">
+        <div class="card-table">
+          <div class="card-header">
+            <h3 class="card-title">Información de la dirección</h3>
+          </div>
+          <div class="card-body">
+            <div class="overflow-x-auto">
+              <table class="table-auto border border-gray-300 text-sm w-full">
+                <tbody>
+                  <tr class="border-b border-gray-300">
+                    <td
+                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                    >
+                      Dirección original
+                    </td>
+                    <td class="px-4 py-3">
+                      {{ resultado$()?.datos?.direccion_original }}
+                    </td>
+                  </tr>
+                  <tr class="border-b border-gray-300">
+                    <td
+                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                    >
+                      Dirección formateada
+                    </td>
+                    <td class="px-4 py-3">
+                      {{ resultado$()?.datos?.direccion_formato }}
+                    </td>
+                  </tr>
+                  <tr class="border-b border-gray-300">
+                    <td
+                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                    >
+                      Latitud
+                    </td>
+                    <td class="px-4 py-3 border-r border-gray-300">
+                      {{ resultado$()?.datos?.latitud }}
+                    </td>
+                    <td
+                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                    >
+                      Longitud
+                    </td>
+                    <td class="px-4 py-3">
+                      {{ resultado$()?.datos?.longitud }}
+                    </td>
+                  </tr>
+                  <tr class="border-b border-gray-300">
+                    <td
+                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                    >
+                      Cantidad de resultados
+                    </td>
+                    <td class="px-4 py-3">
+                      {{ resultado$()?.datos?.cantidad_resultados }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      @if (resultado$()?.datos?.resultados && resultado$()?.datos?.resultados.length > 0) {
+        <div class="card">
+          <div class="card-table">
+            <div class="card-header">
+              <h3 class="card-title">Resultados encontrados</h3>
+            </div>
+            <div class="card-body">
+              <div class="overflow-x-auto">
+                <table class="table-auto border border-gray-300 text-sm w-full">
+                  <thead>
+                    <tr class="bg-gray-100 border-b border-gray-300">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                        #
+                      </th>
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                        Dirección formateada
+                      </th>
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                        Latitud
+                      </th>
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                        Longitud
+                      </th>
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                        Tipo de ubicación
+                      </th>
+                      <th class="px-4 py-3 text-left font-bold text-gray-700">
+                        Place ID
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (resultado of resultado$()?.datos?.resultados; track resultado.place_id) {
+                      <tr class="border-b border-gray-300">
+                        <td class="px-4 py-3 border-r border-gray-300">
+                          {{ $index + 1 }}
+                        </td>
+                        <td class="px-4 py-3 border-r border-gray-300">
+                          {{ resultado.formatted_address }}
+                        </td>
+                        <td class="px-4 py-3 border-r border-gray-300">
+                          {{ resultado.geometry.location.lat }}
+                        </td>
+                        <td class="px-4 py-3 border-r border-gray-300">
+                          {{ resultado.geometry.location.lng }}
+                        </td>
+                        <td class="px-4 py-3 border-r border-gray-300">
+                          {{ resultado.geometry.location_type }}
+                        </td>
+                        <td class="px-4 py-3">
+                          <div class="overflow-x-auto" style="max-width: 250px;">
+                            {{ resultado.place_id }}
+                          </div>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

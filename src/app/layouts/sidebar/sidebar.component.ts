@@ -113,6 +113,19 @@ export class SidebarComponent extends General implements OnInit {
       ],
     },
     {
+      nombre: 'Utilidad',
+      link: '',
+      iconoClase: 'ki-filled ki-setting-3',
+      activo: false,
+      tipoAcordion: true,
+      children: [
+        {
+          nombre: 'Decodificar dirección',
+          link: '/utilidad/decodificar-direccion',
+        },
+      ],
+    },
+    {
       nombre: 'Complementos',
       link: '/complemento/lista',
       iconoClase: 'ki-filled ki-plus-squared',
