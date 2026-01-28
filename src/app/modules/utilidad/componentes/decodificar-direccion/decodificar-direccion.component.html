@@ -24,6 +24,7 @@
               placeholder="Ingrese la dirección a decodificar"
               [formControl]="direccionControl"
               [disabled]="estaCargando$()"
+              (keyup.enter)="buscar()"
             />
           </div>
 
