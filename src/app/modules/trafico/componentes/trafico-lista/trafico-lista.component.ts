@@ -131,14 +131,23 @@ export default class TraficoListaComponent
     strokeWeight: 3,
   };
 
-  arrParametrosConsulta: ParametrosApi = {
+  /**
+   * Parámetros base inmutables de la vista.
+   * Estos siempre se aplican y no deben modificarse.
+   */
+  private readonly arrParametrosBase: ParametrosApi = {
     ordering: 'id',
     serializador: 'trafico',
     estado_aprobado: 'True',
     estado_terminado: 'False',
     estado_anulado: 'False',
-    page: 1,
   };
+
+  /**
+   * Filtros dinámicos que pueden cambiar (filtros de usuario, paginación, etc.).
+   * Estos se combinan con arrParametrosBase para cada consulta.
+   */
+  arrFiltros: Record<string, any> = { page: 1 };
 
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
@@ -166,7 +175,7 @@ export default class TraficoListaComponent
   ngOnInit(): void {
     this._construirFiltros();
     this.filtroKey.set('trafico_lista_filtro');
-    this.consultarLista(this.arrParametrosConsulta);
+    this.consultarLista();
   }
 
   private _construirFiltros() {
@@ -191,20 +200,77 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  consultarLista(filtros: Record<string, any> = {}) {
+  /**
+   * Método centralizado para cargar despachos con todos los parámetros y filtros.
+   * Garantiza que siempre se aplique agregarEstadoDespacho() y se actualice cantidadRegistros.
+   *
+   * @param parametrosAdicionales - Parámetros/filtros adicionales a mergear
+   * @param mostrarMensajeExito - Si debe mostrar mensaje de éxito al completar
+   */
+  private _cargarDespachos(
+    parametrosAdicionales: Record<string, any> = {},
+    mostrarMensajeExito: boolean = false
+  ): void {
+    // 1. Mergear filtros dinámicos (mantiene filtros previos como paginación)
+    this.arrFiltros = {
+      ...this.arrFiltros,
+      ...parametrosAdicionales,
+    };
+
+    // 2. Combinar parámetros base inmutables + filtros dinámicos
+    const parametrosConsulta = {
+      ...this.arrParametrosBase,
+      ...this.arrFiltros,
+    };
+
+    // 3. Activar indicador de carga
+    this.actualizandoLista.set(true);
+
+    // 4. Realizar consulta
     this._generalApiService
-      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', {
-        ...this.arrParametrosConsulta,
-        ...filtros,
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => {
-        this.arrDespachos = this._traficoService.agregarEstadoDespacho(
-          respuesta.results
-        );
-        this.cantidadRegistros = respuesta.count;
-        this.changeDetectorRef.detectChanges();
+      .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', parametrosConsulta)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          // 9. Desactivar indicador siempre (éxito o error)
+          this.actualizandoLista.set(false);
+        })
+      )
+      .subscribe({
+        next: (respuesta) => {
+          // 5. Aplicar lógica de negocio SIEMPRE
+          this.arrDespachos = this._traficoService.agregarEstadoDespacho(
+            respuesta.results
+          );
+
+          // 6. Actualizar conteo para paginación
+          this.cantidadRegistros = respuesta.count;
+
+          // 7. Mensaje de éxito condicional
+          if (mostrarMensajeExito) {
+            this.alerta.mensajaExitoso('Lista actualizada.', 'Operación exitosa');
+          }
+
+          this.changeDetectorRef.detectChanges();
+        },
+        error: (error) => {
+          // 8. Manejo de errores
+          console.error('Error al cargar despachos:', error);
+          this.alerta.mensajeError(
+            'Error',
+            'No se pudo cargar la lista de despachos.'
+          );
+          this.changeDetectorRef.detectChanges();
+        },
       });
+  }
+
+  /**
+   * Carga la lista de despachos con filtros opcionales.
+   * Usado en: ngOnInit, callbacks de modales
+   */
+  consultarLista(filtros: Record<string, any> = {}): void {
+    this._cargarDespachos(filtros, false);
   }
 
   private consultarVisitas(despachoId: number) {
@@ -242,21 +308,13 @@ export default class TraficoListaComponent
       .pipe(takeUntil(this.destroy$));
   }
 
-  recargarDespachos() {
-    this.actualizandoLista.set(true);
-    this._despachoApiService
-      .lista(this.arrParametrosConsulta)
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => {
-          this.actualizandoLista.set(false);
-        })
-      )
-      .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.results;
-        this.alerta.mensajaExitoso('Lista actualizada.', 'Operación exitosa');
-        this.changeDetectorRef.detectChanges();
-      });
+
+  /**
+   * Recarga la lista de despachos manteniendo filtros y paginación actuales.
+   * Usado en: Botón de recarga manual
+   */
+  recargarDespachos(): void {
+    this._cargarDespachos({}, true); // Con mensaje de éxito
   }
 
   descargarPlanoSemantica(id: number) {
@@ -672,25 +730,34 @@ export default class TraficoListaComponent
     this.consultarLista();
   }
 
+  /**
+   * Maneja el cambio de página en el paginador.
+   */
   onPageChange(page: number): void {
-    // this._generalApiService
-    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-    //     limit: 50,
-    //     page,
-    //   })
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
-    //this.consultaLista({ page });
-    this.arrParametrosConsulta = {
-      ...this.arrParametrosConsulta,
-      page,
-    };
-    this.consultarLista();
+    this._cargarDespachos({ page }, false);
   }
 
-  filterChange(filters: Record<string, any>) {
-    console.log(filters);
+  /**
+   * Maneja el cambio de filtros desde el componente de filtros.
+   * Si recibe un objeto vacío, limpia todos los filtros.
+   * Siempre resetea a página 1 al aplicar nuevos filtros.
+   */
+  filterChange(filters: Record<string, any>): void {
+    if (Object.keys(filters).length === 0) {
+      // Limpiar filtros: resetear a estado inicial
+      this.limpiarFiltros();
+    } else {
+      // Aplicar nuevos filtros, siempre volver a página 1
+      this._cargarDespachos({ ...filters, page: 1 }, false);
+    }
+  }
 
-    this.consultarLista(filters);
+  /**
+   * Limpia todos los filtros dinámicos y recarga con solo los parámetros base.
+   * Útil para el botón "Limpiar filtros" o cuando el usuario resetea los filtros.
+   */
+  limpiarFiltros(): void {
+    this.arrFiltros = { page: 1 };
+    this._cargarDespachos({}, false);
   }
 }
