@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GoogleMapsModule } from '@angular/google-maps';
 import { finalize } from 'rxjs/operators';
 import { UtilidadApiService } from '../../servicios/utilidad-api.service';
 import { AlertaService } from '../../../../common/services/alerta.service';
@@ -10,7 +11,7 @@ import { DecodificarDireccionResponse } from '../../interfaces/utilidad.interfac
 @Component({
   selector: 'app-decodificar-direccion',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, GoogleMapsModule],
   templateUrl: './decodificar-direccion.component.html',
   styleUrl: './decodificar-direccion.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +23,34 @@ export default class DecodificarDireccionComponent extends General {
   public estaCargando$ = signal<boolean>(false);
   public direccionControl = new FormControl('', [Validators.required]);
   public resultado$ = signal<DecodificarDireccionResponse | null>(null);
+
+  // Propiedades del mapa
+  public readonly mapCenter = computed<google.maps.LatLngLiteral>(() => {
+    const datos = this.resultado$()?.datos;
+    if (datos?.latitud && datos?.longitud) {
+      return {
+        lat: datos.latitud,
+        lng: datos.longitud,
+      };
+    }
+    return { lat: 6.200713725811437, lng: -75.58609508555918 };
+  });
+
+  public readonly mapZoom = 15;
+
+  public readonly mapOptions: google.maps.MapOptions = {
+    mapTypeId: 'roadmap',
+    zoomControl: true,
+    scrollwheel: true,
+    disableDoubleClickZoom: false,
+    maxZoom: 20,
+    minZoom: 8,
+  };
+
+  public readonly markerOptions: google.maps.MarkerOptions = {
+    draggable: false,
+    animation: google.maps.Animation.DROP,
+  };
 
   buscar(): void {
     if (this.direccionControl.invalid) {

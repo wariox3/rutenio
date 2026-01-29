@@ -61,7 +61,7 @@
             <h3 class="card-title">Información de la dirección</h3>
           </div>
           <div class="card-body">
-            <div class="overflow-x-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <table class="table-auto border border-gray-300 text-sm w-full">
                 <tbody>
                   <tr class="border-b border-gray-300">
@@ -114,10 +114,26 @@
                   </tr>
                 </tbody>
               </table>
+              <div class="w-full h-[300px] rounded-lg overflow-hidden border border-gray-300">
+              <google-map
+                height="100%"
+                width="100%"
+                [center]="mapCenter()"
+                [zoom]="mapZoom"
+                [options]="mapOptions"
+              >
+                <map-marker
+                  [position]="mapCenter()"
+                  [options]="markerOptions"
+                />
+              </google-map>
+            </div>
             </div>
           </div>
         </div>
       </div>
+
+     
 
       @if (resultado$()?.datos?.resultados && resultado$()?.datos?.resultados.length > 0) {
         <div class="card">
