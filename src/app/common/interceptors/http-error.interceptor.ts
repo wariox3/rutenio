@@ -45,7 +45,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
         }
 
-        alerta.mensajeError(errorMensaje, `Código de error:  ${errorCodigo}`);
+        const errorTitulo = errorCodigo ? `Código de error:  ${errorCodigo}` : "Error";
+
+        alerta.mensajeError(errorTitulo, errorMensaje);
       }
 
       return throwError(error?.error);
