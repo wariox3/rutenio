@@ -111,7 +111,6 @@ export default class TraficoListaComponent
   public toggleModalTrasbordarTrafico$ = new BehaviorSubject(false);
   public actualizandoLista = signal<boolean>(false);
   public currentPage = signal(1);
-  public totalPages = signal(1);
   public cantidadRegistros: number = 0;
   public filtroKey = signal<string>('');
   public nombreFiltro = '';
@@ -734,6 +733,7 @@ export default class TraficoListaComponent
    * Maneja el cambio de página en el paginador.
    */
   onPageChange(page: number): void {
+    this.currentPage.set(page);
     this._cargarDespachos({ page }, false);
   }
 
@@ -743,6 +743,7 @@ export default class TraficoListaComponent
    * Siempre resetea a página 1 al aplicar nuevos filtros.
    */
   filterChange(filters: Record<string, any>): void {
+    this.currentPage.set(1);
     if (Object.keys(filters).length === 0) {
       // Limpiar filtros: resetear a estado inicial
       this.limpiarFiltros();
@@ -757,6 +758,7 @@ export default class TraficoListaComponent
    * Útil para el botón "Limpiar filtros" o cuando el usuario resetea los filtros.
    */
   limpiarFiltros(): void {
+    this.currentPage.set(1);
     this.arrFiltros = { page: 1 };
     this._cargarDespachos({}, false);
   }
