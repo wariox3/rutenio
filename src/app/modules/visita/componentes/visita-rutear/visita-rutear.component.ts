@@ -36,6 +36,7 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { PaginacionDefaultComponent } from '../../../../common/components/ui/paginacion/paginacion-default/paginacion-default.component';
 import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
+import { FiltrosCompactosPipe } from '../../../../common/pipes/filtros-compactos.pipe';
 import { GeneralApiService } from '../../../../core';
 import {
   EstadoPaginacion,
@@ -80,6 +81,7 @@ import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
     FullLoaderDefaultComponent,
     VisitaResumenPedienteComponent,
     RedondearPipe,
+    FiltrosCompactosPipe,
     VisitaFormularioComponent,
     VisitaImportarPorComplementoComponent,
     PaginadorComponent,
@@ -239,7 +241,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
     const filtrosTransformados =
       this._filterTransformerService.transformToApiParams(filtrosParseados);
     this.valoresFiltrados = Object.values(filtrosTransformados)
-      .filter((value) => value)
+      .filter((value) => value !== null && value !== undefined && value !== '')
       .join(', ');
 
     this.filtrosActivos.set({
@@ -396,7 +398,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       total = (this.servicio() / this.tiempoTotal()) * 100;
     }
 
-    this.porcentajeTiempo = total;
+    // Redondear a 2 decimales para evitar problemas de UI
+    this.porcentajeTiempo = Math.round(total * 100) / 100;
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
@@ -568,7 +571,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -582,7 +585,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarErrores() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta acción elimina las visitas con errores',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -715,7 +718,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarVisita(id: number) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -802,7 +805,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this._filterTransformerService.transformToApiParams(filters);
     this._actualizarFiltrosPost(filters);
     this.valoresFiltrados = Object.values(filtrosTransformados)
-      .filter((value) => value)
+      .filter((value) => value !== null && value !== undefined && value !== '')
       .join(', ');
     this.filtrosActivos.set(filtrosTransformados);
     this.ordenar();

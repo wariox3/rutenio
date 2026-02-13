@@ -23,4 +23,5 @@ export class InputTextareaComponent {
   @Input() minLength: number = 0;
   @Input({ required: true }) control = new FormControl();
   @Input() errorTemplate?: TemplateRef<any>;
+  @Input() fieldName?: string = 'El campo';
 }

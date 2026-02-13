@@ -16,13 +16,13 @@
 
   <ng-container *ngIf="control.invalid && control.touched">
     <span *ngIf="control.hasError('required')" class="text-red-600 text-xs block mt-1">
-      El campo es requerido.
+      {{ fieldName }} es requerido.
     </span>
     <span *ngIf="control.hasError('minlength')" class="text-red-600 text-xs block mt-1">
-      El campo debe tener un mínimo de {{ minLength }} caracteres.
+      {{ fieldName }} debe tener un mínimo de {{ minLength }} caracteres.
     </span>
     <span *ngIf="control.hasError('maxlength')" class="text-red-600 text-xs block mt-1">
-      El campo debe tener un máximo de {{ maxLength }} caracteres.
+      {{ fieldName }} debe tener un máximo de {{ maxLength }} caracteres.
     </span>
     <span *ngIf="control.hasError('pattern')" class="text-red-600 text-xs block mt-1">
       Formato inválido.

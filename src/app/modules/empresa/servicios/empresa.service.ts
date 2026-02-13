@@ -28,7 +28,7 @@ export class EmpresaService {
   }
 
   detalle(){
-    return this.httpService.get<Empresa>('general/empresa/1/')
+    return this.httpService.getDetalle<Empresa>('general/empresa/1/')
   }
 
 }

@@ -84,7 +84,7 @@
     <app-importar
     (emitirCerrarModal)="cerrarModal('importarVehiculos')"
     (emitirConsultarLista)="handleUploadSuccess($event)"
-    archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+    archivosAdmitidos='.xls,.xlsx'
     url="ruteo/vehiculo/importar/"
     exampleFileUrl="https://semantica.sfo3.digitaloceanspaces.com/rutenio/ejemplos/importar_vehiculo.xlsx"
     exampleFileName="importar_vehiculo.xlsx"

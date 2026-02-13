@@ -35,7 +35,7 @@ export class GeneralApiService {
   }
 
   guardarConfiguracion(configuracion: any, id: number) {
-    return this._httpService.put(`general/configuracion/${id}/`, configuracion);
+    return this._httpService.put<Configuracion>(`general/configuracion/${id}/`, configuracion);
   }
 
   getConfiguracion(id: number) {

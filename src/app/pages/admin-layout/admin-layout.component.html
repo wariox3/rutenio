@@ -17,4 +17,52 @@
     <app-footer class="mt-auto"></app-footer> <!-- Agregado mt-auto -->
   </div>
   <app-search-modal></app-search-modal>
+
+  <!-- Modal de configuración de dirección origen -->
+  <app-modal-standard
+    modalId="modalConfiguracionDireccion"
+    title="Configuración requerida"
+    [showCloseButton]="false"
+    [closeOnOutsideClick]="false"
+    [closeOnEsc]="false"
+    size="lg"
+  >
+    <div class="space-y-6">
+      <div class="flex items-center justify-center mb-4">
+        <div class="rounded-full bg-yellow-100 p-4">
+          <i class="ki-duotone ki-map text-yellow-600 text-5xl">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">
+          Dirección de origen no configurada
+        </h3>
+        <p class="text-gray-700 mb-4">
+          Para poder utilizar el sistema de ruteo, es necesario que configure una <strong>dirección de origen</strong>.
+        </p>
+        
+      </div>
+
+  
+
+      <div class="flex justify-center pt-4">
+        <button
+          (click)="navegarAConfiguracion()"
+          class="btn btn-primary px-8 py-2.5 text-base font-medium"
+        >
+          <i class="ki-duotone ki-setting-2 mr-2">
+            <span class="path1"></span>
+            <span class="path2"></span>
+            <span class="path3"></span>
+          </i>
+          Configurar ahora
+        </button>
+      </div>
+    </div>
+  </app-modal-standard>
 </div>

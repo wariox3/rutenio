@@ -5,9 +5,13 @@
         <thead class="sticky-header">
           <tr>
             <th *ngFor="let item of encabezados">
-              {{ item.encabezado }}
+              <span 
+                [title]="item.tooltip || ''"
+              >
+                {{ item.encabezado }}
+              </span>
             </th>
-            <th class="w-[60px]"></th>
+            <th class="w-[60px]" *ngIf="!ocultarEditar"></th>
             <th class="w-[60px]"></th>
             <th class="w-[60px]">
               <input
@@ -31,7 +35,7 @@
               ></app-tabla-campo>
             </td>
             }
-            <td>
+            <td *ngIf="!ocultarEditar">
               <button
                 (click)="editarItem(item.id)"
                 class="btn btn-sm btn-icon btn-clear btn-light"

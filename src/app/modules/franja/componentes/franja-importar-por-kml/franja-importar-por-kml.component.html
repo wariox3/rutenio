@@ -1,5 +1,18 @@
 <form action="" class="mb-4">
-  <input class="file-input my-2" type="file" (change)="onFileChange($event)" accept=".kml" />
+  <div class="file-input-wrapper my-2">
+    <label for="kml-file" class="file-input-label">
+      <span class="file-input-button">Seleccionar archivo</span>
+      <span class="file-input-text">{{ fileName || 'Ningún archivo seleccionado' }}</span>
+    </label>
+    <input 
+      id="kml-file" 
+      class="file-input-hidden" 
+      type="file" 
+      (change)="onFileChange($event)" 
+      accept=".kml" 
+    />
+  </div>
+  <p class="file-extension-hint">Extensiones permitidas: .kml</p>
 </form>
 <div class="d-flex justify-content-end">
   <div class="flex justify-end gap-4 w-full" modal-footer>

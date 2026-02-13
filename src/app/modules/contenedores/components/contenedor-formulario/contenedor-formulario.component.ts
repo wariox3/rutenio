@@ -75,9 +75,9 @@ export class ContenedorFormularioComponent extends General {
       '',
       Validators.compose([
         Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(50),
-        Validators.pattern(/^[0-9]+$/),
+        Validators.minLength(10),
+        Validators.maxLength(15),
+        Validators.pattern(/^[\+]?[0-9][\s\-\(\)0-9]{8,14}$/),
       ])
     ),
     reddoc: new FormControl(false),

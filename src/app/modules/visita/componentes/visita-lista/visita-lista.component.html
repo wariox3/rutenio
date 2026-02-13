@@ -164,8 +164,10 @@
       campoMapeo="Visita"
       [mapeo]="mapeoDocumento"
       [datos]="arrGuia"
+      [ocultarEditar]="true"
       (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
       (emitirDetalleItem)="detalleVisita($event)"
+      (emitirEditarItem)="editarVisita($event)"
     ></app-tabla-comun>
   </div>
 </div>
@@ -196,7 +198,7 @@
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
-      archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      archivosAdmitidos='.xls,.xlsx'
       url="ruteo/visita/importar-excel/"
       [archivoEjemplo]="{
         nombre: 'estructuraVisita',

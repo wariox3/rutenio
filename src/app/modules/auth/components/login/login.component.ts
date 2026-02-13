@@ -29,8 +29,9 @@ import { RespuestaLogin } from '../../types/auth.interface';
 import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 import { AuthService } from '../../services/auth.service';
 import { TokenService } from '../../services/token.service';
-import { NgxTurnstileModule } from 'ngx-turnstile';
+import { NgxTurnstileModule, NgxTurnstileComponent } from 'ngx-turnstile';
 import { ConfirmarInivitacion } from '../../types/informacion-perfil.type';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -52,10 +53,12 @@ export default class LoginComponent extends General implements OnInit {
   private tokenService = inject(TokenService);
   private authService = inject(AuthService);
   private _router = inject(Router);
+  @ViewChild(NgxTurnstileComponent) turnstileComponent!: NgxTurnstileComponent;
   turnstileToken: string = '';
   turnstileSiteKey: string = environment.turnstileSiteKey;
   public isLoading$ = new BehaviorSubject<boolean>(false);
   isProduction: boolean = environment.production;
+  enableTurnstile: boolean = environment.enableTurnstile;
 
   formularioLogin = new FormGroup({
     cf_turnstile_response: new FormControl(''),
@@ -72,7 +75,7 @@ export default class LoginComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.isProduction) {
+    if (this.enableTurnstile) {
       this.formularioLogin
         .get('cf_turnstile_response')
         ?.addValidators([Validators.required]);
@@ -95,8 +98,15 @@ export default class LoginComponent extends General implements OnInit {
     const tokenUrl = this.activatedRoute.snapshot.paramMap.get('token');
 
     this.isLoading$.next(true);
+    const loginData = { ...this.formularioLogin.value };
+    
+    // Solo incluir cf_turnstile_response si Turnstile está habilitado
+    if (!this.enableTurnstile) {
+      delete loginData.cf_turnstile_response;
+    }
+    
     this.authService
-      .login(this.formularioLogin.value)
+      .login(loginData)
       .pipe(
         tap((resultado: RespuestaLogin) => {
           if (resultado.token) {
