@@ -19,7 +19,7 @@ export class ButtonComponent {
   @Input() texto = '';
   @Input() textoCargando = '';
   @Input() type: 'submit' | 'button' = 'submit';
-  @Input() color: 'primary' | 'danger' = 'primary';
+  @Input() color: 'primary' | 'danger' | 'secondary' = 'primary';
   @Input() clases = '';
   @Input() estaCargando = false;
   @Input() estaDeshabilitado = false;

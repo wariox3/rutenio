@@ -75,14 +75,16 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Unidades',
       },
       {
-        encabezado: 'Pes',
+        encabezado: 'Peso',
         campoNombre: 'peso',
         campoTipo: 'IntegerField',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Peso (kg)',
       },
       {
         encabezado: 'Vol',
@@ -91,6 +93,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Volumen',
       },
       {
         encabezado: 'Despacho',
@@ -107,6 +110,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Estado Despacho',
       },
       {
         encabezado: 'E',
@@ -115,6 +119,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Estado Entregado',
       },
       {
         encabezado: 'N',
@@ -123,6 +128,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Estado Novedad',
       },
       {
         encabezado: 'Dev',
@@ -131,6 +137,7 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+        tooltip: 'Estado Devolución',
       },
     ],
   },

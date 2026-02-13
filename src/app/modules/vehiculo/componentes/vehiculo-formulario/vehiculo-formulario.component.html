@@ -25,6 +25,7 @@
           <div>
             <app-label [required]="true">Placa</app-label>
             <app-input
+              [fieldName]="'La placa'"
               [control]="formularioVehiculo.controls.placa"
               [maxLength]="6"
             ></app-input>
@@ -48,14 +49,22 @@
           <div>
             <app-label [required]="true">Capacidad (kg)</app-label>
             <app-input
+              [fieldName]="'La capacidad'"
               [control]="formularioVehiculo.controls.capacidad"
               placeholder="1000"
+              [soloNumeros]="true"
+              type="number"
               ></app-input>
           </div>
         </div>
         <div>
           <app-label [required]="true">Tiempo (min)</app-label>
-          <app-input [control]="formularioVehiculo.controls.tiempo" placeholder="480"></app-input>
+          <app-input 
+            [fieldName]="'El tiempo'" 
+            [control]="formularioVehiculo.controls.tiempo" 
+            placeholder="480"
+            [soloNumeros]="true"
+            type="number"></app-input>
         </div>
       </div>
 
@@ -63,6 +72,7 @@
         <div>
           <app-label>Usuario app</app-label>
           <app-input
+            [fieldName]="'El usuario app'"
             [control]="formularioVehiculo.controls.usuario_app"
             [maxLength]="6"
           ></app-input>

@@ -41,17 +41,9 @@
           [control]="formularioLogin.controls.password"
         ></app-input-password>
       </div>
-      <label class="checkbox-group">
-        <input
-          class="checkbox checkbox-sm"
-          name="check"
-          type="checkbox"
-          value="1"
-        />
-        <span class="checkbox-label"> Recuerdame </span>
-      </label>
+    
 
-      @if(isProduction) {
+      @if(enableTurnstile) {
       <ngx-turnstile
         [siteKey]="turnstileSiteKey"
         (resolved)="onTurnstileSuccess($event)"

@@ -56,7 +56,7 @@
         </span>
       </label>
 
-      @if(isProduction) {
+      @if(enableTurnstile) {
       <ngx-turnstile
         [siteKey]="turnstileSiteKey"
         (resolved)="onTurnstileSuccess($event)"

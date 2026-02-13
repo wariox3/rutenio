@@ -187,7 +187,7 @@ export default class ComplementoComponent extends General implements OnInit {
   confirmacionDesinstalar(complemento: any) {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta acción desinstala el complemento',
         textoBotonCofirmacion: 'Si, desinstalar',
       })

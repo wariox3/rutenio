@@ -67,7 +67,7 @@
       <div class="flex justify-between items-center">
         <section class="flex gap-8">
           <div>
-            <p class="text-xs text-slate-600">Vehiculos</p>
+            <p class="text-xs text-slate-600">Vehículos</p>
             <span class="font-semibold">
               <i
                 class="ki-filled ki-delivery"
@@ -156,7 +156,18 @@
       <section class="flex gap-2 items-center">
         <h3 class="card-title">Visita</h3>
         @if(valoresFiltrados.length > 0){
-        <span class="text-sm text-slate-500">[ {{ valoresFiltrados }} ]</span>
+        <div
+          class="flex items-center gap-2 cursor-pointer"
+          data-modal-toggle="#filtros-visita"
+          (click)="abrirModalFiltros()"
+        >
+          <span class="text-xs text-slate-400">Filtros:</span>
+          <span
+            class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded-full border hover:bg-slate-200 transition-colors"
+          >
+            {{ valoresFiltrados | filtrosCompactos }}
+          </span>
+        </div>
         }
       </section>
       <section class="flex items-center">
@@ -538,7 +549,7 @@
   class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_vehiculos_disponibles"
 >
-  Vehiculos disponibles
+  Vehículos disponibles
 </div>
 
 <div
@@ -559,7 +570,7 @@
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
       (emitirConsultarLista)="consultarVisitas()"
-      archivosAdmitidos="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+      archivosAdmitidos=".xls,.xlsx"
       url="ruteo/visita/importar-excel/"
       [archivoEjemplo]="{
         nombre: 'estructuraVisita',
@@ -634,7 +645,7 @@
 <app-modal-default
   size="medium"
   [id]="'nuevo-visita'"
-  titulo="Nuevo visita"
+  titulo="Nueva visita"
   (emitirModalCerrado)="cerrarModalVisitaNuevo()"
   #visitaNuevo
 >

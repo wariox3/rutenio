@@ -51,7 +51,8 @@ export class ImportarComponent extends General {
   public fileName: string = '';
   public fileSize: string = '';
   public estaImportando$: BehaviorSubject<boolean>;
-  public isDownloadingExample$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public isDownloadingExample$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(false);
   public errorMessage: string = '';
 
   constructor() {
@@ -63,19 +64,56 @@ export class ImportarComponent extends General {
 
   onFileChange(event: any) {
     const file = event.target.files[0];
-
     if (file) {
-      const fileSize = file.size;
-
-      const fileSizeInKB = fileSize / 1024;
-      const fileSizeInMB = fileSizeInKB / 1024;
-
-      this.fileSize = `${fileSizeInKB.toFixed(2)}KB`;
-
-      this.fileName = file.name;
-      this.selectedFile = file;
-      this.convertToBase64(file);
+      this.processFile(file);
     }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      this.processFile(file);
+    }
+  }
+
+  private processFile(file: File) {
+    // Validar tipo de archivo si se especifica
+    if (this.archivosAdmitidos) {
+      const acceptedTypes = this.archivosAdmitidos
+        .split(',')
+        .map((type) => type.trim());
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+
+      if (!acceptedTypes.includes(fileExtension)) {
+        this.alerta.mensajeError(
+          'Tipo de archivo no válido',
+          `Solo se permiten archivos: ${this.archivosAdmitidos}`
+        );
+        return;
+      }
+    }
+
+    const fileSize = file.size;
+    const fileSizeInKB = fileSize / 1024;
+
+    this.fileSize = `${fileSizeInKB.toFixed(2)}KB`;
+    this.fileName = file.name;
+    this.selectedFile = file;
+    this.convertToBase64(file);
   }
 
   removerArchivoSeleccionado() {
@@ -143,21 +181,19 @@ export class ImportarComponent extends General {
           finalize(() => {
             this.estaImportando$.next(false);
             this._modalDefaultService.actualizarEstadoModal(false);
-          }),
-          catchError((err) => {
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.alerta.mensajaExitoso('Registros importados exitosamente');
+            this.emitirCerrarModal.emit();
+            this.emitirConsultarLista.emit();
+          },
+          error: (err) => {
             if (err.errores_validador) {
               this._adaptarErroresImportar(err.errores_validador);
             }
-
-            return of(null);
-          })
-        )
-        .subscribe((response) => {
-          if (response?.mensaje) {
-            this.alerta.mensajaExitoso(response?.mensaje);
-          }
-          this.emitirCerrarModal.emit();
-          this.emitirConsultarLista.emit();
+          },
         });
     } else {
       this.alerta.mensajeError('No se ha seleccionado ningún archivo', 'Error');
@@ -193,7 +229,7 @@ export class ImportarComponent extends General {
       this.downloadExampleFile();
       return;
     }
-    
+
     // Si no hay URL externa, usamos el método local tradicional
     if (this.archivoEjemplo?.ruta) {
       this._generalService.descargarArchivoLocal(
@@ -201,8 +237,12 @@ export class ImportarComponent extends General {
         this.archivoEjemplo.nombre
       );
     } else {
-      this.errorMessage = 'No se ha configurado una ruta para el archivo de ejemplo';
-      this.alerta.mensajeError('Error', 'No se ha configurado una ruta para el archivo de ejemplo');
+      this.errorMessage =
+        'No se ha configurado una ruta para el archivo de ejemplo';
+      this.alerta.mensajeError(
+        'Error',
+        'No se ha configurado una ruta para el archivo de ejemplo'
+      );
     }
   }
 
@@ -211,12 +251,13 @@ export class ImportarComponent extends General {
    */
   downloadExampleFile(): void {
     if (!this.exampleFileUrl) {
-      this.errorMessage = 'No se ha configurado una URL para el archivo de ejemplo';
+      this.errorMessage =
+        'No se ha configurado una URL para el archivo de ejemplo';
       return;
     }
 
     this.isDownloadingExample$.next(true);
-    
+
     try {
       // Si la URL es relativa, usamos el servicio HTTP para descargar
       if (!this.exampleFileUrl.startsWith('http')) {
@@ -237,7 +278,10 @@ export class ImportarComponent extends General {
       this.isDownloadingExample$.next(false);
       this.exampleDownloadError.emit(error);
       this.errorMessage = 'Error al descargar el archivo de ejemplo';
-      this.alerta.mensajeError('Error', 'No se pudo descargar el archivo de ejemplo');
+      this.alerta.mensajeError(
+        'Error',
+        'No se pudo descargar el archivo de ejemplo'
+      );
     }
   }
 }

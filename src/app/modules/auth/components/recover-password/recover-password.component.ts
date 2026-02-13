@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
@@ -21,6 +21,7 @@ import { General } from '../../../../common/clases/general';
     ReactiveFormsModule,
     ButtonComponent,
     InputEmailComponent,
+    RouterLink,
   ],
   templateUrl: './recover-password.component.html',
   styleUrl: './recover-password.component.scss',

@@ -166,7 +166,7 @@ export default class VisitaListaComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Estas seguro?',
+        titulo: '¿Estás seguro?',
         texto: 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, eliminar',
       })
@@ -270,22 +270,48 @@ export default class VisitaListaComponent extends General implements OnInit {
     this._listaItemsEliminar = itemsSeleccionados;
   }
 
-  eliminarItemsSeleccionados() {
-    const eliminarRegistros = this._listaItemsEliminar.map((id) => {
-      return this._visitaApiService.eliminarPorId(id);
+  async eliminarItemsSeleccionados() {
+    if (this._listaItemsEliminar.length === 0) {
+      return;
+    }
+
+    const cantidadVisitas = this._listaItemsEliminar.length;
+    const textoConfirmacion = cantidadVisitas === 1 
+      ? '¿Estás seguro de que deseas eliminar esta visita?' 
+      : `¿Estás seguro de que deseas eliminar estas ${cantidadVisitas} visitas?`;
+
+    const resultado = await this.alerta.confirmar({
+      titulo: 'Confirmar eliminación',
+      texto: textoConfirmacion,
+      textoBotonCofirmacion: 'Sí, eliminar',
+      colorConfirmar: '#d33'
     });
 
-    forkJoin(eliminarRegistros)
-      .pipe(
-        finalize(() => {
-          this._listaItemsEliminar = [];
-          this.consultaLista(this.arrParametrosConsulta);
-          this.changeDetectorRef.detectChanges();
-        })
-      )
-      .subscribe((respuesta: any) => {
-        this.alerta.mensajaExitoso('Registros eliminado');
+    if (resultado.isConfirmed) {
+      const eliminarRegistros = this._listaItemsEliminar.map((id) => {
+        return this._visitaApiService.eliminarPorId(id);
       });
+
+      forkJoin(eliminarRegistros)
+        .pipe(
+          finalize(() => {
+            this._listaItemsEliminar = [];
+            this.consultaLista(this.arrParametrosConsulta);
+            this.changeDetectorRef.detectChanges();
+          })
+        )
+        .subscribe({
+          next: () => {
+            this.alerta.mensajaExitoso('Se han eliminado los registros');
+          },
+          error: (error) => {
+            this.alerta.mensajeError(
+              'Error al eliminar',
+              'No se han eliminado algunos de los registros'
+            );
+          },
+        });
+    }
   }
 
   exportarExcel() {
@@ -298,6 +324,10 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   detalleVisita(id: number) {
     this.router.navigateByUrl(`/movimiento/visita/detalle/${id}`);
+  }
+
+  editarVisita(id: number) {
+    this.router.navigateByUrl(`/movimiento/visita/editar/${id}`);
   }
 
   filterChange(filters: Record<string, any>) {

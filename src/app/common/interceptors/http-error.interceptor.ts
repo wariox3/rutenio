@@ -15,7 +15,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: any) => {
       let errorCodigo: string;
-      let errorMensaje: string = "";
+      let errorMensaje: string = " ";
 
       if (error instanceof HttpErrorResponse) {
         switch (error.status) {
@@ -35,7 +35,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
             }
             if (objError.hasOwnProperty("mensaje")) {
               errorCodigo = objError.codigo;
-              errorMensaje = objError.mensaje;
+              errorMensaje = `${objError.mensaje}\n`;
             }
             if (objError.hasOwnProperty("validaciones")) {
               for (const key in objError.validaciones) {
@@ -45,7 +45,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
         }
 
-        alerta.mensajeError(errorMensaje, `Código de error:  ${errorCodigo}`);
+        const errorTitulo = errorCodigo ? `Código de error:  ${errorCodigo}` : "Error";
+
+        alerta.mensajeError(errorTitulo, errorMensaje);
       }
 
       return throwError(error?.error);

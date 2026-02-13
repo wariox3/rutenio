@@ -12,6 +12,7 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
+  forkJoin,
   Observable,
   of,
   Subject,
@@ -39,6 +40,11 @@ import {
   empresaActionInit,
   empresaLimpiarAction,
 } from '../../../../redux/actions/empresa/empresa.actions';
+import {
+  configuracionActionInit,
+  configuracionLimpiarAction,
+} from '../../../../redux/actions/configuracion/configuracion.actions';
+import { GeneralApiService } from '../../../../core/api/general-api.service';
 import { FormsModule } from '@angular/forms';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 
@@ -67,6 +73,7 @@ export default class ContenedorListaComponent
   private contenedorService = inject(ContenedorService);
   private _modalService = inject(ModalService);
   private _empresaService = inject(EmpresaService);
+  private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
   arrConectando: boolean[] = [];
   arrContenedores: ContenedorLista[] = [];
@@ -153,10 +160,35 @@ export default class ContenedorListaComponent
             acceso_restringido: respuesta.acceso_restringido,
           };
           this.store.dispatch(ContenedorActionInit({ contenedor }));
-          this._empresaService.detalle().subscribe((empresa: any) => {
-            this.store.dispatch(empresaActionInit({ empresa }));
-          });
-          return of(null);
+
+          return forkJoin({
+            empresa: this._empresaService.detalle(),
+            configuracion: this._generalApiService.getConfiguracion(1).pipe(
+              catchError(() => of({
+                id: 0,
+                empresa: 0,
+                informacion_factura: null,
+                informacion_factura_superior: null,
+                gen_uvt: '',
+                gen_emitir_automaticamente: false,
+                hum_factor: '',
+                hum_salario_minimo: '',
+                hum_auxilio_transporte: '',
+                hum_entidad_riesgo: null,
+                pos_documento_tipo: 0,
+                rut_sincronizar_complemento: false,
+                rut_rutear_franja: false,
+                rut_direccion_origen: '',
+                rut_longitud: '',
+                rut_latitud: '',
+              }))
+            )
+          }).pipe(
+            tap(({ empresa, configuracion }) => {
+              this.store.dispatch(empresaActionInit({ empresa }));
+              this.store.dispatch(configuracionActionInit({ configuracion }));
+            })
+          );
         }),
         catchError(() => {
           this.arrConectando[indexContenedor] = false;
@@ -212,6 +244,7 @@ export default class ContenedorListaComponent
 
   limpiarEmpresa() {
     this.store.dispatch(empresaLimpiarAction());
+    this.store.dispatch(configuracionLimpiarAction());
     this.changeDetectorRef.detectChanges();
   }
 

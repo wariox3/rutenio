@@ -56,11 +56,12 @@
         id="sidebar_menu"
       >
         @for (menu of sidebarMenu; track $index) { @if (!menu.tipoAcordion) {
-        <div class="menu-item">
+        <div class="menu-item" data-menu-item-trigger="click">
           <div
             class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent"
             [routerLink]="menu.link"
             routerLinkActive="bg-slate-100 text-white rounded-lg"
+            (click)="onMenuClick(menu)"
             tabindex="0"
           >
             <span
@@ -86,12 +87,12 @@
         } @else {
         <div
           class="menu-item"
-          data-menu-item-toggle="accordion"
-          data-menu-item-trigger="click"
+          [class.show]="isAccordionOpen(menu.nombre)"
         >
           <div
             class="menu-link flex items-center grow cursor-pointer border border-transparent gap-[10px] pl-[10px] pr-[10px] py-[6px]"
             tabindex="0"
+            (click)="toggleAccordion(menu.nombre)"
           >
             <span
               class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]"
@@ -106,15 +107,20 @@
             <span
               class="menu-arrow text-gray-400 w-[20px] shrink-0 justify-end ml-1 mr-[-10px]"
             >
-              <i class="ki-filled ki-plus text-2xs menu-item-show:hidden"> </i>
+              <i 
+                class="ki-filled ki-plus text-2xs"
+                [class.hidden]="isAccordionOpen(menu.nombre)"
+              > </i>
               <i
-                class="ki-filled ki-minus text-2xs hidden menu-item-show:inline-flex"
+                class="ki-filled ki-minus text-2xs"
+                [class.hidden]="!isAccordionOpen(menu.nombre)"
               >
               </i>
             </span>
           </div>
           <div
             class="menu-accordion gap-0.5 pl-[10px] relative before:absolute before:left-[20px] before:top-0 before:bottom-0 before:border-l before:border-gray-200"
+            [class.hidden]="!isAccordionOpen(menu.nombre)"
           >
             @for (subMenu of menu?.children; track $index) {
             <div class="menu-item">
@@ -125,6 +131,7 @@
                   'bg-secondary-active rounded-lg': isActive(subMenu.link),
                   'text-gray-700': !isActive(subMenu.link)
                 }"
+                (click)="onSubMenuClick(subMenu)"
                 tabindex="0"
               >
                 <span

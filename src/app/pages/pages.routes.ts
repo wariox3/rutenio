@@ -158,6 +158,17 @@ export default [
     ],
   },
   {
+    path: 'utilidad',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () => import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('../modules/utilidad/utilidad.routes'),
+      },
+    ],
+  },
+  {
     path: 'movimiento',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

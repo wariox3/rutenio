@@ -17,6 +17,11 @@ export default [
       import('./componentes/visita-nuevo/visita-nuevo.component'),
   },
   {
+    path: 'editar/:id',
+    loadComponent: () =>
+      import('./componentes/visita-editar/visita-editar.component'),
+  },
+  {
     path: 'detalle/:id',
     loadComponent: () =>
       import('./componentes/visita-detalle/visita-detalle.component'),

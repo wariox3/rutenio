@@ -6,19 +6,42 @@
         class="select mt-1 w-full"
         name="select"
         [formControl]="formularioNovedad.controls.novedad_tipo"
+        [ngClass]="{
+          'border-danger':
+            formularioNovedad.controls.novedad_tipo.touched &&
+            formularioNovedad.controls.novedad_tipo.invalid,
+          'border-success':
+            formularioNovedad.controls.novedad_tipo.touched &&
+            formularioNovedad.controls.novedad_tipo.valid
+        }"
       >
-        <option value="0">Seleccionar</option>
         @for (novedadTipo of arrTipoNovedad; track $index) {
         <option [value]="novedadTipo.id">
           {{ novedadTipo.nombre }}
         </option>
         }
       </select>
+      <ng-container
+        *ngIf="
+          formularioNovedad.controls.novedad_tipo.invalid &&
+          formularioNovedad.controls.novedad_tipo.touched
+        "
+      >
+        <span
+          *ngIf="formularioNovedad.controls.novedad_tipo.hasError('required')"
+          class="text-danger text-xs block"
+        >
+          El tipo de novedad es requerido.
+        </span>
+      </ng-container>
     </div>
     <div>
       <div>
         <app-label [required]="true"> Visita id </app-label>
-        <app-input [control]="formularioNovedad.controls.visita"></app-input>
+        <app-input
+          [fieldName]="'La visita id'"
+          [control]="formularioNovedad.controls.visita"
+        ></app-input>
       </div>
     </div>
   </div>
@@ -31,6 +54,7 @@
       [rows]="4"
       [minLength]="10"
       [maxLength]="500"
+      fieldName="La descripción"
     ></app-input-textarea>
   </div>
 

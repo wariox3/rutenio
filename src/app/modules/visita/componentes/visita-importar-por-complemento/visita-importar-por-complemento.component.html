@@ -33,6 +33,7 @@
       <div>
         <app-label>Número desde</app-label>
         <app-input
+          [fieldName]="'El número desde'"
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.desde"
         ></app-input>
@@ -40,6 +41,7 @@
       <div>
         <app-label>Número hasta</app-label>
         <app-input
+          [fieldName]="'El número hasta'"
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.hasta"
           [errorTemplate]="erroresCustomHasta"
@@ -59,6 +61,7 @@
       <div>
         <app-label>Código contacto</app-label>
         <app-input
+          [fieldName]="'El código contacto'"
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.codigoContacto"
         ></app-input>
@@ -66,6 +69,7 @@
       <div>
         <app-label>Código destino</app-label>
         <app-input
+          [fieldName]="'El código destino'"
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.codigoDestino"
         ></app-input>
@@ -76,12 +80,14 @@
       <div>
         <app-label>Código zona</app-label>
         <app-input
+          [fieldName]="'El código zona'"
           [control]="formularioComplementos.controls.codigoZona"
         ></app-input>
       </div>
       <div>
         <app-label>Código despacho</app-label>
         <app-input
+          [fieldName]="'El código despacho'"
           [type]="'number'"
           [control]="formularioComplementos.controls.codigo_despacho"
         ></app-input>
