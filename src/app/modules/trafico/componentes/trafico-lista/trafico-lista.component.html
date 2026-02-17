@@ -65,7 +65,17 @@
             </th>
             <th>Complemento</th>
             <th>Placa</th>
-            <th>Fecha</th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamientoFecha()"
+            >
+              Fecha
+              @if (ordenamientoFecha() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (ordenamientoFecha() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              }
+            </th>
             <th>Tiempo (min)</th>
             <th>Peso / Volumen</th>
             <th>Última ubicación</th>
@@ -319,7 +329,8 @@
   (onOpen)="onModalOpened()"
   #traficoRuta
 >
-  <section *ngIf="toggleModalRuta$ | async" modal-body>
+  @if (toggleModalRuta()) {
+  <section modal-body>
     <div class="h-full" style="height: 600px; position: relative">
       <div class="flex justify-end mb-2">
         <button
@@ -344,9 +355,9 @@
           #marker="mapMarker"
           [label]="markerPosition.label"
           [icon]="
-            markerPosition.infoContent.datosVisita.estado_novedad
+            $any(markerPosition.infoContent.datosVisita).estado_novedad
               ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
-              : markerPosition.infoContent.datosVisita.estado_entregado
+              : $any(markerPosition.infoContent.datosVisita).estado_entregado
               ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/verde1.png'
               : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
           "
@@ -418,6 +429,7 @@
       </google-map>
     </div>
   </section>
+  }
 </app-modal-default>
 
 <app-modal-default
@@ -428,7 +440,8 @@
   (onOpen)="onModalOpened()"
   #traficoUbicacionActual
 >
-  <section *ngIf="toggleModalUbicacion$ | async" modal-body>
+  @if (toggleModalUbicacion()) {
+  <section modal-body>
     <div class="card-body h-full" style="height: 600px">
       <google-map
         height="100%"
@@ -493,6 +506,7 @@
       </google-map>
     </div>
   </section>
+  }
 </app-modal-default>
 
 <app-modal-standard title="" size="8xl" modalId="trafico-despacho-visita">
@@ -525,20 +539,21 @@
       </nav>
     </div>
 
-    <div *ngIf="activeTab === 'visitas' && selectedDespachoId">
+    @if (activeTab === 'visitas' && despachoIdActual) {
+    <div>
       <app-despacho-tab-visita
-        [despachoId]="selectedDespachoId"
+        [despachoId]="despachoIdActual"
       ></app-despacho-tab-visita>
     </div>
+    }
 
-    <div
-      *ngIf="activeTab === 'ubicaciones' && selectedDespachoId"
-      class="overflow-x-auto"
-    >
+    @if (activeTab === 'ubicaciones' && despachoIdActual) {
+    <div class="overflow-x-auto">
       <app-despacho-tab-ubicacion
-        [despachoId]="selectedDespachoId"
+        [despachoId]="despachoIdActual"
       ></app-despacho-tab-ubicacion>
     </div>
+    }
     }
   </section>
 </app-modal-standard>
@@ -550,9 +565,11 @@
   (emitirModalCerrado)="cerrarModalLiberar()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModalLiberar$ | async" modal-body>
+  @if (toggleModalLiberar()) {
+  <section modal-body>
     <app-visita-liberar [despachoId]="despachoIdActual"></app-visita-liberar>
   </section>
+  }
 </app-modal-default>
 
 <app-modal-default
@@ -562,7 +579,8 @@
   (emitirModalCerrado)="cerrarModalAdicionar()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModal$ | async" modal-body>
+  @if (toggleModal()) {
+  <section modal-body>
     <app-despacho-formulario
       [isModal]="true"
       [isEditando]="true"
@@ -570,6 +588,7 @@
       (emitirFormulario)="actualizarDespacho($event)"
     ></app-despacho-formulario>
   </section>
+  }
 </app-modal-default>
 
 <div
@@ -586,11 +605,13 @@
   (emitirModalCerrado)="cerrarModalAdicionar()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModalAdicionarVisita$ | async" modal-body>
+  @if (toggleModalAdicionarVisita()) {
+  <section modal-body>
     <app-despacho-adicionar-visita-pendiente
       [despachoId]="despachoIdActual"
     ></app-despacho-adicionar-visita-pendiente>
   </section>
+  }
 </app-modal-default>
 
 <app-modal-default
@@ -600,11 +621,13 @@
   (emitirModalCerrado)="cerrarModalAdicionarVisitaTrafico()"
   #importarPorExcelModal
 >
-  <section *ngIf="toggleModalAdicionarVisitaTrafico$ | async" modal-body>
+  @if (toggleModalAdicionarVisitaTrafico()) {
+  <section modal-body>
     <app-despacho-adicionar-visita-trafico
       [despachoId]="despachoIdActual"
     ></app-despacho-adicionar-visita-trafico>
   </section>
+  }
 </app-modal-default>
 
 <app-modal-default
@@ -613,10 +636,12 @@
   [titulo]="'Trasbordar a despacho ' + despachoIdActual"
   (emitirModalCerrado)="cerrarModalAdicionar()"
 >
-  <section *ngIf="toggleModalTrasbordarTrafico$ | async" modal-body>
+  @if (toggleModalTrasbordarTrafico()) {
+  <section modal-body>
     <app-despacho-trasbordar
       [despachoId]="despachoIdActual"
       (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho-trafico')"
     ></app-despacho-trasbordar>
   </section>
+  }
 </app-modal-default>
