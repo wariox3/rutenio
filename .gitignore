@@ -41,5 +41,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
+# Claude
+CLAUDE.md
+
 environment.*
 settings.json
