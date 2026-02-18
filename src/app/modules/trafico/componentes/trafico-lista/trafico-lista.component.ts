@@ -129,7 +129,8 @@ export default class TraficoListaComponent
   public cantidadRegistros: number = 0;
   public filtroKey = signal<string>('');
   public nombreFiltro = '';
-  public ordenamientoFecha = signal<'asc' | 'desc' | null>(null);
+  public columnaOrdenada = signal<string | null>('id');
+  public direccionOrden = signal<'asc' | 'desc' | null>('asc');
 
   customMarkers: CustomMarker[] = [];
   mostrarMapaFlag = false;
@@ -700,27 +701,31 @@ export default class TraficoListaComponent
    */
   limpiarFiltros(): void {
     this.arrFiltros = { page: 1 };
-    this.ordenamientoFecha.set(null);
+    this.columnaOrdenada.set('id');
+    this.direccionOrden.set('asc');
     this._cargarDespachos({}, false);
   }
 
-  toggleOrdenamientoFecha(): void {
-    const actual = this.ordenamientoFecha();
-    let siguiente: 'asc' | 'desc' | null;
-
-    if (actual === null) siguiente = 'desc';
-    else if (actual === 'desc') siguiente = 'asc';
-    else siguiente = null;
-
-    this.ordenamientoFecha.set(siguiente);
-
-    if (siguiente === null) {
-      const { ordering, ...filtrosSinOrden } = this.arrFiltros;
-      this.arrFiltros = filtrosSinOrden;
-      this._cargarDespachos({}, false);
+  toggleOrdenamiento(campo: string): void {
+    if (this.columnaOrdenada() === campo) {
+      const actual = this.direccionOrden();
+      if (actual === 'desc') {
+        this.direccionOrden.set('asc');
+        this._cargarDespachos({ ordering: campo }, false);
+      } else if (actual === 'asc') {
+        this.columnaOrdenada.set(null);
+        this.direccionOrden.set(null);
+        const { ordering, ...filtrosSinOrden } = this.arrFiltros;
+        this.arrFiltros = filtrosSinOrden;
+        this._cargarDespachos({}, false);
+      } else {
+        this.direccionOrden.set('desc');
+        this._cargarDespachos({ ordering: `-${campo}` }, false);
+      }
     } else {
-      const ordering = siguiente === 'desc' ? '-fecha_salida' : 'fecha_salida';
-      this._cargarDespachos({ ordering }, false);
+      this.columnaOrdenada.set(campo);
+      this.direccionOrden.set('desc');
+      this._cargarDespachos({ ordering: `-${campo}` }, false);
     }
   }
 }

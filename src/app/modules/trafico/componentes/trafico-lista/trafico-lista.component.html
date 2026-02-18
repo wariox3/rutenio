@@ -55,30 +55,114 @@
       >
         <thead class="top-0 bg-white">
           <tr>
-            <th>Id</th>
-            <th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('id')"
+            >
+              Id
+              @if (columnaOrdenada() === 'id' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'id' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('entrega_id')"
+            >
               <span
                 data-tooltip="#tooltip_orden_entrega"
                 nbTooltipStatus="primary"
                 >O_E</span
               >
-            </th>
-            <th>Complemento</th>
-            <th>Placa</th>
-            <th
-              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
-              (click)="toggleOrdenamientoFecha()"
-            >
-              Fecha
-              @if (ordenamientoFecha() === 'desc') {
+              @if (columnaOrdenada() === 'entrega_id' && direccionOrden() === 'desc') {
               <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
-              } @else if (ordenamientoFecha() === 'asc') {
+              } @else if (columnaOrdenada() === 'entrega_id' && direccionOrden() === 'asc') {
               <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
               }
             </th>
-            <th>Tiempo (min)</th>
-            <th>Peso / Volumen</th>
-            <th>Última ubicación</th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('codigo_complemento')"
+            >
+              Complemento
+              @if (columnaOrdenada() === 'codigo_complemento' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'codigo_complemento' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('vehiculo__placa')"
+            >
+              Placa
+              @if (columnaOrdenada() === 'vehiculo__placa' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'vehiculo__placa' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('fecha_salida')"
+            >
+              Fecha
+              @if (columnaOrdenada() === 'fecha_salida' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'fecha_salida' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('tiempo')"
+            >
+              Tiempo (min)
+              @if (columnaOrdenada() === 'tiempo' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'tiempo' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('peso')"
+            >
+              Peso / Volumen
+              @if (columnaOrdenada() === 'peso' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'peso' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
+            <th
+              class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+              (click)="toggleOrdenamiento('fecha_ubicacion')"
+            >
+              Última ubicación
+              @if (columnaOrdenada() === 'fecha_ubicacion' && direccionOrden() === 'desc') {
+              <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+              } @else if (columnaOrdenada() === 'fecha_ubicacion' && direccionOrden() === 'asc') {
+              <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+              } @else {
+              <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+              }
+            </th>
             <th style="text-align: center">Progreso</th>
             <th></th>
           </tr>

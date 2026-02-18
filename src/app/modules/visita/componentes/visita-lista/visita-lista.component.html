@@ -165,9 +165,11 @@
       [mapeo]="mapeoDocumento"
       [datos]="arrGuia"
       [ocultarEditar]="true"
+      ordenamientoInicial="-id"
       (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
       (emitirDetalleItem)="detalleVisita($event)"
       (emitirEditarItem)="editarVisita($event)"
+      (emitirOrdenamiento)="onOrdenamientoChange($event)"
     ></app-tabla-comun>
   </div>
 </div>
