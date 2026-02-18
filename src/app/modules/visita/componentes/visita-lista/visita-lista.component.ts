@@ -353,6 +353,15 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
 
+  onOrdenamientoChange(ordering: string): void {
+    if (ordering) {
+      this.arrParametrosConsulta['ordering'] = ordering;
+    } else {
+      this.arrParametrosConsulta['ordering'] = '-id';
+    }
+    this.consultaLista(this.arrParametrosConsulta);
+  }
+
   private _procesarRespuestaLista(respuesta: RespuestaApi<Visita>, ordenarRuta = true): void {
     this.arrGuia = respuesta.results?.map((guia) => ({
       ...guia,

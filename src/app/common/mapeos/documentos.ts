@@ -181,7 +181,7 @@ export const mapeo: any = {
       {
         encabezado: 'Peso',
         campoNombre: 'peso',
-        campoTipo: 'CharField',
+        campoTipo: 'IntegerField',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
@@ -189,7 +189,7 @@ export const mapeo: any = {
       {
         encabezado: 'Volumen',
         campoNombre: 'volumen',
-        campoTipo: 'CharField',
+        campoTipo: 'IntegerField',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,

@@ -5,11 +5,26 @@
         <thead class="sticky-header">
           <tr>
             <th *ngFor="let item of encabezados">
-              <span 
-                [title]="item.tooltip || ''"
-              >
-                {{ item.encabezado }}
-              </span>
+              @if (item.ordenable) {
+                <span
+                  [title]="item.tooltip || ''"
+                  class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+                  (click)="toggleOrdenamiento(item.campoNombre)"
+                >
+                  {{ item.encabezado }}
+                  @if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'desc') {
+                    <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+                  } @else if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'asc') {
+                    <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+                  } @else {
+                    <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+                  }
+                </span>
+              } @else {
+                <span [title]="item.tooltip || ''">
+                  {{ item.encabezado }}
+                </span>
+              }
             </th>
             <th class="w-[60px]" *ngIf="!ocultarEditar"></th>
             <th class="w-[60px]"></th>
