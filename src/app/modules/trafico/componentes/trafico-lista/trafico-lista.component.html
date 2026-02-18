@@ -44,7 +44,6 @@
       <div class="flex justify-between items-center mx-8 my-2">
         <app-paginador
           [currentPage]="currentPage()"
-          [totalPages]="totalPages()"
           (pageChange)="onPageChange($event)"
           [totalItems]="cantidadRegistros"
         ></app-paginador>
