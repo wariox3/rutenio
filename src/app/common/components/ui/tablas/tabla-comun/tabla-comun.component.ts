@@ -8,6 +8,7 @@ import {
   OnChanges,
   OnInit,
   Output,
+  signal,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -27,11 +28,15 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
   @Input({ required: true }) mapeo: any[];
   @Input() datos: any[] = [];
   @Input() ocultarEditar: boolean = false;
+  @Input() ordenamientoInicial: string = '';
   @Output() emitirEditarItem: EventEmitter<number>;
   @Output() emitirDetalleItem: EventEmitter<number>;
   @Output() emitirItemsSeleccionados: EventEmitter<number[]>;
+  @Output() emitirOrdenamiento = new EventEmitter<string>();
 
   public encabezados: any[];
+  public columnaOrdenada = signal<string | null>(null);
+  public direccionOrden = signal<'asc' | 'desc' | null>(null);
   private _itemsAEliminar: number[] = [];
 
   @ViewChild('checkboxGlobal', { static: false })
@@ -48,6 +53,16 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
     this.encabezados = this.mapeo?.[this.campoMapeo]?.datos
       ?.filter((dato) => dato.visibleTabla === true)
       ?.map((dato) => dato);
+
+    if (this.ordenamientoInicial) {
+      if (this.ordenamientoInicial.startsWith('-')) {
+        this.columnaOrdenada.set(this.ordenamientoInicial.substring(1));
+        this.direccionOrden.set('desc');
+      } else {
+        this.columnaOrdenada.set(this.ordenamientoInicial);
+        this.direccionOrden.set('asc');
+      }
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -117,5 +132,26 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
 
   estoyEnListaEliminar(id: number): boolean {
     return this._itemsAEliminar.indexOf(id) !== -1;
+  }
+
+  toggleOrdenamiento(campoNombre: string): void {
+    if (this.columnaOrdenada() === campoNombre) {
+      const actual = this.direccionOrden();
+      if (actual === 'desc') {
+        this.direccionOrden.set('asc');
+        this.emitirOrdenamiento.emit(campoNombre);
+      } else if (actual === 'asc') {
+        this.columnaOrdenada.set(null);
+        this.direccionOrden.set(null);
+        this.emitirOrdenamiento.emit('');
+      } else {
+        this.direccionOrden.set('desc');
+        this.emitirOrdenamiento.emit(`-${campoNombre}`);
+      }
+    } else {
+      this.columnaOrdenada.set(campoNombre);
+      this.direccionOrden.set('desc');
+      this.emitirOrdenamiento.emit(`-${campoNombre}`);
+    }
   }
 }
