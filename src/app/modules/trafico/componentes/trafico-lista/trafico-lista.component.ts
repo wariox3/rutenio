@@ -10,12 +10,10 @@ import {
 } from '@angular/core';
 import {
   GoogleMapsModule,
-  MapDirectionsService,
   MapInfoWindow,
   MapMarker,
 } from '@angular/google-maps';
 import {
-  BehaviorSubject,
   finalize,
   Observable,
   Subject,
@@ -55,6 +53,23 @@ import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { HttpService } from '../../../../common/services/http.service';
 
+interface CustomMarker {
+  position: google.maps.LatLngLiteral;
+  label: google.maps.MarkerLabel;
+  title: string;
+  infoContent: {
+    titulo: string;
+    datosVisita: Visita | Despacho;
+  };
+}
+
+const DEFAULT_MAP_CENTER: google.maps.LatLngLiteral = {
+  lat: 6.200713725811437,
+  lng: -75.58609508555918,
+};
+const DEFAULT_MAP_ZOOM = 11;
+const MAX_WAYPOINTS = 23;
+
 @Component({
   selector: 'app-trafico-lista',
   standalone: true,
@@ -88,7 +103,6 @@ export default class TraficoListaComponent
   private _despachoApiService = inject(DespachoApiService);
   private _generalService = inject(GeneralService);
   private _modalService = inject(ModalService);
-  private directionsService = inject(MapDirectionsService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
   private _httpService = inject(HttpService);
@@ -101,27 +115,26 @@ export default class TraficoListaComponent
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
   public novedades = signal<string[]>([]);
-  public mostarModalDetalleVisita$ = new BehaviorSubject<boolean>(false);
-  public toggleModal$ = new BehaviorSubject(false);
-  public toggleModalRuta$ = new BehaviorSubject(false);
-  public toggleModalAdicionarVisita$ = new BehaviorSubject(false);
-  public toggleModalAdicionarVisitaTrafico$ = new BehaviorSubject(false);
-  public toggleModalLiberar$ = new BehaviorSubject(false);
-  public toggleModalUbicacion$ = new BehaviorSubject(false);
-  public toggleModalTrasbordarTrafico$ = new BehaviorSubject(false);
+  public mostarModalDetalleVisita = signal(false);
+  public toggleModal = signal(false);
+  public toggleModalRuta = signal(false);
+  public toggleModalAdicionarVisita = signal(false);
+  public toggleModalAdicionarVisitaTrafico = signal(false);
+  public toggleModalLiberar = signal(false);
+  public toggleModalUbicacion = signal(false);
+  public toggleModalTrasbordarTrafico = signal(false);
   public actualizandoLista = signal<boolean>(false);
   public currentPage = signal(1);
   public cantidadRegistros: number = 0;
   public filtroKey = signal<string>('');
   public nombreFiltro = '';
+  public columnaOrdenada = signal<string | null>('id');
+  public direccionOrden = signal<'asc' | 'desc' | null>('asc');
 
-  customMarkers: any[] = [];
+  customMarkers: CustomMarker[] = [];
   mostrarMapaFlag = false;
-  center: google.maps.LatLngLiteral = {
-    lat: 6.200713725811437,
-    lng: -75.58609508555918,
-  };
-  zoom = 11;
+  center: google.maps.LatLngLiteral = DEFAULT_MAP_CENTER;
+  zoom = DEFAULT_MAP_ZOOM;
   marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [];
   marcarPosicionesUbicacionesOrdenadas: google.maps.LatLngLiteral[] = [];
   polylineOptions: google.maps.PolylineOptions = {
@@ -150,18 +163,15 @@ export default class TraficoListaComponent
 
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
-  selectedDespachoId: number | null = null;
   private map: google.maps.Map;
-  selectedMarkerInfo: any;
   activeTab: string = 'visitas';
-  arrUbicaciones: any[] = [];
+  arrUbicaciones: Ubicacion[] = [];
   mostrarUbicaciones = false;
   directionsResultsVisitas: google.maps.DirectionsResult;
   directionsResultsUbicaciones: google.maps.DirectionsResult;
   despachoIdActual: number | null = null;
   lineasConectoras: google.maps.LatLng[][] = [];
-  private MAX_WAYPOINTS = 23;
-  directionsResultsUbicacionesArray;
+  directionsResultsUbicacionesArray: google.maps.DirectionsResult[] = [];
   customUbicacionMarkers: {
     position: google.maps.LatLngLiteral;
     label: string;
@@ -179,11 +189,6 @@ export default class TraficoListaComponent
 
   private _construirFiltros() {
     this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
-    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
-    if (filtroGuardado !== null) {
-      const filtros = JSON.parse(filtroGuardado);
-      //this.arrParametrosConsulta.filtros = [...filtros];
-    }
   }
 
   ngOnDestroy(): void {
@@ -210,42 +215,34 @@ export default class TraficoListaComponent
     parametrosAdicionales: Record<string, any> = {},
     mostrarMensajeExito: boolean = false
   ): void {
-    // 1. Mergear filtros dinámicos (mantiene filtros previos como paginación)
     this.arrFiltros = {
       ...this.arrFiltros,
       ...parametrosAdicionales,
     };
 
-    // 2. Combinar parámetros base inmutables + filtros dinámicos
     const parametrosConsulta = {
       ...this.arrParametrosBase,
       ...this.arrFiltros,
     };
 
-    // 3. Activar indicador de carga
     this.actualizandoLista.set(true);
 
-    // 4. Realizar consulta
     this._generalApiService
       .consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', parametrosConsulta)
       .pipe(
         takeUntil(this.destroy$),
         finalize(() => {
-          // 9. Desactivar indicador siempre (éxito o error)
           this.actualizandoLista.set(false);
         })
       )
       .subscribe({
         next: (respuesta) => {
-          // 5. Aplicar lógica de negocio SIEMPRE
           this.arrDespachos = this._traficoService.agregarEstadoDespacho(
             respuesta.results
           );
 
-          // 6. Actualizar conteo para paginación
           this.cantidadRegistros = respuesta.count;
 
-          // 7. Mensaje de éxito condicional
           if (mostrarMensajeExito) {
             this.alerta.mensajaExitoso('Lista actualizada.', 'Operación exitosa');
           }
@@ -253,7 +250,6 @@ export default class TraficoListaComponent
           this.changeDetectorRef.detectChanges();
         },
         error: (error) => {
-          // 8. Manejo de errores
           console.error('Error al cargar despachos:', error);
           this.alerta.mensajeError(
             'Error',
@@ -291,12 +287,6 @@ export default class TraficoListaComponent
     const parametrosConsultaUbicacion: ParametrosApi = {
       ordering: '-fecha',
       despacho_id: despachoId.toString(),
-      // filtros: [{ propiedad: 'despacho_id', valor1: despachoId.toString() }],
-      // limite: 25,
-      // desplazar: 0,
-      // ordenamientos: ['-fecha'],
-      // limite_conteo: 25,
-      // modelo: 'RutUbicacion',
     };
 
     return this._generalApiService
@@ -363,7 +353,7 @@ export default class TraficoListaComponent
   }
 
   abrirModalDetalleVisita(despacho_id: number) {
-    this.selectedDespachoId = despacho_id;
+    this.despachoIdActual = despacho_id;
     this.openModal('trafico-despacho-visita');
     this.changeDetectorRef.detectChanges();
   }
@@ -375,59 +365,59 @@ export default class TraficoListaComponent
       if (this.arrVisitasPorDespacho.length > 0) {
         this.mostrarMapa(this.arrVisitasPorDespacho, true, false);
       }
-      this.toggleModalRuta$.next(true);
+      this.toggleModalRuta.set(true);
       this.changeDetectorRef.detectChanges();
     });
   }
 
-  abrirModalLiberar(despacho_id) {
+  abrirModalLiberar(despacho_id: number) {
     this.despachoIdActual = despacho_id;
-    this.toggleModalLiberar$.next(true);
+    this.toggleModalLiberar.set(true);
     this.changeDetectorRef.detectChanges();
   }
 
-  abrirModalAdicionar(despacho_id) {
+  abrirModalAdicionar(despacho_id: number) {
     this.despachoIdActual = despacho_id;
-    this.toggleModalAdicionarVisita$.next(true);
+    this.toggleModalAdicionarVisita.set(true);
     this.changeDetectorRef.detectChanges();
   }
 
-  abrirModalAdicionarVistaTrafico(despacho_id) {
+  abrirModalAdicionarVistaTrafico(despacho_id: number) {
     this.despachoIdActual = despacho_id;
-    this.toggleModalAdicionarVisitaTrafico$.next(true);
+    this.toggleModalAdicionarVisitaTrafico.set(true);
     this.changeDetectorRef.detectChanges();
   }
 
   abrirModalUbicacion() {
     this.mostrarMapa(this.arrDespachos, false, true);
-    this.toggleModalUbicacion$.next(true);
+    this.toggleModalUbicacion.set(true);
     this.changeDetectorRef.detectChanges();
   }
 
   cerrarModal() {
-    this.toggleModal$.next(false);
+    this.toggleModal.set(false);
     this.limpiarInformacionAdicional();
   }
 
   cerrarModalRuta() {
-    this.toggleModalRuta$.next(false);
+    this.toggleModalRuta.set(false);
     this.limpiarInformacionAdicional();
   }
 
   cerrarModalLiberar() {
-    this.toggleModalLiberar$.next(false);
+    this.toggleModalLiberar.set(false);
     this.limpiarInformacionAdicional();
     this.consultarLista();
   }
 
   cerrarModalAdicionar() {
-    this.toggleModalAdicionarVisita$.next(false);
+    this.toggleModalAdicionarVisita.set(false);
     this.limpiarInformacionAdicional();
     this.consultarLista();
   }
 
   cerrarModalAdicionarVisitaTrafico() {
-    this.toggleModalAdicionarVisitaTrafico$.next(false);
+    this.toggleModalAdicionarVisitaTrafico.set(false);
     this.limpiarInformacionAdicional();
     this.consultarLista();
   }
@@ -487,72 +477,25 @@ export default class TraficoListaComponent
     this.infoWindow.open(marker);
   }
 
-  mostrarMapa(arrRegistros, calcular_ruta, index_personalizado) {
+  mostrarMapa(arrRegistros: (Visita | Despacho)[], calcular_ruta: boolean, index_personalizado: boolean) {
     this.customMarkers = [];
-    this.marcarPosicionesVisitasOrdenadas = [
-      { lat: 6.200713725811437, lng: -75.58609508555918 },
-    ];
+    this.marcarPosicionesVisitasOrdenadas = [DEFAULT_MAP_CENTER];
 
     arrRegistros.forEach((registro, index) => {
       if (registro.latitud && registro.longitud) {
-        const position = { lat: registro.latitud, lng: registro.longitud };
-        let label;
-
-        if (!index_personalizado) {
-          label = (index + 1).toString();
-        } else {
-          label = registro.vehiculo_placa;
-        }
+        const position = { lat: Number(registro.latitud), lng: Number(registro.longitud) };
+        const label = index_personalizado
+          ? (registro as Despacho).vehiculo__placa
+          : (index + 1).toString();
 
         this.marcarPosicionesVisitasOrdenadas.push(position);
         this.addMarker(position, label, registro);
       }
     });
 
-    if (this.marcarPosicionesVisitasOrdenadas.length >= 2 && calcular_ruta) {
-      // this.calcularRuta();
-    }
-
     this.mostrarMapaFlag = true;
     this.changeDetectorRef.detectChanges();
   }
-
-  // En trafico no se muestra la ruta solo todos los puntos de entrega
-  // calcularRuta() {
-  //   const origin = this.marcarPosicionesVisitasOrdenadas[0];
-  //   const destination =
-  //     this.marcarPosicionesVisitasOrdenadas[
-  //       this.marcarPosicionesVisitasOrdenadas.length - 1
-  //     ];
-  //   const waypoints = this.marcarPosicionesVisitasOrdenadas
-  //     .slice(1, -1)
-  //     .map((position) => ({
-  //       location: new google.maps.LatLng(position.lat, position.lng),
-  //       stopover: true,
-  //     }));
-
-  //   const request: google.maps.DirectionsRequest = {
-  //     origin: new google.maps.LatLng(origin.lat, origin.lng),
-  //     destination: new google.maps.LatLng(destination.lat, destination.lng),
-  //     waypoints,
-  //     travelMode: google.maps.TravelMode.DRIVING,
-  //     optimizeWaypoints: false,
-  //   };
-
-  //   this.directionsService
-  //     .route(request)
-  //     .pipe(takeUntil(this.destroy$))
-  //     .subscribe({
-  //       next: (response) => {
-  //         this.directionsResultsVisitas = response.result;
-  //         this.changeDetectorRef.detectChanges();
-  //       },
-  //       error: (e) => {
-  //         console.error('Error al calcular la ruta:', e);
-  //         this.changeDetectorRef.detectChanges();
-  //       },
-  //     });
-  // }
 
   calcularRutaUbicaciones() {
     this.directionsResultsUbicacionesArray = [];
@@ -575,9 +518,9 @@ export default class TraficoListaComponent
   }
 
   addMarker(
-    position: { lat: number; lng: number },
+    position: google.maps.LatLngLiteral,
     label: string,
-    registroData: any
+    registroData: Visita | Despacho
   ) {
     this.customMarkers.push({
       position,
@@ -615,8 +558,8 @@ export default class TraficoListaComponent
       this.arrUbicaciones = respuesta.results;
       this.marcarPosicionesUbicacionesOrdenadas = [
         ...this.arrUbicaciones.map((ubicacion) => ({
-          lat: parseFloat(ubicacion.latitud),
-          lng: parseFloat(ubicacion.longitud),
+          lat: Number(ubicacion.latitud),
+          lng: Number(ubicacion.longitud),
         })),
       ];
 
@@ -672,7 +615,7 @@ export default class TraficoListaComponent
 
   abrirModalEditarDespacho(id: number) {
     this.despachoSeleccionado = this.arrDespachos[id];
-    this.toggleModal$.next(true);
+    this.toggleModal.set(true);
     this.changeDetectorRef.detectChanges();
   }
 
@@ -702,7 +645,7 @@ export default class TraficoListaComponent
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
       `)}`,
-      scaledSize: new google.maps.Size(30, 30), // Ajusta el tamaño
+      scaledSize: new google.maps.Size(30, 30),
     };
   }
 
@@ -718,13 +661,13 @@ export default class TraficoListaComponent
     return this._modalService.isOpen$(id);
   }
 
-  abrirModalTrasbordar(id) {
+  abrirModalTrasbordar(id: number) {
     this.despachoIdActual = id;
-    this.toggleModalTrasbordarTrafico$.next(true);
+    this.toggleModalTrasbordarTrafico.set(true);
   }
 
   cerrarModalTrasbordar(selector: string) {
-    this.toggleModalTrasbordarTrafico$.next(false);
+    this.toggleModalTrasbordarTrafico.set(false);
     this.dismissModal(selector);
     this.consultarLista();
   }
@@ -760,6 +703,31 @@ export default class TraficoListaComponent
   limpiarFiltros(): void {
     this.currentPage.set(1);
     this.arrFiltros = { page: 1 };
+    this.columnaOrdenada.set('id');
+    this.direccionOrden.set('asc');
     this._cargarDespachos({}, false);
+  }
+
+  toggleOrdenamiento(campo: string): void {
+    if (this.columnaOrdenada() === campo) {
+      const actual = this.direccionOrden();
+      if (actual === 'desc') {
+        this.direccionOrden.set('asc');
+        this._cargarDespachos({ ordering: campo }, false);
+      } else if (actual === 'asc') {
+        this.columnaOrdenada.set(null);
+        this.direccionOrden.set(null);
+        const { ordering, ...filtrosSinOrden } = this.arrFiltros;
+        this.arrFiltros = filtrosSinOrden;
+        this._cargarDespachos({}, false);
+      } else {
+        this.direccionOrden.set('desc');
+        this._cargarDespachos({ ordering: `-${campo}` }, false);
+      }
+    } else {
+      this.columnaOrdenada.set(campo);
+      this.direccionOrden.set('desc');
+      this._cargarDespachos({ ordering: `-${campo}` }, false);
+    }
   }
 }

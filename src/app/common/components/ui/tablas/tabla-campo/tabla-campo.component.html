@@ -1,5 +1,5 @@
 @switch (tipoCampo) { @case ('IntegerField') {
-{{ datoCampo }}
+{{ datoCampo | number:'1.0-0' }}
 } @case ('CharField') {
 {{ datoCampo }}
 }@case ('Boolean') { @if (datoCampo) {

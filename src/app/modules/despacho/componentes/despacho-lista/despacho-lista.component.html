@@ -28,8 +28,10 @@
       campoMapeo="Despacho"
       [mapeo]="mapeoDocumento"
       [datos]="despachos$ | async"
+      ordenamientoInicial="-fecha"
       (emitirDetalleItem)="detalleDespacho($event)"
       (emitirEditarItem)="navegarDespachoEditar($event)"
+      (emitirOrdenamiento)="onOrdenamientoChange($event)"
     ></app-tabla-comun>
   </div>
 </div>

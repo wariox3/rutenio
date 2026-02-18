@@ -92,11 +92,18 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   onPageChange(page: number): void {
-    console.log(page);
-
     this.consultaLista({
       ...this.arrParametrosConsulta,
       page
     });
+  }
+
+  onOrdenamientoChange(ordering: string): void {
+    if (ordering) {
+      this.arrParametrosConsulta['ordering'] = ordering;
+    } else {
+      this.arrParametrosConsulta['ordering'] = '-fecha';
+    }
+    this.consultaLista(this.arrParametrosConsulta);
   }
 }

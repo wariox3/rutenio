@@ -54,19 +54,16 @@ export class TraficoService {
    * @param arrDespachos lista de despachos
    * @returns lista de despachos con el estado agregado
    */
-  agregarEstadoDespacho(arrDespachos: Despacho[]) {
-    arrDespachos.forEach((despacho) => {
-      const { estado } = this.calcularEstadoDespacho(
+  agregarEstadoDespacho(arrDespachos: Despacho[]): Despacho[] {
+    return arrDespachos.map((despacho) => ({
+      ...despacho,
+      ...this.calcularEstadoDespacho(
         despacho.fecha_salida,
         despacho.tiempo,
         despacho.visitas,
         despacho.visitas_entregadas
-      );
-
-      despacho.estado = estado;
-    });
-
-    return arrDespachos;
+      ),
+    }));
   }
 
   /**
