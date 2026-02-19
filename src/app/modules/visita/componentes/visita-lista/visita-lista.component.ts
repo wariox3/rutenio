@@ -72,14 +72,17 @@ export default class VisitaListaComponent extends General implements OnInit {
   public marcarPosicionesVisitasOrdenadas: google.maps.LatLngLiteral[] = [
     { lat: 6.200713725811437, lng: -75.58609508555918 },
   ];
-  public arrParametrosConsulta: ParametrosApi = {
-    limit: 50,
-    ordering: '-id',
-  };
   public currentPage = signal(1);
   public totalPages = signal(1);
   public totalItems: number = 0;
   public filtroKey = signal<string>('');
+
+  private readonly arrParametrosBase: ParametrosApi = {
+    limit: 50,
+    ordering: '-id',
+    serializador: 'lista',
+  };
+  arrFiltros: Record<string, any> = { page: 1 };
 
   public formularioFiltros = new FormGroup({
     id: new FormControl(''),
@@ -97,7 +100,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.filtroKey.set(
       'visita_lista_filtro'
     );
-    this.consultaLista(this.arrParametrosConsulta);
+    this._consultarLista();
   }
 
   private _construirFiltros() {
@@ -105,7 +108,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     const filtroGuardado = localStorage.getItem(this.nombreFiltro);
     if (filtroGuardado !== null) {
       const filtros = JSON.parse(filtroGuardado);
-      //this.arrParametrosConsulta.filtros = [...filtros];
+      //this.arrFiltros.filtros = [...filtros];
     }
   }
 
@@ -140,9 +143,19 @@ export default class VisitaListaComponent extends General implements OnInit {
     }
   }
 
-  consultaLista(filtros: Record<string, any>) {
+  private _consultarLista(parametrosAdicionales: Record<string, any> = {}): void {
+    this.arrFiltros = {
+      ...this.arrFiltros,
+      ...parametrosAdicionales,
+    };
+
+    const parametrosConsulta = {
+      ...this.arrParametrosBase,
+      ...this.arrFiltros,
+    };
+
     this._generalApiService
-      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', { limit: 50, serializador: 'lista', ...filtros })
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsulta)
       .pipe(takeUntil(this.destroy$))
       .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
   }
@@ -156,9 +169,13 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.marcarPosicionesVisitasOrdenadas.push(position);
   }
 
+  recargarLista(): void {
+    this._consultarLista();
+  }
+
   decodificar() {
     this._visitaApiService.decodificar().subscribe(() => {
-      this.consultaLista(this.arrParametrosConsulta);
+      this._consultarLista();
       this.alerta.mensajaExitoso('Se ha decodificado correctamente');
     });
   }
@@ -192,7 +209,7 @@ export default class VisitaListaComponent extends General implements OnInit {
           this.alerta.mensajaExitoso(
             'Se han eliminado los registros correctamente.'
           );
-          this.consultaLista(this.arrParametrosConsulta);
+          this._consultarLista();
         });
     } else {
       this.alerta.mensajeError(
@@ -296,7 +313,7 @@ export default class VisitaListaComponent extends General implements OnInit {
         .pipe(
           finalize(() => {
             this._listaItemsEliminar = [];
-            this.consultaLista(this.arrParametrosConsulta);
+            this._consultarLista();
             this.changeDetectorRef.detectChanges();
           })
         )
@@ -316,7 +333,8 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   exportarExcel() {
     this._generalService.descargarArchivo(`ruteo/visita`, {
-      ...this.arrParametrosConsulta,
+      ...this.arrParametrosBase,
+      ...this.arrFiltros,
       limit: 5000,
       serializador: 'excel',
     });
@@ -331,35 +349,23 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   filterChange(filters: Record<string, any>) {
-    // this._generalApiService
-    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-    //     limit: 50,
-    //     ...filters,
-    //   })
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
-    this.consultaLista(filters);
+    const { ordering, page, ..._ } = this.arrFiltros;
+    this.arrFiltros = { page: 1, ...(ordering ? { ordering } : {}), ...filters };
+    this._consultarLista();
   }
 
   onPageChange(page: number): void {
-    // this._generalApiService
-    //   .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', {
-    //     limit: 50,
-    //     page,
-    //   })
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
-    this.consultaLista({ page });
+    this._consultarLista({ page });
   }
-
 
   onOrdenamientoChange(ordering: string): void {
     if (ordering) {
-      this.arrParametrosConsulta['ordering'] = ordering;
+      this._consultarLista({ ordering });
     } else {
-      this.arrParametrosConsulta['ordering'] = '-id';
+      const { ordering: _, ...filtrosSinOrden } = this.arrFiltros;
+      this.arrFiltros = filtrosSinOrden;
+      this._consultarLista();
     }
-    this.consultaLista(this.arrParametrosConsulta);
   }
 
   private _procesarRespuestaLista(respuesta: RespuestaApi<Visita>, ordenarRuta = true): void {

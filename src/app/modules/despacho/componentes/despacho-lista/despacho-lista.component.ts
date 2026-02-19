@@ -35,10 +35,6 @@ export default class DespachoListaComponent extends General implements OnInit {
   public mapeoFiltros = despachoMapeo;
   public nombreFiltro = '';
   public despachos$: Observable<any[]>;
-  public arrParametrosConsulta: ParametrosApi = {
-    limit: 50,
-    ordering: '-fecha',
-  };
   public filtroKey = signal<string>('');
   public currentPage = signal(1);
   public totalPages = signal(1);
@@ -49,17 +45,31 @@ export default class DespachoListaComponent extends General implements OnInit {
   });
   public cantidadRegistros: number = 0;
 
+  private readonly arrParametrosBase: ParametrosApi = {
+    limit: 50,
+    ordering: '-fecha',
+  };
+  arrFiltros: Record<string, any> = { page: 1 };
+
   ngOnInit() {
     this.filtroKey.set(
       'despacho_lista_filtro'
     );
-    this.consultaLista(this.arrParametrosConsulta);
+    this._consultarLista();
   }
 
-  consultaLista(filtros: any) {
-    console.log(filtros);
-    
-    this.despachos$ = this._despachoApiService.lista(filtros).pipe(
+  private _consultarLista(parametrosAdicionales: Record<string, any> = {}): void {
+    this.arrFiltros = {
+      ...this.arrFiltros,
+      ...parametrosAdicionales,
+    };
+
+    const parametrosConsulta = {
+      ...this.arrParametrosBase,
+      ...this.arrFiltros,
+    };
+
+    this.despachos$ = this._despachoApiService.lista(parametrosConsulta).pipe(
       switchMap((response) => {
         this.cantidadRegistros = response.count;
         return of(response.results);
@@ -76,7 +86,8 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   limpiarFiltros() {
-    this.consultaLista(this.arrParametrosConsulta);
+    this.arrFiltros = { page: 1 };
+    this._consultarLista();
     this.formularioFiltros.patchValue({
       id: '',
       guia: '',
@@ -85,25 +96,22 @@ export default class DespachoListaComponent extends General implements OnInit {
   }
 
   filterChange(filters: Record<string, any>) {
-    this.consultaLista({
-      ...this.arrParametrosConsulta,
-      ...filters
-    });
+    const { ordering, page, ..._ } = this.arrFiltros;
+    this.arrFiltros = { page: 1, ...(ordering ? { ordering } : {}), ...filters };
+    this._consultarLista();
   }
 
   onPageChange(page: number): void {
-    this.consultaLista({
-      ...this.arrParametrosConsulta,
-      page
-    });
+    this._consultarLista({ page });
   }
 
   onOrdenamientoChange(ordering: string): void {
     if (ordering) {
-      this.arrParametrosConsulta['ordering'] = ordering;
+      this._consultarLista({ ordering });
     } else {
-      this.arrParametrosConsulta['ordering'] = '-fecha';
+      const { ordering: _, ...filtrosSinOrden } = this.arrFiltros;
+      this.arrFiltros = filtrosSinOrden;
+      this._consultarLista();
     }
-    this.consultaLista(this.arrParametrosConsulta);
   }
 }
