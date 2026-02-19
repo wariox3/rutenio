@@ -184,7 +184,7 @@
   <section *ngIf="toggleModalImportarComplemento$ | async" modal-body>
     <app-visita-importar-por-complemento
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-complemento-modal')"
-      (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
+      (emitirConsultarLista)="recargarLista()"
     ></app-visita-importar-por-complemento>
   </section>
 </app-modal-default>
@@ -199,7 +199,7 @@
   <section *ngIf="toggleModalImportarExcel$ | async" modal-body>
     <app-importar
       (emitirCerrarModal)="cerrarModalPorId('#importar-por-excel-modal')"
-      (emitirConsultarLista)="consultaLista(arrParametrosConsulta)"
+      (emitirConsultarLista)="recargarLista()"
       archivosAdmitidos='.xls,.xlsx'
       url="ruteo/visita/importar-excel/"
       [archivoEjemplo]="{
