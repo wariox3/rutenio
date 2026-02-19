@@ -687,13 +687,9 @@ export default class TraficoListaComponent
    */
   filterChange(filters: Record<string, any>): void {
     this.currentPage.set(1);
-    if (Object.keys(filters).length === 0) {
-      // Limpiar filtros: resetear a estado inicial
-      this.limpiarFiltros();
-    } else {
-      // Aplicar nuevos filtros, siempre volver a página 1
-      this._cargarDespachos({ ...filters, page: 1 }, false);
-    }
+    const { ordering, page, ..._ } = this.arrFiltros;
+    this.arrFiltros = { page: 1, ...(ordering ? { ordering } : {}), ...filters };
+    this._cargarDespachos({}, false);
   }
 
   /**
