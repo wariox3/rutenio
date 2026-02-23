@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subject, forkJoin, takeUntil, finalize } from 'rxjs';
+import { Subject, takeUntil, catchError, of } from 'rxjs';
 import { DashboardService } from './servicios/dashboard.service';
 import {
   CumplimientoZona,
@@ -38,6 +38,7 @@ export default class DashboardComponent implements OnInit, OnDestroy {
   cargando = signal(false);
 
   private destroy$ = new Subject<void>();
+  private llamadasPendientes = 0;
 
   private filtrosPorDefecto: DashboardFiltros = {
     fechaDesde: '',
@@ -60,27 +61,41 @@ export default class DashboardComponent implements OnInit, OnDestroy {
 
   cargarDatos(filtros: DashboardFiltros): void {
     this.cargando.set(true);
+    this.llamadasPendientes = 4;
 
-    forkJoin({
-      kpis: this.dashboardService.obtenerKpis(filtros),
-      desempeno: this.dashboardService.obtenerDesempeno(filtros),
-      cumplimiento: this.dashboardService.obtenerCumplimientoZona(filtros),
-      marcadores: this.dashboardService.obtenerMarcadoresMapa(filtros),
-    })
-      .pipe(
-        takeUntil(this.destroy$),
-        finalize(() => this.cargando.set(false))
-      )
-      .subscribe({
-        next: ({ kpis, desempeno, cumplimiento, marcadores }) => {
-          this.kpis.set(kpis);
-          this.desempeno.set(desempeno);
-          this.cumplimientoZonas.set(cumplimiento);
-          this.marcadoresMapa.set(marcadores);
-        },
-        error: (error) => {
-          console.error('Error al cargar datos del dashboard:', error);
-        },
+    this.dashboardService.obtenerKpis(filtros)
+      .pipe(takeUntil(this.destroy$), catchError(() => of([])))
+      .subscribe((datos) => {
+        this.kpis.set(datos);
+        this.verificarCarga();
       });
+
+    this.dashboardService.obtenerDesempeno(filtros)
+      .pipe(takeUntil(this.destroy$), catchError(() => of(null)))
+      .subscribe((datos) => {
+        this.desempeno.set(datos);
+        this.verificarCarga();
+      });
+
+    this.dashboardService.obtenerCumplimientoZona(filtros)
+      .pipe(takeUntil(this.destroy$), catchError(() => of([])))
+      .subscribe((datos) => {
+        this.cumplimientoZonas.set(datos);
+        this.verificarCarga();
+      });
+
+    this.dashboardService.obtenerMarcadoresMapa(filtros)
+      .pipe(takeUntil(this.destroy$), catchError(() => of([])))
+      .subscribe((datos) => {
+        this.marcadoresMapa.set(datos);
+        this.verificarCarga();
+      });
+  }
+
+  private verificarCarga(): void {
+    this.llamadasPendientes--;
+    if (this.llamadasPendientes <= 0) {
+      this.cargando.set(false);
+    }
   }
 }
