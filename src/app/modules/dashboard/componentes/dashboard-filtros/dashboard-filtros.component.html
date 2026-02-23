@@ -1,0 +1,61 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 mb-5">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+    <div>
+      <label class="text-xs font-semibold text-[#575757] uppercase mb-1 block">Desde</label>
+      <input
+        type="date"
+        class="input input-sm w-full"
+        [(ngModel)]="fechaDesde"
+        (change)="aplicarFiltros()"
+      />
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-[#575757] uppercase mb-1 block">Hasta</label>
+      <input
+        type="date"
+        class="input input-sm w-full"
+        [(ngModel)]="fechaHasta"
+        (change)="aplicarFiltros()"
+      />
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-[#575757] uppercase mb-1 block">Ciudad</label>
+      <select
+        class="select select-sm w-full"
+        [(ngModel)]="ciudadSeleccionada"
+        (change)="aplicarFiltros()"
+      >
+        <option value="">Todas</option>
+        @for (ciudad of ciudades; track ciudad) {
+          <option [value]="ciudad">{{ ciudad }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-[#575757] uppercase mb-1 block">Cliente</label>
+      <select
+        class="select select-sm w-full"
+        [(ngModel)]="clienteSeleccionado"
+        (change)="aplicarFiltros()"
+      >
+        <option value="">Todos</option>
+        @for (cliente of clientes; track cliente) {
+          <option [value]="cliente">{{ cliente }}</option>
+        }
+      </select>
+    </div>
+    <div>
+      <label class="text-xs font-semibold text-[#575757] uppercase mb-1 block">Tipo Vehículo</label>
+      <select
+        class="select select-sm w-full"
+        [(ngModel)]="tipoVehiculoSeleccionado"
+        (change)="aplicarFiltros()"
+      >
+        <option value="">Todos</option>
+        @for (tipo of tiposVehiculo; track tipo) {
+          <option [value]="tipo">{{ tipo }}</option>
+        }
+      </select>
+    </div>
+  </div>
+</div>
