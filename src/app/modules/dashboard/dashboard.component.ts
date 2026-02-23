@@ -1,52 +1,86 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { General } from '../../common/clases/general';
-import { ListaVehiculo } from '../../interfaces/vehiculo/vehiculo.interface';
-import { Visita } from '../../interfaces/visita/visita.interface';
-import { FooterComponent } from '../../layouts/footer/footer.component';
-import { HeaderComponent } from '../../layouts/header/header.component';
-import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
-import { SearchModalComponent } from '../../partials/search-modal/search-modal.component';
-import { VehiculoService } from '../vehiculo/servicios/vehiculo.service';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Subject, forkJoin, takeUntil, finalize } from 'rxjs';
+import { DashboardService } from './servicios/dashboard.service';
+import {
+  CumplimientoZona,
+  DashboardFiltros,
+  DesempenoEntregas,
+  KpiIndicador,
+  MarcadorMapa,
+} from '../../interfaces/dashboard/dashboard.interface';
+import { DashboardFiltrosComponent } from './componentes/dashboard-filtros/dashboard-filtros.component';
+import { DashboardKpiTarjetaComponent } from './componentes/dashboard-kpi-tarjeta/dashboard-kpi-tarjeta.component';
+import { DashboardDesempenoChartComponent } from './componentes/dashboard-desempeno-chart/dashboard-desempeno-chart.component';
+import { DashboardCumplimientoZonaComponent } from './componentes/dashboard-cumplimiento-zona/dashboard-cumplimiento-zona.component';
+import { DashboardMapaComponent } from './componentes/dashboard-mapa/dashboard-mapa.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-dashboard',
   standalone: true,
   imports: [
-    RouterOutlet,
-    HeaderComponent,
-    FooterComponent,
-    SidebarComponent,
-    SearchModalComponent,
+    CommonModule,
+    DashboardFiltrosComponent,
+    DashboardKpiTarjetaComponent,
+    DashboardDesempenoChartComponent,
+    DashboardCumplimientoZonaComponent,
+    DashboardMapaComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class DashboardComponent extends General {
-  arrParametrosConsulta: any = {
-    filtros: [],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: [],
-    limite_conteo: 10000,
-    modelo: 'RutVehiculo',
+export default class DashboardComponent implements OnInit, OnDestroy {
+  kpis = signal<KpiIndicador[]>([]);
+  desempeno = signal<DesempenoEntregas | null>(null);
+  cumplimientoZonas = signal<CumplimientoZona[]>([]);
+  marcadoresMapa = signal<MarcadorMapa[]>([]);
+  cargando = signal(false);
+
+  private destroy$ = new Subject<void>();
+
+  private filtrosPorDefecto: DashboardFiltros = {
+    fechaDesde: '',
+    fechaHasta: '',
+    ciudad: '',
+    cliente: '',
+    tipoVehiculo: '',
   };
 
-  arrParametrosConsultaVisita: any = {
-    filtros: [{ propiedad: 'estado_decodificado', valor1: true }],
-    limite: 50,
-    desplazar: 0,
-    ordenamientos: [],
-    limite_conteo: 10000,
-    modelo: 'RutVisita',
-  };
+  constructor(private dashboardService: DashboardService) {}
 
-  arrVehiculos: ListaVehiculo[] = [];
-  arrVisitas: Visita[];
+  ngOnInit(): void {
+    this.cargarDatos(this.filtrosPorDefecto);
+  }
 
-  constructor(
-    private vehiculoService: VehiculoService,
-  ) {
-    super();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  cargarDatos(filtros: DashboardFiltros): void {
+    this.cargando.set(true);
+
+    forkJoin({
+      kpis: this.dashboardService.obtenerKpis(filtros),
+      desempeno: this.dashboardService.obtenerDesempeno(filtros),
+      cumplimiento: this.dashboardService.obtenerCumplimientoZona(filtros),
+      marcadores: this.dashboardService.obtenerMarcadoresMapa(filtros),
+    })
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.cargando.set(false))
+      )
+      .subscribe({
+        next: ({ kpis, desempeno, cumplimiento, marcadores }) => {
+          this.kpis.set(kpis);
+          this.desempeno.set(desempeno);
+          this.cumplimientoZonas.set(cumplimiento);
+          this.marcadoresMapa.set(marcadores);
+        },
+        error: (error) => {
+          console.error('Error al cargar datos del dashboard:', error);
+        },
+      });
   }
 }

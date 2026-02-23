@@ -1,0 +1,17 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full">
+  <h3 class="text-sm font-semibold text-[#575757] mb-3">Desempeño de Entregas</h3>
+  @if (chartOptions) {
+    <apx-chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [xaxis]="chartOptions.xaxis"
+      [yaxis]="chartOptions.yaxis"
+      [stroke]="chartOptions.stroke"
+      [dataLabels]="chartOptions.dataLabels"
+      [tooltip]="chartOptions.tooltip"
+      [legend]="chartOptions.legend"
+      [grid]="chartOptions.grid"
+      [colors]="chartOptions.colors"
+    ></apx-chart>
+  }
+</div>
