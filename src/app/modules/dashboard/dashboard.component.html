@@ -17,30 +17,56 @@
     </div>
   </div>
 
-  <!-- Filtros -->
-  <app-dashboard-filtros (filtrosAplicados)="cargarDatos($event)"></app-dashboard-filtros>
-
   <!-- KPIs -->
   <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-5">
     @for (kpi of kpis(); track kpi.titulo) {
-      <app-dashboard-kpi-tarjeta [kpi]="kpi"></app-dashboard-kpi-tarjeta>
+      <app-dashboard-kpi-tarjeta [kpi]="kpi" (ayudaClick)="mostrarAyuda($event)"></app-dashboard-kpi-tarjeta>
     }
   </div>
 
-  <!-- Fila inferior: Gráfico, Cumplimiento, Mapa -->
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-    <div>
-      @if (desempeno()) {
-        <app-dashboard-desempeno-chart [datos]="desempeno()!"></app-dashboard-desempeno-chart>
-      }
-    </div>
+  <!-- Fila inferior: Cumplimiento y Mapa -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
     <div>
       @if (cumplimientoZonas().length > 0) {
         <app-dashboard-cumplimiento-zona [zonas]="cumplimientoZonas()"></app-dashboard-cumplimiento-zona>
       }
     </div>
     <div>
-      <app-dashboard-mapa [marcadores]="marcadoresMapa()"></app-dashboard-mapa>
+      @if (mostrarMapa()) {
+        <app-dashboard-mapa [marcadores]="marcadoresMapa()"></app-dashboard-mapa>
+      } @else {
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full flex flex-col items-center justify-center min-h-[300px]">
+          <i class="ki-filled ki-map text-5xl mb-3 text-[#0098d7]"></i>
+          <h3 class="text-sm font-semibold text-[#575757] mb-2">Mapa de Despachos en Ruta</h3>
+          <p class="text-xs text-gray-400 mb-4 text-center">Visualiza la ubicación de los despachos activos</p>
+          <button
+            class="btn btn-sm btn-primary"
+            (click)="cargarMapa()"
+            [disabled]="cargandoMapa()"
+          >
+            @if (cargandoMapa()) {
+              <i class="ki-filled ki-loading animate-spin mr-1"></i>
+              Cargando...
+            } @else {
+              <i class="ki-filled ki-map mr-1"></i>
+              Ver mapa
+            }
+          </button>
+        </div>
+      }
     </div>
   </div>
 </div>
+
+<!-- Modal de ayuda KPI -->
+<app-modal-standard
+  modalId="modalAyudaKpi"
+  [title]="kpiSeleccionado()?.titulo || ''"
+  size="sm"
+>
+  @if (kpiSeleccionado()) {
+    <div class="space-y-3">
+      <p class="text-sm text-gray-600 whitespace-pre-line">{{ kpiSeleccionado()!.detalleAyuda }}</p>
+    </div>
+  }
+</app-modal-standard>

@@ -9,6 +9,15 @@
             [style.color]="zona.color"
           ></i>
           <span class="text-sm font-medium text-[#575757]">{{ zona.zona }}</span>
+          @if (zona.descripcion) {
+            <button
+              class="text-gray-400 hover:text-[#0098d7] transition-colors"
+              (click)="mostrarAyuda(zona)"
+              title="Ver explicación"
+            >
+              <i class="ki-filled ki-question-2 text-xs"></i>
+            </button>
+          }
         </div>
         <div class="flex-1">
           <div class="w-full bg-gray-100 rounded-full h-2">
@@ -33,3 +42,29 @@
     }
   </div>
 </div>
+
+<!-- Modal de ayuda Cumplimiento -->
+<app-modal-standard
+  modalId="modalAyudaCumplimiento"
+  [title]="zonaSeleccionada()?.zona || ''"
+  size="sm"
+>
+  @if (zonaSeleccionada()) {
+    <div class="space-y-3">
+      <p class="text-sm text-gray-600 whitespace-pre-line">{{ zonaSeleccionada()!.descripcion }}</p>
+      <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+        <span class="text-xs text-gray-500">Estado actual:</span>
+        <span
+          class="text-xs font-medium px-2 py-0.5 rounded-full"
+          [style.backgroundColor]="obtenerFondoEstado(zonaSeleccionada()!.estado)"
+          [style.color]="zonaSeleccionada()!.color"
+        >
+          {{ obtenerTextoEstado(zonaSeleccionada()!.estado) }} ({{ zonaSeleccionada()!.sla }}%)
+        </span>
+      </div>
+      <div class="text-xs text-gray-400">
+        <p>Umbrales: Cumple ≥ 90% | Alerta ≥ 70% | Crítico &lt; 70%</p>
+      </div>
+    </div>
+  }
+</app-modal-standard>

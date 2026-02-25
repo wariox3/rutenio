@@ -1,6 +1,17 @@
 <div class="kpi-tarjeta bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
   <div class="flex items-center justify-between mb-2">
-    <span class="text-xs font-semibold text-[#575757] uppercase tracking-wide">{{ kpi.titulo }}</span>
+    <div class="flex items-center gap-1.5">
+      <span class="text-xs font-semibold text-[#575757] uppercase tracking-wide">{{ kpi.titulo }}</span>
+      @if (kpi.detalleAyuda) {
+        <button
+          class="text-gray-400 hover:text-[#0098d7] transition-colors"
+          (click)="ayudaClick.emit(kpi)"
+          title="Ver explicación"
+        >
+          <i class="ki-filled ki-question-2 text-sm"></i>
+        </button>
+      }
+    </div>
     @if (kpi.comparacionAnterior !== undefined) {
       <span class="flex items-center gap-1 text-xs font-medium {{ colorComparacion }}">
         <i class="{{ iconoComparacion }} text-[10px]"></i>
