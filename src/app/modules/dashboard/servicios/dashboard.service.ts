@@ -1,12 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { forkJoin, map, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { GeneralApiService } from '../../../core';
 import { ParametrosApi, RespuestaApi } from '../../../core/types/api.type';
 import { Despacho } from '../../../interfaces/despacho/despacho.interface';
 import {
   CumplimientoZona,
   DashboardFiltros,
-  DesempenoEntregas,
   KpiIndicador,
   MarcadorMapa,
 } from '../../../interfaces/dashboard/dashboard.interface';
@@ -77,9 +76,13 @@ export class DashboardService {
 
         const vehiculosEnRuta = new Set(enRuta.map(d => d.vehiculo)).size;
 
+        const cantidadNovedades = Number(novedades.count) || 0;
+
         const kpis: KpiIndicador[] = [
           {
             titulo: 'OTIF',
+            descripcion: 'Porcentaje de visitas entregadas sobre el total',
+            detalleAyuda: 'OTIF (On-Time In-Full) mide el porcentaje de cumplimiento de entregas.\n\nFórmula: (Visitas Entregadas / Total Visitas) × 100\n\nMeta: 95%\n\nSe consideran todas las visitas de despachos aprobados y no anulados.',
             valor: porcentajeEntrega,
             unidad: '%',
             meta: 95,
@@ -89,7 +92,9 @@ export class DashboardService {
             ],
           },
           {
-            titulo: 'Visitas',
+            titulo: 'Visitas Totales',
+            descripcion: 'Total de visitas registradas en despachos',
+            detalleAyuda: 'Cantidad total de visitas registradas en el sistema.\n\nIncluye visitas en todos los estados: pendientes, en ruta, entregadas y con novedad.\n\nSub-indicadores:\n• Unidades: cantidad de unidades/paquetes asociados\n• Peso: peso total en kg',
             valor: visitaResumen.resumen.cantidad,
             unidad: '',
             subIndicadores: [
@@ -98,7 +103,9 @@ export class DashboardService {
             ],
           },
           {
-            titulo: 'Entregadas',
+            titulo: 'Visitas Entregadas',
+            descripcion: 'Visitas completadas exitosamente',
+            detalleAyuda: 'Cantidad de visitas que fueron entregadas al destinatario.\n\nSe obtiene sumando las visitas entregadas de todos los despachos aprobados.\n\nSub-indicadores:\n• Exitosas: entregas sin ninguna novedad\n• Novedad: entregas que presentaron alguna novedad',
             valor: totalEntregadas,
             unidad: '',
             subIndicadores: [
@@ -107,7 +114,9 @@ export class DashboardService {
             ],
           },
           {
-            titulo: 'En Ruta',
+            titulo: 'Despachos en Ruta',
+            descripcion: 'Despachos activos sin terminar',
+            detalleAyuda: 'Cantidad de despachos que están actualmente en ruta (no terminados).\n\nSolo se cuentan despachos aprobados y no anulados.\n\nSub-indicadores:\n• Vehículos: cantidad de vehículos únicos en ruta\n• Despachos: total de despachos activos',
             valor: enRuta.length,
             unidad: '',
             subIndicadores: [
@@ -117,14 +126,18 @@ export class DashboardService {
           },
           {
             titulo: 'Novedades',
-            valor: novedades.count || 0,
+            descripcion: 'Novedades sin resolver',
+            detalleAyuda: 'Cantidad de novedades que aún no han sido resueltas.\n\nSe consultan directamente del módulo de novedades filtrando por estado de solución pendiente.\n\nSub-indicadores:\n• Sin resolver: novedades abiertas que requieren atención',
+            valor: cantidadNovedades,
             unidad: '',
             subIndicadores: [
-              { etiqueta: 'Sin resolver', valor: novedades.count || 0, icono: 'ki-filled ki-information-3', color: '#f1416c' },
+              { etiqueta: 'Sin resolver', valor: cantidadNovedades, icono: 'ki-filled ki-information-3', color: '#f1416c' },
             ],
           },
           {
-            titulo: 'Despachos',
+            titulo: 'Total Despachos',
+            descripcion: 'Todos los despachos aprobados',
+            detalleAyuda: 'Cantidad total de despachos aprobados y no anulados.\n\nSub-indicadores:\n• Activos: despachos en ruta (no terminados)\n• Terminados: despachos que ya completaron su recorrido',
             valor: todosDespachos.length,
             unidad: '',
             subIndicadores: [
@@ -137,24 +150,6 @@ export class DashboardService {
         return kpis;
       })
     );
-  }
-
-  // TODO: conectar a API real cuando exista endpoint de agregación histórica
-  obtenerDesempeno(_filtros: DashboardFiltros): Observable<DesempenoEntregas> {
-    const hoy = new Date();
-    const fechas: string[] = [];
-    for (let i = 6; i >= 0; i--) {
-      const fecha = new Date(hoy);
-      fecha.setDate(hoy.getDate() - i);
-      fechas.push(fecha.toLocaleDateString('es-CO', { day: '2-digit', month: 'short' }));
-    }
-
-    const desempeno: DesempenoEntregas = {
-      fechas,
-      otifPorcentaje: [82, 85, 83, 87, 86, 88, 87],
-      aTiempoPorcentaje: [84, 86, 85, 88, 87, 90, 89],
-    };
-    return of(desempeno);
   }
 
   obtenerCumplimientoZona(filtros: DashboardFiltros): Observable<CumplimientoZona[]> {
@@ -205,10 +200,10 @@ export class DashboardService {
         };
 
         const zonas: CumplimientoZona[] = [
-          { zona: 'Entregas', sla: slaEntregas, color: obtenerColor(obtenerEstado(slaEntregas)), estado: obtenerEstado(slaEntregas) },
-          { zona: 'Sin Novedad', sla: slaSinNovedad, color: obtenerColor(obtenerEstado(slaSinNovedad)), estado: obtenerEstado(slaSinNovedad) },
-          { zona: 'Despachos Terminados', sla: slaTerminados, color: obtenerColor(obtenerEstado(slaTerminados)), estado: obtenerEstado(slaTerminados) },
-          { zona: 'Retención', sla: slaLiberadas, color: obtenerColor(obtenerEstado(slaLiberadas)), estado: obtenerEstado(slaLiberadas) },
+          { zona: 'Entregas', descripcion: 'Porcentaje de visitas entregadas sobre el total de visitas.\nFórmula: (Entregadas / Total Visitas) × 100', sla: slaEntregas, color: obtenerColor(obtenerEstado(slaEntregas)), estado: obtenerEstado(slaEntregas) },
+          { zona: 'Sin Novedad', descripcion: 'Porcentaje de entregas realizadas sin ninguna novedad.\nFórmula: (Entregadas - Novedades) / Total Visitas × 100', sla: slaSinNovedad, color: obtenerColor(obtenerEstado(slaSinNovedad)), estado: obtenerEstado(slaSinNovedad) },
+          { zona: 'Despachos Terminados', descripcion: 'Porcentaje de despachos que completaron su recorrido.\nFórmula: Terminados / Total Despachos × 100', sla: slaTerminados, color: obtenerColor(obtenerEstado(slaTerminados)), estado: obtenerEstado(slaTerminados) },
+          { zona: 'Retención', descripcion: 'Porcentaje de visitas que permanecen en su despacho original sin ser liberadas.\nFórmula: (Total Visitas - Liberadas) / Total Visitas × 100\nUn valor alto indica que las visitas se mantienen en sus despachos asignados.', sla: slaLiberadas, color: obtenerColor(obtenerEstado(slaLiberadas)), estado: obtenerEstado(slaLiberadas) },
         ];
 
         return zonas;

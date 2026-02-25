@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { KpiIndicador } from '../../../../interfaces/dashboard/dashboard.interface';
 
@@ -12,6 +12,7 @@ import { KpiIndicador } from '../../../../interfaces/dashboard/dashboard.interfa
 })
 export class DashboardKpiTarjetaComponent {
   @Input({ required: true }) kpi!: KpiIndicador;
+  @Output() ayudaClick = new EventEmitter<KpiIndicador>();
 
   get esPositivo(): boolean {
     return (this.kpi.comparacionAnterior ?? 0) >= 0;
