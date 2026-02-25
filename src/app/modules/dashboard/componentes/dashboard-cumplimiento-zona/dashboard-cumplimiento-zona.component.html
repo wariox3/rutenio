@@ -1,0 +1,35 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full">
+  <h3 class="text-sm font-semibold text-[#575757] mb-3">Cumplimiento Operativo</h3>
+  <div class="space-y-3">
+    @for (zona of zonas; track zona.zona) {
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 min-w-[140px]">
+          <i
+            class="{{ obtenerIconoEstado(zona.estado) }} text-sm"
+            [style.color]="zona.color"
+          ></i>
+          <span class="text-sm font-medium text-[#575757]">{{ zona.zona }}</span>
+        </div>
+        <div class="flex-1">
+          <div class="w-full bg-gray-100 rounded-full h-2">
+            <div
+              class="h-2 rounded-full transition-all"
+              [style.width.%]="zona.sla"
+              [style.backgroundColor]="zona.color"
+            ></div>
+          </div>
+        </div>
+        <span class="text-sm font-semibold w-12 text-right" [style.color]="zona.color">
+          {{ zona.sla }}%
+        </span>
+        <span
+          class="estado-badge text-xs font-medium px-2 py-0.5 rounded-full w-16 text-center"
+          [style.backgroundColor]="obtenerFondoEstado(zona.estado)"
+          [style.color]="zona.color"
+        >
+          {{ obtenerTextoEstado(zona.estado) }}
+        </span>
+      </div>
+    }
+  </div>
+</div>
