@@ -1,17 +1,27 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CumplimientoZona } from '../../../../interfaces/dashboard/dashboard.interface';
+import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
+import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 
 @Component({
   selector: 'app-dashboard-cumplimiento-zona',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ModalStandardComponent],
   templateUrl: './dashboard-cumplimiento-zona.component.html',
   styleUrl: './dashboard-cumplimiento-zona.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardCumplimientoZonaComponent {
+  private modalService = inject(ModalService);
+
   @Input({ required: true }) zonas!: CumplimientoZona[];
+  zonaSeleccionada = signal<CumplimientoZona | null>(null);
+
+  mostrarAyuda(zona: CumplimientoZona): void {
+    this.zonaSeleccionada.set(zona);
+    this.modalService.open('modalAyudaCumplimiento');
+  }
 
   obtenerIconoEstado(estado: string): string {
     switch (estado) {
