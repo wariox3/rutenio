@@ -18,6 +18,7 @@ import KTLayout from '../../../metronic/app/layouts/demo1';
 import { AlertaSuspensionComponent } from "../../common/components/alerta-suspension/alerta-suspension.component";
 import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../common/components/ui/modals/service/modal.service';
+import { TutorialComponent } from '../../common/components/tutorial/tutorial.component';
 import { Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/configuracion.selectors';
@@ -33,7 +34,8 @@ import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/
     SearchModalComponent,
     HeaderComponent,
     AlertaSuspensionComponent,
-    ModalStandardComponent
+    ModalStandardComponent,
+    TutorialComponent,
 ],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',

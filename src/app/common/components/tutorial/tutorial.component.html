@@ -1,0 +1,135 @@
+<!-- Botón flotante para abrir tutorial -->
+@if (!tutorialService.visible()) {
+  <button
+    (click)="tutorialService.abrir()"
+    class="tutorial-fab fixed bottom-24 right-6 z-40 flex items-center gap-2 bg-white border border-gray-200 rounded-full pl-3 pr-4 py-2.5 shadow-lg hover:shadow-xl transition-all duration-300 group"
+  >
+    <div class="flex items-center justify-center w-7 h-7 rounded-full bg-[#0098d715]">
+      <i class="ki-filled ki-questionnaire-tablet text-sm text-[#0098d7]"></i>
+    </div>
+    <span class="text-xs font-semibold text-gray-600 group-hover:text-[#0098d7] transition-colors">Guía</span>
+    @if (!tutorialService.tutorialCompletado()) {
+      <span class="flex items-center justify-center w-5 h-5 rounded-full bg-[#0098d7] text-[10px] font-bold text-white">
+        {{ tutorialService.progreso() }}%
+      </span>
+    }
+  </button>
+}
+
+<!-- Panel del tutorial -->
+@if (tutorialService.visible()) {
+  <div class="tutorial-panel fixed bottom-6 right-6 z-40 w-[380px] max-h-[calc(100vh-120px)] bg-white rounded-2xl shadow-2xl border border-gray-100 flex flex-col overflow-hidden animate-slide-up">
+    <!-- Header -->
+    <div class="p-4 pb-3 border-b border-gray-100 shrink-0">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#0098d715]">
+            <i class="ki-filled ki-rocket text-base text-[#0098d7]"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-800">Primeros pasos</h3>
+            <p class="text-[10px] text-gray-400">Configura tu operación</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          @if (tutorialService.tutorialCompletado()) {
+            <button
+              (click)="tutorialService.reiniciar()"
+              class="p-1.5 text-gray-400 hover:text-[#0098d7] hover:bg-gray-50 rounded-lg transition-colors"
+              title="Reiniciar tutorial"
+            >
+              <i class="ki-filled ki-arrows-circle text-sm"></i>
+            </button>
+          }
+          <button
+            (click)="tutorialService.cerrar()"
+            class="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+            title="Cerrar"
+          >
+            <i class="ki-filled ki-cross text-sm"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Barra de progreso -->
+      <div class="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+        <div
+          class="h-1.5 rounded-full bg-[#0098d7] transition-all duration-500 ease-out"
+          [style.width.%]="tutorialService.progreso()"
+        ></div>
+      </div>
+      <p class="text-[10px] text-gray-400 mt-1">{{ tutorialService.progreso() }}% completado</p>
+    </div>
+
+    <!-- Lista de pasos -->
+    <div class="flex-1 overflow-y-auto p-3 space-y-1.5">
+      @for (paso of tutorialService.pasos(); track paso.id; let i = $index) {
+        <div
+          class="tutorial-paso group flex items-start gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200"
+          [class.bg-gray-50]="tutorialService.pasoActual() === i && !paso.completado"
+          [class.hover:bg-gray-50]="!paso.completado"
+          [class.opacity-60]="paso.completado"
+          (click)="navegarAPaso(paso, i)"
+        >
+          <!-- Indicador de estado -->
+          <div class="relative shrink-0 mt-0.5">
+            @if (paso.completado) {
+              <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#17c65315]">
+                <i class="ki-filled ki-check text-sm text-[#17c653]"></i>
+              </div>
+            } @else {
+              <div
+                class="flex items-center justify-center w-8 h-8 rounded-lg transition-transform duration-200 group-hover:scale-110"
+                [style.backgroundColor]="paso.colorIcono + '15'"
+              >
+                <i class="{{ paso.icono }} text-sm" [style.color]="paso.colorIcono"></i>
+              </div>
+            }
+            <!-- Línea conectora -->
+            @if (i < tutorialService.pasos().length - 1) {
+              <div class="absolute left-1/2 top-9 -translate-x-1/2 w-px h-[calc(100%+2px)] bg-gray-100"></div>
+            }
+          </div>
+
+          <!-- Contenido -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <span
+                class="text-xs font-semibold leading-tight"
+                [class.text-gray-800]="!paso.completado"
+                [class.text-gray-500]="paso.completado"
+                [class.line-through]="paso.completado"
+              >
+                {{ paso.titulo }}
+              </span>
+              @if (!paso.completado) {
+                <button
+                  class="shrink-0 opacity-0 group-hover:opacity-100 p-1 text-gray-300 hover:text-[#17c653] transition-all"
+                  (click)="marcarCompletado(paso, $event)"
+                  title="Marcar como completado"
+                >
+                  <i class="ki-filled ki-check-circle text-sm"></i>
+                </button>
+              }
+            </div>
+            @if (!paso.completado) {
+              <p class="text-[11px] text-gray-400 leading-snug mt-0.5">{{ paso.descripcion }}</p>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Footer -->
+    @if (tutorialService.tutorialCompletado()) {
+      <div class="p-4 pt-3 border-t border-gray-100 shrink-0">
+        <div class="flex items-center gap-2 bg-[#17c65310] rounded-xl p-3">
+          <i class="ki-filled ki-check-circle text-lg text-[#17c653]"></i>
+          <div>
+            <p class="text-xs font-semibold text-gray-700">Tutorial completado</p>
+            <p class="text-[10px] text-gray-400">Ya conoces el flujo completo de la operación</p>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}
