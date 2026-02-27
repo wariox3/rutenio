@@ -12,6 +12,8 @@ export interface KpiIndicador {
   detalleAyuda?: string;
   valor: number;
   unidad: string;
+  icono?: string;
+  colorIcono?: string;
   comparacionAnterior?: number;
   meta?: number;
   subIndicadores?: { etiqueta: string; valor: number; icono?: string; color?: string }[];
