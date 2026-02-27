@@ -1,41 +1,43 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, catchError, of } from 'rxjs';
 import { DashboardService } from './servicios/dashboard.service';
 import {
   CumplimientoZona,
   DashboardFiltros,
-  DesempenoEntregas,
   KpiIndicador,
   MarcadorMapa,
 } from '../../interfaces/dashboard/dashboard.interface';
-import { DashboardFiltrosComponent } from './componentes/dashboard-filtros/dashboard-filtros.component';
 import { DashboardKpiTarjetaComponent } from './componentes/dashboard-kpi-tarjeta/dashboard-kpi-tarjeta.component';
-import { DashboardDesempenoChartComponent } from './componentes/dashboard-desempeno-chart/dashboard-desempeno-chart.component';
 import { DashboardCumplimientoZonaComponent } from './componentes/dashboard-cumplimiento-zona/dashboard-cumplimiento-zona.component';
 import { DashboardMapaComponent } from './componentes/dashboard-mapa/dashboard-mapa.component';
+import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
+import { ModalService } from '../../common/components/ui/modals/service/modal.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
-    DashboardFiltrosComponent,
     DashboardKpiTarjetaComponent,
-    DashboardDesempenoChartComponent,
     DashboardCumplimientoZonaComponent,
     DashboardMapaComponent,
+    ModalStandardComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class DashboardComponent implements OnInit, OnDestroy {
+  private modalService = inject(ModalService);
+
   kpis = signal<KpiIndicador[]>([]);
-  desempeno = signal<DesempenoEntregas | null>(null);
   cumplimientoZonas = signal<CumplimientoZona[]>([]);
   marcadoresMapa = signal<MarcadorMapa[]>([]);
   cargando = signal(false);
+  mostrarMapa = signal(false);
+  cargandoMapa = signal(false);
+  kpiSeleccionado = signal<KpiIndicador | null>(null);
 
   private destroy$ = new Subject<void>();
   private llamadasPendientes = 0;
@@ -61,19 +63,12 @@ export default class DashboardComponent implements OnInit, OnDestroy {
 
   cargarDatos(filtros: DashboardFiltros): void {
     this.cargando.set(true);
-    this.llamadasPendientes = 4;
+    this.llamadasPendientes = 2;
 
     this.dashboardService.obtenerKpis(filtros)
       .pipe(takeUntil(this.destroy$), catchError(() => of([])))
       .subscribe((datos) => {
         this.kpis.set(datos);
-        this.verificarCarga();
-      });
-
-    this.dashboardService.obtenerDesempeno(filtros)
-      .pipe(takeUntil(this.destroy$), catchError(() => of(null)))
-      .subscribe((datos) => {
-        this.desempeno.set(datos);
         this.verificarCarga();
       });
 
@@ -83,12 +78,22 @@ export default class DashboardComponent implements OnInit, OnDestroy {
         this.cumplimientoZonas.set(datos);
         this.verificarCarga();
       });
+  }
 
-    this.dashboardService.obtenerMarcadoresMapa(filtros)
+  mostrarAyuda(kpi: KpiIndicador): void {
+    this.kpiSeleccionado.set(kpi);
+    this.modalService.open('modalAyudaKpi');
+  }
+
+  cargarMapa(): void {
+    this.mostrarMapa.set(true);
+    this.cargandoMapa.set(true);
+
+    this.dashboardService.obtenerMarcadoresMapa(this.filtrosPorDefecto)
       .pipe(takeUntil(this.destroy$), catchError(() => of([])))
       .subscribe((datos) => {
         this.marcadoresMapa.set(datos);
-        this.verificarCarga();
+        this.cargandoMapa.set(false);
       });
   }
 

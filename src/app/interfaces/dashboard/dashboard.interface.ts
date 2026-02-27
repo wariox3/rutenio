@@ -8,21 +8,20 @@ export interface DashboardFiltros {
 
 export interface KpiIndicador {
   titulo: string;
+  descripcion?: string;
+  detalleAyuda?: string;
   valor: number;
   unidad: string;
+  icono?: string;
+  colorIcono?: string;
   comparacionAnterior?: number;
   meta?: number;
   subIndicadores?: { etiqueta: string; valor: number; icono?: string; color?: string }[];
 }
 
-export interface DesempenoEntregas {
-  fechas: string[];
-  otifPorcentaje: number[];
-  aTiempoPorcentaje: number[];
-}
-
 export interface CumplimientoZona {
   zona: string;
+  descripcion?: string;
   sla: number;
   color: string;
   estado: 'ok' | 'alerta' | 'critico';

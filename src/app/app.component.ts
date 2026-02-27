@@ -4,6 +4,7 @@ import { HeaderComponent } from './layouts/header/header.component';
 import { FooterComponent } from './layouts/footer/footer.component';
 import { SidebarComponent } from './layouts/sidebar/sidebar.component';
 import { SearchModalComponent } from './partials/search-modal/search-modal.component';
+import { BotonWhatsappComponent } from './common/components/boton-whatsapp/boton-whatsapp.component';
 // Precaucion: Siempre deben ir de ultimos y en este orden (KTComponents)
 import KTComponents from '../metronic/core/index';
 
@@ -16,6 +17,7 @@ import KTComponents from '../metronic/core/index';
     FooterComponent,
     SidebarComponent,
     SearchModalComponent,
+    BotonWhatsappComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

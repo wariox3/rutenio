@@ -1,35 +1,83 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full">
-  <h3 class="text-sm font-semibold text-[#575757] mb-3">Cumplimiento Operativo</h3>
-  <div class="space-y-3">
+<div class="bg-white rounded-xl border border-gray-100 p-5 h-full">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-[#0098d715]">
+        <i class="ki-filled ki-chart-pie-simple text-base text-[#0098d7]"></i>
+      </div>
+      <div>
+        <h3 class="text-sm font-bold text-gray-800">Cumplimiento Operativo</h3>
+        <p class="text-[10px] text-gray-400">SLA por indicador</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="space-y-4">
     @for (zona of zonas; track zona.zona) {
-      <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 min-w-[140px]">
-          <i
-            class="{{ obtenerIconoEstado(zona.estado) }} text-sm"
-            [style.color]="zona.color"
-          ></i>
-          <span class="text-sm font-medium text-[#575757]">{{ zona.zona }}</span>
-        </div>
-        <div class="flex-1">
-          <div class="w-full bg-gray-100 rounded-full h-2">
-            <div
-              class="h-2 rounded-full transition-all"
-              [style.width.%]="zona.sla"
-              [style.backgroundColor]="zona.color"
-            ></div>
+      <div class="zona-fila group">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="flex items-center gap-2">
+            <i
+              class="{{ obtenerIconoEstado(zona.estado) }} text-xs"
+              [style.color]="zona.color"
+            ></i>
+            <span class="text-sm font-medium text-gray-700">{{ zona.zona }}</span>
+            @if (zona.descripcion) {
+              <button
+                class="text-gray-300 hover:text-[#0098d7] transition-colors opacity-0 group-hover:opacity-100"
+                (click)="mostrarAyuda(zona)"
+                title="Ver explicación"
+              >
+                <i class="ki-filled ki-question-2 text-xs"></i>
+              </button>
+            }
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-bold tabular-nums" [style.color]="zona.color">
+              {{ zona.sla }}%
+            </span>
+            <span
+              class="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              [style.backgroundColor]="obtenerFondoEstado(zona.estado)"
+              [style.color]="zona.color"
+            >
+              {{ obtenerTextoEstado(zona.estado) }}
+            </span>
           </div>
         </div>
-        <span class="text-sm font-semibold w-12 text-right" [style.color]="zona.color">
-          {{ zona.sla }}%
-        </span>
-        <span
-          class="estado-badge text-xs font-medium px-2 py-0.5 rounded-full w-16 text-center"
-          [style.backgroundColor]="obtenerFondoEstado(zona.estado)"
-          [style.color]="zona.color"
-        >
-          {{ obtenerTextoEstado(zona.estado) }}
-        </span>
+        <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+          <div
+            class="h-2 rounded-full transition-all duration-700 ease-out"
+            [style.width.%]="zona.sla"
+            [style.backgroundColor]="zona.color"
+          ></div>
+        </div>
       </div>
     }
   </div>
 </div>
+
+<!-- Modal de ayuda Cumplimiento -->
+<app-modal-standard
+  modalId="modalAyudaCumplimiento"
+  [title]="zonaSeleccionada()?.zona || ''"
+  size="sm"
+>
+  @if (zonaSeleccionada()) {
+    <div class="space-y-3">
+      <p class="text-sm text-gray-600 whitespace-pre-line">{{ zonaSeleccionada()!.descripcion }}</p>
+      <div class="flex items-center gap-2 pt-2 border-t border-gray-100">
+        <span class="text-xs text-gray-500">Estado actual:</span>
+        <span
+          class="text-xs font-medium px-2 py-0.5 rounded-full"
+          [style.backgroundColor]="obtenerFondoEstado(zonaSeleccionada()!.estado)"
+          [style.color]="zonaSeleccionada()!.color"
+        >
+          {{ obtenerTextoEstado(zonaSeleccionada()!.estado) }} ({{ zonaSeleccionada()!.sla }}%)
+        </span>
+      </div>
+      <div class="text-xs text-gray-400">
+        <p>Umbrales: Cumple &ge; 90% | Alerta &ge; 70% | Crítico &lt; 70%</p>
+      </div>
+    </div>
+  }
+</app-modal-standard>
