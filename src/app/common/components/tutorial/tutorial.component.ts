@@ -17,7 +17,11 @@ export class TutorialComponent {
 
   navegarAPaso(paso: PasoTutorial, indice: number): void {
     this.tutorialService.irAPaso(indice);
-    this.router.navigate([paso.ruta]);
+    this.router.navigate([paso.ruta]).then(navegado => {
+      if (navegado) {
+        this.tutorialService.lanzarTour(paso.ruta, paso.id);
+      }
+    });
   }
 
   marcarCompletado(paso: PasoTutorial, evento: Event): void {

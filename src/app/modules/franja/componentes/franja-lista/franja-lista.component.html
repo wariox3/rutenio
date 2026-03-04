@@ -1,5 +1,5 @@
 <div class="grid md:grid-cols-[.5fr,1fr]">
-  <div class="card m-4">
+  <div id="tour-franja-lista" class="card m-4">
     <div class="card-header">
       <section>
         <h3 class="card-title">Franjas</h3>
@@ -19,6 +19,7 @@
         ></app-button>
         } @else {
         <app-button
+          id="tour-franja-nuevo"
           type="button"
           texto="Nuevo"
           (click)="toggleEstaCreando()"
@@ -83,7 +84,7 @@
     </div>
   </div>
 
-  <div class="card m-4 h-[45rem]">
+  <div id="tour-franja-mapa" class="card m-4 h-[45rem]">
     <div class="card-header">
       <div class="card-title my-[9px]">Mapa</div>
       <div class="flex gap-2">

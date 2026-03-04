@@ -24,13 +24,14 @@
         >
         </app-button>
         } @else {
-        <button class="btn btn-primary ms-2" (click)="recargarDespachos()">
+        <button id="tour-trafico-actualizar" class="btn btn-primary ms-2" (click)="recargarDespachos()">
           <i class="ki-filled ki-arrows-circle"></i>
           Actualizar
         </button>
 
         }
         <button
+          id="tour-trafico-ubicacion"
           class="btn btn-primary ms-2"
           (click)="abrirModalUbicacion()"
           data-modal-toggle="#trafico-ubicacion-actual"
@@ -50,6 +51,7 @@
       </div>
 
       <table
+        id="tour-trafico-tabla"
         class="table align-middle text-gray-700 font-medium text-sm w-full "
       >
         <thead class="top-0 bg-white">

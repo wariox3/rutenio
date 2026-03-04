@@ -18,7 +18,7 @@
   </div>
 
   <!-- KPIs principales (primera fila: 3 tarjetas destacadas) -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+  <div id="tour-dashboard-kpis" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
     @for (kpi of kpis().slice(0, 3); track kpi.titulo) {
       <app-dashboard-kpi-tarjeta [kpi]="kpi" (ayudaClick)="mostrarAyuda($event)"></app-dashboard-kpi-tarjeta>
     }
@@ -33,12 +33,12 @@
 
   <!-- Fila inferior: Cumplimiento y Mapa -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <div>
+    <div id="tour-dashboard-zonas">
       @if (cumplimientoZonas().length > 0) {
         <app-dashboard-cumplimiento-zona [zonas]="cumplimientoZonas()"></app-dashboard-cumplimiento-zona>
       }
     </div>
-    <div>
+    <div id="tour-dashboard-mapa">
       @if (mostrarMapa()) {
         <app-dashboard-mapa [marcadores]="marcadoresMapa()"></app-dashboard-mapa>
       } @else {
