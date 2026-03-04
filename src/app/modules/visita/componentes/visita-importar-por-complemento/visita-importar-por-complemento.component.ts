@@ -65,6 +65,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       fecha_desde: new FormControl(null),
       fecha_hasta: new FormControl(null),
       pendienteDespacho: new FormControl(true),
+      novedad: new FormControl(false),
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
       codigoZona: new FormControl(null),
@@ -109,6 +110,7 @@ export class VisitaImportarPorComplementoComponent extends General {
     const hasta = this.formularioComplementos.get('hasta')?.value;
     const pendienteDespacho =
       this.formularioComplementos.get('pendienteDespacho')?.value;
+    const novedad = this.formularioComplementos.get('novedad')?.value;
     const numeroRegistros =
       this.formularioComplementos.get('numeroRegistros')?.value;
     const codigo_contacto = this.formularioComplementos.get('codigoContacto')?.value;
@@ -125,6 +127,7 @@ export class VisitaImportarPorComplementoComponent extends General {
         desde,
         hasta,
         pendienteDespacho,
+        novedad,
         complemento,
         codigo_contacto,
         codigo_destino,

@@ -59,7 +59,7 @@
 
     <div class="grid grid-cols-2 gap-4">
       <div>
-        <app-label>Código contacto</app-label>
+        <app-label>Código contacto (remitente)</app-label>
         <app-input
           [fieldName]="'El código contacto'"
           [soloNumeros]="true"
@@ -116,10 +116,14 @@
         [control]="formularioComplementos.controls.numeroRegistros"
       ></app-input>
     </div>
-    <div class="flex">
+    <div class="flex flex-wrap gap-4">
       <app-switch
         [control]="formularioComplementos.controls.pendienteDespacho"
         titulo="Pendiente despacho"
+      ></app-switch>
+      <app-switch
+        [control]="formularioComplementos.controls.novedad"
+        titulo="Novedad"
       ></app-switch>
     </div>
   </div>

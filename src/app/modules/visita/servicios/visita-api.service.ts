@@ -150,6 +150,7 @@ export class VisitaApiService {
     desde: number | string;
     hasta: number | string;
     pendienteDespacho: boolean;
+    novedad: boolean;
     complemento: number;
     codigo_contacto: number;
     codigo_destino: number;
@@ -163,6 +164,7 @@ export class VisitaApiService {
       guia_desde: parametros.desde,
       guia_hasta: parametros.hasta,
       pendiente_despacho: parametros.pendienteDespacho,
+      novedad: parametros.novedad,
       complemento: parametros.complemento,
       codigo_contacto: parametros.codigo_contacto,
       codigo_destino: parametros.codigo_destino,
