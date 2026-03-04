@@ -10,10 +10,11 @@
   </div>
 </div>
 
-<div class="card min-w-full">
+<div id="tour-vehiculo-tabla" class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Vehículos</h3>
     <app-button
+      id="tour-vehiculo-nuevo"
       routerLink="/administracion/vehiculo/nuevo"
       type="button"
       texto="Nuevo"
@@ -30,6 +31,7 @@
         <div class="inline-flex rounded-md shadow-s my-5">
           <div class="menu menu-default p-0" data-menu="true">
             <button
+              id="tour-vehiculo-importar"
               class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 bg-white border-y border-x border-gray-200 rounded-e-lg"
               (click)="abrirModal('importarVehiculos')"
             >

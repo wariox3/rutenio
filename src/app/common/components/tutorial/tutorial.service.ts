@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { driver, DriveStep } from 'driver.js';
 
 export interface PasoTutorial {
   id: number;
@@ -20,6 +21,7 @@ export class TutorialService {
   pasos = signal<PasoTutorial[]>(this.obtenerPasosIniciales());
   pasoActual = signal<number>(0);
   visible = signal<boolean>(this.obtenerVisibilidadGuardada());
+  tourActivo = signal<boolean>(false);
 
   progreso = computed(() => {
     const lista = this.pasos();
@@ -28,6 +30,193 @@ export class TutorialService {
   });
 
   tutorialCompletado = computed(() => this.progreso() === 100);
+
+  private toursPorPagina: Record<string, DriveStep[]> = {
+    '/configuracion': [
+      {
+        element: '#tour-config-direccion',
+        popover: {
+          title: 'Dirección de origen',
+          description: 'Busca y selecciona la dirección desde donde salen tus vehículos. Es el punto de partida para calcular todas las rutas.',
+        },
+      },
+      {
+        element: '#tour-config-opciones',
+        popover: {
+          title: 'Opciones de configuración',
+          description: 'Activa o desactiva funcionalidades como la sincronización con complementos externos y el ruteo por franjas geográficas.',
+        },
+      },
+      {
+        element: '#tour-config-guardar',
+        popover: {
+          title: 'Guardar configuración',
+          description: 'Una vez que hayas configurado tu dirección y opciones, haz clic aquí para guardar los cambios.',
+        },
+      },
+    ],
+    '/administracion/vehiculo/lista': [
+      {
+        element: '#tour-vehiculo-tabla',
+        popover: {
+          title: 'Lista de vehículos',
+          description: 'Aquí verás todos los vehículos registrados en tu flota con su capacidad, tipo y estado.',
+        },
+      },
+      {
+        element: '#tour-vehiculo-nuevo',
+        popover: {
+          title: 'Crear vehículo',
+          description: 'Haz clic aquí para registrar un nuevo vehículo indicando su placa, capacidad de peso, volumen y tiempo disponible.',
+        },
+      },
+      {
+        element: '#tour-vehiculo-importar',
+        popover: {
+          title: 'Importar vehículos',
+          description: 'Si tienes muchos vehículos, puedes importarlos masivamente desde un archivo Excel.',
+        },
+      },
+    ],
+    '/administracion/franja/lista': [
+      {
+        element: '#tour-franja-lista',
+        popover: {
+          title: 'Lista de franjas',
+          description: 'Estas son tus zonas de cobertura. Cada franja agrupa entregas por área geográfica para optimizar las rutas.',
+        },
+      },
+      {
+        element: '#tour-franja-mapa',
+        popover: {
+          title: 'Mapa de franjas',
+          description: 'Visualiza y dibuja tus zonas de cobertura directamente en el mapa. Puedes crear polígonos para definir cada franja.',
+        },
+      },
+      {
+        element: '#tour-franja-nuevo',
+        popover: {
+          title: 'Crear franja',
+          description: 'Haz clic aquí para empezar a dibujar una nueva zona de cobertura en el mapa.',
+        },
+      },
+    ],
+    '/movimiento/visita/lista': [
+      {
+        element: '#tour-visita-tabla',
+        popover: {
+          title: 'Lista de visitas',
+          description: 'Aquí se muestran todas las entregas pendientes con su dirección, peso, volumen y estado actual.',
+        },
+      },
+      {
+        element: '#tour-visita-nuevo',
+        popover: {
+          title: 'Crear visita',
+          description: 'Agrega manualmente una nueva entrega con todos sus datos: dirección, destinatario, peso y ventana horaria.',
+        },
+      },
+      {
+        element: '#tour-visita-importar',
+        popover: {
+          title: 'Importar visitas',
+          description: 'Importa entregas masivamente desde Excel o desde un complemento externo. Ideal cuando tienes muchos pedidos.',
+        },
+      },
+    ],
+    '/rutear': [
+      {
+        element: '#tour-rutear-boton',
+        popover: {
+          title: 'Botón Rutear',
+          description: 'Este es el botón principal. Al hacer clic, el sistema asigna automáticamente las visitas a los vehículos disponibles optimizando las rutas.',
+        },
+      },
+      {
+        element: '#tour-rutear-resumen',
+        popover: {
+          title: 'Resumen de capacidad',
+          description: 'Aquí puedes ver las métricas de tu flota: vehículos disponibles, visitas pendientes, capacidad utilizada y tiempo estimado.',
+        },
+      },
+      {
+        element: '#tour-rutear-flota',
+        popover: {
+          title: 'Selección de flota',
+          description: 'Selecciona qué flota de vehículos usar para el ruteo. Puedes tener múltiples flotas configuradas.',
+        },
+      },
+    ],
+    '/diseno-ruta/lista': [
+      {
+        element: '#tour-diseno-despachos',
+        popover: {
+          title: 'Despachos',
+          description: 'Lista de despachos creados por el ruteo. Cada despacho agrupa las visitas asignadas a un vehículo específico.',
+        },
+      },
+      {
+        element: '#tour-diseno-visitas',
+        popover: {
+          title: 'Visitas por despacho',
+          description: 'Al seleccionar un despacho, aquí verás las visitas asignadas en orden de entrega. Puedes reorganizar el orden arrastrando.',
+        },
+      },
+      {
+        element: '#tour-diseno-mapa',
+        popover: {
+          title: 'Mapa de ruta',
+          description: 'Visualiza la ruta del despacho seleccionado en el mapa. Puedes verificar que el recorrido sea lógico antes de aprobarlo.',
+        },
+      },
+    ],
+    '/trafico/lista': [
+      {
+        element: '#tour-trafico-tabla',
+        popover: {
+          title: 'Tabla de despachos',
+          description: 'Supervisa todos los despachos en curso. Puedes ver el progreso de entregas, la ubicación del vehículo y las novedades.',
+        },
+      },
+      {
+        element: '#tour-trafico-actualizar',
+        popover: {
+          title: 'Actualizar datos',
+          description: 'Recarga la información de los despachos para ver el estado más reciente del avance de entregas.',
+        },
+      },
+      {
+        element: '#tour-trafico-ubicacion',
+        popover: {
+          title: 'Ubicación actual',
+          description: 'Consulta la ubicación en tiempo real de los vehículos en operación para monitorear su avance.',
+        },
+      },
+    ],
+    '/dashboard': [
+      {
+        element: '#tour-dashboard-kpis',
+        popover: {
+          title: 'Indicadores principales',
+          description: 'Consulta los KPIs clave de tu operación: cumplimiento, entregas exitosas, tiempo promedio y más.',
+        },
+      },
+      {
+        element: '#tour-dashboard-zonas',
+        popover: {
+          title: 'Cumplimiento por zona',
+          description: 'Analiza el desempeño de entregas desglosado por zona geográfica para identificar áreas de mejora.',
+        },
+      },
+      {
+        element: '#tour-dashboard-mapa',
+        popover: {
+          title: 'Mapa de operación',
+          description: 'Visualiza la distribución geográfica de tus entregas y la cobertura de tu operación en el mapa.',
+        },
+      },
+    ],
+  };
 
   constructor() {
     this.cargarEstado();
@@ -68,6 +257,37 @@ export class TutorialService {
     this.pasos.set(reiniciados);
     this.pasoActual.set(0);
     this.guardarEstado();
+  }
+
+  lanzarTour(ruta: string, pasoId: number): void {
+    const pasos = this.toursPorPagina[ruta];
+    if (!pasos || pasos.length === 0) return;
+
+    this.cerrar();
+    this.tourActivo.set(true);
+
+    setTimeout(() => {
+      const instancia = driver({
+        showProgress: true,
+        animate: true,
+        overlayColor: '#000000',
+        overlayOpacity: 0.6,
+        stagePadding: 10,
+        stageRadius: 8,
+        popoverClass: 'rutenio-tour-popover',
+        nextBtnText: 'Siguiente',
+        prevBtnText: 'Anterior',
+        doneBtnText: 'Finalizar',
+        progressText: '{{current}} de {{total}}',
+        onDestroyed: () => {
+          this.completarPaso(pasoId);
+          this.tourActivo.set(false);
+        },
+        steps: pasos,
+      });
+
+      instancia.drive();
+    }, 600);
   }
 
   private obtenerPasosIniciales(): PasoTutorial[] {
