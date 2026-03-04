@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-export const WHATSAPP_NUMBER = '3106097801';
+export const WHATSAPP_NUMBER = '573106097801';
 
 @Component({
   selector: 'app-boton-whatsapp',
