@@ -22,6 +22,7 @@ import { TutorialComponent } from '../../common/components/tutorial/tutorial.com
 import { Subject, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/configuracion.selectors';
+import { TutorialService } from '../../common/components/tutorial/tutorial.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -46,6 +47,7 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
   private modalService = inject(ModalService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private tutorialService = inject(TutorialService);
   private destroy$ = new Subject<void>();
 
   public mostrarModalConfiguracion = signal<boolean>(true);
@@ -60,9 +62,11 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
         next: (estaVacia) => {
           // setTimeout para asegurar que el DOM esté listo
           setTimeout(() => {
-            if (estaVacia) {
+            if (estaVacia && !this.tutorialService.tourActivo()) {
               this.mostrarModalConfiguracion.set(true);
               this.modalService.open('modalConfiguracionDireccion');
+            } else if (estaVacia && this.tutorialService.tourActivo()) {
+              this.mostrarModalConfiguracion.set(false);
             } else {
               this.mostrarModalConfiguracion.set(false);
               this.modalService.close('modalConfiguracionDireccion');

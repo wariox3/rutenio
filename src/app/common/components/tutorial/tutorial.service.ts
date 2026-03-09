@@ -1,5 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { driver, DriveStep } from 'driver.js';
+import { ModalService } from '../ui/modals/service/modal.service';
 
 export interface PasoTutorial {
   id: number;
@@ -18,6 +19,8 @@ const STORAGE_KEY_VISIBLE = 'tutorial_visible';
   providedIn: 'root',
 })
 export class TutorialService {
+  private modalService = inject(ModalService);
+
   pasos = signal<PasoTutorial[]>(this.obtenerPasosIniciales());
   pasoActual = signal<number>(0);
   visible = signal<boolean>(this.obtenerVisibilidadGuardada());
@@ -266,14 +269,23 @@ export class TutorialService {
     this.cerrar();
     this.tourActivo.set(true);
 
-    setTimeout(() => {
+    this.esperarElementos(pasos).then(pasosVisibles => {
+      if (pasosVisibles.length === 0) {
+        this.tourActivo.set(false);
+        return;
+      }
+
+      this.modalService.close('modalConfiguracionDireccion');
+
       const instancia = driver({
         showProgress: true,
         animate: true,
         overlayColor: '#000000',
         overlayOpacity: 0.6,
-        stagePadding: 10,
-        stageRadius: 8,
+        stagePadding: 4,
+        stageRadius: 5,
+        allowClose: true,
+        smoothScroll: true,
         popoverClass: 'rutenio-tour-popover',
         nextBtnText: 'Siguiente',
         prevBtnText: 'Anterior',
@@ -283,11 +295,34 @@ export class TutorialService {
           this.completarPaso(pasoId);
           this.tourActivo.set(false);
         },
-        steps: pasos,
+        steps: pasosVisibles,
       });
 
       instancia.drive();
-    }, 600);
+    });
+  }
+
+  private esperarElementos(pasos: DriveStep[], intentosMax = 20, intervalo = 200): Promise<DriveStep[]> {
+    return new Promise(resolve => {
+      let intentos = 0;
+      const verificar = () => {
+        intentos++;
+        const primerElemento = pasos[0]?.element;
+        if (primerElemento && document.querySelector(primerElemento as string)) {
+          const pasosVisibles = pasos.filter(
+            p => !p.element || document.querySelector(p.element as string)
+          );
+          resolve(pasosVisibles);
+          return;
+        }
+        if (intentos >= intentosMax) {
+          resolve([]);
+          return;
+        }
+        setTimeout(verificar, intervalo);
+      };
+      setTimeout(verificar, 300);
+    });
   }
 
   private obtenerPasosIniciales(): PasoTutorial[] {
