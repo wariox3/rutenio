@@ -7,7 +7,7 @@ import {
   ContenedorActionBorrarInformacion,
   ContenedorActionInit,
 } from '../../actions/contenedor/contenedor.actions';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 
 @Injectable()
 export class ContenedorEffects {

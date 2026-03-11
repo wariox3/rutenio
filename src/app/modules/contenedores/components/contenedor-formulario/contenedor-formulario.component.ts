@@ -17,7 +17,7 @@ import { InputEmailComponent } from '../../../../common/components/ui/form/input
 import { InputComponent } from '../../../../common/components/ui/form/input/input.component';
 import { General } from '../../../../common/clases/general';
 import { InputGroupDefaultComponent } from '../../../../common/components/ui/form/input-group-default/input-group-default.component';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { ContenedorService } from '../../services/contenedor.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { RouterLink } from '@angular/router';

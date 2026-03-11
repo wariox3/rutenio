@@ -20,7 +20,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';

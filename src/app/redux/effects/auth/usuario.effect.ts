@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
 import { getCookie, setCookie } from 'typescript-cookie';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { Usuario } from '../../../interfaces/user/user.interface';
 import {
   usuarioActionActualizar,
