@@ -17,6 +17,14 @@
           (click)="abrirModalResumen()"
         >
         </app-button>
+        <app-button
+          clases="btn btn-light"
+          data-modal-toggle="#pendientes-rutear"
+          type="button"
+          texto="Pendientes"
+          (click)="abrirModalPendientesRutear()"
+        >
+        </app-button>
         <div
           class="dropdown"
           data-dropdown="true"
@@ -632,6 +640,17 @@
 <app-full-loader-default
   [mostrarCargando]="mostarVistaCargando$ | async"
 ></app-full-loader-default>
+
+<app-modal-default
+  size="medium"
+  [id]="'pendientes-rutear'"
+  titulo="Pendientes por rutear"
+>
+  <section *ngIf="toggleModalPendientesRutear$ | async" modal-body>
+    <app-visita-resumen-pediente [resumen]="visitaPendientesRutear">
+    </app-visita-resumen-pediente>
+  </section>
+</app-modal-default>
 
 <app-modal-default
   size="medium"

@@ -189,6 +189,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalVisitaEditar$ = new BehaviorSubject(false);
   public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
   public toggleModalFlotas$ = new BehaviorSubject(false);
+  public toggleModalPendientesRutear$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
   public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS;
   public filtroKey = signal<string>('filtro_visita_rutear');
@@ -209,6 +210,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   visitarEditar: any;
   datos: any[];
   visitaResumen: any;
+  visitaPendientesRutear: any;
 
   constructor() {
     super();
@@ -741,6 +743,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
   abrirModalResumen() {
     this.toggleModalVisitaResumen$.next(true);
     this.resumen();
+  }
+
+  abrirModalPendientesRutear() {
+    this.toggleModalPendientesRutear$.next(true);
+    const filtros = [
+      ...this.arrParametrosConsultaResumen.filtros,
+      { propiedad: 'estado_decodificado', valor1: true, operador: 'exact' },
+    ];
+    this._visitaApiService.resumenPendiente(filtros).subscribe({
+      next: (response) => {
+        this.visitaPendientesRutear = response.resumen;
+        this.changeDetectorRef.detectChanges();
+      },
+    });
   }
 
   resumen() {
