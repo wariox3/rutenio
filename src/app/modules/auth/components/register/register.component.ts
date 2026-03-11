@@ -22,7 +22,7 @@ import { AuthService } from '../../services/auth.service';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { General } from '../../../../common/clases/general';
-import { environment } from '../../../../../environments/environment.development';
+import { environment } from '../../../../../environments/environment';
 import { NgxTurnstileModule, NgxTurnstileComponent } from 'ngx-turnstile';
 import { ViewChild } from '@angular/core';
 

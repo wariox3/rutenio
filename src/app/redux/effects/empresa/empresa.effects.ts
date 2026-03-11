@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { tap } from 'rxjs/operators';
 import { Empresa } from '../../actions/contenedor/empresa.interface';
 import { cookieKey } from '../../../core/domain/enums/cookie-key.enum';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { empresaActionInit, empresaActualizacionAction, empresaActualizacionImangenAction, empresaActualizacionRededocIdAction, empresaLimpiarAction } from '../../actions/empresa/empresa.actions';
 import { CookieService } from '../../../core/servicios/cookie.service';
 
