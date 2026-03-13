@@ -130,9 +130,12 @@
       <div></div>
     </div>
   </div>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-    <div class="mb-5">
-      <div>
+  <div class="border-t border-gray-200 pt-3 mt-1">
+    <p class="text-xs text-gray-500 mb-2">
+      <i class="ki-filled ki-time"></i> Ventana de cita (opcional)
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="mb-2">
         <app-label [required]="false">Cita inicio</app-label>
         <ui-input
           type="datetime-local"
@@ -141,9 +144,7 @@
           [control]="formularioVisitaRutear.get('cita_inicio')"
         ></ui-input>
       </div>
-    </div>
-    <div class="mb-5">
-      <div>
+      <div class="mb-2">
         <app-label [required]="false">Cita fin</app-label>
         <ui-input
           type="datetime-local"
@@ -153,10 +154,10 @@
         ></ui-input>
       </div>
     </div>
+    @if (formularioVisitaRutear.errors?.['citaInvalida']) {
+      <div class="text-danger text-xs mb-2">{{ formularioVisitaRutear.errors?.['citaInvalida'] }}</div>
+    }
   </div>
-  @if (formularioVisitaRutear.errors?.['citaInvalida']) {
-    <div class="text-danger text-xs mb-2">{{ formularioVisitaRutear.errors?.['citaInvalida'] }}</div>
-  }
   <div class="flex justify-end">
     <app-button
       type="button"
