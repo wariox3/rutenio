@@ -212,6 +212,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
   visitaResumen: any;
   visitaPendientesRutear: Visita[] = [];
   totalPendientesRutear: number = 0;
+  totalErroresPendientes: number = 0;
+  totalAlertasPendientes: number = 0;
   cargandoPendientes$ = new BehaviorSubject(false);
 
   constructor() {
@@ -763,6 +765,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .subscribe((respuesta) => {
         this.visitaPendientesRutear = respuesta.results;
         this.totalPendientesRutear = respuesta.count;
+        this.totalErroresPendientes = respuesta.results.filter(v => !v.estado_decodificado).length;
+        this.totalAlertasPendientes = respuesta.results.filter(v => v.estado_decodificado_alerta).length;
         this.changeDetectorRef.detectChanges();
       });
   }
