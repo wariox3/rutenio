@@ -17,4 +17,5 @@ export const VISITA_RUTEAR_FILTERS: FilterField[] = [
   },
   { name: 'estado_decodificado', displayName: 'Decodificado', type: 'boolean' },
   { name: 'estado_decodificado_alerta', displayName: 'Alerta', type: 'boolean' },
+  { name: 'cita_inicio__isnull', displayName: 'Sin cita', type: 'boolean' },
 ];

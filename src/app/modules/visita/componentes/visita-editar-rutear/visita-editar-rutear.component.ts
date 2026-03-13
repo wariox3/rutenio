@@ -55,6 +55,8 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
     unidades: new FormControl('', [Validators.required, Validators.min(1)]),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
+    cita_inicio: new FormControl(null),
+    cita_fin: new FormControl(null),
   });
 
   ngOnInit(): void {
@@ -69,6 +71,8 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
       unidades: this.visita?.unidades,
       peso: this.visita?.peso,
       volumen: this.visita?.volumen,
+      cita_inicio: this.visita?.cita_inicio,
+      cita_fin: this.visita?.cita_fin,
     });
   }
 
@@ -77,8 +81,13 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
   }
 
   enviar() {
+    const datos = { ...this.formularioVisitaRutear.value };
+    if (!datos.cita_inicio || !datos.cita_fin) {
+      delete datos.cita_inicio;
+      delete datos.cita_fin;
+    }
     this._visitaApiService
-      .actualizarDireccion(this.formularioVisitaRutear.value)
+      .actualizarDireccion(datos)
       .subscribe((response) => {
         this.alerta.mensajaExitoso('Se actualizó la visita');
         this.emitirCerrarModal.emit();

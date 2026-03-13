@@ -92,6 +92,8 @@ export default class VisitaFormularioComponent
     ]),
     ciudad_nombre: new FormControl(''),
     ciudad: new FormControl(null, [Validators.required]),
+    cita_inicio: new FormControl(null),
+    cita_fin: new FormControl(null),
   });
 
   ngOnInit(): void {
@@ -110,6 +112,8 @@ export default class VisitaFormularioComponent
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
         fecha: this.informacionVisita.fecha,
+        cita_inicio: this.informacionVisita.cita_inicio,
+        cita_fin: this.informacionVisita.cita_fin,
       });
       this.ciudadSeleccionada = {
         id: this.informacionVisita.ciudad,
@@ -204,10 +208,17 @@ export default class VisitaFormularioComponent
         .trim()
         .replace(/\s+/g, ' ');
 
-    return {
+    const datos = {
       ...formData,
       destinatario_direccion: direccionCompleta,
     };
+
+    if (!datos.cita_inicio || !datos.cita_fin) {
+      delete datos.cita_inicio;
+      delete datos.cita_fin;
+    }
+
+    return datos;
   }
 
   onKeyDown(event: KeyboardEvent): void {

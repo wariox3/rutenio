@@ -130,6 +130,30 @@
       <div></div>
     </div>
   </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Cita inicio</app-label>
+        <ui-input
+          type="time"
+          placeholder="HH:MM"
+          formControlName="cita_inicio"
+          [control]="formularioVisitaRutear.get('cita_inicio')"
+        ></ui-input>
+      </div>
+    </div>
+    <div class="mb-5">
+      <div>
+        <app-label [required]="false">Cita fin</app-label>
+        <ui-input
+          type="time"
+          placeholder="HH:MM"
+          formControlName="cita_fin"
+          [control]="formularioVisitaRutear.get('cita_fin')"
+        ></ui-input>
+      </div>
+    </div>
+  </div>
   <div class="flex justify-end">
     <app-button
       type="button"
