@@ -21,6 +21,7 @@ import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components'
 import { SoloNumerosDirective } from '../../../../common/directivas/solo-numeros.directive';
 import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
 import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
+import { CitaRangoValidator } from '../../../../common/validaciones/cita-rango.validator';
 
 @Component({
   selector: 'app-visita-editar-rutear',
@@ -57,7 +58,7 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
     cita_inicio: new FormControl(null),
     cita_fin: new FormControl(null),
-  });
+  }, { validators: CitaRangoValidator.validar });
 
   ngOnInit(): void {
     this.formularioVisitaRutear.patchValue({
@@ -71,8 +72,8 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
       unidades: this.visita?.unidades,
       peso: this.visita?.peso,
       volumen: this.visita?.volumen,
-      cita_inicio: this.visita?.cita_inicio,
-      cita_fin: this.visita?.cita_fin,
+      cita_inicio: this.normalizarCitaParaInput(this.visita?.cita_inicio),
+      cita_fin: this.normalizarCitaParaInput(this.visita?.cita_fin),
     });
   }
 
@@ -83,8 +84,11 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
   enviar() {
     const datos = { ...this.formularioVisitaRutear.value };
     if (!datos.cita_inicio || !datos.cita_fin) {
-      delete datos.cita_inicio;
-      delete datos.cita_fin;
+      datos.cita_inicio = null;
+      datos.cita_fin = null;
+    } else {
+      datos.cita_inicio = this.formatearCitaParaApi(datos.cita_inicio);
+      datos.cita_fin = this.formatearCitaParaApi(datos.cita_fin);
     }
     this._visitaApiService
       .actualizarDireccion(datos)
@@ -92,5 +96,15 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
         this.alerta.mensajaExitoso('Se actualizó la visita');
         this.emitirCerrarModal.emit();
       });
+  }
+
+  private formatearCitaParaApi(valor: string): string {
+    if (!valor) return valor;
+    return valor.length === 16 ? `${valor}:00` : valor;
+  }
+
+  private normalizarCitaParaInput(valor: string | null): string | null {
+    if (!valor) return null;
+    return valor.replace(' ', 'T').substring(0, 16);
   }
 }

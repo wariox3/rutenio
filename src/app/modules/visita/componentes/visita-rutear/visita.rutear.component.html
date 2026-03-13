@@ -360,7 +360,7 @@
                     <span>Franja: {{ visita.franja_codigo }}</span>
                     @if (visita.cita_inicio) {
                       <i class="ki-filled ki-time text-blue-500"></i>
-                      <span class="text-blue-600">Cita: {{ visita.cita_inicio }}-{{ visita.cita_fin }}</span>
+                      <span class="text-blue-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
                     }
                   </div>
 

@@ -219,8 +219,8 @@
       <div>
         <app-label [required]="false">Cita inicio</app-label>
         <ui-input
-          type="time"
-          placeholder="HH:MM"
+          type="datetime-local"
+          placeholder=""
           formControlName="cita_inicio"
           [control]="formularioVisita.get('cita_inicio')"
         ></ui-input>
@@ -230,14 +230,17 @@
       <div>
         <app-label [required]="false">Cita fin</app-label>
         <ui-input
-          type="time"
-          placeholder="HH:MM"
+          type="datetime-local"
+          placeholder=""
           formControlName="cita_fin"
           [control]="formularioVisita.get('cita_fin')"
         ></ui-input>
       </div>
     </div>
   </div>
+  @if (formularioVisita.errors?.['citaInvalida']) {
+    <div class="text-danger text-xs mb-2">{{ formularioVisita.errors?.['citaInvalida'] }}</div>
+  }
   <div class="flex justify-end">
     <app-button
       texto="Guardar"
@@ -455,8 +458,8 @@
           <div>
             <app-label [required]="false">Cita inicio</app-label>
             <ui-input
-              type="time"
-              placeholder="HH:MM"
+              type="datetime-local"
+              placeholder=""
               formControlName="cita_inicio"
               [control]="formularioVisita.get('cita_inicio')"
             ></ui-input>
@@ -466,14 +469,17 @@
           <div>
             <app-label [required]="false">Cita fin</app-label>
             <ui-input
-              type="time"
-              placeholder="HH:MM"
+              type="datetime-local"
+              placeholder=""
               formControlName="cita_fin"
               [control]="formularioVisita.get('cita_fin')"
             ></ui-input>
           </div>
         </div>
       </div>
+      @if (formularioVisita.errors?.['citaInvalida']) {
+        <div class="text-danger text-xs mb-2">{{ formularioVisita.errors?.['citaInvalida'] }}</div>
+      }
     </form>
   </div>
 </div>
