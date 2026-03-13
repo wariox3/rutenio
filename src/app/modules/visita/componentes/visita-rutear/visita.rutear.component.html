@@ -649,7 +649,19 @@
   <section *ngIf="toggleModalPendientesRutear$ | async" modal-body>
     <div class="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
       <span class="text-sm font-medium text-gray-700">Total entregas pendientes</span>
-      <span class="text-lg font-bold text-blue-700">{{ totalPendientesRutear }}</span>
+      <div class="flex items-center gap-4">
+        @if (totalErroresPendientes > 0) {
+          <span class="text-sm font-semibold px-2 py-0.5 rounded-full bg-red-200 text-red-800">
+            {{ totalErroresPendientes }} errores
+          </span>
+        }
+        @if (totalAlertasPendientes > 0) {
+          <span class="text-sm font-semibold px-2 py-0.5 rounded-full bg-[#fef08a] text-[#854d0e]">
+            {{ totalAlertasPendientes }} alertas
+          </span>
+        }
+        <span class="text-lg font-bold text-blue-700">{{ totalPendientesRutear }}</span>
+      </div>
     </div>
     @if (cargandoPendientes$ | async) {
       <div class="flex justify-center py-8">
