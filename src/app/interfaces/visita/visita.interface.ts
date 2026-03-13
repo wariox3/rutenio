@@ -28,5 +28,7 @@ export interface Visita {
   estado_despacho: boolean;
   estado_novedad: boolean;
   destinatario_direccion_formato: string;
+  cita_inicio: string | null;
+  cita_fin: string | null;
   resultados: any[];
 }
