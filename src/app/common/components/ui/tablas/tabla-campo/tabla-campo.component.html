@@ -8,6 +8,8 @@
 <span class="badge badge-sm badge-outline badge-danger"> No </span>
 } } @case ('DateField') {
 {{ datoCampo | date : "yyyy-MM-dd" }}
+} @case ('DateTimeField') {
+{{ datoCampo ? (datoCampo | date : "dd/MM/yyyy HH:mm") : '' }}
 } @case ('Hour') {
 {{ datoCampo | formatFecha : "H:i" }}
 } @case ('ArrayField') {

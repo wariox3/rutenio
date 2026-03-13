@@ -58,5 +58,21 @@ export const guiaMapeo: any = {
       visibleFiltro: true,
       ordenable: false,
     },
+    {
+      nombre: 'cita_inicio',
+      campoNombre: 'Cita inicio',
+      campoTipo: 'DateTimeField',
+      visibleTabla: true,
+      visibleFiltro: false,
+      ordenable: true,
+    },
+    {
+      nombre: 'cita_fin',
+      campoNombre: 'Cita fin',
+      campoTipo: 'DateTimeField',
+      visibleTabla: true,
+      visibleFiltro: false,
+      ordenable: true,
+    },
   ],
 };

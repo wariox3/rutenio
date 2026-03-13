@@ -25,6 +25,7 @@ import { GeneralApiService } from '../../../../core';
 import { AutocompletarCiudades } from '../../../../interfaces/general/autocompletar.interface';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
+import { CitaRangoValidator } from '../../../../common/validaciones/cita-rango.validator';
 import { NoSoloEspacios } from '../../../../common/validaciones/no-solo-espacios.validator';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
 import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
@@ -94,7 +95,7 @@ export default class VisitaFormularioComponent
     ciudad: new FormControl(null, [Validators.required]),
     cita_inicio: new FormControl(null),
     cita_fin: new FormControl(null),
-  });
+  }, { validators: CitaRangoValidator.validar });
 
   ngOnInit(): void {
     if (this.formularioTipo === 'editar') {
@@ -112,8 +113,8 @@ export default class VisitaFormularioComponent
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
         fecha: this.informacionVisita.fecha,
-        cita_inicio: this.informacionVisita.cita_inicio,
-        cita_fin: this.informacionVisita.cita_fin,
+        cita_inicio: this.normalizarCitaParaInput(this.informacionVisita.cita_inicio),
+        cita_fin: this.normalizarCitaParaInput(this.informacionVisita.cita_fin),
       });
       this.ciudadSeleccionada = {
         id: this.informacionVisita.ciudad,
@@ -214,11 +215,24 @@ export default class VisitaFormularioComponent
     };
 
     if (!datos.cita_inicio || !datos.cita_fin) {
-      delete datos.cita_inicio;
-      delete datos.cita_fin;
+      datos.cita_inicio = null;
+      datos.cita_fin = null;
+    } else {
+      datos.cita_inicio = this.formatearCitaParaApi(datos.cita_inicio);
+      datos.cita_fin = this.formatearCitaParaApi(datos.cita_fin);
     }
 
     return datos;
+  }
+
+  private formatearCitaParaApi(valor: string): string {
+    if (!valor) return valor;
+    return valor.length === 16 ? `${valor}:00` : valor;
+  }
+
+  private normalizarCitaParaInput(valor: string | null): string | null {
+    if (!valor) return null;
+    return valor.replace(' ', 'T').substring(0, 16);
   }
 
   onKeyDown(event: KeyboardEvent): void {

@@ -135,8 +135,8 @@
       <div>
         <app-label [required]="false">Cita inicio</app-label>
         <ui-input
-          type="time"
-          placeholder="HH:MM"
+          type="datetime-local"
+          placeholder=""
           formControlName="cita_inicio"
           [control]="formularioVisitaRutear.get('cita_inicio')"
         ></ui-input>
@@ -146,14 +146,17 @@
       <div>
         <app-label [required]="false">Cita fin</app-label>
         <ui-input
-          type="time"
-          placeholder="HH:MM"
+          type="datetime-local"
+          placeholder=""
           formControlName="cita_fin"
           [control]="formularioVisitaRutear.get('cita_fin')"
         ></ui-input>
       </div>
     </div>
   </div>
+  @if (formularioVisitaRutear.errors?.['citaInvalida']) {
+    <div class="text-danger text-xs mb-2">{{ formularioVisitaRutear.errors?.['citaInvalida'] }}</div>
+  }
   <div class="flex justify-end">
     <app-button
       type="button"
