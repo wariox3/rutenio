@@ -210,7 +210,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
   visitarEditar: any;
   datos: any[];
   visitaResumen: any;
-  visitaPendientesRutear: any;
+  visitaPendientesRutear: Visita[] = [];
+  totalPendientesRutear: number = 0;
+  cargandoPendientes$ = new BehaviorSubject(false);
 
   constructor() {
     super();
@@ -747,16 +749,22 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   abrirModalPendientesRutear() {
     this.toggleModalPendientesRutear$.next(true);
-    const filtros = [
-      ...this.arrParametrosConsultaResumen.filtros,
-      { propiedad: 'estado_decodificado', valor1: true, operador: 'exact' },
-    ];
-    this._visitaApiService.resumenPendiente(filtros).subscribe({
-      next: (response) => {
-        this.visitaPendientesRutear = response.resumen;
+    this.cargandoPendientes$.next(true);
+    const params = {
+      ...this.filtrosActivos(),
+      estado_despacho: 'False',
+      estado_devolucion: 'False',
+      ordering: 'orden',
+      page_size: 1000,
+    };
+    this._generalApiService
+      .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', params)
+      .pipe(finalize(() => this.cargandoPendientes$.next(false)))
+      .subscribe((respuesta) => {
+        this.visitaPendientesRutear = respuesta.results;
+        this.totalPendientesRutear = respuesta.count;
         this.changeDetectorRef.detectChanges();
-      },
-    });
+      });
   }
 
   resumen() {

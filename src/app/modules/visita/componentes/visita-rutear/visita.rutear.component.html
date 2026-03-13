@@ -647,8 +647,42 @@
   titulo="Pendientes por rutear"
 >
   <section *ngIf="toggleModalPendientesRutear$ | async" modal-body>
-    <app-visita-resumen-pediente [resumen]="visitaPendientesRutear">
-    </app-visita-resumen-pediente>
+    <div class="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
+      <span class="text-sm font-medium text-gray-700">Total entregas pendientes</span>
+      <span class="text-lg font-bold text-blue-700">{{ totalPendientesRutear }}</span>
+    </div>
+    @if (cargandoPendientes$ | async) {
+      <div class="flex justify-center py-8">
+        <span class="text-sm text-gray-500">Cargando...</span>
+      </div>
+    } @else {
+      <div class="h-[500px] overflow-y-auto">
+        <table class="table w-full border-collapse text-sm">
+          <thead class="sticky top-0 bg-gray-100">
+            <tr>
+              <th class="px-2 py-1 text-left">Destinatario</th>
+              <th class="px-2 py-1 text-left">Dirección</th>
+              <th class="px-2 py-1 text-center">Número</th>
+              <th class="px-2 py-1 text-center">Und</th>
+              <th class="px-2 py-1 text-center">Peso</th>
+              <th class="px-2 py-1 text-center">Franja</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (visita of visitaPendientesRutear; track visita.id) {
+              <tr class="hover:bg-gray-50 border-b">
+                <td class="px-2 py-1">{{ visita.destinatario }}</td>
+                <td class="px-2 py-1 text-xs max-w-[14rem] truncate">{{ visita.destinatario_direccion }}</td>
+                <td class="px-2 py-1 text-center">{{ visita.numero }}</td>
+                <td class="px-2 py-1 text-right">{{ visita.unidades }}</td>
+                <td class="px-2 py-1 text-right">{{ visita.peso }}</td>
+                <td class="px-2 py-1 text-center">{{ visita.franja_codigo }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   </section>
 </app-modal-default>
 
