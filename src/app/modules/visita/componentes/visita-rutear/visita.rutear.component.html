@@ -488,6 +488,8 @@
               ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
               : !markerPosition.infoContent.datosVisita.estado_decodificado
               ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
+              : markerPosition.infoContent.datosVisita.cita_inicio
+              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/verde1.png'
               : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
           "
           (mapClick)="openInfoWindow(marker, $index)"
@@ -521,6 +523,12 @@
                 >
               </div>
             </div>
+            @if (selectedVisita?.cita_inicio) {
+              <div class="mt-1 text-blue-600">
+                <i class="ki-filled ki-time"></i>
+                <span class="ml-1">Cita: {{ selectedVisita?.cita_inicio | date:'dd/MM HH:mm' }} - {{ selectedVisita?.cita_fin | date:'HH:mm' }}</span>
+              </div>
+            }
           </section>
         </map-info-window>
       </google-map>
