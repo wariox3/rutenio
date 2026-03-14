@@ -41,6 +41,12 @@ export class VisitaEditarRutearComponent extends General implements OnInit {
 
   @Input() visita;
   @Output() emitirCerrarModal = new EventEmitter<void>();
+  public minFechaCita = this.obtenerFechaHoraActual();
+
+  private obtenerFechaHoraActual(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
 
   public formularioVisitaRutear = new FormGroup({
     id: new FormControl(''),
