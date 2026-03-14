@@ -60,6 +60,12 @@ export default class VisitaFormularioComponent
   public arrCiudades: AutocompletarCiudades[] = [];
   public ciudadSeleccionada: any;
   private destroy$ = new Subject<void>();
+  public minFechaCita = this.obtenerFechaHoraActual();
+
+  private obtenerFechaHoraActual(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  }
 
   public formularioVisita = new FormGroup({
     numero: new FormControl(null, [

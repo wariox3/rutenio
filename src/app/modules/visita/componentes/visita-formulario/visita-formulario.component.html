@@ -190,21 +190,21 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="mb-2">
         <app-label [required]="false">Cita inicio</app-label>
-        <ui-input
+        <input
           type="datetime-local"
-          placeholder=""
+          class="input"
           formControlName="cita_inicio"
-          [control]="formularioVisita.get('cita_inicio')"
-        ></ui-input>
+          [min]="minFechaCita"
+        />
       </div>
       <div class="mb-2">
         <app-label [required]="false">Cita fin</app-label>
-        <ui-input
+        <input
           type="datetime-local"
-          placeholder=""
+          class="input"
           formControlName="cita_fin"
-          [control]="formularioVisita.get('cita_fin')"
-        ></ui-input>
+          [min]="minFechaCita"
+        />
       </div>
     </div>
     @if (formularioVisita.errors?.['citaInvalida']) {
@@ -422,21 +422,21 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="mb-2">
             <app-label [required]="false">Cita inicio</app-label>
-            <ui-input
+            <input
               type="datetime-local"
-              placeholder=""
+              class="input"
               formControlName="cita_inicio"
-              [control]="formularioVisita.get('cita_inicio')"
-            ></ui-input>
+              [min]="minFechaCita"
+            />
           </div>
           <div class="mb-2">
             <app-label [required]="false">Cita fin</app-label>
-            <ui-input
+            <input
               type="datetime-local"
-              placeholder=""
+              class="input"
               formControlName="cita_fin"
-              [control]="formularioVisita.get('cita_fin')"
-            ></ui-input>
+              [min]="minFechaCita"
+            />
           </div>
         </div>
         @if (formularioVisita.errors?.['citaInvalida']) {
