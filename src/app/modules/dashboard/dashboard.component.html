@@ -43,7 +43,7 @@
       @if (utilizacionFlota()) {
         <app-dashboard-utilizacion-flota [datos]="utilizacionFlota()!"></app-dashboard-utilizacion-flota>
       } @else {
-        <div class="bg-white rounded-xl border border-gray-100 p-5 h-full flex items-center justify-center min-h-[200px]">
+        <div class="bg-white dark:bg-coal-300 rounded-xl border border-gray-100 p-5 h-full flex items-center justify-center min-h-[200px]">
           <p class="text-sm text-gray-400">Sin datos de flota</p>
         </div>
       }
