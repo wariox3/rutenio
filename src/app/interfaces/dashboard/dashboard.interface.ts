@@ -27,6 +27,23 @@ export interface CumplimientoZona {
   estado: 'ok' | 'alerta' | 'critico';
 }
 
+export interface DatoDiario {
+  dia: string;
+  entregas: number;
+  sinNovedad: number;
+}
+
+export interface UtilizacionFlota {
+  vehiculosActivos: number;
+  vehiculosTotales: number;
+  pesoTotal: number;
+  capacidadTotal: number;
+  porcentaje: number;
+  entregas: number;
+  sinNovedad: number;
+  criticos: number;
+}
+
 export interface MarcadorMapa {
   lat: number;
   lng: number;
