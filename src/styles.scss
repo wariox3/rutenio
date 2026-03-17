@@ -1,5 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Dashboard gradient background */
+body.dashboard-activo main.content {
+  background: linear-gradient(160deg, #d0e8f6 0%, #e4f1fb 25%, #f0f7fd 55%, #f8fbff 80%, #ffffff 100%);
+  transition: background 0.3s ease;
+}
+
 // Main style
 @tailwind base;
 @tailwind components;
