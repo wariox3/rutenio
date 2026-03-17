@@ -6,8 +6,10 @@ import { Despacho } from '../../../interfaces/despacho/despacho.interface';
 import {
   CumplimientoZona,
   DashboardFiltros,
+  DatoDiario,
   KpiIndicador,
   MarcadorMapa,
+  UtilizacionFlota,
 } from '../../../interfaces/dashboard/dashboard.interface';
 import { VisitaApiService } from '../../visita/servicios/visita-api.service';
 
@@ -108,6 +110,7 @@ export class DashboardService {
           : 0;
 
         const kpis: KpiIndicador[] = [
+          // Row 1
           {
             titulo: 'OTIF',
             descripcion: 'Porcentaje de visitas entregadas sobre el total',
@@ -115,11 +118,11 @@ export class DashboardService {
             valor: porcentajeEntrega,
             unidad: '%',
             icono: 'ki-filled ki-chart-simple',
-            colorIcono: '#0098d7',
+            colorIcono: '#f7c74d',
             meta: 95,
             subIndicadores: [
               { etiqueta: 'Entregadas', valor: totalEntregadas, color: '#0098d7' },
-              { etiqueta: 'Total', valor: totalVisitas, color: '#0098d7' },
+              { etiqueta: 'Total', valor: totalVisitas, color: '#575757' },
             ],
           },
           {
@@ -144,10 +147,11 @@ export class DashboardService {
             icono: 'ki-filled ki-check-circle',
             colorIcono: '#17c653',
             subIndicadores: [
-              { etiqueta: 'Exitosas', valor: totalEntregadas - totalNovedades, icono: 'ki-filled ki-check-circle', color: '#0098d7' },
+              { etiqueta: 'Exitosas', valor: totalEntregadas - totalNovedades, icono: 'ki-filled ki-check-circle', color: '#17c653' },
               { etiqueta: 'Novedad', valor: totalNovedades, icono: 'ki-filled ki-cross-circle', color: '#f1416c' },
             ],
           },
+          // Row 2
           {
             titulo: 'Despachos en Ruta',
             descripcion: 'Despachos activos sin terminar',
@@ -155,48 +159,9 @@ export class DashboardService {
             valor: enRuta.length,
             unidad: '',
             icono: 'ki-filled ki-delivery-3',
-            colorIcono: '#7239ea',
+            colorIcono: '#0098d7',
             subIndicadores: [
-              { etiqueta: 'Vehículos', valor: vehiculosEnRuta, icono: 'ki-filled ki-delivery-3', color: '#0098d7' },
-              { etiqueta: 'Despachos', valor: enRuta.length, icono: 'ki-filled ki-parcel', color: '#575757' },
-            ],
-          },
-          {
-            titulo: 'Novedades',
-            descripcion: 'Novedades sin resolver',
-            detalleAyuda: 'Cantidad de novedades que aún no han sido resueltas.\n\nSe consultan directamente del módulo de novedades filtrando por estado de solución pendiente.\n\nSub-indicadores:\n• Sin resolver: novedades abiertas que requieren atención',
-            valor: cantidadNovedadesSinResolver,
-            unidad: '',
-            icono: 'ki-filled ki-notification-bing',
-            colorIcono: '#f1416c',
-            subIndicadores: [
-              { etiqueta: 'Sin resolver', valor: cantidadNovedadesSinResolver, icono: 'ki-filled ki-information-3', color: '#f1416c' },
-            ],
-          },
-          {
-            titulo: 'Total Despachos',
-            descripcion: 'Todos los despachos aprobados',
-            detalleAyuda: 'Cantidad total de despachos aprobados y no anulados.\n\nSub-indicadores:\n• Activos: despachos en ruta (no terminados)\n• Terminados: despachos que ya completaron su recorrido',
-            valor: todosDespachos.length,
-            unidad: '',
-            icono: 'ki-filled ki-parcel',
-            colorIcono: '#575757',
-            subIndicadores: [
-              { etiqueta: 'Activos', valor: enRuta.length, color: '#0098d7' },
-              { etiqueta: 'Terminados', valor: todosDespachos.filter(d => d.estado_terminado).length, color: '#575757' },
-            ],
-          },
-          {
-            titulo: 'Utilización Flota',
-            descripcion: 'Uso promedio de capacidad de los vehículos',
-            detalleAyuda: 'Porcentaje promedio de utilización de la capacidad de los vehículos.\n\nFórmula: Promedio de (Peso / Capacidad Vehículo) × 100\n\nSolo se consideran despachos con vehículos que tienen capacidad registrada.\n\nSub-indicadores:\n• Peso total: kg despachados\n• Capacidad total: kg disponibles',
-            valor: utilizacionFlota,
-            unidad: '%',
-            icono: 'ki-filled ki-truck',
-            colorIcono: '#f7c74d',
-            subIndicadores: [
-              { etiqueta: 'Peso', valor: pesoTotal, color: '#0098d7' },
-              { etiqueta: 'Capacidad', valor: capacidadTotal, color: '#575757' },
+              { etiqueta: 'Vehículos activos', valor: vehiculosEnRuta, icono: 'ki-filled ki-delivery-3', color: '#0098d7' },
             ],
           },
           {
@@ -208,47 +173,20 @@ export class DashboardService {
             icono: 'ki-filled ki-time',
             colorIcono: '#0098d7',
             subIndicadores: [
-              { etiqueta: 'Servicio', valor: tiempoServicioPromedio, icono: 'ki-filled ki-time', color: '#0098d7' },
               { etiqueta: 'Trayecto', valor: tiempoTrayectoPromedio, icono: 'ki-filled ki-route', color: '#575757' },
             ],
           },
           {
             titulo: 'Carga Total',
-            descripcion: 'Peso y volumen total despachado',
-            detalleAyuda: 'Resumen de la carga total procesada en todos los despachos aprobados.\n\nSub-indicadores:\n• Volumen: metros cúbicos totales\n• Unidades: cantidad total de unidades/paquetes',
+            descripcion: 'Peso y capacidad total de los despachos',
+            detalleAyuda: 'Resumen de la carga total procesada en todos los despachos aprobados.\n\nSub-indicadores:\n• Capacidad: kg disponibles totales\n• Volumen: metros cúbicos totales',
             valor: pesoTotal,
             unidad: 'kg',
             icono: 'ki-filled ki-package',
-            colorIcono: '#575757',
+            colorIcono: '#7239ea',
             subIndicadores: [
-              { etiqueta: 'Volumen', valor: volumenTotal, color: '#0098d7' },
-              { etiqueta: 'Unidades', valor: unidadesTotal, color: '#575757' },
-            ],
-          },
-          {
-            titulo: 'Geocodificación',
-            descripcion: 'Alertas de direcciones no decodificadas',
-            detalleAyuda: 'Cantidad de visitas con alertas de geocodificación.\n\nIndica direcciones que no pudieron ser ubicadas correctamente en el mapa.\n\nSub-indicadores:\n• Errores: visitas con error en la decodificación de dirección',
-            valor: visitaResumen.alertas.cantidad,
-            unidad: '',
-            icono: 'ki-filled ki-map',
-            colorIcono: '#f7c74d',
-            subIndicadores: [
-              { etiqueta: 'Alertas', valor: visitaResumen.alertas.cantidad, icono: 'ki-filled ki-geolocation', color: '#f7c74d' },
-              { etiqueta: 'Errores', valor: visitaResumen.errores.cantidad, icono: 'ki-filled ki-cross-circle', color: '#f1416c' },
-            ],
-          },
-          {
-            titulo: 'Resolución Novedades',
-            descripcion: 'Porcentaje de novedades resueltas',
-            detalleAyuda: 'Porcentaje de novedades que han sido resueltas sobre el total.\n\nFórmula: (Novedades Resueltas / Total Novedades) × 100\n\nSub-indicadores:\n• Resueltas: novedades con solución registrada\n• Total: todas las novedades registradas',
-            valor: tasaResolucion,
-            unidad: '%',
-            icono: 'ki-filled ki-shield-tick',
-            colorIcono: '#17c653',
-            subIndicadores: [
-              { etiqueta: 'Resueltas', valor: novedadesResueltas, icono: 'ki-filled ki-check-circle', color: '#0098d7' },
-              { etiqueta: 'Total', valor: cantidadNovedadesTotales, icono: 'ki-filled ki-information-3', color: '#575757' },
+              { etiqueta: 'Capacidad', valor: capacidadTotal, color: '#0098d7' },
+              { etiqueta: 'Volumen m³', valor: volumenTotal, color: '#575757' },
             ],
           },
         ];
@@ -313,6 +251,109 @@ export class DashboardService {
         ];
 
         return zonas;
+      })
+    );
+  }
+
+  obtenerDatosGrafico(filtros: DashboardFiltros): Observable<DatoDiario[]> {
+    const hoy = new Date();
+    const hace7dias = new Date(hoy);
+    hace7dias.setDate(hace7dias.getDate() - 6);
+
+    const parametros: ParametrosApi = {
+      estado_aprobado: 'True',
+      estado_anulado: 'False',
+      limit: 1000,
+      fecha__gte: filtros.fechaDesde || hace7dias.toISOString().split('T')[0],
+    };
+
+    if (filtros.fechaHasta) {
+      parametros['fecha__lte'] = filtros.fechaHasta;
+    }
+
+    return this._generalApiService.consultaApi<RespuestaApi<Despacho>>(
+      'ruteo/despacho/',
+      parametros
+    ).pipe(
+      map((respuesta) => {
+        const despachos = respuesta.results || [];
+        const porFecha = new Map<string, { visitas: number; entregadas: number; novedades: number }>();
+
+        for (const d of despachos) {
+          const fecha = d.fecha.split('T')[0];
+          const existing = porFecha.get(fecha) || { visitas: 0, entregadas: 0, novedades: 0 };
+          porFecha.set(fecha, {
+            visitas: existing.visitas + d.visitas,
+            entregadas: existing.entregadas + d.visitas_entregadas,
+            novedades: existing.novedades + d.visitas_novedad,
+          });
+        }
+
+        return Array.from(porFecha.entries())
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([fecha, datos]) => {
+            const entregas = datos.visitas > 0 ? Math.round((datos.entregadas / datos.visitas) * 100) : 0;
+            const sinNovedad = datos.visitas > 0
+              ? Math.round(((datos.entregadas - datos.novedades) / datos.visitas) * 100)
+              : 0;
+            const date = new Date(fecha + 'T12:00:00');
+            const dia = date.toLocaleDateString('es-CO', { weekday: 'short' });
+            return { dia: dia.charAt(0).toUpperCase() + dia.slice(1), entregas, sinNovedad };
+          });
+      })
+    );
+  }
+
+  obtenerUtilizacionFlota(filtros: DashboardFiltros): Observable<UtilizacionFlota> {
+    const parametros: ParametrosApi = {
+      estado_aprobado: 'True',
+      estado_anulado: 'False',
+      limit: 1000,
+    };
+
+    if (filtros.fechaDesde) {
+      parametros['fecha__gte'] = filtros.fechaDesde;
+    }
+    if (filtros.fechaHasta) {
+      parametros['fecha__lte'] = filtros.fechaHasta;
+    }
+
+    return forkJoin({
+      todos: this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', parametros),
+      enRuta: this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', { ...parametros, estado_terminado: 'False' }),
+    }).pipe(
+      map(({ todos, enRuta }) => {
+        const todosDespachos = todos.results || [];
+        const activos = enRuta.results || [];
+
+        const vehiculosActivos = new Set(activos.map(d => d.vehiculo)).size;
+        const vehiculosTotales = new Set(todosDespachos.map(d => d.vehiculo)).size;
+        const pesoTotal = Math.round(todosDespachos.reduce((acc, d) => acc + d.peso, 0));
+        const conCapacidad = todosDespachos.filter(d => d.vehiculo__capacidad > 0);
+        const capacidadTotal = Math.round(conCapacidad.reduce((acc, d) => acc + d.vehiculo__capacidad, 0));
+        const porcentaje = capacidadTotal > 0
+          ? Math.round((pesoTotal / capacidadTotal) * 1000) / 10
+          : 0;
+
+        const totalVisitas = todosDespachos.reduce((acc, d) => acc + d.visitas, 0);
+        const totalEntregadas = todosDespachos.reduce((acc, d) => acc + d.visitas_entregadas, 0);
+        const totalNovedades = todosDespachos.reduce((acc, d) => acc + d.visitas_novedad, 0);
+
+        const entregas = totalVisitas > 0 ? Math.round((totalEntregadas / totalVisitas) * 100) : 0;
+        const sinNovedad = totalVisitas > 0
+          ? Math.round(((totalEntregadas - totalNovedades) / totalVisitas) * 100)
+          : 0;
+
+        return {
+          vehiculosActivos,
+          vehiculosTotales,
+          pesoTotal,
+          capacidadTotal,
+          porcentaje,
+          entregas,
+          sinNovedad,
+          criticos: totalNovedades,
+        };
       })
     );
   }

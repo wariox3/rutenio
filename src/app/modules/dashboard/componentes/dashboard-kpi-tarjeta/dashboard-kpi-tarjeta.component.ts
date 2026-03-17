@@ -12,6 +12,7 @@ import { KpiIndicador } from '../../../../interfaces/dashboard/dashboard.interfa
 })
 export class DashboardKpiTarjetaComponent {
   @Input({ required: true }) kpi!: KpiIndicador;
+  @Input() esGrande = false;
   @Output() ayudaClick = new EventEmitter<KpiIndicador>();
 
   get esPositivo(): boolean {

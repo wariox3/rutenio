@@ -1,16 +1,18 @@
-import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, OnDestroy, signal, inject, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, catchError, of } from 'rxjs';
 import { DashboardService } from './servicios/dashboard.service';
 import {
-  CumplimientoZona,
   DashboardFiltros,
+  DatoDiario,
   KpiIndicador,
   MarcadorMapa,
+  UtilizacionFlota,
 } from '../../interfaces/dashboard/dashboard.interface';
 import { DashboardKpiTarjetaComponent } from './componentes/dashboard-kpi-tarjeta/dashboard-kpi-tarjeta.component';
 import { DashboardCumplimientoZonaComponent } from './componentes/dashboard-cumplimiento-zona/dashboard-cumplimiento-zona.component';
 import { DashboardMapaComponent } from './componentes/dashboard-mapa/dashboard-mapa.component';
+import { DashboardUtilizacionFlotaComponent } from './componentes/dashboard-utilizacion-flota/dashboard-utilizacion-flota.component';
 import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../common/components/ui/modals/service/modal.service';
 
@@ -22,6 +24,7 @@ import { ModalService } from '../../common/components/ui/modals/service/modal.se
     DashboardKpiTarjetaComponent,
     DashboardCumplimientoZonaComponent,
     DashboardMapaComponent,
+    DashboardUtilizacionFlotaComponent,
     ModalStandardComponent,
   ],
   templateUrl: './dashboard.component.html',
@@ -30,9 +33,11 @@ import { ModalService } from '../../common/components/ui/modals/service/modal.se
 })
 export default class DashboardComponent implements OnInit, OnDestroy {
   private modalService = inject(ModalService);
+  private renderer = inject(Renderer2);
 
   kpis = signal<KpiIndicador[]>([]);
-  cumplimientoZonas = signal<CumplimientoZona[]>([]);
+  datosGrafico = signal<DatoDiario[]>([]);
+  utilizacionFlota = signal<UtilizacionFlota | null>(null);
   marcadoresMapa = signal<MarcadorMapa[]>([]);
   cargando = signal(false);
   mostrarMapa = signal(false);
@@ -53,17 +58,19 @@ export default class DashboardComponent implements OnInit, OnDestroy {
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
+    this.renderer.addClass(document.body, 'dashboard-activo');
     this.cargarDatos(this.filtrosPorDefecto);
   }
 
   ngOnDestroy(): void {
+    this.renderer.removeClass(document.body, 'dashboard-activo');
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   cargarDatos(filtros: DashboardFiltros): void {
     this.cargando.set(true);
-    this.llamadasPendientes = 2;
+    this.llamadasPendientes = 3;
 
     this.dashboardService.obtenerKpis(filtros)
       .pipe(takeUntil(this.destroy$), catchError(() => of([])))
@@ -72,10 +79,20 @@ export default class DashboardComponent implements OnInit, OnDestroy {
         this.verificarCarga();
       });
 
-    this.dashboardService.obtenerCumplimientoZona(filtros)
+    this.dashboardService.obtenerDatosGrafico(filtros)
       .pipe(takeUntil(this.destroy$), catchError(() => of([])))
       .subscribe((datos) => {
-        this.cumplimientoZonas.set(datos);
+        this.datosGrafico.set(datos);
+        this.verificarCarga();
+      });
+
+    this.dashboardService.obtenerUtilizacionFlota(filtros)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(() => of(null))
+      )
+      .subscribe((datos) => {
+        this.utilizacionFlota.set(datos);
         this.verificarCarga();
       });
   }

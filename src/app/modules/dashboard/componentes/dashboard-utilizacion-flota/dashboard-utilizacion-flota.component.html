@@ -1,0 +1,61 @@
+<div class="bg-white rounded-xl border border-gray-100 p-5 h-full flex flex-col">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-2.5">
+      <div class="flex items-center justify-center w-9 h-9 rounded-lg bg-[#f7c74d15]">
+        <i class="ki-filled ki-truck text-base text-[#f7c74d]"></i>
+      </div>
+      <div>
+        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">Utilización Flota</h3>
+        <p class="text-[10px] text-gray-400">
+          <span class="font-bold text-gray-700">{{ datos.vehiculosActivos }}</span>
+          de
+          <span class="font-bold text-gray-700">{{ datos.vehiculosTotales }}</span>
+          vehículos activos
+        </p>
+      </div>
+    </div>
+    <div class="flex flex-col items-end">
+      <span class="text-2xl font-bold text-gray-900">{{ datos.porcentaje | number:'1.0-1' }}%</span>
+      <span class="text-[10px] text-gray-400">utilización</span>
+    </div>
+  </div>
+
+  <!-- Barra de capacidad -->
+  <div class="mb-4">
+    <div class="flex justify-between text-[10px] text-gray-400 mb-1.5">
+      <span>{{ datos.pesoTotal | number }} kg cargados</span>
+      <span>{{ datos.capacidadTotal | number }} kg capacidad</span>
+    </div>
+    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+      <div
+        class="h-2 rounded-full transition-all duration-700 ease-out"
+        [style.width.%]="datos.porcentaje"
+        [style.backgroundColor]="datos.porcentaje >= 80 ? '#0098d7' : datos.porcentaje >= 50 ? '#f7c74d' : '#f1416c'"
+      ></div>
+    </div>
+    <p class="text-[10px] text-gray-400 mt-1">
+      <span class="font-semibold text-[#0098d7]">{{ datos.pesoTotal | number }}</span> kg de
+      <span class="font-semibold text-gray-600">{{ datos.capacidadTotal | number }}</span> kg de capacidad
+    </p>
+  </div>
+
+  <!-- Indicadores -->
+  <div class="grid grid-cols-3 gap-3 mt-auto pt-3 border-t border-gray-50">
+    <div class="flex flex-col items-center gap-1 p-2 rounded-lg bg-[#0098d708]">
+      <span class="w-2 h-2 rounded-full bg-[#0098d7]"></span>
+      <span class="text-xs font-bold text-gray-700">{{ datos.entregas }}%</span>
+      <span class="text-[10px] text-gray-400 text-center leading-tight">Entregas</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 p-2 rounded-lg bg-[#17c65308]">
+      <span class="w-2 h-2 rounded-full bg-[#17c653]"></span>
+      <span class="text-xs font-bold text-gray-700">{{ datos.sinNovedad }}%</span>
+      <span class="text-[10px] text-gray-400 text-center leading-tight">Sin novedad</span>
+    </div>
+    <div class="flex flex-col items-center gap-1 p-2 rounded-lg bg-[#f1416c08]">
+      <span class="w-2 h-2 rounded-full bg-[#f1416c]"></span>
+      <span class="text-xs font-bold text-gray-700">{{ datos.criticos }}</span>
+      <span class="text-[10px] text-gray-400 text-center leading-tight">Críticos</span>
+    </div>
+  </div>
+</div>
