@@ -6,6 +6,10 @@ body.dashboard-activo main.content {
   transition: background 0.3s ease;
 }
 
+html.dark body.dashboard-activo main.content {
+  background: linear-gradient(160deg, #0d1526 0%, #111827 30%, #151f2e 60%, #1a2332 100%);
+}
+
 // Main style
 @tailwind base;
 @tailwind components;
@@ -48,6 +52,35 @@ body.dashboard-activo main.content {
   }
 }
 
+/* ng-select dark mode */
+html.dark .ng-select .ng-select-container {
+  background-color: var(--tw-coal-400);
+  color: var(--tw-gray-700);
+  border-color: var(--tw-gray-200);
+}
+
+html.dark .ng-select.ng-select-focused .ng-select-container {
+  box-shadow: none;
+}
+
+html.dark .ng-dropdown-panel {
+  background-color: var(--tw-coal-400);
+  border-color: var(--tw-gray-200);
+
+  .ng-dropdown-panel-items .ng-option {
+    background-color: var(--tw-coal-400);
+    color: var(--tw-gray-700);
+
+    &.ng-option-marked {
+      background-color: var(--tw-coal-500);
+    }
+
+    &.ng-option-selected {
+      background-color: var(--tw-coal-500);
+    }
+  }
+}
+
 /* Driver.js - bloquear scroll durante el tour */
 body.driver-active {
   overflow: hidden !important;
@@ -59,6 +92,12 @@ body.driver-active {
   box-sizing: border-box;
   background-color: #fff;
   color: #2d2d2d;
+
+  html.dark & {
+    background-color: #1e1e2d;
+    color: #cdcfd4;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
   padding: 15px;
   border-radius: 10px;
   min-width: 250px;
@@ -75,6 +114,8 @@ body.driver-active {
     display: block;
     line-height: 1.5;
     margin: 0;
+
+    html.dark & { color: #e5e7eb; }
   }
 
   .driver-popover-close-btn {
@@ -91,9 +132,8 @@ body.driver-active {
     z-index: 1;
     text-align: center;
 
-    &:hover {
-      color: #2d2d2d;
-    }
+    &:hover { color: #2d2d2d; }
+    html.dark &:hover { color: #e5e7eb; }
   }
 
   .driver-popover-description {
@@ -103,6 +143,8 @@ body.driver-active {
     color: #6b7280;
     line-height: 1.5;
     font-weight: 400;
+
+    html.dark & { color: #9ca3af; }
   }
 
   .driver-popover-footer {
@@ -144,8 +186,14 @@ body.driver-active {
     color: #374151 !important;
     background-color: #fff !important;
 
-    &:hover {
-      background-color: #f3f4f6 !important;
+    &:hover { background-color: #f3f4f6 !important; }
+
+    html.dark & {
+      border-color: #374151 !important;
+      color: #d1d5db !important;
+      background-color: #2d2d3f !important;
+
+      &:hover { background-color: #374151 !important; }
     }
   }
 
@@ -174,5 +222,7 @@ body.driver-active {
     content: "";
     position: absolute;
     border: 5px solid #fff;
+
+    html.dark & { border-color: #1e1e2d; }
   }
 }
