@@ -16,7 +16,7 @@
   <div class="flex min-h-screen items-center justify-center p-4 text-center sm:p-0">
     <!-- Actual modal -->
     <div
-      class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full"
+      class="relative transform overflow-hidden rounded-lg bg-white dark:bg-coal-300 text-left shadow-xl transition-all sm:my-8 sm:w-full"
       [ngClass]="modalSize"
     >
       <!-- Close button -->
@@ -34,7 +34,7 @@
       </div>
        
       <!-- Modal content -->
-      <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+      <div class="bg-white dark:bg-coal-300 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
         <!-- Content slot -->
         <div *ngIf="isOpen()" class="mt-2">
           <ng-content></ng-content>
