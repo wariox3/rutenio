@@ -480,7 +480,7 @@ export default class TraficoListaComponent
   getMarkerIcon(visita: any): google.maps.Icon {
     let url = 'assets/images/marker-azul.svg';
     if (visita?.estado_novedad) {
-      url = 'assets/images/marker-amarillo.svg';
+      url = 'assets/images/marker-naranja.svg';
     } else if (visita?.estado_entregado) {
       url = 'assets/images/marker-verde.svg';
     }
