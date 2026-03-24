@@ -125,6 +125,12 @@
         >
           N
         </th>
+        <th
+          class="px-4 py-2 font-bold text-purple-700 border-r border-gray-300 bg-purple-50"
+          title="Ventana de cita"
+        >
+          <i class="ki-filled ki-time text-purple-500 mr-1"></i>Cita
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -152,6 +158,11 @@
         </td>
         <td class="px-4 py-2 border border-gray-300">
           {{ visita.estado_novedad | validarBooleano }}
+        </td>
+        <td class="px-4 py-2 border border-gray-300">
+          @if (visita.cita_inicio) {
+            <span class="text-purple-600">{{ visita.cita_inicio | date:'dd/MM HH:mm' }} - {{ visita.cita_fin | date:'HH:mm' }}</span>
+          }
         </td>
       </tr>
     </tbody>
