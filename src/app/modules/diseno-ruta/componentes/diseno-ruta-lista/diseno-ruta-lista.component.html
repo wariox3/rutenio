@@ -354,8 +354,8 @@
             #marker="mapMarker"
             [icon]="
               arrVisitasPorDespacho[$index - 1]?.cita_inicio
-                ? 'assets/images/morado1.svg'
-                : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+                ? 'assets/images/marker-morado.svg'
+                : 'assets/images/marker-azul.svg'
             "
             [label]="markerPosition.label"
             (mapClick)="openInfoWindow(marker, $index - 1)"

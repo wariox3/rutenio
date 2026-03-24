@@ -54,7 +54,7 @@
         id="tour-trafico-tabla"
         class="table align-middle text-gray-700 font-medium text-sm w-full "
       >
-        <thead class="top-0 bg-white">
+        <thead class="top-0 bg-white dark:bg-coal-300">
           <tr>
             <th
               class="cursor-pointer select-none hover:text-blue-600 transition-colors"
@@ -441,10 +441,10 @@
           [label]="markerPosition.label"
           [icon]="
             $any(markerPosition.infoContent.datosVisita).estado_novedad
-              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
+              ? 'assets/images/marker-amarillo.svg'
               : $any(markerPosition.infoContent.datosVisita).estado_entregado
-              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/verde1.png'
-              : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+              ? 'assets/images/marker-verde.svg'
+              : 'assets/images/marker-azul.svg'
           "
           (mapClick)="openInfoWindow(marker, $index)"
         ></map-marker>

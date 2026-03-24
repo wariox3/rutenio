@@ -485,12 +485,12 @@
           #marker="mapMarker"
           [icon]="
             markerPosition.infoContent.datosVisita.estado_decodificado_alerta
-              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/amarillo1.png'
+              ? 'assets/images/marker-amarillo.svg'
               : !markerPosition.infoContent.datosVisita.estado_decodificado
-              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
+              ? 'assets/images/marker-rojo.svg'
               : markerPosition.infoContent.datosVisita.cita_inicio
-              ? 'assets/images/morado1.svg'
-              : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+              ? 'assets/images/marker-morado.svg'
+              : 'assets/images/marker-azul.svg'
           "
           (mapClick)="openInfoWindow(marker, $index)"
         >
