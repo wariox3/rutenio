@@ -1,4 +1,4 @@
-<div class="card bg-white rounded-lg shadow-md p-6 w-full">
+<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full">
   <!-- Card principal - Facturación -->
   <div class="mb-6">
     <h5 class="card-title">Facturación</h5>
@@ -6,7 +6,7 @@
 
   <!-- Sección Pendiente por pagar -->
   <div
-    class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200"
+    class="bg-white dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-300"
   >
     <div class="flex justify-between items-center mb-4">
       <h5>Pendiente por pagar</h5>
@@ -19,7 +19,7 @@
     <!-- Tabla de facturas -->
     <div class="overflow-x-auto">
       <table class="table align-middle">
-        <thead class="bg-gray-50">
+        <thead class="bg-gray-50 dark:bg-coal-400">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
             <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
@@ -27,7 +27,7 @@
             <th class="w-[60px]"></th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
+        <tbody class="bg-white dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
           @for (factura of facturas; let idx = $index; track idx;) {
           <tr>
             <td>{{ factura.fecha | formatFecha : "Y-m-d" }}</td>
@@ -182,7 +182,7 @@
   </div>
 
   <!-- Sección Valor estimado -->
-  <div class="bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-200">
+  <div class="bg-white dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-300">
     <div class="flex items-center">
       <h5 class="d-inline-block">Valor estimado</h5>
       <span
@@ -244,14 +244,14 @@
   </div>
 </div>
 
-<div class="card bg-white rounded-lg shadow-md p-6 w-full mt-6">
+<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
   <div class="flex items-center mb-4">
     <h5 class="card-title">Consumos</h5>
   </div>
 
   <div class="overflow-x-auto">
     <table class="table align-middle">
-      <thead class="bg-gray-50">
+      <thead class="bg-gray-50 dark:bg-coal-400">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium">Subdominio</th>
           <th class="px-6 py-3 text-left text-xs font-medium">Empresa</th>
@@ -259,7 +259,7 @@
           <th class="px-6 py-3 text-left text-xs font-medium">Total</th>
         </tr>
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
+      <tbody class="bg-white dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
         @for (consumo of consumos; let idx = $index; track idx;) {
         <tr>
           <td>{{ consumo.subdominio }}</td>
@@ -275,7 +275,7 @@
   </div>
 </div>
 
-<div class="card bg-white rounded-lg shadow-md p-6 w-full mt-6">
+<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
   <div class="mb-6">  
     <h5 class="card-title">Historial facturación</h5>
   </div>
