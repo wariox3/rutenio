@@ -328,6 +328,19 @@ export default class DisenoRutaListaComponent
     });
   }
 
+  getMarkerIcon(visitaIndex: number): google.maps.Icon {
+    const visita = this.arrVisitasPorDespacho[visitaIndex];
+    const url = visita?.cita_inicio
+      ? 'assets/images/marker-morado.svg'
+      : 'assets/images/marker-azul.svg';
+    return {
+      url,
+      scaledSize: new google.maps.Size(28, 40),
+      anchor: new google.maps.Point(14, 40),
+      labelOrigin: new google.maps.Point(14, 15),
+    };
+  }
+
   retirarVisita(id: number) {
     this._visitaApiService.retirar(id).subscribe({
       next: (response) => {
