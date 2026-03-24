@@ -139,6 +139,22 @@ export const mapeo: any = {
         ordenable: true,
         tooltip: 'Estado Devolución',
       },
+      {
+        encabezado: 'Cita inicio',
+        campoNombre: 'cita_inicio',
+        campoTipo: 'DateTimeField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: true,
+      },
+      {
+        encabezado: 'Cita fin',
+        campoNombre: 'cita_fin',
+        campoTipo: 'DateTimeField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: true,
+      },
     ],
   },
   Despacho: {
