@@ -1,5 +1,5 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full">
-  <h3 class="text-sm font-semibold text-[#575757] mb-3">Mapa de Despachos en Ruta</h3>
+<div class="bg-white dark:bg-coal-300 rounded-lg shadow-sm border border-gray-100 dark:border-gray-200 p-4 h-full">
+  <h3 class="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">Mapa de Despachos en Ruta</h3>
   @if (marcadores && marcadores.length > 0) {
     <div class="mapa-contenedor rounded-lg overflow-hidden">
       <google-map
@@ -18,7 +18,7 @@
         }
       </google-map>
     </div>
-    <div class="flex gap-4 mt-2 text-xs text-[#575757]">
+    <div class="flex gap-4 mt-2 text-xs text-gray-600 dark:text-gray-400">
       <span class="flex items-center gap-1">
         <span class="w-2.5 h-2.5 rounded-full inline-block" style="background-color: #0098d7"></span>
         Sin novedad
@@ -29,7 +29,7 @@
       </span>
     </div>
   } @else {
-    <div class="flex flex-col items-center justify-center h-[300px] text-[#575757]">
+    <div class="flex flex-col items-center justify-center h-[300px] text-gray-600 dark:text-gray-400">
       <i class="ki-filled ki-map text-4xl mb-2 text-[#0098d7]"></i>
       <p class="text-sm">No hay despachos en ruta con ubicación</p>
     </div>
