@@ -233,7 +233,8 @@ export default class VisitaFormularioComponent
 
   private formatearCitaParaApi(valor: string): string {
     if (!valor) return valor;
-    return valor.length === 16 ? `${valor}:00` : valor;
+    const formatted = valor.length === 16 ? `${valor}:00` : valor;
+    return formatted.replace('T', ' ');
   }
 
   private normalizarCitaParaInput(valor: string | null): string | null {
