@@ -38,6 +38,12 @@ html.dark body.dashboard-activo main.content {
   &:hover {
     cursor: pointer;
   }
+
+  html.dark & {
+    background-color: var(--tw-coal-400);
+    color: var(--tw-gray-800);
+    border-color: var(--tw-gray-200);
+  }
 }
 
 .ng-select.ng-select-single .ng-select-container .ng-value-container .ng-input {
@@ -48,15 +54,23 @@ html.dark body.dashboard-activo main.content {
   border: none !important;
 
   &:hover {
-    box-shadow: #fff !important;
+    box-shadow: none !important;
   }
 }
 
 /* ng-select dark mode */
 html.dark .ng-select .ng-select-container {
   background-color: var(--tw-coal-400);
-  color: var(--tw-gray-700);
+  color: var(--tw-gray-800);
   border-color: var(--tw-gray-200);
+}
+
+html.dark .ng-select .ng-select-container .ng-value-container .ng-placeholder {
+  color: var(--tw-gray-600);
+}
+
+html.dark .ng-select .ng-select-container .ng-value-container .ng-input > input {
+  color: var(--tw-gray-800);
 }
 
 html.dark .ng-select.ng-select-focused .ng-select-container {
@@ -69,7 +83,7 @@ html.dark .ng-dropdown-panel {
 
   .ng-dropdown-panel-items .ng-option {
     background-color: var(--tw-coal-400);
-    color: var(--tw-gray-700);
+    color: var(--tw-gray-800);
 
     &.ng-option-marked {
       background-color: var(--tw-coal-500);
