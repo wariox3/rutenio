@@ -439,13 +439,7 @@
           [position]="markerPosition.position"
           #marker="mapMarker"
           [label]="markerPosition.label"
-          [icon]="
-            $any(markerPosition.infoContent.datosVisita).estado_novedad
-              ? 'assets/images/marker-amarillo.svg'
-              : $any(markerPosition.infoContent.datosVisita).estado_entregado
-              ? 'assets/images/marker-verde.svg'
-              : 'assets/images/marker-azul.svg'
-          "
+          [icon]="getMarkerIcon($any(markerPosition.infoContent.datosVisita))"
           (mapClick)="openInfoWindow(marker, $index)"
         ></map-marker>
         }

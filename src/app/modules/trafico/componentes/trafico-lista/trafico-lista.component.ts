@@ -477,6 +477,21 @@ export default class TraficoListaComponent
     this.infoWindow.open(marker);
   }
 
+  getMarkerIcon(visita: any): google.maps.Icon {
+    let url = 'assets/images/marker-azul.svg';
+    if (visita?.estado_novedad) {
+      url = 'assets/images/marker-amarillo.svg';
+    } else if (visita?.estado_entregado) {
+      url = 'assets/images/marker-verde.svg';
+    }
+    return {
+      url,
+      scaledSize: new google.maps.Size(28, 40),
+      anchor: new google.maps.Point(14, 40),
+      labelOrigin: new google.maps.Point(14, 15),
+    };
+  }
+
   mostrarMapa(arrRegistros: (Visita | Despacho)[], calcular_ruta: boolean, index_personalizado: boolean) {
     this.customMarkers = [];
     this.marcarPosicionesVisitasOrdenadas = [DEFAULT_MAP_CENTER];

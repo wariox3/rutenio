@@ -352,11 +352,7 @@
           <map-marker
             [position]="markerPosition.position"
             #marker="mapMarker"
-            [icon]="
-              arrVisitasPorDespacho[$index - 1]?.cita_inicio
-                ? 'assets/images/marker-morado.svg'
-                : 'assets/images/marker-azul.svg'
-            "
+            [icon]="getMarkerIcon($index - 1)"
             [label]="markerPosition.label"
             (mapClick)="openInfoWindow(marker, $index - 1)"
           ></map-marker>
