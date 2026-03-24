@@ -130,13 +130,13 @@
     </tr>
     <tr class="border-b border-gray-300">
       <td
-        class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+        class="px-4 py-3 font-bold text-purple-700 border-r border-gray-300 bg-purple-50"
       >
-        Cita
+        <i class="ki-filled ki-time text-purple-500 mr-1"></i>Cita
       </td>
       <td class="px-4 py-3 border-r border-gray-300">
         @if (visita.cita_inicio && visita.cita_fin) {
-          {{ visita.cita_inicio | date:'dd/MM/yyyy HH:mm' }} - {{ visita.cita_fin | date:'dd/MM/yyyy HH:mm' }}
+          <span class="text-purple-600">{{ visita.cita_inicio | date:'dd/MM/yyyy HH:mm' }} - {{ visita.cita_fin | date:'dd/MM/yyyy HH:mm' }}</span>
         } @else {
           -
         }

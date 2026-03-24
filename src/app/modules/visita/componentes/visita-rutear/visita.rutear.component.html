@@ -359,8 +359,8 @@
                     <i class="ki-filled ki-geolocation mr-1"></i>
                     <span>Franja: {{ visita.franja_codigo }}</span>
                     @if (visita.cita_inicio) {
-                      <i class="ki-filled ki-time text-blue-500"></i>
-                      <span class="text-blue-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
+                      <i class="ki-filled ki-time text-purple-500"></i>
+                      <span class="text-purple-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
                     }
                   </div>
 
@@ -489,7 +489,7 @@
               : !markerPosition.infoContent.datosVisita.estado_decodificado
               ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/rojo1.png'
               : markerPosition.infoContent.datosVisita.cita_inicio
-              ? 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/verde1.png'
+              ? 'assets/images/morado1.svg'
               : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
           "
           (mapClick)="openInfoWindow(marker, $index)"
@@ -524,8 +524,8 @@
               </div>
             </div>
             @if (selectedVisita?.cita_inicio) {
-              <div class="mt-1 text-blue-600">
-                <i class="ki-filled ki-time"></i>
+              <div class="mt-1 text-purple-600">
+                <i class="ki-filled ki-time text-purple-500"></i>
                 <span class="ml-1">Cita: {{ selectedVisita?.cita_inicio | date:'dd/MM HH:mm' }} - {{ selectedVisita?.cita_fin | date:'HH:mm' }}</span>
               </div>
             }
