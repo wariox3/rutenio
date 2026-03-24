@@ -4,5 +4,5 @@
       <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.3"/>
     </filter>
   </defs>
-  <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22C24 5.373 18.627 0 12 0z" fill="#F59E0B" filter="url(#s)"/>
+  <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22C24 5.373 18.627 0 12 0z" fill="#FACC15" filter="url(#s)"/>
 </svg>
