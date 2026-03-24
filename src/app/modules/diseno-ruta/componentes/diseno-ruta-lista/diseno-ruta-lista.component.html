@@ -353,7 +353,9 @@
             [position]="markerPosition.position"
             #marker="mapMarker"
             [icon]="
-              'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
+              arrVisitasPorDespacho[$index - 1]?.cita_inicio
+                ? 'assets/images/morado1.svg'
+                : 'https://semantica.sfo3.digitaloceanspaces.com/rutenio/images/azul1.png'
             "
             [label]="markerPosition.label"
             (mapClick)="openInfoWindow(marker, $index - 1)"
@@ -390,6 +392,12 @@
                   >
                 </div>
               </div>
+              @if (visitaSeleccionada?.cita_inicio) {
+                <div class="mt-1 text-purple-600">
+                  <i class="ki-filled ki-time text-purple-500"></i>
+                  <span class="ml-1">Cita: {{ visitaSeleccionada?.cita_inicio | date:'dd/MM HH:mm' }} - {{ visitaSeleccionada?.cita_fin | date:'HH:mm' }}</span>
+                </div>
+              }
             </section>
           </map-info-window>
           <map-polyline
