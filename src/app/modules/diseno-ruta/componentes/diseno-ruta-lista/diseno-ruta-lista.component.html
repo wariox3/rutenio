@@ -278,6 +278,10 @@
                         >
                         <i class="ki-filled ki-geolocation mr-1"></i>
                         <span>Franja: {{ visita.franja_codigo }}</span>
+                        @if (visita.cita_inicio) {
+                          <i class="ki-filled ki-time text-purple-500 ml-1"></i>
+                          <span class="text-purple-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
+                        }
                       </div>
 
                       <section class="flex gap-1">
