@@ -67,7 +67,7 @@
               class="menu-title text-sm font-semibold"
               [ngClass]="{
                 'rounded-lg': isActive(menu.link),
-                'text-gray-700': !isActive(menu.link)
+                'text-gray-700 dark:text-gray-300': !isActive(menu.link)
               }"
             >
               {{ menu.nombre }}
@@ -90,7 +90,7 @@
               <i [class]="menu.iconoClase + ' text-lg'"></i>
             </span>
             <span
-              class="menu-title text-sm  text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary"
+              class="menu-title text-sm text-gray-700 dark:text-gray-300 menu-item-active:text-primary menu-link-hover:!text-primary"
             >
               {{ menu.nombre }}
             </span>
@@ -134,7 +134,7 @@
                     'text-primary font-semibold before:bg-primary': isActive(
                       subMenu.link
                     ),
-                    'text-gray-700': !isActive(subMenu.link)
+                    'text-gray-700 dark:text-gray-300': !isActive(subMenu.link)
                   }"
                 >
                   {{ subMenu.nombre }}
