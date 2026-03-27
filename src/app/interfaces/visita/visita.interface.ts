@@ -30,5 +30,6 @@ export interface Visita {
   destinatario_direccion_formato: string;
   cita_inicio: string | null;
   cita_fin: string | null;
+  cita_tipo: 'obligatoria' | 'preferente' | null;
   resultados: any[];
 }
