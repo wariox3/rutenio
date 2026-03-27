@@ -293,6 +293,11 @@
                         @if (visita.cita_inicio) {
                           <i class="ki-filled ki-time text-purple-500 ml-1"></i>
                           <span class="text-purple-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
+                          @if (visita.cita_tipo === 'obligatoria') {
+                            <span class="badge badge-xs badge-danger">Obligatoria</span>
+                          } @else if (visita.cita_tipo === 'preferente') {
+                            <span class="badge badge-xs badge-warning">Preferente</span>
+                          }
                         }
                       </div>
 
