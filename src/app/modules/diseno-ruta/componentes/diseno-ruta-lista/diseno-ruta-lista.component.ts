@@ -476,6 +476,19 @@ export default class DisenoRutaListaComponent
     }
   }
 
+  reordenarDespacho(despachoId: number) {
+    this.actualizandoLista.set(true);
+    this._visitaApiService
+      .ordenarPorDespacho(despachoId)
+      .pipe(finalize(() => this.actualizandoLista.set(false)))
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Visitas reordenadas');
+          this._consultarVisitas(this.parametrosConsultaVisitas);
+        },
+      });
+  }
+
   descargarPlanoSemantica(id: number) {
     this._httpService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,

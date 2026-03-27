@@ -127,6 +127,18 @@
                           <div class="menu-dropdown w-48 py-2">
                             <div class="menu-item" data-menu-dismiss="true">
                               <button
+                                (click)="reordenarDespacho(despacho.id)"
+                                class="menu-link"
+                              >
+                                <span class="menu-icon">
+                                  <i class="ki-filled ki-arrows-loop"></i>
+                                </span>
+                                <span class="menu-title">Reordenar</span>
+                              </button>
+                            </div>
+
+                            <div class="menu-item" data-menu-dismiss="true">
+                              <button
                                 (click)="confirmarAprobarDespacho(despacho.id)"
                                 class="menu-link"
                               >
