@@ -70,6 +70,12 @@ export class VisitaApiService {
     });
   }
 
+  ordenarPorDespacho(despachoId: number) {
+    return this._httpService.post<any>(`ruteo/visita/ordenar/`, {
+      despacho_id: despachoId,
+    });
+  }
+
   rutear(parametros?: ParametrosConsulta) {
     return this._httpService.post<any[]>(`ruteo/visita/rutear/`, parametros);
   }
