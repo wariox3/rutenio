@@ -84,6 +84,7 @@ export default class DisenoRutaListaComponent
   public toggleModalTrasbordar$ = new BehaviorSubject(false);
   public toggleModalAdicionarVisitaPendiente$ = new BehaviorSubject(false);
   public rutaOptimizada: any;
+  public tramosRuta: { path: google.maps.LatLngLiteral[]; options: google.maps.PolylineOptions }[] = [];
   public currentPage = signal(1);
   public totalPages = signal(1);
   customMarkers: {
@@ -143,6 +144,8 @@ export default class DisenoRutaListaComponent
     this.marcarPosicionesVisitasOrdenadas = [];
     this.arrVisitasPorDespacho = [];
     this.customMarkers = [];
+    this.tramosRuta = [];
+    this.rutaOptimizada = null;
     this.totalRegistrosVisitas = 0;
     this.ultimoDespachoSeleccionadoId = null;
     this.changeDetectorRef.detectChanges();
@@ -192,7 +195,8 @@ export default class DisenoRutaListaComponent
     this.mostrarMapaFlag = false;
     this.marcarPosicionesVisitasOrdenadas = [];
     this.directionsResults = undefined;
-
+    this.tramosRuta = [];
+    this.rutaOptimizada = null;
     this.customMarkers = [];
     this.despachoSeleccionadoId.set(despacho.id);
     this.parametrosConsultaVisitas = {
@@ -226,12 +230,23 @@ export default class DisenoRutaListaComponent
     this.marcarPosicionesVisitasOrdenadas.push(position);
   }
 
-  eliminarDespacho(despachoId: number) {
-    this._despachoApiService.eliminar(despachoId).subscribe((respuesta) => {
-      this.alerta.mensajaExitoso('Despacho eliminado con exito');
-      this.consultarLista();
-      this._limpiarVisitasPorDespacho();
-    });
+  confirmarEliminarDespacho(despachoId: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Estás seguro?',
+        texto: 'Se retirarán todas las visitas del despacho',
+        textoBotonCofirmacion: 'Si, eliminar',
+        colorConfirmar: '#dc3545',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this._despachoApiService.eliminar(despachoId).subscribe((resp) => {
+            this.alerta.mensajaExitoso('Despacho eliminado con exito');
+            this.consultarLista();
+            this._limpiarVisitasPorDespacho();
+          });
+        }
+      });
   }
 
   openInfoWindow(marker: MapMarker, index: number) {
@@ -269,9 +284,28 @@ export default class DisenoRutaListaComponent
                 strokeOpacity: 1.0,
                 strokeWeight: 4,
               },
-              distancia: response.respuesta.distancia_total,
-              duracion: response.respuestaduracion_total,
+              distancia: response.respuesta.distancia,
+              duracion: response.respuesta.duracion,
             };
+
+            // Generar tramos coloreados por cita
+            const puntosPorTramo = response.respuesta.puntos_por_tramo;
+            const tieneCitas = response.respuesta.tiene_citas || [];
+            if (puntosPorTramo && puntosPorTramo.length > 0) {
+              this.tramosRuta = puntosPorTramo.map(
+                (tramo: number[][], index: number) => ({
+                  path: tramo.map((p: number[]) => ({ lat: p[0], lng: p[1] })),
+                  options: {
+                    strokeColor: tieneCitas[index] ? '#8B5CF6' : '#00b2ff',
+                    strokeOpacity: 1.0,
+                    strokeWeight: 4,
+                  },
+                })
+              );
+              this.rutaOptimizada = null;
+            } else {
+              this.tramosRuta = [];
+            }
 
             // Ajustar vista del mapa
             const bounds = new google.maps.LatLngBounds();
@@ -406,15 +440,20 @@ export default class DisenoRutaListaComponent
   onDropToB(event: CdkDragDrop<any[]>, index: number) {
     if (event.previousContainer.id !== event.container.id) {
       const draggedItem = event.previousContainer.data[event.previousIndex];
-      const despacho = this.arrDespachos.find((_, i) => i === index);
-      const pesoActualizado = despacho?.peso + draggedItem?.peso;
+      const despacho = this.arrDespachos[index];
+
+      if (!despacho || !draggedItem) {
+        return;
+      }
+
+      const pesoActualizado = (despacho.peso || 0) + (draggedItem.peso || 0);
 
       if (pesoActualizado > despacho.vehiculo__capacidad) {
         this.alerta.mensajeError(
           'La operación no es posible',
           `El vehiculo tiene una capacidad maxima de ${despacho.vehiculo__capacidad} kg`
         );
-        return null;
+        return;
       }
 
       if (draggedItem.despacho_id === despacho.id) {
@@ -422,10 +461,8 @@ export default class DisenoRutaListaComponent
           'La visita no se pudo mover',
           'Actualmente pertenece al despacho'
         );
-        throw new Error('La visita actualmente pertenece al mismo depacho');
+        return;
       }
-
-      this.arrVisitasPorDespacho.splice(event.previousIndex, 1);
 
       this._visitaApiService
         .cambiarDespacho(draggedItem.id, despacho.id)
@@ -446,7 +483,7 @@ export default class DisenoRutaListaComponent
   }
 
   cerrarModalDetalleVisita() {
-    this.mostarModalDetalleVisita$.next(true);
+    this.mostarModalDetalleVisita$.next(false);
   }
 
   abrirModalDetalleVisita() {
@@ -454,7 +491,7 @@ export default class DisenoRutaListaComponent
   }
 
   cerrarModalAdicionarVisita() {
-    this.mostarModalAdicionarVisita$.next(true);
+    this.mostarModalAdicionarVisita$.next(false);
     this.consultarLista();
     this.recargarDespachos();
   }
@@ -494,7 +531,7 @@ export default class DisenoRutaListaComponent
   }
 
   cerrarModalAdicionar() {
-    this.toggleModal$.next(true);
+    this.toggleModal$.next(false);
   }
 
   cerrarModalTrasbordar(selector: string) {

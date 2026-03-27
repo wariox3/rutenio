@@ -151,7 +151,7 @@
 
                             <div class="menu-item" data-menu-dismiss="true">
                               <button
-                                (click)="eliminarDespacho(despacho.id)"
+                                (click)="confirmarEliminarDespacho(despacho.id)"
                                 class="menu-link"
                               >
                                 <span class="menu-icon">
@@ -401,6 +401,12 @@
             [path]="rutaOptimizada.path"
             [options]="rutaOptimizada.options"
           ></map-polyline>
+          @for (tramo of tramosRuta; track $index) {
+            <map-polyline
+              [path]="tramo.path"
+              [options]="tramo.options"
+            ></map-polyline>
+          }
         </google-map>
       </div>
     </div>
