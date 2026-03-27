@@ -156,7 +156,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   };
 
   arrFlota = signal<ListaFlota[]>([]);
-  arrVisitas: Visita[];
+  arrVisitas: Visita[] = [];
   public flotasSeleccionadas: number[] = [];
   public capacidadTotal: number = 0;
   public pesoTotal: number = 0;
@@ -463,12 +463,20 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   rutear() {
+    this.mostarVistaCargando$.next(true);
     this._visitaApiService
       .rutear(this.arrParametrosConsultaResumen)
-      .subscribe(() => {
-        this.consultarLista();
-        this.alerta.mensajaExitoso('Se ha ruteado correctamente correctamente');
-        this.router.navigate(['/diseno-ruta/lista']);
+      .pipe(
+        finalize(() => {
+          this.mostarVistaCargando$.next(false);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.consultarLista();
+          this.alerta.mensajaExitoso('Se ha ruteado correctamente');
+          this.router.navigate(['/diseno-ruta/lista']);
+        },
       });
   }
 
@@ -564,7 +572,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   cerrarModalFiltrosVisita() {
-    this.toggleModalFlotas$.next(false);
+    this.toggleModalFiltros$.next(false);
   }
 
   eliminarFlota(id: number) {
@@ -852,8 +860,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.totalRegistrosVisitas = respuesta.count;
 
     respuesta.results.forEach((visita) => {
-      const position = { lat: visita.latitud, lng: visita.longitud };
-      this.addMarker(position, visita);
+      if (visita.latitud != null && visita.longitud != null) {
+        const position = { lat: visita.latitud, lng: visita.longitud };
+        this.addMarker(position, visita);
+      }
     });
 
     this._calcularPorcentajeCapacidad();
