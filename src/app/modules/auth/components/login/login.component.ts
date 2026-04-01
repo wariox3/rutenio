@@ -8,6 +8,7 @@ import {
 import {
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -39,6 +40,7 @@ import { ViewChild } from '@angular/core';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     InputPasswordComponent,
     InputEmailComponent,
     ButtonComponent,
@@ -59,6 +61,7 @@ export default class LoginComponent extends General implements OnInit {
   public isLoading$ = new BehaviorSubject<boolean>(false);
   isProduction: boolean = environment.production;
   enableTurnstile: boolean = environment.enableTurnstile;
+  recordarUsuario: boolean = false;
 
   formularioLogin = new FormGroup({
     cf_turnstile_response: new FormControl(''),
@@ -79,6 +82,12 @@ export default class LoginComponent extends General implements OnInit {
       this.formularioLogin
         .get('cf_turnstile_response')
         ?.addValidators([Validators.required]);
+    }
+
+    const emailGuardado = localStorage.getItem('recordar_usuario_email');
+    if (emailGuardado) {
+      this.formularioLogin.get('username')?.setValue(emailGuardado);
+      this.recordarUsuario = true;
     }
   }
 
@@ -105,6 +114,12 @@ export default class LoginComponent extends General implements OnInit {
       delete loginData.cf_turnstile_response;
     }
     
+    if (this.recordarUsuario) {
+      localStorage.setItem('recordar_usuario_email', loginData.username);
+    } else {
+      localStorage.removeItem('recordar_usuario_email');
+    }
+
     this.authService
       .login(loginData)
       .pipe(

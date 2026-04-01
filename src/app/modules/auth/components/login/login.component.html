@@ -43,6 +43,16 @@
       </div>
     
 
+      <label class="checkbox-group">
+        <input
+          type="checkbox"
+          class="checkbox checkbox-sm"
+          [(ngModel)]="recordarUsuario"
+          [ngModelOptions]="{ standalone: true }"
+        />
+        <span class="checkbox-label text-2sm text-gray-700">Recordar usuario</span>
+      </label>
+
       @if(enableTurnstile) {
       <ngx-turnstile
         [siteKey]="turnstileSiteKey"
