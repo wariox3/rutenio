@@ -35,6 +35,17 @@
           "
         ></app-buscador-direcciones>
       </div>
+      <div class="space-y-4">
+        <div>
+          <label class="form-label font-normal text-gray-900">Hora de salida de vehículos</label>
+          <input
+            type="time"
+            class="input w-auto"
+            formControlName="rut_hora_inicio"
+          />
+          <p class="text-xs text-gray-500 mt-1">Hora estimada de salida de los vehículos. Se usa para calcular ventanas horarias de citas.</p>
+        </div>
+      </div>
       <div id="tour-config-opciones" class="space-y-4">
         <app-switch
           titulo="Sincronizar complemento"

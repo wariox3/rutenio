@@ -28,6 +28,7 @@ let estadoInicializado: Configuracion = {
   rut_direccion_origen: '',
   rut_longitud: '',
   rut_latitud: '',
+  rut_hora_inicio: '07:00',
   rut_whatsapp_habilitado: false,
 };
 

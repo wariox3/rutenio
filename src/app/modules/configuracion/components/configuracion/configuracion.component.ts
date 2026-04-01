@@ -52,6 +52,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     rut_direccion_origen: new FormControl(''),
     rut_latitud: new FormControl(''),
     rut_longitud: new FormControl(''),
+    rut_hora_inicio: new FormControl('07:00'),
     rut_whatsapp_habilitado: new FormControl(false),
   });
 
@@ -88,6 +89,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_direccion_origen: configuracion.rut_direccion_origen,
               rut_latitud: configuracion.rut_latitud,
               rut_longitud: configuracion.rut_longitud,
+              rut_hora_inicio: configuracion.rut_hora_inicio || '07:00',
               rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
             });
           }
