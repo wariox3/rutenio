@@ -495,13 +495,18 @@
             </div>
           </section>
         </map-info-window>
+        <map-polyline
+          [path]="ubicacionPolylinePath"
+          [options]="ubicacionPolylineOptions"
+        ></map-polyline>
         <map-marker
           *ngFor="let marker of customUbicacionMarkers"
           [position]="marker.position"
+          [icon]="marker.icon"
           [label]="{
             text: marker.label,
             color: 'white',
-            fontSize: '15px',
+            fontSize: '12px',
             fontWeight: 'bold',
           }"
         ></map-marker>
