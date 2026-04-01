@@ -183,6 +183,15 @@
       ></ui-input>
     </div>
   </div>
+  <div class="mb-3">
+    <app-label [required]="false">Observación</app-label>
+    <textarea
+      class="input w-full"
+      rows="2"
+      placeholder=""
+      formControlName="observacion"
+    ></textarea>
+  </div>
   <div class="border-t border-purple-200 pt-3 mt-1">
     <p class="text-xs text-purple-500 mb-2">
       <i class="ki-filled ki-time"></i> Ventana de cita (opcional)
@@ -412,6 +421,19 @@
                 required: 'El tiempo servicio es requerido',
               }"
             ></ui-input>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-4 mb-2">
+        <div class="mb-5">
+          <div>
+            <app-label [required]="false">Observación</app-label>
+            <textarea
+              class="input w-full"
+              rows="2"
+              placeholder=""
+              formControlName="observacion"
+            ></textarea>
           </div>
         </div>
       </div>
