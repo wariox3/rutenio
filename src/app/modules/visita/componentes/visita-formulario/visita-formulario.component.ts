@@ -99,6 +99,7 @@ export default class VisitaFormularioComponent
     ]),
     ciudad_nombre: new FormControl(''),
     ciudad: new FormControl(null, [Validators.required]),
+    observacion: new FormControl(null),
     cita_inicio: new FormControl(null),
     cita_fin: new FormControl(null),
   }, { validators: CitaRangoValidator.validar });
@@ -119,6 +120,7 @@ export default class VisitaFormularioComponent
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
         fecha: this.informacionVisita.fecha,
+        observacion: this.informacionVisita.observacion,
         cita_inicio: this.normalizarCitaParaInput(this.informacionVisita.cita_inicio),
         cita_fin: this.normalizarCitaParaInput(this.informacionVisita.cita_fin),
       });
