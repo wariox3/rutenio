@@ -116,6 +116,14 @@
       </ng-container>
     </div>
   </div>
+  <div class="mb-3">
+    <app-label [required]="false">Complemento dirección</app-label>
+    <ui-input
+      placeholder="Ej: Apto 301, Torre B, Local 5"
+      formControlName="destinatario_direccion_complemento"
+      [control]="formularioVisita.get('destinatario_direccion_complemento')"
+    ></ui-input>
+  </div>
   <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
     <div class="mb-3">
       <app-label [required]="false">Correo</app-label>
@@ -342,6 +350,18 @@
               El campo es requerido.
             </span>
           </ng-container>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 gap-4 mb-2">
+        <div class="mb-5">
+          <div>
+            <app-label [required]="false">Complemento dirección</app-label>
+            <ui-input
+              placeholder="Ej: Apto 301, Torre B, Local 5"
+              formControlName="destinatario_direccion_complemento"
+              [control]="formularioVisita.get('destinatario_direccion_complemento')"
+            ></ui-input>
+          </div>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
