@@ -45,6 +45,19 @@
           />
           <p class="text-xs text-gray-500 mt-1">Hora estimada de salida de los vehículos. Se usa para calcular ventanas horarias de citas.</p>
         </div>
+        <div>
+          <label class="form-label font-normal text-gray-900">Estrategia de ruteo</label>
+          <select class="select w-auto" formControlName="rut_estrategia_ruteo">
+            <option value="distancia">Ruta más corta</option>
+            <option value="balanceado">Balanceado</option>
+            <option value="tiempo">Menor tiempo</option>
+          </select>
+          <p class="text-xs text-gray-500 mt-1">
+            Ruta más corta: prioriza distancia, pasa por citas de camino.
+            Menor tiempo: evita esperas, llega justo a las citas.
+            Balanceado: equilibrio entre ambas.
+          </p>
+        </div>
       </div>
       <div id="tour-config-opciones" class="space-y-4">
         <app-switch

@@ -17,5 +17,6 @@ export interface Configuracion {
     rut_latitud: string
     rut_hora_inicio: string
     rut_whatsapp_habilitado: boolean
+    rut_estrategia_ruteo: string
 }
   
