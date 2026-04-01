@@ -30,6 +30,7 @@ let estadoInicializado: Configuracion = {
   rut_latitud: '',
   rut_hora_inicio: '07:00',
   rut_whatsapp_habilitado: false,
+  rut_estrategia_ruteo: 'balanceado',
 };
 
 const initialState: Configuracion = datosConfiguracion

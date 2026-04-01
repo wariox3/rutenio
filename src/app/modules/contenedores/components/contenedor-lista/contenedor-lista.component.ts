@@ -183,6 +183,7 @@ export default class ContenedorListaComponent
                 rut_latitud: '',
                 rut_hora_inicio: '07:00',
                 rut_whatsapp_habilitado: false,
+                rut_estrategia_ruteo: 'balanceado',
               }))
             )
           }).pipe(
