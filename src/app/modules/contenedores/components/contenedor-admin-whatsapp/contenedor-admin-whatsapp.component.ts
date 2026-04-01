@@ -1,8 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { getCookie, removeCookie } from 'typescript-cookie';
 
 interface ContenedorAdmin {
   id: number;
@@ -21,9 +22,15 @@ interface ContenedorAdmin {
 })
 export default class ContenedorAdminWhatsappComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
   contenedores: ContenedorAdmin[] = [];
   cargando = true;
   procesandoId: number | null = null;
+
+  private get headers(): HttpHeaders {
+    const token = getCookie('admin_token');
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
 
   ngOnInit(): void {
     this.consultarContenedores();
@@ -33,7 +40,8 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
     this.cargando = true;
     this.http
       .get<ContenedorAdmin[]>(
-        `${environment.url_api}/contenedor/contenedor/admin-lista/`
+        `${environment.url_api}/contenedor/contenedor/admin-lista/`,
+        { headers: this.headers }
       )
       .subscribe({
         next: (respuesta) => {
@@ -51,7 +59,8 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
     this.http
       .post<{ mensaje: string; acceso_whatsapp: boolean }>(
         `${environment.url_api}/contenedor/contenedor/toggle-whatsapp/`,
-        { id: contenedor.id }
+        { id: contenedor.id },
+        { headers: this.headers }
       )
       .subscribe({
         next: (respuesta) => {
@@ -62,5 +71,10 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
           this.procesandoId = null;
         },
       });
+  }
+
+  cerrarSesion() {
+    removeCookie('admin_token', { path: '/' });
+    this.router.navigate(['/admin/login']);
   }
 }

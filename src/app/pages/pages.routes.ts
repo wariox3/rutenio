@@ -1,8 +1,20 @@
 import { Routes } from '@angular/router';
 import { authGuard } from '../common/guards/auth.guard';
 import { contenedorGuard } from '../common/guards/contenedor.guard';
+import { adminGuard } from '../common/guards/admin.guard';
 
 export default [
+  {
+    path: 'admin/login',
+    loadComponent: () =>
+      import('../modules/auth/components/admin-login/admin-login.component'),
+  },
+  {
+    path: 'admin/whatsapp',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-whatsapp/contenedor-admin-whatsapp.component'),
+  },
   {
     path: 'contenedor',
     canActivate: [authGuard],
