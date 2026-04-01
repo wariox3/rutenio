@@ -4,6 +4,7 @@ export const VISITA_LISTA_FILTERS: FilterField[] = [
   { name: 'id', displayName: 'Id', type: 'number' },
   { name: 'numero', displayName: 'Número', type: 'number' },
   { name: 'destinatario', displayName: 'Destinatario', type: 'string' },
+  { name: 'despacho__vehiculo__placa', displayName: 'Placa', type: 'string' },
   { name: 'fecha', displayName: 'Fecha', type: 'date' },
   { name: 'despacho_id', displayName: 'Despacho', type: 'number' },
   { name: 'estado_despacho', displayName: 'Despachado', type: 'boolean' },
