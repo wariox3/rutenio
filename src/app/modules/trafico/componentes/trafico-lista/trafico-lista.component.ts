@@ -175,7 +175,14 @@ export default class TraficoListaComponent
   customUbicacionMarkers: {
     position: google.maps.LatLngLiteral;
     label: string;
+    icon?: google.maps.Icon | google.maps.Symbol;
   }[] = [];
+  ubicacionPolylinePath: google.maps.LatLngLiteral[] = [];
+  ubicacionPolylineOptions: google.maps.PolylineOptions = {
+    strokeColor: '#4285F4',
+    strokeOpacity: 0.8,
+    strokeWeight: 4,
+  };
 
   constructor() {
     super();
@@ -516,18 +523,35 @@ export default class TraficoListaComponent
     this.directionsResultsUbicacionesArray = [];
     this.lineasConectoras = [];
 
-    this.customUbicacionMarkers = [...this.marcarPosicionesUbicacionesOrdenadas]
-      .reverse()
-      .map((pos, index) => ({
-        position: pos,
-        label: (index + 1).toString(),
-      }));
+    const puntos = [...this.marcarPosicionesUbicacionesOrdenadas].reverse();
+    this.ubicacionPolylinePath = puntos;
+    this.customUbicacionMarkers = [];
 
-    if (this.customUbicacionMarkers.length > 0) {
-      const primerMarcador = this.customUbicacionMarkers[0];
-      this.map.panTo(primerMarcador.position);
-      this.map.setZoom(24);
-    }
+    if (puntos.length === 0) return;
+
+    const intervalo = Math.max(1, Math.floor(puntos.length / 10));
+
+    puntos.forEach((pos, index) => {
+      const esInicio = index === 0;
+      const esFin = index === puntos.length - 1;
+      const esIntervalo = index % intervalo === 0;
+
+      if (esInicio || esFin || esIntervalo) {
+        this.customUbicacionMarkers.push({
+          position: pos,
+          label: (index + 1).toString(),
+          icon: esInicio
+            ? { url: 'assets/images/marker-verde.svg', scaledSize: new google.maps.Size(28, 40), anchor: new google.maps.Point(14, 40), labelOrigin: new google.maps.Point(14, 15) }
+            : esFin
+            ? { url: 'assets/images/marker-rojo.svg', scaledSize: new google.maps.Size(28, 40), anchor: new google.maps.Point(14, 40), labelOrigin: new google.maps.Point(14, 15) }
+            : { url: 'assets/images/marker-azul.svg', scaledSize: new google.maps.Size(22, 32), anchor: new google.maps.Point(11, 32), labelOrigin: new google.maps.Point(11, 12) },
+        });
+      }
+    });
+
+    const bounds = new google.maps.LatLngBounds();
+    puntos.forEach((p) => bounds.extend(p));
+    this.map.fitBounds(bounds);
 
     this.changeDetectorRef.detectChanges();
   }
@@ -596,6 +620,7 @@ export default class TraficoListaComponent
       this.arrUbicaciones = [];
       this.marcarPosicionesUbicacionesOrdenadas = [];
       this.customUbicacionMarkers = [];
+      this.ubicacionPolylinePath = [];
       this.mostrarUbicaciones = false;
       this.changeDetectorRef.detectChanges();
     }
