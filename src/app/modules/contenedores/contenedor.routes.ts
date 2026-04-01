@@ -16,9 +16,4 @@ export default [
     loadComponent: () =>
       import('./components/contenedor-nuevo/contenedor-nuevo.component'),
   },
-  {
-    path: 'admin-whatsapp',
-    loadComponent: () =>
-      import('./components/contenedor-admin-whatsapp/contenedor-admin-whatsapp.component'),
-  },
 ] as Routes;
