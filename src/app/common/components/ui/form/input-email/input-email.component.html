@@ -1,17 +1,16 @@
-<input [formControl]="control" class="input" [placeholder]="placeholder" type="text" [ngClass]="{
-            'border-danger':
-              control.touched &&
-              control.invalid,
-            'border-success':
-              control.touched &&
-              control.valid
-          }" />
+<div class="input" [ngClass]="{
+  'border-danger': control.touched && control.invalid,
+  'border-success': control.touched && control.valid
+}">
+  <i class="ki-outline ki-sms text-gray-400"></i>
+  <input [formControl]="control" [placeholder]="placeholder" type="email" />
+</div>
 
 <ng-container *ngIf="control.invalid && control.touched">
-    <span *ngIf="control.hasError('required')" class="text-danger text-xs">
-        El correo es requerido.
-    </span>
-    <span *ngIf="control.hasError('email')" class="text-danger text-xs">
-        El formato del correo no es válido.
-    </span>
+  <span *ngIf="control.hasError('required')" class="text-danger text-xs mt-1 block">
+    El correo es requerido.
+  </span>
+  <span *ngIf="control.hasError('email')" class="text-danger text-xs mt-1 block">
+    El formato del correo no es válido.
+  </span>
 </ng-container>
