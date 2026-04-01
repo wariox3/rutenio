@@ -1,0 +1,64 @@
+<div class="container-fixed max-w-[900px] py-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-xl font-semibold text-gray-900">Admin WhatsApp</h1>
+      <p class="text-sm text-gray-500">Gestionar acceso a notificaciones WhatsApp por empresa</p>
+    </div>
+    <a routerLink="/contenedor/lista" class="btn btn-secondary btn-sm">
+      <i class="ki-filled ki-arrow-left mr-1"></i> Volver
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="card-body p-0">
+      @if (cargando) {
+        <div class="p-8 text-center text-gray-500">Cargando...</div>
+      } @else if (contenedores.length === 0) {
+        <div class="p-8 text-center text-gray-500">No hay empresas registradas</div>
+      } @else {
+        <table class="table table-auto w-full">
+          <thead>
+            <tr class="bg-gray-50">
+              <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Empresa</th>
+              <th class="text-left px-4 py-3 text-sm font-medium text-gray-600">Subdominio</th>
+              <th class="text-center px-4 py-3 text-sm font-medium text-gray-600">Usuarios</th>
+              <th class="text-center px-4 py-3 text-sm font-medium text-gray-600">WhatsApp</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (contenedor of contenedores; track contenedor.id) {
+              <tr class="border-t border-gray-100 hover:bg-gray-50">
+                <td class="px-4 py-3 text-sm font-medium text-gray-900">
+                  {{ contenedor.nombre || '-' }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">
+                  {{ contenedor.schema_name }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600 text-center">
+                  {{ contenedor.usuarios }}
+                </td>
+                <td class="px-4 py-3 text-center">
+                  <button
+                    (click)="toggleWhatsapp(contenedor)"
+                    [disabled]="procesandoId === contenedor.id"
+                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+                    [class]="contenedor.acceso_whatsapp
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'"
+                  >
+                    @if (procesandoId === contenedor.id) {
+                      <span class="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full"></span>
+                    } @else {
+                      <i class="ki-filled" [class]="contenedor.acceso_whatsapp ? 'ki-check-circle' : 'ki-cross-circle'"></i>
+                    }
+                    {{ contenedor.acceso_whatsapp ? 'Activo' : 'Inactivo' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  </div>
+</div>

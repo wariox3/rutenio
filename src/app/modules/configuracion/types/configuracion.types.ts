@@ -15,5 +15,6 @@ export interface Configuracion {
     rut_direccion_origen: string
     rut_longitud: string
     rut_latitud: string
+    rut_whatsapp_habilitado: boolean
 }
   
