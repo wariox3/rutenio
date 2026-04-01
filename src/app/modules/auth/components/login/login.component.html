@@ -1,8 +1,7 @@
 <div
   class="flex h-[100vh] justify-center items-center p-8 lg:p-10 order-2 lg:order-1 login-container"
 >
-  <div class="card max-w-[400px] w-full">
-    <!-- form start here -->
+  <div class="card max-w-[400px] w-full shadow-lg">
     <form
       [formGroup]="formularioLogin"
       class="card-body flex flex-col gap-5 p-10"
@@ -10,7 +9,12 @@
       method="get"
       (submit)="enviar()"
     >
-      <div class="text-center mb-2.5">
+      <div class="text-center mb-4">
+        <img
+          src="assets/media/app/default-logo2.svg"
+          alt="Ruteo.co"
+          class="h-8 mx-auto mb-5"
+        />
         <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
           Ingresar
         </h3>
@@ -23,7 +27,7 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="form-label font-normal text-gray-900"> Email </label>
+        <label class="form-label font-normal text-gray-900">Email</label>
         <app-input-email
           [control]="formularioLogin.controls.username"
         ></app-input-email>
@@ -41,7 +45,6 @@
           [control]="formularioLogin.controls.password"
         ></app-input-password>
       </div>
-    
 
       <label class="checkbox-group">
         <input
@@ -60,14 +63,6 @@
       ></ngx-turnstile>
       }
 
-      <!-- <ng-container
-        [ngTemplateOutlet]="formError"
-        [ngTemplateOutletContext]="{
-        validation: 'required',
-        message: 'Por favor complete la verificación Turnstile',
-        control: loginForm.controls['turnstileToken'],
-      }"
-      ></ng-container> -->
       <div class="w-full">
         <app-button
           [type]="'submit'"

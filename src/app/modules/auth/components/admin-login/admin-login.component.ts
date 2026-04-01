@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { BehaviorSubject, catchError, finalize, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
@@ -22,6 +22,7 @@ import { noRequiereToken } from '../../../../common/interceptors/token.intercept
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     InputPasswordComponent,
     InputEmailComponent,
     ButtonComponent,

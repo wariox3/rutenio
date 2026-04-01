@@ -1,21 +1,27 @@
 <div
-  class="flex h-[100vh] justify-center items-center p-8 lg:p-10 login-container"
+  class="flex h-[100vh] justify-center items-center p-8 lg:p-10"
+  style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%)"
 >
-  <div class="card max-w-[400px] w-full">
+  <div class="card max-w-[400px] w-full shadow-lg">
     <form
       [formGroup]="formularioLogin"
       class="card-body flex flex-col gap-5 p-10"
       (submit)="enviar()"
     >
-      <div class="text-center mb-2.5">
-        <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
-          Admin Ruteo.co
+      <div class="text-center mb-4">
+        <img
+          src="assets/media/app/default-logo2.svg"
+          alt="Ruteo.co"
+          class="h-8 mx-auto mb-5"
+        />
+        <h3 class="text-lg font-medium text-gray-900 leading-none mb-1">
+          Panel de administración
         </h3>
-        <p class="text-2sm text-gray-500">Panel de administración</p>
+        <p class="text-2sm text-gray-500">Acceso exclusivo para administradores</p>
       </div>
 
       @if (errorMensaje) {
-        <div class="bg-red-50 text-red-600 text-sm p-3 rounded-lg">
+        <div class="bg-red-50 text-red-600 text-sm p-3 rounded-lg text-center">
           {{ errorMensaje }}
         </div>
       }
@@ -42,6 +48,10 @@
           [clases]="'btn btn-primary w-full text-center justify-center'"
           [estaDeshabilitado]="!this.formularioLogin.valid"
         ></app-button>
+      </div>
+
+      <div class="text-center">
+        <a routerLink="/auth/login" class="text-2sm link text-gray-500">Volver al login</a>
       </div>
     </form>
   </div>
