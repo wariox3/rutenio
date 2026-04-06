@@ -1,0 +1,134 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="container-fixed max-w-[1100px] py-6">
+  <div class="mb-6">
+    <h1 class="text-xl font-semibold text-gray-900">Entregas por empresa</h1>
+    <p class="text-sm text-gray-500">Resumen de entregas para facturar por empresa y rango de fechas</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card mb-4">
+    <div class="card-body py-4">
+      <div class="flex flex-wrap items-end gap-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-gray-600">Desde</label>
+          <input
+            type="date"
+            [(ngModel)]="fechaDesde"
+            class="input input-sm w-44"
+          />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-xs font-medium text-gray-600">Hasta</label>
+          <input
+            type="date"
+            [(ngModel)]="fechaHasta"
+            class="input input-sm w-44"
+          />
+        </div>
+        <button
+          (click)="consultar()"
+          [disabled]="cargando"
+          class="btn btn-sm btn-primary"
+        >
+          @if (cargando) {
+            <span class="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full mr-1"></span>
+          }
+          Consultar
+        </button>
+        <button
+          (click)="descargarExcel()"
+          [disabled]="descargando || empresas.length === 0"
+          class="btn btn-sm btn-light"
+        >
+          @if (descargando) {
+            <span class="animate-spin inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full mr-1"></span>
+          }
+          <i class="ki-filled ki-file-down mr-1"></i>
+          Exportar Excel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="card">
+    <div class="card-body p-0">
+      @if (cargando) {
+        <div class="p-8 text-center text-gray-500">Cargando...</div>
+      } @else if (empresas.length === 0) {
+        <div class="p-8 text-center text-gray-500">No hay datos para el rango seleccionado</div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="table table-auto w-full">
+            <thead>
+              <tr class="bg-gray-50">
+                <th class="text-left px-4 py-3 text-xs font-medium text-gray-600">Empresa</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Despachos</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Visitas</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Entregadas</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Cumplimiento</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Novedades</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Unidades</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Peso (kg)</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (empresa of empresas; track empresa.contenedor_id) {
+                <tr class="border-t border-gray-100 hover:bg-gray-50">
+                  <td class="px-4 py-3">
+                    <div class="text-sm font-medium text-gray-900">{{ empresa.nombre }}</div>
+                    <div class="text-xs text-gray-400">{{ empresa.schema_name }}</div>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.total_despachos }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.visitas }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.visitas_entregadas }}</td>
+                  <td class="px-4 py-3 text-right">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-100 text-green-700': calcularCumplimiento(empresa.visitas_entregadas, empresa.visitas) >= 90,
+                        'bg-yellow-100 text-yellow-700': calcularCumplimiento(empresa.visitas_entregadas, empresa.visitas) >= 70 && calcularCumplimiento(empresa.visitas_entregadas, empresa.visitas) < 90,
+                        'bg-red-100 text-red-700': calcularCumplimiento(empresa.visitas_entregadas, empresa.visitas) < 70
+                      }"
+                    >
+                      {{ calcularCumplimiento(empresa.visitas_entregadas, empresa.visitas) }}%
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.visitas_novedad }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.unidades }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.peso | number:'1.0-1' }}</td>
+                </tr>
+              }
+            </tbody>
+            @if (totales) {
+              <tfoot>
+                <tr class="border-t-2 border-gray-300 bg-gray-50 font-semibold">
+                  <td class="px-4 py-3 text-sm text-gray-900">Total</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.total_despachos }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.visitas }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.visitas_entregadas }}</td>
+                  <td class="px-4 py-3 text-right">
+                    <span
+                      class="inline-flex px-2 py-0.5 rounded-full text-xs font-medium"
+                      [ngClass]="{
+                        'bg-green-100 text-green-700': calcularCumplimiento(totales.visitas_entregadas, totales.visitas) >= 90,
+                        'bg-yellow-100 text-yellow-700': calcularCumplimiento(totales.visitas_entregadas, totales.visitas) >= 70 && calcularCumplimiento(totales.visitas_entregadas, totales.visitas) < 90,
+                        'bg-red-100 text-red-700': calcularCumplimiento(totales.visitas_entregadas, totales.visitas) < 70
+                      }"
+                    >
+                      {{ calcularCumplimiento(totales.visitas_entregadas, totales.visitas) }}%
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.visitas_novedad }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.unidades }}</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.peso | number:'1.0-1' }}</td>
+                </tr>
+              </tfoot>
+            }
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

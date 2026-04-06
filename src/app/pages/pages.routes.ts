@@ -10,6 +10,12 @@ export default [
       import('../modules/auth/components/admin-login/admin-login.component'),
   },
   {
+    path: 'admin/entregas',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-entregas/contenedor-admin-entregas.component'),
+  },
+  {
     path: 'admin/whatsapp',
     canActivate: [adminGuard],
     loadComponent: () =>

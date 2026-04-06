@@ -1,0 +1,106 @@
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
+import { getCookie } from 'typescript-cookie';
+import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
+import {
+  AdminEntregasRespuesta,
+  AdminEntregasTotales,
+  EntregaEmpresa,
+} from '../../interfaces/admin-entregas.interface';
+
+@Component({
+  selector: 'app-contenedor-admin-entregas',
+  standalone: true,
+  imports: [CommonModule, FormsModule, AdminNavComponent],
+  templateUrl: './contenedor-admin-entregas.component.html',
+})
+export default class ContenedorAdminEntregasComponent implements OnInit {
+  private http = inject(HttpClient);
+
+  empresas: EntregaEmpresa[] = [];
+  totales: AdminEntregasTotales | null = null;
+  cargando = false;
+  descargando = false;
+  fechaDesde = '';
+  fechaHasta = '';
+
+  private get headers(): HttpHeaders {
+    const token = getCookie('admin_token');
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  ngOnInit(): void {
+    const hoy = new Date();
+    this.fechaHasta = hoy.toISOString().substring(0, 10);
+    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    this.fechaDesde = primerDia.toISOString().substring(0, 10);
+    this.consultar();
+  }
+
+  consultar() {
+    if (!this.fechaDesde || !this.fechaHasta) return;
+    this.cargando = true;
+    this.http
+      .get<AdminEntregasRespuesta>(
+        `${environment.url_api}/contenedor/contenedor/admin-entregas/`,
+        {
+          headers: this.headers,
+          params: {
+            fecha_desde: this.fechaDesde,
+            fecha_hasta: this.fechaHasta,
+          },
+        }
+      )
+      .subscribe({
+        next: (resp) => {
+          this.empresas = resp.resultados;
+          this.totales = resp.totales;
+          this.cargando = false;
+        },
+        error: () => {
+          this.cargando = false;
+        },
+      });
+  }
+
+  descargarExcel() {
+    if (!this.fechaDesde || !this.fechaHasta) return;
+    this.descargando = true;
+    this.http
+      .get(`${environment.url_api}/contenedor/contenedor/admin-entregas/`, {
+        headers: this.headers,
+        params: {
+          fecha_desde: this.fechaDesde,
+          fecha_hasta: this.fechaHasta,
+          formato: 'xlsx',
+        },
+        responseType: 'blob',
+        observe: 'response',
+      })
+      .subscribe({
+        next: (response) => {
+          const blob = response.body;
+          if (blob) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `entregas_${this.fechaDesde}_${this.fechaHasta}.xlsx`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+          }
+          this.descargando = false;
+        },
+        error: () => {
+          this.descargando = false;
+        },
+      });
+  }
+
+  calcularCumplimiento(entregadas: number, total: number): number {
+    if (total === 0) return 0;
+    return Math.round((entregadas / total) * 1000) / 10;
+  }
+}
