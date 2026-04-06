@@ -16,6 +16,12 @@ export default [
       import('../modules/contenedores/components/contenedor-admin-entregas/contenedor-admin-entregas.component'),
   },
   {
+    path: 'admin/entregas/:schema',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-entregas-detalle/contenedor-admin-entregas-detalle.component'),
+  },
+  {
     path: 'admin/whatsapp',
     canActivate: [adminGuard],
     loadComponent: () =>
