@@ -67,7 +67,7 @@ export default class AdminLoginComponent {
             expires: expira,
             path: '/',
           });
-          this.router.navigate(['/admin/whatsapp']);
+          this.router.navigate(['/admin/entregas']);
         }),
         catchError((error) => {
           this.errorMensaje =

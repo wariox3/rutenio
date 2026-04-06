@@ -1,0 +1,22 @@
+<nav class="bg-white border-b border-gray-200 mb-6">
+  <div class="container-fixed max-w-[1100px] flex items-center justify-between h-14">
+    <div class="flex items-center gap-6">
+      <span class="text-sm font-semibold text-gray-900">Admin Panel</span>
+      <div class="flex items-center gap-1">
+        @for (enlace of enlaces; track enlace.ruta) {
+          <a
+            [routerLink]="enlace.ruta"
+            routerLinkActive="bg-primary-light text-primary"
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+          >
+            <i class="ki-filled" [ngClass]="enlace.icono"></i>
+            {{ enlace.etiqueta }}
+          </a>
+        }
+      </div>
+    </div>
+    <button (click)="cerrarSesion()" class="btn btn-sm btn-light">
+      <i class="ki-filled ki-exit-right mr-1"></i> Salir
+    </button>
+  </div>
+</nav>

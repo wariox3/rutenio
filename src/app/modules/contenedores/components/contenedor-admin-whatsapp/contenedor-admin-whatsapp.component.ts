@@ -2,8 +2,8 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
-import { Router, RouterLink } from '@angular/router';
-import { getCookie, removeCookie } from 'typescript-cookie';
+import { getCookie } from 'typescript-cookie';
+import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
 
 interface ContenedorAdmin {
   id: number;
@@ -17,12 +17,11 @@ interface ContenedorAdmin {
 @Component({
   selector: 'app-contenedor-admin-whatsapp',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, AdminNavComponent],
   templateUrl: './contenedor-admin-whatsapp.component.html',
 })
 export default class ContenedorAdminWhatsappComponent implements OnInit {
   private http = inject(HttpClient);
-  private router = inject(Router);
   contenedores: ContenedorAdmin[] = [];
   cargando = true;
   procesandoId: number | null = null;
@@ -73,8 +72,4 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
       });
   }
 
-  cerrarSesion() {
-    removeCookie('admin_token', { path: '/' });
-    this.router.navigate(['/admin/login']);
-  }
 }
