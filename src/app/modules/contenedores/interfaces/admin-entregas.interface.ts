@@ -2,6 +2,7 @@ export interface EntregaEmpresa {
   contenedor_id: number;
   schema_name: string;
   nombre: string;
+  fecha_ultima_conexion: string | null;
   decodificadas: number;
   whatsapp_enviados: number;
   total_despachos: number;
