@@ -24,6 +24,7 @@ let parsedState: Usuario = {
   verificado: false,
   socio_id: null,
   is_active: false,
+  is_staff: false,
 };
 
 export const initialState: Usuario = usuarioData

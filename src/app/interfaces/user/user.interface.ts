@@ -15,6 +15,7 @@ export interface Usuario {
   vr_saldo: number;
   numero_identificacion: string;
   is_active: boolean;
+  is_staff: boolean;
   socio_id: number | null;
   verificado: boolean;
 }
