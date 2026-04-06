@@ -3,6 +3,7 @@ export interface EntregaEmpresa {
   schema_name: string;
   nombre: string;
   decodificadas: number;
+  whatsapp_enviados: number;
   total_despachos: number;
   visitas: number;
   visitas_entregadas: number;
@@ -14,6 +15,7 @@ export interface EntregaEmpresa {
 
 export interface AdminEntregasTotales {
   decodificadas: number;
+  whatsapp_enviados: number;
   total_despachos: number;
   visitas: number;
   visitas_entregadas: number;
