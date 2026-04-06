@@ -2,6 +2,7 @@ export interface EntregaEmpresa {
   contenedor_id: number;
   schema_name: string;
   nombre: string;
+  decodificadas: number;
   total_despachos: number;
   visitas: number;
   visitas_entregadas: number;
@@ -12,6 +13,7 @@ export interface EntregaEmpresa {
 }
 
 export interface AdminEntregasTotales {
+  decodificadas: number;
   total_despachos: number;
   visitas: number;
   visitas_entregadas: number;

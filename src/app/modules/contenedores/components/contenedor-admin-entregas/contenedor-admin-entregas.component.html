@@ -64,6 +64,7 @@
             <thead>
               <tr class="bg-gray-50">
                 <th class="text-left px-4 py-3 text-xs font-medium text-gray-600">Empresa</th>
+                <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Decodificadas</th>
                 <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Despachos</th>
                 <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Visitas</th>
                 <th class="text-right px-4 py-3 text-xs font-medium text-gray-600">Entregadas</th>
@@ -80,6 +81,7 @@
                     <div class="text-sm font-medium text-gray-900">{{ empresa.nombre }}</div>
                     <div class="text-xs text-gray-400">{{ empresa.schema_name }}</div>
                   </td>
+                  <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.decodificadas }}</td>
                   <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.total_despachos }}</td>
                   <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.visitas }}</td>
                   <td class="px-4 py-3 text-sm text-gray-700 text-right">{{ empresa.visitas_entregadas }}</td>
@@ -105,6 +107,7 @@
               <tfoot>
                 <tr class="border-t-2 border-gray-300 bg-gray-50 font-semibold">
                   <td class="px-4 py-3 text-sm text-gray-900">Total</td>
+                  <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.decodificadas }}</td>
                   <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.total_despachos }}</td>
                   <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.visitas }}</td>
                   <td class="px-4 py-3 text-sm text-gray-900 text-right">{{ totales.visitas_entregadas }}</td>
