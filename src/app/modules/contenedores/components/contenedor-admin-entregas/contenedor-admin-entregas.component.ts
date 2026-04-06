@@ -21,11 +21,15 @@ export default class ContenedorAdminEntregasComponent implements OnInit {
   private http = inject(HttpClient);
 
   empresas: EntregaEmpresa[] = [];
+  empresasOrdenadas: EntregaEmpresa[] = [];
   totales: AdminEntregasTotales | null = null;
   cargando = false;
   descargando = false;
   fechaDesde = '';
   fechaHasta = '';
+
+  ordenColumna: string = 'nombre';
+  ordenDireccion: 'asc' | 'desc' = 'asc';
 
   private get headers(): HttpHeaders {
     const token = getCookie('admin_token');
@@ -58,6 +62,7 @@ export default class ContenedorAdminEntregasComponent implements OnInit {
         next: (resp) => {
           this.empresas = resp.resultados;
           this.totales = resp.totales;
+          this.aplicarOrden();
           this.cargando = false;
         },
         error: () => {
@@ -99,8 +104,40 @@ export default class ContenedorAdminEntregasComponent implements OnInit {
       });
   }
 
+  ordenarPor(columna: string) {
+    if (this.ordenColumna === columna) {
+      this.ordenDireccion = this.ordenDireccion === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.ordenColumna = columna;
+      this.ordenDireccion = 'desc';
+    }
+    this.aplicarOrden();
+  }
+
+  private aplicarOrden() {
+    this.empresasOrdenadas = [...this.empresas].sort((a, b) => {
+      const valA = (a as any)[this.ordenColumna];
+      const valB = (b as any)[this.ordenColumna];
+      let comparacion = 0;
+      if (typeof valA === 'string') {
+        comparacion = (valA || '').localeCompare(valB || '');
+      } else {
+        comparacion = (valA || 0) - (valB || 0);
+      }
+      return this.ordenDireccion === 'asc' ? comparacion : -comparacion;
+    });
+  }
+
   calcularCumplimiento(entregadas: number, total: number): number {
     if (total === 0) return 0;
     return Math.round((entregadas / total) * 1000) / 10;
+  }
+
+  diasDesdeConexion(fecha: string | null): string {
+    if (!fecha) return 'Sin conexión';
+    const diff = Math.floor((Date.now() - new Date(fecha).getTime()) / 86400000);
+    if (diff === 0) return 'Hoy';
+    if (diff === 1) return 'Ayer';
+    return `Hace ${diff} días`;
   }
 }
