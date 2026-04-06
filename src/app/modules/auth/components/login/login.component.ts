@@ -33,6 +33,7 @@ import { TokenService } from '../../services/token.service';
 import { NgxTurnstileModule, NgxTurnstileComponent } from 'ngx-turnstile';
 import { ConfirmarInivitacion } from '../../types/informacion-perfil.type';
 import { ViewChild } from '@angular/core';
+import { setCookie } from 'typescript-cookie';
 
 @Component({
   selector: 'app-login',
@@ -135,6 +136,12 @@ export default class LoginComponent extends General implements OnInit {
               })
             );
             this.tokenService.guardar(resultado.token, calcularTiempo);
+            if (resultado.user.is_staff) {
+              setCookie('admin_token', resultado.token, {
+                expires: calcularTiempo,
+                path: '/',
+              });
+            }
           }
         }),
         switchMap(() => {

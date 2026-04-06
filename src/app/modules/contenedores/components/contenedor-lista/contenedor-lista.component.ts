@@ -47,6 +47,7 @@ import {
 import { GeneralApiService } from '../../../../core/api/general-api.service';
 import { FormsModule } from '@angular/forms';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { obtenerUsuario } from '../../../../redux/selectors/usuario.selector';
 
 @Component({
   selector: 'app-contenedor-lista',
@@ -86,8 +87,15 @@ export default class ContenedorListaComponent
 
   public currentPage = signal<number>(1);
   public searchTerm: string = '';
+  public esAdmin = false;
 
   ngOnInit() {
+    this.store.select(obtenerUsuario).pipe(
+      tap((usuario) => {
+        this.esAdmin = usuario.is_staff;
+        this.changeDetectorRef.detectChanges();
+      })
+    ).subscribe();
     this.consultarLista();
     this.initSearchContenedor();
     this.limpiarEmpresa();
