@@ -1,0 +1,210 @@
+<app-admin-nav></app-admin-nav>
+
+<div class="bg-gray-50 min-h-screen">
+  <div class="container-fixed max-w-[1200px] py-8">
+    <!-- Header -->
+    <div class="flex flex-wrap items-center gap-4 mb-6">
+      <a routerLink="/admin/entregas" [queryParams]="{ desde: fechaDesde, hasta: fechaHasta }"
+        class="flex items-center justify-center w-9 h-9 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors">
+        <i class="ki-filled ki-arrow-left text-sm text-gray-500"></i>
+      </a>
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold text-gray-900">{{ empresa?.nombre || schemaName }}</h1>
+        <p class="text-sm text-gray-500 mt-0.5">{{ fechaDesde }} — {{ fechaHasta }} &middot; {{ despachos.length }} despachos</p>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    @if (despachos.length > 0) {
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-100">
+                <i class="ki-filled ki-delivery-3 text-lg text-blue-600"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-gray-900">{{ despachos.length }}</div>
+                <div class="text-xs text-gray-500">Despachos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-purple-100">
+                <i class="ki-filled ki-geolocation text-lg text-purple-600"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-gray-900">{{ totalVisitas | number }}</div>
+                <div class="text-xs text-gray-500">Visitas totales</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-100">
+                <i class="ki-filled ki-check-circle text-lg text-green-600"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-gray-900">{{ totalEntregadas | number }}</div>
+                <div class="text-xs text-gray-500">Entregadas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <div class="flex items-center gap-3">
+              <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-red-100">
+                <i class="ki-filled ki-cross-circle text-lg text-red-500"></i>
+              </div>
+              <div>
+                <div class="text-2xl font-bold text-gray-900">{{ totalNovedades | number }}</div>
+                <div class="text-xs text-gray-500">Novedades</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Despachos -->
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        @if (cargando) {
+          <div class="flex flex-col items-center justify-center py-20">
+            <span class="animate-spin inline-block w-8 h-8 border-3 border-primary border-t-transparent rounded-full mb-3"></span>
+            <span class="text-sm text-gray-400">Consultando despachos...</span>
+          </div>
+        } @else if (despachos.length === 0) {
+          <div class="flex flex-col items-center justify-center py-20">
+            <i class="ki-filled ki-delivery-3 text-5xl text-gray-200 mb-4"></i>
+            <span class="text-sm text-gray-400">No hay despachos en este rango</span>
+          </div>
+        } @else {
+          <div class="overflow-x-auto">
+            <table class="table table-auto w-full text-sm">
+              <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="w-10 px-4 py-3"></th>
+                  <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">ID</th>
+                  <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Fecha</th>
+                  <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Placa</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Visitas</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entregadas</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">%</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Novedades</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Unids</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Peso</th>
+                  <th class="text-center px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (despacho of despachos; track despacho.id) {
+                  <!-- Fila despacho -->
+                  <tr
+                    (click)="toggleDespacho(despacho.id)"
+                    class="border-t border-gray-100 cursor-pointer transition-colors"
+                    [ngClass]="despachoExpandido === despacho.id ? 'bg-blue-50/60' : 'hover:bg-gray-50/80'"
+                  >
+                    <td class="px-4 py-3 text-center">
+                      <i class="ki-filled text-xs text-gray-400 transition-transform duration-200"
+                        [ngClass]="despachoExpandido === despacho.id ? 'ki-arrow-down' : 'ki-arrow-right'"></i>
+                    </td>
+                    <td class="px-4 py-3 font-mono text-xs text-gray-500">#{{ despacho.id }}</td>
+                    <td class="px-4 py-3 text-gray-700">{{ despacho.fecha | date:'d MMM y, HH:mm' }}</td>
+                    <td class="px-4 py-3">
+                      <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-gray-100 text-xs font-semibold text-gray-700">
+                        <i class="ki-filled ki-delivery-3 text-[10px]"></i>
+                        {{ despacho.vehiculo__placa || 'Sin placa' }}
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right text-gray-600">{{ despacho.visitas | number }}</td>
+                    <td class="px-4 py-3 text-right font-semibold text-gray-900">{{ despacho.visitas_entregadas | number }}</td>
+                    <td class="px-4 py-3 text-right">
+                      <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-semibold"
+                        [ngClass]="{
+                          'bg-green-50 text-green-700': calcularCumplimiento(despacho.visitas_entregadas, despacho.visitas) >= 90,
+                          'bg-yellow-50 text-yellow-700': calcularCumplimiento(despacho.visitas_entregadas, despacho.visitas) >= 70 && calcularCumplimiento(despacho.visitas_entregadas, despacho.visitas) < 90,
+                          'bg-red-50 text-red-600': calcularCumplimiento(despacho.visitas_entregadas, despacho.visitas) < 70
+                        }">
+                        {{ calcularCumplimiento(despacho.visitas_entregadas, despacho.visitas) }}%
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 text-right text-gray-600">{{ despacho.visitas_novedad | number }}</td>
+                    <td class="px-4 py-3 text-right text-gray-600">{{ despacho.unidades | number }}</td>
+                    <td class="px-4 py-3 text-right text-gray-600">{{ despacho.peso | number:'1.0-1' }}</td>
+                    <td class="px-4 py-3 text-center">
+                      @if (despacho.estado_terminado) {
+                        <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-green-100 text-green-700">Terminado</span>
+                      } @else {
+                        <span class="inline-flex px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-100 text-blue-700">En ruta</span>
+                      }
+                    </td>
+                  </tr>
+
+                  <!-- Visitas expandidas -->
+                  @if (despachoExpandido === despacho.id && despacho.visitas_detalle.length > 0) {
+                    <tr>
+                      <td colspan="11" class="p-0">
+                        <div class="bg-gray-50/50 border-y border-gray-200">
+                          <div class="px-8 py-3">
+                            <div class="text-[11px] font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                              Visitas del despacho #{{ despacho.id }} ({{ despacho.visitas_detalle.length }})
+                            </div>
+                            <table class="w-full text-xs">
+                              <thead>
+                                <tr class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                                  <th class="text-left py-2 pr-4">#</th>
+                                  <th class="text-left py-2 pr-4">Documento</th>
+                                  <th class="text-left py-2 pr-4">Destinatario</th>
+                                  <th class="text-left py-2 pr-4">Dirección</th>
+                                  <th class="text-right py-2 pr-4">Unids</th>
+                                  <th class="text-right py-2 pr-4">Peso</th>
+                                  <th class="text-center py-2">Estado</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                @for (visita of despacho.visitas_detalle; track visita.id) {
+                                  <tr class="border-t border-gray-200/60">
+                                    <td class="py-2 pr-4 text-gray-400">{{ visita.orden }}</td>
+                                    <td class="py-2 pr-4 font-mono text-gray-600">{{ visita.documento || '-' }}</td>
+                                    <td class="py-2 pr-4 text-gray-700 font-medium max-w-[180px] truncate">{{ visita.destinatario }}</td>
+                                    <td class="py-2 pr-4 text-gray-500 max-w-[220px] truncate">{{ visita.destinatario_direccion }}</td>
+                                    <td class="py-2 pr-4 text-right text-gray-600">{{ visita.unidades }}</td>
+                                    <td class="py-2 pr-4 text-right text-gray-600">{{ visita.peso | number:'1.0-1' }}</td>
+                                    <td class="py-2 text-center">
+                                      @if (visita.estado_entregado) {
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-green-100 text-green-700">
+                                          <i class="ki-filled ki-check text-[8px]"></i> Entregado
+                                        </span>
+                                      } @else if (visita.estado_novedad) {
+                                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-100 text-red-600">
+                                          <i class="ki-filled ki-cross text-[8px]"></i> Novedad
+                                        </span>
+                                      } @else {
+                                        <span class="inline-flex px-1.5 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-500">Pendiente</span>
+                                      }
+                                    </td>
+                                  </tr>
+                                }
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { getCookie } from 'typescript-cookie';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
@@ -19,6 +20,7 @@ import {
 })
 export default class ContenedorAdminEntregasComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
 
   empresas: EntregaEmpresa[] = [];
   empresasOrdenadas: EntregaEmpresa[] = [];
@@ -131,6 +133,12 @@ export default class ContenedorAdminEntregasComponent implements OnInit {
   calcularCumplimiento(entregadas: number, total: number): number {
     if (total === 0) return 0;
     return Math.round((entregadas / total) * 1000) / 10;
+  }
+
+  verDetalle(schemaName: string) {
+    this.router.navigate(['/admin/entregas', schemaName], {
+      queryParams: { desde: this.fechaDesde, hasta: this.fechaHasta },
+    });
   }
 
   diasDesdeConexion(fecha: string | null): string {
