@@ -24,26 +24,6 @@
       </div>
     </div>
   </div>
-  @if (esAdmin) {
-    <div class="card-body pt-0 pb-4">
-      <a routerLink="/admin/entregas"
-        class="group relative flex items-center gap-5 p-5 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
-        style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #0098d7 100%)">
-        <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm group-hover:bg-white/25 transition-colors">
-          <i class="ki-filled ki-setting-2 text-white text-2xl"></i>
-        </div>
-        <div class="flex flex-col flex-1">
-          <span class="text-white font-semibold text-base">Panel Administrativo</span>
-          <span class="text-white/60 text-xs mt-0.5">Entregas &middot; Decodificadas &middot; WhatsApp</span>
-        </div>
-        <div class="flex items-center gap-1.5 text-white/80 group-hover:text-white transition-colors">
-          <span class="text-sm font-medium">Acceder</span>
-          <i class="ki-filled ki-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
-        </div>
-      </a>
-    </div>
-  }
-
   <div class="card-table scrollable-x-auto">
     <table class="table align-middle text-gray-700 font-medium text-sm">
       <thead>
@@ -55,6 +35,27 @@
         </tr>
       </thead>
       <tbody>
+        @if (esAdmin) {
+        <tr class="bg-blue-50/50">
+          <td class="flex items-center">
+            <div class="flex items-center justify-center rounded-lg border border-1 bg-gray-100" style="min-width: 120px; width: 120px; height: 120px;">
+              <i class="ki-filled ki-setting-2 text-3xl text-gray-400"></i>
+            </div>
+            <div class="flex flex-col items-start ml-4">
+              <span class="text-dark font-bold">Panel Administrativo</span>
+              <span class="text-slate-400 mb-3 text-xs">Entregas &middot; Decodificadas &middot; WhatsApp</span>
+              <span class="badge badge-outline badge-xs badge-primary">admin</span>
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            <div class="flex gap-4">
+              <a routerLink="/admin/entregas" class="btn btn-sm btn-primary">Conectar</a>
+            </div>
+          </td>
+        </tr>
+        }
         @for (contenedor of arrContenedores; let idx = $index; track idx;) {
         <tr>
           <td class="flex items-center">
