@@ -27,14 +27,18 @@
   @if (esAdmin) {
     <div class="card-body pt-0 pb-4">
       <a routerLink="/admin/entregas"
-        class="flex items-center gap-4 p-4 rounded-lg border-2 border-primary bg-primary-light hover:bg-blue-100 transition-colors cursor-pointer">
-        <div class="flex items-center justify-center w-[120px] h-[80px] rounded-lg bg-primary">
-          <i class="ki-filled ki-chart-line text-white text-3xl"></i>
+        class="group relative flex items-center gap-5 p-5 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg"
+        style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #0098d7 100%)">
+        <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-white/15 backdrop-blur-sm group-hover:bg-white/25 transition-colors">
+          <i class="ki-filled ki-setting-2 text-white text-2xl"></i>
         </div>
-        <div class="flex flex-col">
-          <span class="text-dark font-bold text-base">Panel Administrativo</span>
-          <span class="text-gray-500 text-xs mb-2">Entregas por empresa &middot; WhatsApp</span>
-          <span class="badge badge-primary badge-sm w-fit">Acceder</span>
+        <div class="flex flex-col flex-1">
+          <span class="text-white font-semibold text-base">Panel Administrativo</span>
+          <span class="text-white/60 text-xs mt-0.5">Entregas &middot; Decodificadas &middot; WhatsApp</span>
+        </div>
+        <div class="flex items-center gap-1.5 text-white/80 group-hover:text-white transition-colors">
+          <span class="text-sm font-medium">Acceder</span>
+          <i class="ki-filled ki-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
         </div>
       </a>
     </div>

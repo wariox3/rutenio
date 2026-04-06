@@ -1,27 +1,26 @@
 <div
   class="flex h-[100vh] justify-center items-center p-8 lg:p-10"
-  style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%)"
+  style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #0098d7 100%)"
 >
-  <div class="card max-w-[400px] w-full shadow-lg">
+  <div class="card max-w-[420px] w-full shadow-xl">
     <form
       [formGroup]="formularioLogin"
       class="card-body flex flex-col gap-5 p-10"
       (submit)="enviar()"
     >
       <div class="text-center mb-4">
-        <img
-          src="assets/media/app/default-logo.jpg"
-          alt="Ruteo.co"
-          class="h-8 mx-auto mb-5"
-        />
-        <h3 class="text-lg font-medium text-gray-900 leading-none mb-1">
-          Panel de administración
+        <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gray-100 mx-auto mb-5">
+          <i class="ki-filled ki-setting-2 text-2xl text-gray-600"></i>
+        </div>
+        <h3 class="text-lg font-bold text-gray-900 leading-none mb-1">
+          Panel de Administración
         </h3>
         <p class="text-2sm text-gray-500">Acceso exclusivo para administradores</p>
       </div>
 
       @if (errorMensaje) {
-        <div class="bg-red-50 text-red-600 text-sm p-3 rounded-lg text-center">
+        <div class="flex items-center gap-2 bg-red-50 text-red-600 text-sm p-3 rounded-lg">
+          <i class="ki-filled ki-cross-circle text-base"></i>
           {{ errorMensaje }}
         </div>
       }
@@ -39,19 +38,22 @@
         ></app-input-password>
       </div>
 
-      <div class="w-full">
+      <div class="w-full mt-1">
         <app-button
           [type]="'submit'"
           [texto]="'Ingresar'"
           [textoCargando]="'Ingresando...'"
           [estaCargando]="isLoading$ | async"
-          [clases]="'btn btn-primary w-full text-center justify-center'"
+          [clases]="'btn btn-dark w-full text-center justify-center'"
           [estaDeshabilitado]="!this.formularioLogin.valid"
         ></app-button>
       </div>
 
       <div class="text-center">
-        <a routerLink="/auth/login" class="text-2sm link text-gray-500">Volver al login</a>
+        <a routerLink="/auth/login" class="text-2sm link text-gray-500 hover:text-primary transition-colors">
+          <i class="ki-filled ki-arrow-left text-xs mr-1"></i>
+          Volver al login
+        </a>
       </div>
     </form>
   </div>

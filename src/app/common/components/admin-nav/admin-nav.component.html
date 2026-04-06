@@ -1,22 +1,38 @@
-<nav class="bg-white border-b border-gray-200 mb-6">
-  <div class="container-fixed max-w-[1100px] flex items-center justify-between h-14">
-    <div class="flex items-center gap-6">
-      <span class="text-sm font-semibold text-gray-900">Admin Panel</span>
+<nav class="bg-[#1e293b] shadow-md">
+  <div class="container-fixed max-w-[1200px] flex items-center justify-between h-16">
+    <div class="flex items-center gap-8">
+      <a routerLink="/admin/entregas" class="flex items-center gap-2.5">
+        <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-white/10">
+          <i class="ki-filled ki-setting-2 text-white text-base"></i>
+        </div>
+        <span class="text-sm font-semibold text-white">Admin Panel</span>
+      </a>
+      <div class="h-5 w-px bg-white/20"></div>
       <div class="flex items-center gap-1">
         @for (enlace of enlaces; track enlace.ruta) {
           <a
             [routerLink]="enlace.ruta"
-            routerLinkActive="bg-primary-light text-primary"
-            class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+            routerLinkActive="bg-white/15 text-white"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center gap-2 px-3.5 py-2 rounded-lg text-sm font-medium text-white/60 hover:text-white hover:bg-white/10 transition-all duration-200"
           >
-            <i class="ki-filled" [ngClass]="enlace.icono"></i>
+            <i [ngClass]="enlace.icono" class="text-sm"></i>
             {{ enlace.etiqueta }}
           </a>
         }
       </div>
     </div>
-    <button (click)="cerrarSesion()" class="btn btn-sm btn-light">
-      <i class="ki-filled ki-exit-right mr-1"></i> Salir
-    </button>
+    <div class="flex items-center gap-3">
+      <a routerLink="/contenedor/lista"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:text-white hover:bg-white/10 transition-all duration-200">
+        <i class="ki-filled ki-arrow-left text-xs"></i>
+        Contenedores
+      </a>
+      <button (click)="cerrarSesion()"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white/50 hover:text-red-400 hover:bg-white/10 transition-all duration-200">
+        <i class="ki-filled ki-exit-right text-xs"></i>
+        Salir
+      </button>
+    </div>
   </div>
 </nav>
