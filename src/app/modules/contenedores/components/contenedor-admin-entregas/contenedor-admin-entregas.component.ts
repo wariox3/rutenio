@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { getCookie } from 'typescript-cookie';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
@@ -21,6 +21,7 @@ import {
 export default class ContenedorAdminEntregasComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   empresas: EntregaEmpresa[] = [];
   empresasOrdenadas: EntregaEmpresa[] = [];
@@ -39,10 +40,17 @@ export default class ContenedorAdminEntregasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const hoy = new Date();
-    this.fechaHasta = hoy.toISOString().substring(0, 10);
-    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    this.fechaDesde = primerDia.toISOString().substring(0, 10);
+    const qDesde = this.route.snapshot.queryParams['desde'];
+    const qHasta = this.route.snapshot.queryParams['hasta'];
+    if (qDesde && qHasta) {
+      this.fechaDesde = qDesde;
+      this.fechaHasta = qHasta;
+    } else {
+      const hoy = new Date();
+      this.fechaHasta = hoy.toISOString().substring(0, 10);
+      const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+      this.fechaDesde = primerDia.toISOString().substring(0, 10);
+    }
     this.consultar();
   }
 
