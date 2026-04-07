@@ -43,6 +43,26 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   private alertaService = inject(AlertaService);
   private destroy$ = new Subject<void>();
   obtenerEmpresaImagen$ = this.store.select(obtenerEmpresaImagen);
+  mostrarModalConfirmacion = false;
+  modalTitulo = '';
+  modalDescripcion = '';
+  private modalControl: FormControl | null = null;
+  private ignorarCambios = false;
+
+  private switchDescripciones: Record<string, { titulo: string; descripcion: string }> = {
+    rut_sincronizar_complemento: {
+      titulo: 'Sincronizar complemento',
+      descripcion: 'Las entregas se sincronizarán automáticamente con el sistema complementario. Si se desactiva, los datos no se actualizarán en el sistema externo.',
+    },
+    rut_rutear_franja: {
+      titulo: 'Rutear por franjas',
+      descripcion: 'Las visitas se asignarán solo a vehículos cuyas franjas coincidan. Requiere que los vehículos tengan franjas asignadas. Visitas sin franja se asignarán a cualquier vehículo.',
+    },
+    rut_whatsapp_habilitado: {
+      titulo: 'Notificaciones WhatsApp',
+      descripcion: 'Se enviarán notificaciones WhatsApp a los destinatarios al aprobar despachos. Requiere tener configurada la integración con WhatsApp.',
+    },
+  };
 
   formularioConfiguracion = new FormGroup({
     id: new FormControl(0),
@@ -82,6 +102,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         takeUntil(this.destroy$),
         tap((configuracion) => {
           if (configuracion.id > 0) {
+            this.ignorarCambios = true;
             this.formularioConfiguracion.patchValue({
               id: configuracion.id,
               empresa: configuracion.empresa,
@@ -94,15 +115,45 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_estrategia_ruteo: configuracion.rut_estrategia_ruteo || 'balanceado',
               rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
             });
+            this.ignorarCambios = false;
           }
         })
       )
       .subscribe();
+
+    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_whatsapp_habilitado'] as const;
+    for (const key of switches) {
+      this.formularioConfiguracion.controls[key].valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          if (this.ignorarCambios) return;
+          const info = this.switchDescripciones[key];
+          this.modalTitulo = info.titulo;
+          this.modalDescripcion = info.descripcion;
+          this.modalControl = this.formularioConfiguracion.controls[key];
+          this.mostrarModalConfirmacion = true;
+        });
+    }
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  cerrarConfirmacion() {
+    if (this.modalControl) {
+      this.ignorarCambios = true;
+      this.modalControl.setValue(!this.modalControl.value);
+      this.ignorarCambios = false;
+    }
+    this.mostrarModalConfirmacion = false;
+    this.modalControl = null;
+  }
+
+  confirmarCambio() {
+    this.mostrarModalConfirmacion = false;
+    this.modalControl = null;
   }
 
   submit() {
