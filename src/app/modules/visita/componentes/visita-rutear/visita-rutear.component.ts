@@ -455,10 +455,18 @@ export default class VisitaRutearComponent extends General implements OnInit {
           this.mostarVistaCargando$.next(false);
         })
       )
-      .subscribe(() => {
-        this.consultarFlotas(this.arrParametrosConsultaFlota);
-        this.consultarVisitas();
-        this.alerta.mensajaExitoso('Se ha ordenado correctamente');
+      .subscribe({
+        next: () => {
+          this.consultarFlotas(this.arrParametrosConsultaFlota);
+          this.consultarVisitas();
+          this.alerta.mensajaExitoso('Se ha ordenado correctamente');
+        },
+        error: (error) => {
+          this.alerta.mensajeError(
+            'Error al ordenar',
+            error?.error?.mensaje || 'Ocurrió un error inesperado'
+          );
+        },
       });
   }
 
@@ -472,10 +480,32 @@ export default class VisitaRutearComponent extends General implements OnInit {
         })
       )
       .subscribe({
-        next: () => {
-          this.consultarLista();
-          this.alerta.mensajaExitoso('Se ha ruteado correctamente');
-          this.router.navigate(['/diseno-ruta/lista']);
+        next: (respuesta: any) => {
+          const mensaje = respuesta?.mensaje || '';
+          const rechazos = respuesta?.rechazos || {};
+          const tieneRechazos = Object.keys(rechazos).length > 0;
+
+          if (mensaje.includes('0 rutas creadas')) {
+            let textoError = mensaje;
+            if (tieneRechazos) {
+              const detalles = Object.entries(rechazos)
+                .map(([visita, razon]) => `Visita ${visita}: ${razon}`)
+                .join('<br>');
+              textoError += `<br><br><b>Razones:</b><br>${detalles}`;
+            }
+            this.alerta.mensajeError('No se crearon rutas', textoError);
+            this.consultarLista();
+          } else {
+            this.alerta.mensajaExitoso(mensaje || 'Se ha ruteado correctamente');
+            this.consultarLista();
+            this.router.navigate(['/diseno-ruta/lista']);
+          }
+        },
+        error: (error) => {
+          this.alerta.mensajeError(
+            'Error al rutear',
+            error?.error?.mensaje || 'Ocurrió un error inesperado'
+          );
         },
       });
   }
