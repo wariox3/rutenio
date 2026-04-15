@@ -14,11 +14,15 @@ import {
   MapMarker,
 } from '@angular/google-maps';
 import {
+  filter,
   finalize,
+  interval,
   Observable,
   Subject,
+  switchMap,
   takeUntil,
 } from 'rxjs';
+import { Alerta } from '../../../../interfaces/alerta/alerta.interface';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
@@ -161,6 +165,10 @@ export default class TraficoListaComponent
    */
   arrFiltros: Record<string, any> = { page: 1 };
 
+  private readonly ALERTAS_INTERVALO_MS = 30000;
+  private alertasIdsMostradas = new Set<number>();
+  private mostrandoAlerta = false;
+
   arrDespachos: Despacho[] = [];
   arrVisitasPorDespacho: Visita[] = [];
   private map: google.maps.Map;
@@ -192,6 +200,94 @@ export default class TraficoListaComponent
     this._construirFiltros();
     this.filtroKey.set('trafico_lista_filtro');
     this.consultarLista();
+    this._iniciarPollingAlertas();
+  }
+
+  private _iniciarPollingAlertas(): void {
+    this._consultarAlertas();
+    interval(this.ALERTAS_INTERVALO_MS)
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(() => !this.mostrandoAlerta),
+        switchMap(() =>
+          this._generalApiService.consultaApi<RespuestaApi<Alerta>>(
+            'ruteo/alerta/',
+            { leida: 'False', ordering: 'fecha' }
+          )
+        )
+      )
+      .subscribe({
+        next: (respuesta) => this._procesarAlertas(respuesta.results),
+        error: (error) => console.error('Error consultando alertas:', error),
+      });
+  }
+
+  private _consultarAlertas(): void {
+    this._generalApiService
+      .consultaApi<RespuestaApi<Alerta>>('ruteo/alerta/', {
+        leida: 'False',
+        ordering: 'fecha',
+      })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => this._procesarAlertas(respuesta.results),
+        error: (error) => console.error('Error consultando alertas:', error),
+      });
+  }
+
+  private async _procesarAlertas(alertas: Alerta[]): Promise<void> {
+    if (this.mostrandoAlerta) return;
+    const pendientes = alertas.filter((a) => !this.alertasIdsMostradas.has(a.id));
+    if (pendientes.length === 0) return;
+    this.mostrandoAlerta = true;
+    try {
+      for (const alerta of pendientes) {
+        this.alertasIdsMostradas.add(alerta.id);
+        await this.alerta.alertaTrafico(
+          this._tituloAlerta(alerta),
+          this._cuerpoAlerta(alerta)
+        );
+        this._marcarAlertaLeida(alerta.id);
+      }
+    } finally {
+      this.mostrandoAlerta = false;
+    }
+  }
+
+  private _tituloAlerta(alerta: Alerta): string {
+    if (alerta.tipo === 'parada_prolongada') return 'Parada prolongada';
+    if (alerta.tipo === 'fuera_geocerca') return 'Vehículo fuera de geocerca';
+    return 'Alerta';
+  }
+
+  private _cuerpoAlerta(alerta: Alerta): string {
+    const placa = alerta.despacho__vehiculo__placa || 'N/D';
+    const fecha = new Date(alerta.fecha).toLocaleString();
+    const partes = [
+      `<b>Vehículo:</b> ${placa}`,
+      `<b>Despacho:</b> ${alerta.despacho ?? 'N/D'}`,
+    ];
+    if (alerta.visita__numero) {
+      partes.push(`<b>Visita:</b> ${alerta.visita__numero} - ${alerta.visita__destinatario || ''}`);
+    }
+    if (alerta.duracion_minutos) {
+      partes.push(`<b>Tiempo detenido:</b> ${alerta.duracion_minutos} min`);
+    }
+    if (alerta.latitud && alerta.longitud) {
+      const url = `https://www.google.com/maps?q=${alerta.latitud},${alerta.longitud}`;
+      partes.push(`<a href="${url}" target="_blank" class="text-blue-600 underline">Ver en mapa</a>`);
+    }
+    partes.push(`<span class="text-xs text-gray-500">${fecha}</span>`);
+    return partes.join('<br/>');
+  }
+
+  private _marcarAlertaLeida(id: number): void {
+    this._httpService
+      .patch(`ruteo/alerta/${id}/`, { leida: true })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: (error) => console.error('Error marcando alerta leída:', error),
+      });
   }
 
   private _construirFiltros() {

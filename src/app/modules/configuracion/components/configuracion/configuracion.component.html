@@ -79,6 +79,44 @@
           [control]="formularioConfiguracion.controls.rut_whatsapp_habilitado"
           class="block"
         ></app-switch>
+
+        <app-switch
+          titulo="Alerta de parada prolongada"
+          [control]="formularioConfiguracion.controls.rut_alerta_parada_activa"
+          class="block"
+        ></app-switch>
+
+        <div
+          *ngIf="formularioConfiguracion.controls.rut_alerta_parada_activa.value"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200"
+        >
+          <div>
+            <label class="form-label font-normal text-gray-900">Minutos detenido para alertar</label>
+            <input
+              type="number"
+              min="1"
+              class="input w-auto"
+              formControlName="rut_alerta_parada_minutos"
+            />
+            <p class="text-xs text-gray-500 mt-1">Tiempo mínimo sin movimiento para generar la alerta.</p>
+          </div>
+          <div>
+            <label class="form-label font-normal text-gray-900">Radio (metros)</label>
+            <input
+              type="number"
+              min="10"
+              class="input w-auto"
+              formControlName="rut_alerta_parada_radio_metros"
+            />
+            <p class="text-xs text-gray-500 mt-1">Distancia máxima dentro de la cual se considera detenido.</p>
+          </div>
+        </div>
+
+        <app-switch
+          titulo="Alerta de salida de geocerca"
+          [control]="formularioConfiguracion.controls.rut_alerta_geocerca_activa"
+          class="block"
+        ></app-switch>
       </div>
     </form>
   </div>
