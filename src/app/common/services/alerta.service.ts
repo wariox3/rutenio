@@ -202,6 +202,19 @@ export class AlertaService {
     });
   }
 
+  async alertaTrafico(titulo: string, html: string) {
+    return await Swal.fire({
+      ...this.getBaseConfig(),
+      title: titulo,
+      html,
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+      confirmButtonColor: '#f59e0b',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  }
+
   async confirmar({
     colorConfirmar = '#d33',
     texto,

@@ -18,5 +18,9 @@ export interface Configuracion {
     rut_hora_inicio: string
     rut_whatsapp_habilitado: boolean
     rut_estrategia_ruteo: string
+    rut_alerta_parada_activa: boolean
+    rut_alerta_parada_minutos: number
+    rut_alerta_parada_radio_metros: number
+    rut_alerta_geocerca_activa: boolean
 }
   

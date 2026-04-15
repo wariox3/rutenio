@@ -62,6 +62,14 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       titulo: 'Notificaciones WhatsApp',
       descripcion: 'Se enviarán notificaciones WhatsApp a los destinatarios al aprobar despachos. Requiere tener configurada la integración con WhatsApp.',
     },
+    rut_alerta_parada_activa: {
+      titulo: 'Alerta de parada prolongada',
+      descripcion: 'Se generará una alerta cuando un vehículo permanezca detenido más tiempo del permitido durante un despacho activo. La alerta aparecerá como pop-up en el módulo de Tráfico.',
+    },
+    rut_alerta_geocerca_activa: {
+      titulo: 'Alerta de salida de geocerca',
+      descripcion: 'Se generará una alerta cuando un vehículo salga de la franja asignada a la visita en curso. La alerta aparecerá como pop-up en el módulo de Tráfico.',
+    },
   };
 
   formularioConfiguracion = new FormGroup({
@@ -75,6 +83,10 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     rut_hora_inicio: new FormControl('07:00'),
     rut_estrategia_ruteo: new FormControl('balanceado'),
     rut_whatsapp_habilitado: new FormControl(false),
+    rut_alerta_parada_activa: new FormControl(false),
+    rut_alerta_parada_minutos: new FormControl(15),
+    rut_alerta_parada_radio_metros: new FormControl(80),
+    rut_alerta_geocerca_activa: new FormControl(false),
   });
 
   goBack(): void {
@@ -114,6 +126,10 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_hora_inicio: configuracion.rut_hora_inicio || '07:00',
               rut_estrategia_ruteo: configuracion.rut_estrategia_ruteo || 'balanceado',
               rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
+              rut_alerta_parada_activa: configuracion.rut_alerta_parada_activa,
+              rut_alerta_parada_minutos: configuracion.rut_alerta_parada_minutos ?? 15,
+              rut_alerta_parada_radio_metros: configuracion.rut_alerta_parada_radio_metros ?? 80,
+              rut_alerta_geocerca_activa: configuracion.rut_alerta_geocerca_activa,
             });
             this.ignorarCambios = false;
           }
@@ -121,7 +137,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       )
       .subscribe();
 
-    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_whatsapp_habilitado'] as const;
+    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_whatsapp_habilitado', 'rut_alerta_parada_activa', 'rut_alerta_geocerca_activa'] as const;
     for (const key of switches) {
       this.formularioConfiguracion.controls[key].valueChanges
         .pipe(takeUntil(this.destroy$))
