@@ -35,6 +35,9 @@ let estadoInicializado: Configuracion = {
   rut_alerta_parada_minutos: 15,
   rut_alerta_parada_radio_metros: 80,
   rut_alerta_geocerca_activa: false,
+  rut_limite_complemento: 1000,
+  rut_limite_importacion: 500,
+  rut_alertas_intervalo_segundos: 30,
 };
 
 const initialState: Configuracion = datosConfiguracion
