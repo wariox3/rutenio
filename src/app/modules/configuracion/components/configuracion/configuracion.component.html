@@ -68,6 +68,39 @@
           class="block"
         ></app-switch>
 
+        <div>
+          <label class="form-label font-normal text-gray-900">Límite de entregas por complemento</label>
+          <input
+            type="number"
+            min="1"
+            class="input w-auto"
+            formControlName="rut_limite_complemento"
+          />
+          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde complemento.</p>
+        </div>
+
+        <div>
+          <label class="form-label font-normal text-gray-900">Límite de registros por importación</label>
+          <input
+            type="number"
+            min="1"
+            class="input w-auto"
+            formControlName="rut_limite_importacion"
+          />
+          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de filas permitidas al importar visitas desde archivo Excel.</p>
+        </div>
+
+        <div>
+          <label class="form-label font-normal text-gray-900">Intervalo de alertas (segundos)</label>
+          <input
+            type="number"
+            min="5"
+            class="input w-auto"
+            formControlName="rut_alertas_intervalo_segundos"
+          />
+          <p class="text-xs text-gray-500 mt-1">Frecuencia con la que el módulo de Tráfico consulta nuevas alertas.</p>
+        </div>
+
         <app-switch
           titulo="Rutear por franjas"
           [control]="formularioConfiguracion.controls.rut_rutear_franja"

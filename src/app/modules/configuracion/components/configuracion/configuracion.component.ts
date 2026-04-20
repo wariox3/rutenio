@@ -87,6 +87,9 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     rut_alerta_parada_minutos: new FormControl(15),
     rut_alerta_parada_radio_metros: new FormControl(80),
     rut_alerta_geocerca_activa: new FormControl(false),
+    rut_limite_complemento: new FormControl(1000),
+    rut_limite_importacion: new FormControl(500),
+    rut_alertas_intervalo_segundos: new FormControl(30),
   });
 
   goBack(): void {
@@ -130,6 +133,9 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_alerta_parada_minutos: configuracion.rut_alerta_parada_minutos ?? 15,
               rut_alerta_parada_radio_metros: configuracion.rut_alerta_parada_radio_metros ?? 80,
               rut_alerta_geocerca_activa: configuracion.rut_alerta_geocerca_activa,
+              rut_limite_complemento: configuracion.rut_limite_complemento ?? 1000,
+              rut_limite_importacion: configuracion.rut_limite_importacion ?? 500,
+              rut_alertas_intervalo_segundos: configuracion.rut_alertas_intervalo_segundos ?? 30,
             });
             this.ignorarCambios = false;
           }
