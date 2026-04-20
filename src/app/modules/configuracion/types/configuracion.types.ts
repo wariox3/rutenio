@@ -22,5 +22,8 @@ export interface Configuracion {
     rut_alerta_parada_minutos: number
     rut_alerta_parada_radio_metros: number
     rut_alerta_geocerca_activa: boolean
+    rut_limite_complemento: number
+    rut_limite_importacion: number
+    rut_alertas_intervalo_segundos: number
 }
   

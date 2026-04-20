@@ -20,8 +20,10 @@ import {
   Observable,
   Subject,
   switchMap,
+  take,
   takeUntil,
 } from 'rxjs';
+import { obtenerConfiguracionInformacion } from '../../../../redux/selectors/configuracion.selectors';
 import { Alerta } from '../../../../interfaces/alerta/alerta.interface';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
@@ -165,7 +167,7 @@ export default class TraficoListaComponent
    */
   arrFiltros: Record<string, any> = { page: 1 };
 
-  private readonly ALERTAS_INTERVALO_MS = 30000;
+  private alertasIntervaloMs = 30000;
   private alertasIdsMostradas = new Set<number>();
   private mostrandoAlerta = false;
 
@@ -204,8 +206,16 @@ export default class TraficoListaComponent
   }
 
   private _iniciarPollingAlertas(): void {
+    this.store
+      .select(obtenerConfiguracionInformacion)
+      .pipe(take(1))
+      .subscribe((configuracion) => {
+        const segundos = configuracion?.rut_alertas_intervalo_segundos ?? 30;
+        this.alertasIntervaloMs = Math.max(segundos, 5) * 1000;
+      });
+
     this._consultarAlertas();
-    interval(this.ALERTAS_INTERVALO_MS)
+    interval(this.alertasIntervaloMs)
       .pipe(
         takeUntil(this.destroy$),
         filter(() => !this.mostrandoAlerta),
