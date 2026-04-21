@@ -240,3 +240,55 @@ body.driver-active {
     html.dark & { border-color: #1e1e2d; }
   }
 }
+/* ========== SweetAlert2 — animaciones custom ========== */
+
+@keyframes swal-fade-scale-in {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes swal-fade-scale-out {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.95) translateY(4px); }
+}
+@keyframes swal-slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes swal-slide-out-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(24px); }
+}
+
+.swal2-show-fade-scale  { animation: swal-fade-scale-in  .22s cubic-bezier(.4, 0, .2, 1); }
+.swal2-hide-fade-scale  { animation: swal-fade-scale-out .15s cubic-bezier(.4, 0, .2, 1); }
+.swal2-show-slide-in-right  { animation: swal-slide-in-right  .22s cubic-bezier(.4, 0, .2, 1); }
+.swal2-hide-slide-out-right { animation: swal-slide-out-right .18s cubic-bezier(.4, 0, .2, 1); }
+
+/* Backdrop más sutil para modales */
+.swal2-container.swal2-backdrop-show {
+  background: rgba(17, 24, 39, .35) !important;
+  backdrop-filter: blur(2px);
+}
+
+/* Icono SweetAlert con menos peso visual */
+.swal2-popup .swal2-icon {
+  border-width: 2.5px !important;
+}
+.swal2-popup .swal2-icon.swal2-success [class^="swal2-success-line"] { background-color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-success .swal2-success-ring { border-color: currentColor !important; opacity: .2; }
+.swal2-popup .swal2-icon.swal2-error [class^="swal2-x-mark-line"] { background-color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-warning { color: inherit !important; border-color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-warning .swal2-icon-content { color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-info { color: inherit !important; border-color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-info .swal2-icon-content { color: currentColor !important; }
+.swal2-popup .swal2-icon.swal2-question { color: inherit !important; border-color: currentColor !important; }
+
+/* Toast: icono a la izquierda, layout horizontal */
+.swal2-toast .swal2-icon { margin: 0 !important; }
+.swal2-toast .swal2-title { padding: 0 !important; margin: 0 !important; }
+.swal2-toast .swal2-html-container { padding: 0 !important; margin: 2px 0 0 0 !important; }
+.swal2-toast .swal2-close { top: 2px !important; right: 4px !important; }
+.swal2-toast .swal2-timer-progress-bar-container {
+  border-radius: 0 0 12px 12px !important;
+  overflow: hidden !important;
+}
