@@ -1,0 +1,129 @@
+<div class="p-6 max-w-3xl mx-auto">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-semibold">Conexión WhatsApp</h1>
+      <p class="text-sm text-gray-500">Integración directa con Meta Cloud API para el inbox del contenedor.</p>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="text-gray-500 py-12 text-center">Cargando...</div>
+
+  <ng-container *ngIf="!cargando">
+    <!-- Estado actual -->
+    <div *ngIf="conexion && !mostrarFormulario" class="bg-white border rounded-lg p-6 mb-4">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <span
+            class="inline-flex h-3 w-3 rounded-full"
+            [ngClass]="{
+              'bg-green-500': conexion.estado === 'activo',
+              'bg-yellow-500': conexion.estado === 'pendiente',
+              'bg-red-500': conexion.estado === 'error'
+            }">
+          </span>
+          <span class="font-medium capitalize">{{ conexion.estado }}</span>
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                  (click)="probar()" [disabled]="probando">
+            {{ probando ? 'Probando...' : 'Probar' }}
+          </button>
+          <button type="button" class="px-3 py-1 text-sm border rounded hover:bg-gray-50"
+                  (click)="editar()">
+            Editar
+          </button>
+        </div>
+      </div>
+
+      <dl class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <dt class="text-gray-500">Número</dt>
+          <dd class="font-medium">{{ conexion.display_phone_number || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">Nombre verificado</dt>
+          <dd class="font-medium">{{ conexion.verified_name || '—' }}</dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">Phone Number ID</dt>
+          <dd class="font-mono text-xs break-all">{{ conexion.phone_number_id }}</dd>
+        </div>
+        <div>
+          <dt class="text-gray-500">WABA ID</dt>
+          <dd class="font-mono text-xs break-all">{{ conexion.waba_id }}</dd>
+        </div>
+        <div class="col-span-2">
+          <dt class="text-gray-500">Verify Token (para Meta webhook)</dt>
+          <dd class="font-mono text-xs break-all">{{ conexion.verify_token }}</dd>
+        </div>
+        <div class="col-span-2" *ngIf="conexion.error_mensaje">
+          <dt class="text-red-600">Error</dt>
+          <dd class="text-red-700 text-xs">{{ conexion.error_mensaje }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <!-- Formulario -->
+    <form *ngIf="mostrarFormulario" [formGroup]="formulario" (ngSubmit)="guardar()"
+          class="bg-white border rounded-lg p-6 space-y-4">
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Phone Number ID *</label>
+        <input type="text" formControlName="phone_number_id"
+               class="w-full border rounded px-3 py-2 text-sm font-mono"
+               placeholder="ej: 1058867180636825"/>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">WABA ID *</label>
+        <input type="text" formControlName="waba_id"
+               class="w-full border rounded px-3 py-2 text-sm font-mono"
+               placeholder="ej: 1609638786754825"/>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Access Token *</label>
+        <textarea formControlName="access_token" rows="3"
+                  class="w-full border rounded px-3 py-2 text-xs font-mono"
+                  placeholder="Token permanente del System User (se guarda cifrado)"></textarea>
+        <p class="text-xs text-gray-500 mt-1">Usa un System User Token de Business Manager. Los temporales de 24h solo sirven para pruebas.</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">App Secret (opcional)</label>
+        <input type="password" formControlName="app_secret"
+               class="w-full border rounded px-3 py-2 text-sm"
+               placeholder="Para validar firma HMAC del webhook"/>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Verify Token (opcional)</label>
+        <input type="text" formControlName="verify_token"
+               class="w-full border rounded px-3 py-2 text-sm font-mono"
+               placeholder="Se genera automáticamente si se deja vacío"/>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                [disabled]="guardando || formulario.invalid">
+          {{ guardando ? 'Guardando...' : (conexion ? 'Actualizar' : 'Conectar') }}
+        </button>
+        <button *ngIf="conexion" type="button" class="px-4 py-2 border text-sm rounded hover:bg-gray-50"
+                (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <!-- Ayuda -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded p-4 text-sm text-blue-900">
+      <p class="font-medium mb-2">Cómo obtener las credenciales</p>
+      <ol class="list-decimal list-inside space-y-1 text-xs">
+        <li>developers.facebook.com → App → WhatsApp → API Setup</li>
+        <li>Copiar <b>Phone Number ID</b> y <b>WABA ID</b></li>
+        <li>Generar <b>Access Token</b> desde un System User (Business Manager) con permisos <code>whatsapp_business_messaging</code> y <code>whatsapp_business_management</code></li>
+        <li>Configurar el webhook en Meta apuntando a <code>https://tu-dominio/mensajeria/webhook/whatsapp/</code> usando el <b>Verify Token</b> de arriba</li>
+      </ol>
+    </div>
+  </ng-container>
+</div>
