@@ -70,6 +70,10 @@ export default [
       {
         path: '',
         loadComponent: () => import('../modules/configuracion/components/configuracion/configuracion.component')
+      },
+      {
+        path: 'whatsapp',
+        loadComponent: () => import('../modules/mensajeria/components/whatsapp-conexion/whatsapp-conexion.component')
       }
     ]
   },
@@ -148,6 +152,19 @@ export default [
         path: '',
         loadChildren: () =>
           import('../modules/complementos/complemento.routes'),
+      },
+    ]
+  },
+  {
+    path: 'mensajeria',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () =>
+      import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('../modules/mensajeria/components/inbox/inbox.component'),
       },
     ]
   },

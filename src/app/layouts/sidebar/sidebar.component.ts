@@ -54,6 +54,12 @@ export class SidebarComponent extends General implements OnInit {
       activo: false,
     },
     {
+      nombre: 'Mensajería',
+      link: '/mensajeria',
+      iconoClase: 'ki-filled ki-messages',
+      activo: false,
+    },
+    {
       nombre: 'Movimiento',
       link: '',
       iconoClase: 'ki-filled ki-book',
