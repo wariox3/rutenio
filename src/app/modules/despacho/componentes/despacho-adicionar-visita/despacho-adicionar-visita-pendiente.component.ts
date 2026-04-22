@@ -26,6 +26,7 @@ import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.
 })
 export class VisitaAdicionarPendienteComponent extends General implements OnInit {
   @Input() despachoId: number;
+  @Input() esTrafico: boolean = false;
   private _despachoApiService = inject(DespachoApiService);
   private _generalApiService = inject(GeneralApiService);
 
@@ -116,6 +117,7 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
     this._despachoApiService.adicionarVisita({
       id: this.despachoId,
       visita_id: visitaId,
+      trafico: this.esTrafico,
     }).subscribe({
       next: (response) => {
         this.alerta.mensajaExitoso(response.mensaje);
@@ -125,6 +127,12 @@ export class VisitaAdicionarPendienteComponent extends General implements OnInit
           map((visitas) => visitas.filter((v) => v.id !== visitaId))
         );
 
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (err) => {
+        this.procesando = null;
+        const mensaje = err?.error?.mensaje || err?.message || 'No se pudo adicionar la visita';
+        this.alerta.mensajeError('Error', mensaje);
         this.changeDetectorRef.detectChanges();
       },
     });
