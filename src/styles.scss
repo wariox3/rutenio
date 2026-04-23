@@ -292,3 +292,140 @@ body.driver-active {
   border-radius: 0 0 12px 12px !important;
   overflow: hidden !important;
 }
+
+/* ========== SweetAlert2 — dark mode overrides ========== */
+html.dark {
+  .swal2-container.swal2-backdrop-show {
+    background: rgba(0, 0, 0, .55) !important;
+  }
+
+  .swal2-popup {
+    background-color: rgb(17 24 39) !important;   /* gray-900 */
+    color: rgb(229 231 235) !important;            /* gray-200 */
+    border-color: rgb(31 41 55) !important;        /* gray-800 */
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / .7) !important;
+  }
+
+  .swal2-popup .swal2-title {
+    color: rgb(243 244 246) !important;            /* gray-100 */
+  }
+
+  .swal2-popup .swal2-html-container {
+    color: rgb(156 163 175) !important;            /* gray-400 */
+  }
+
+  .swal2-popup .swal2-close {
+    color: rgb(107 114 128) !important;            /* gray-500 */
+
+    &:hover {
+      color: rgb(229 231 235) !important;
+      background-color: rgb(31 41 55) !important;  /* gray-800 */
+    }
+  }
+
+  .swal2-popup .swal2-input,
+  .swal2-popup .swal2-textarea,
+  .swal2-popup .swal2-select {
+    background-color: rgb(31 41 55) !important;    /* gray-800 */
+    border-color: rgb(55 65 81) !important;        /* gray-700 */
+    color: rgb(229 231 235) !important;
+
+    &::placeholder {
+      color: rgb(107 114 128) !important;
+    }
+
+    &:focus {
+      background-color: rgb(17 24 39) !important;
+      border-color: rgb(59 130 246) !important;    /* blue-500 */
+    }
+  }
+
+  .swal2-popup .swal2-input-label,
+  .swal2-popup .swal2-validation-message {
+    color: rgb(156 163 175) !important;
+  }
+
+  .swal2-popup .swal2-validation-message {
+    background-color: rgb(127 29 29 / .3) !important;  /* red-900/30 */
+    color: rgb(252 165 165) !important;                /* red-300 */
+  }
+
+  .swal2-popup .swal2-footer {
+    border-color: rgb(31 41 55) !important;        /* gray-800 */
+    color: rgb(156 163 175) !important;
+  }
+
+  /* Cancel button = superficie secundaria en dark */
+  .swal2-popup .swal2-cancel {
+    background-color: rgb(31 41 55) !important;    /* gray-800 */
+    color: rgb(229 231 235) !important;
+    border-color: rgb(55 65 81) !important;        /* gray-700 */
+
+    &:hover {
+      background-color: rgb(55 65 81) !important;
+    }
+  }
+}
+
+/* ========== Dashboard — dark mode overrides forzados ========== */
+html.dark {
+  /* Cards KPI + gráficos */
+  .kpi-tarjeta,
+  app-dashboard-cumplimiento-zona > div,
+  app-dashboard-utilizacion-flota > div {
+    background-color: rgb(17 24 39) !important;    /* gray-900 */
+    border-color: rgb(31 41 55) !important;         /* gray-800 */
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / .05);
+  }
+
+  .kpi-tarjeta:hover,
+  app-dashboard-cumplimiento-zona > div:hover,
+  app-dashboard-utilizacion-flota > div:hover {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / .1);
+  }
+
+  /* Divisores internos de card */
+  .kpi-tarjeta .border-t,
+  app-dashboard-cumplimiento-zona .border-t,
+  app-dashboard-utilizacion-flota .border-t {
+    border-color: rgb(55 65 81) !important;         /* gray-700 */
+  }
+
+  /* Barras de progreso en dashboard */
+  .kpi-tarjeta .bg-gray-100,
+  app-dashboard-utilizacion-flota .bg-gray-100 {
+    background-color: rgb(55 65 81) !important;     /* gray-700 */
+  }
+}
+
+/* ========== Dashboard — textos dark mode forzados ========== */
+html.dark {
+  app-dashboard h1.text-gray-800 { color: rgb(243 244 246) !important; }   /* gray-100 */
+  app-dashboard h1 .text-gray-500 { color: rgb(156 163 175) !important; }  /* gray-400 */
+  app-dashboard > div > .flex p.text-gray-400 { color: rgb(107 114 128) !important; }
+
+  /* Cards KPI */
+  .kpi-tarjeta .text-gray-500 { color: rgb(209 213 219) !important; }
+  .kpi-tarjeta .text-gray-900 { color: rgb(243 244 246) !important; }
+  .kpi-tarjeta .text-gray-400 { color: rgb(107 114 128) !important; }
+  .kpi-tarjeta .text-gray-600 { color: rgb(209 213 219) !important; }
+  .kpi-tarjeta .text-gray-700 { color: rgb(229 231 235) !important; }
+  .kpi-tarjeta .text-gray-300 { color: rgb(75 85 99) !important; }
+
+  /* Cumplimiento zona + Utilización flota */
+  app-dashboard-cumplimiento-zona .text-gray-800,
+  app-dashboard-cumplimiento-zona .text-gray-900,
+  app-dashboard-utilizacion-flota .text-gray-800,
+  app-dashboard-utilizacion-flota .text-gray-900 { color: rgb(243 244 246) !important; }
+
+  app-dashboard-cumplimiento-zona .text-gray-700,
+  app-dashboard-utilizacion-flota .text-gray-700 { color: rgb(229 231 235) !important; }
+
+  app-dashboard-cumplimiento-zona .text-gray-500,
+  app-dashboard-utilizacion-flota .text-gray-500 { color: rgb(156 163 175) !important; }
+
+  app-dashboard-cumplimiento-zona .text-gray-400,
+  app-dashboard-cumplimiento-zona .text-gray-300,
+  app-dashboard-utilizacion-flota .text-gray-400,
+  app-dashboard-utilizacion-flota .text-gray-300 { color: rgb(107 114 128) !important; }
+}

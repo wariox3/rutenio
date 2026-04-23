@@ -1,19 +1,17 @@
-<div class="kpi-tarjeta group bg-white dark:bg-coal-300 rounded-xl border border-gray-100 dark:border-gray-200 p-5 hover:shadow-lg hover:border-gray-200 transition-all duration-300 h-full flex flex-col">
+<div class="kpi-tarjeta group bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 dark:ring-1 dark:ring-white/5 p-5 hover:shadow-lg hover:border-gray-200 dark:hover:shadow-none dark:hover:ring-white/10 transition-all duration-300 h-full flex flex-col">
   <!-- Header: Icono + Título + Ayuda -->
   <div class="flex items-start justify-between mb-3">
     <div class="flex items-center gap-2.5">
       @if (kpi.icono) {
-        <div
-          class="flex items-center justify-center w-10 h-10 rounded-xl transition-transform duration-300 group-hover:scale-110"
-          [style.backgroundColor]="(kpi.colorIcono || '#0098d7') + '18'"
-        >
-          <i class="{{ kpi.icono }} text-lg" [style.color]="kpi.colorIcono || '#0098d7'"></i>
+        <div class="relative flex items-center justify-center w-10 h-10 rounded-xl transition-transform duration-300 group-hover:scale-110 overflow-hidden">
+          <span class="absolute inset-0 rounded-xl opacity-[0.1] dark:opacity-[0.22]" [style.backgroundColor]="kpi.colorIcono || '#0098d7'"></span>
+          <i class="{{ kpi.icono }} text-lg relative" [style.color]="kpi.colorIcono || '#0098d7'"></i>
         </div>
       }
       <div>
-        <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest leading-tight block">{{ kpi.titulo }}</span>
+        <span class="text-[11px] font-bold text-gray-500 dark:text-gray-300 uppercase tracking-widest leading-tight block">{{ kpi.titulo }}</span>
         @if (kpi.descripcion) {
-          <span class="text-[10px] text-gray-400 leading-tight hidden xl:block">{{ kpi.descripcion }}</span>
+          <span class="text-[10px] text-gray-400 dark:text-gray-500 leading-tight hidden xl:block">{{ kpi.descripcion }}</span>
         }
       </div>
     </div>
@@ -26,7 +24,7 @@
       }
       @if (kpi.detalleAyuda) {
         <button
-          class="text-gray-300 hover:text-[#0098d7] transition-colors p-0.5"
+          class="text-gray-300 dark:text-gray-600 hover:text-[#0098d7] dark:hover:text-[#0098d7] transition-colors p-0.5"
           (click)="ayudaClick.emit(kpi)"
           title="Ver explicación"
         >
@@ -42,14 +40,14 @@
       {{ kpi.valor | number:'1.0-1' }}
     </span>
     @if (kpi.unidad) {
-      <span class="text-base font-semibold text-gray-400">{{ kpi.unidad }}</span>
+      <span class="text-base font-semibold text-gray-400 dark:text-gray-500">{{ kpi.unidad }}</span>
     }
   </div>
 
   <!-- Meta destacada (para OTIF) -->
   @if (kpi.meta && kpi.titulo === 'OTIF') {
     <div class="flex items-center gap-1.5 mb-2">
-      <span class="text-xs text-gray-400">Meta</span>
+      <span class="text-xs text-gray-400 dark:text-gray-500">Meta</span>
       <span class="text-sm font-bold text-[#f1416c]">{{ kpi.meta }}{{ kpi.unidad }}</span>
     </div>
   }
@@ -57,7 +55,7 @@
   <!-- Barra de progreso (meta) -->
   @if (kpi.meta) {
     <div class="mb-3">
-      <div class="w-full bg-gray-100 dark:bg-coal-400 rounded-full h-2 overflow-hidden">
+      <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
         <div
           class="h-2 rounded-full transition-all duration-700 ease-out"
           [style.width.%]="progresoMeta"
@@ -65,7 +63,7 @@
         ></div>
       </div>
       @if (kpi.titulo !== 'OTIF') {
-        <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+        <div class="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mt-1">
           <span>{{ kpi.valor | number:'1.0-1' }}{{ kpi.unidad }}</span>
           <span class="font-semibold" [style.color]="colorProgreso">{{ progresoMeta | number:'1.0-0' }}%</span>
         </div>
@@ -75,7 +73,7 @@
 
   <!-- Descripcion resumen debajo del valor (para tarjetas con meta) -->
   @if (kpi.meta && kpi.subIndicadores && kpi.subIndicadores.length >= 2 && kpi.titulo === 'OTIF') {
-    <p class="text-[11px] text-gray-400 mb-2">
+    <p class="text-[11px] text-gray-400 dark:text-gray-500 mb-2">
       <span class="font-semibold text-gray-600 dark:text-gray-300">{{ kpi.subIndicadores[0].valor }}</span>
       entregado{{ kpi.subIndicadores[0].valor !== 1 ? 's' : '' }} a tiempo,
       <span class="font-semibold text-gray-600 dark:text-gray-300">{{ kpi.subIndicadores[1].valor }}</span> totales
@@ -84,7 +82,7 @@
 
   <!-- Sub-indicadores -->
   @if (kpi.subIndicadores && kpi.subIndicadores.length > 0) {
-    <div class="flex flex-wrap gap-x-4 gap-y-1.5 pt-2.5 mt-auto border-t border-gray-50 dark:border-gray-200">
+    <div class="flex flex-wrap gap-x-4 gap-y-1.5 pt-2.5 mt-auto border-t border-gray-50 dark:border-gray-700">
       @for (sub of kpi.subIndicadores; track sub.etiqueta) {
         <div class="flex items-center gap-1.5">
           @if (sub.icono) {
@@ -92,8 +90,8 @@
           } @else {
             <span class="w-2 h-2 rounded-full inline-block" [style.backgroundColor]="sub.color"></span>
           }
-          <span class="text-[11px] text-gray-400">{{ sub.etiqueta }}</span>
-          <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">{{ sub.valor | number }}</span>
+          <span class="text-[11px] text-gray-500 dark:text-gray-400">{{ sub.etiqueta }}</span>
+          <span class="text-[11px] font-bold text-gray-700 dark:text-gray-200">{{ sub.valor | number }}</span>
         </div>
       }
     </div>
