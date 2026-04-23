@@ -11,6 +11,7 @@ interface ContenedorAdmin {
   schema_name: string;
   nombre: string;
   acceso_whatsapp: boolean;
+  acceso_whatsapp_notificaciones: boolean;
   fecha: string;
   usuarios: number;
   whatsapp_phone_number_id?: string | null;
@@ -50,6 +51,7 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
   cargando = true;
   cargandoNumeros = false;
   procesandoId: number | null = null;
+  procesandoNotifId: number | null = null;
 
   controlBusqueda = new FormControl('');
   filtroEstado: FiltroEstado = 'todos';
@@ -171,6 +173,25 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
           this.procesandoId = null;
           this._cdr.markForCheck();
         },
+      });
+  }
+
+  toggleNotificaciones(c: ContenedorAdmin) {
+    if (this.procesandoNotifId === c.id) return;
+    this.procesandoNotifId = c.id;
+    this.http
+      .post<{ mensaje: string; acceso_whatsapp_notificaciones: boolean }>(
+        `${environment.url_api}/contenedor/contenedor/toggle-whatsapp-notificaciones/`,
+        { id: c.id },
+        { headers: this.headers }
+      )
+      .subscribe({
+        next: (resp) => {
+          c.acceso_whatsapp_notificaciones = resp.acceso_whatsapp_notificaciones;
+          this.procesandoNotifId = null;
+          this._cdr.markForCheck();
+        },
+        error: () => { this.procesandoNotifId = null; this._cdr.markForCheck(); },
       });
   }
 
