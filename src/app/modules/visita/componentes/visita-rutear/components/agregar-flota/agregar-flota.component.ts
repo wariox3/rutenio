@@ -27,6 +27,8 @@ export class AgregarFlotaComponent extends General {
     prioridad: number;
   }>();
 
+  public busqueda = '';
+
   get capacidadDisponible(): number {
     return this.flotaActual
       .filter((f) => !f.vehiculo_estado_asignado)
@@ -37,6 +39,24 @@ export class AgregarFlotaComponent extends General {
     return this.flotaActual
       .filter((f) => !f.vehiculo_estado_asignado)
       .reduce((sum, f) => sum + (f.vehiculo_tiempo || 0), 0);
+  }
+
+  get flotaFiltrada(): ListaFlota[] {
+    const termino = this.busqueda.trim().toLowerCase();
+    if (!termino) {
+      return this.flotaActual;
+    }
+    return this.flotaActual.filter((f) => {
+      const placa = (f.vehiculo_placa || '').toLowerCase();
+      const franjas = (f.vehiculo_franjas || [])
+        .map((fr) => fr.nombre?.toLowerCase() || '')
+        .join(' ');
+      return placa.includes(termino) || franjas.includes(termino);
+    });
+  }
+
+  limpiarBusqueda() {
+    this.busqueda = '';
   }
 
   actualizarPrioridad(event: Event, flota: ListaFlota) {
