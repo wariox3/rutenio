@@ -45,6 +45,28 @@
       </p>
     </div>
   } @else {
+    <div class="relative">
+      <i
+        class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-gray-500 dark:text-gray-400"
+      ></i>
+      <input
+        type="text"
+        class="input input-sm w-full pl-9 pr-9"
+        placeholder="Buscar por placa o franja…"
+        [(ngModel)]="busqueda"
+      />
+      @if (busqueda) {
+        <button
+          type="button"
+          class="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+          (click)="limpiarBusqueda()"
+          title="Limpiar"
+        >
+          <i class="ki-outline ki-cross text-sm"></i>
+        </button>
+      }
+    </div>
+
     <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-300">
       <div class="max-h-96 overflow-y-auto">
         <table class="w-full text-sm">
@@ -59,7 +81,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-300">
-            @for (item of flotaActual; track item.id) {
+            @for (item of flotaFiltrada; track item.id) {
               <tr
                 [ngClass]="{
                   'bg-white dark:bg-coal-300': !item.vehiculo_estado_asignado,
@@ -104,6 +126,12 @@
                     class="input input-sm w-20"
                     appSoloNumeros
                   />
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="px-3 py-8 text-center text-xs text-gray-500 dark:text-gray-300">
+                  Sin resultados para "{{ busqueda }}"
                 </td>
               </tr>
             }
