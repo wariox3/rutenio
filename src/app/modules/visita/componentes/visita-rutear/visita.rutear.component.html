@@ -30,7 +30,7 @@
           clases="btn btn-light"
           data-modal-toggle="#agregar-flota"
           type="button"
-          texto="Flota"
+          texto="Vehículos"
           (click)="abrirModalAgregarFlota()"
         >
         </app-button>
@@ -514,7 +514,7 @@
 </div>
 
 <app-modal-default
-  titulo="Flota"
+  titulo="Vehículos"
   size="large"
   [id]="'agregar-flota'"
   (emitirModalCerrado)="cerrarModalAgregarFlota()"
@@ -525,8 +525,6 @@
   >
     <app-agregar-flota
       [flotaActual]="arrFlota()"
-      (emitirConsultarLista)="consultarFlotas(arrParametrosConsultaFlota)"
-      (emitirEliminarFlota)="eliminarFlota($event)"
       (emitirActualizarPrioridad)="actualizarPrioridadDesdeModal($event)"
     ></app-agregar-flota>
   </section>
