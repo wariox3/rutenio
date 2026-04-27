@@ -18,6 +18,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import {
   BehaviorSubject,
   finalize,
+  forkJoin,
   Observable,
   of,
   switchMap,
@@ -44,6 +45,7 @@ import {
   RespuestaApi,
 } from '../../../../core/types/api.type';
 import { ListaFlota } from '../../../../interfaces/flota/flota.interface';
+import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
 import { Franja } from '../../../../interfaces/franja/franja.interface';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { Visita } from '../../../../interfaces/visita/visita.interface';
@@ -347,17 +349,45 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   consultarFlotas(parametros: ParametrosApi) {
     this.cargandoConsultas$.next(true);
-    this._generalApiService
-      .consultaApi<RespuestaApi<ListaFlota>>('ruteo/flota/', parametros)
-      .pipe(finalize(() => this.cargandoConsultas$.next(false)))
-      .subscribe((response) => {
-        this._calcularCapacidadTotal(response.results);
-        this._calcularTiempoTotal(response.results);
-        this._calcularPorcentajeCapacidad();
-        this._calcularPorcentajeTiempo();
-        this.arrFlota.set(response.results);
-        this.changeDetectorRef.detectChanges();
+
+    forkJoin({
+      flota: this._generalApiService.consultaApi<RespuestaApi<ListaFlota>>(
+        'ruteo/flota/',
+        parametros
+      ),
+      vehiculos: this._generalApiService.consultaApi<RespuestaApi<ListaVehiculo>>(
+        'ruteo/vehiculo/',
+        { estado_activo: 'True' }
+      ),
+    }).subscribe(({ flota, vehiculos }) => {
+      const idsEnFlota = new Set(flota.results.map((f) => f.vehiculo_id));
+      const faltantes = vehiculos.results.filter((v) => !idsEnFlota.has(v.id));
+
+      if (faltantes.length === 0) {
+        this._aplicarFlota(flota.results);
+        return;
+      }
+
+      const altas = faltantes.map((v) =>
+        this._flotaService.agregarFlota(v.id)
+      );
+
+      forkJoin(altas).subscribe(() => {
+        this._generalApiService
+          .consultaApi<RespuestaApi<ListaFlota>>('ruteo/flota/', parametros)
+          .subscribe((res) => this._aplicarFlota(res.results));
       });
+    });
+  }
+
+  private _aplicarFlota(flotas: ListaFlota[]) {
+    this.cargandoConsultas$.next(false);
+    this._calcularCapacidadTotal(flotas);
+    this._calcularTiempoTotal(flotas);
+    this._calcularPorcentajeCapacidad();
+    this._calcularPorcentajeTiempo();
+    this.arrFlota.set(flotas);
+    this.changeDetectorRef.detectChanges();
   }
 
   paginar(evento: { limite: number; desplazar: number }) {
@@ -595,12 +625,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalFiltros$.next(false);
   }
 
-  eliminarFlota(id: number) {
-    this._flotaService.eliminarFlota(id).subscribe((response) => {
-      this.consultarFlotas(this.arrParametrosConsultaFlota);
-      this.alerta.mensajaExitoso('Flota eliminada');
-    });
-  }
 
   confirmarEliminarTodos() {
     this.alerta
