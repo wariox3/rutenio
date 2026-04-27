@@ -25,43 +25,15 @@
           (click)="abrirModalPendientesRutear()"
         >
         </app-button>
-        <div
-          class="dropdown"
-          data-dropdown="true"
-          data-dropdown-trigger="click"
-          data-dropdown-dismiss="true"
+        <app-button
+          id="tour-rutear-flota"
+          clases="btn btn-light"
+          data-modal-toggle="#agregar-flota"
+          type="button"
+          texto="Flota"
+          (click)="abrirModalAgregarFlota()"
         >
-          <button id="tour-rutear-flota" class="dropdown-toggle btn btn-light">Flota</button>
-          <div class="dropdown-content w-full max-w-56 py-2">
-            <div class="menu menu-default flex flex-col w-full" id="my_menu">
-              <div class="menu-item">
-                <button
-                  class="menu-link"
-                  data-modal-toggle="#agregar-flota"
-                  (click)="abrirModalAgregarFlota()"
-                >
-                  <span class="menu-icon">
-                    <i class="ki-filled ki-abstract-10"></i>
-                  </span>
-                  <span class="menu-title">Asignar flota</span>
-                </button>
-              </div>
-
-              <div class="menu-item">
-                <button
-                  class="menu-link"
-                  data-modal-toggle="#flotas"
-                  (click)="abrirModalFlotas()"
-                >
-                  <span class="menu-icon">
-                    <i class="ki-filled ki-delivery"></i>
-                  </span>
-                  <span class="menu-title">Ver flota</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        </app-button>
       </div>
     </div>
   </div>
@@ -542,18 +514,20 @@
 </div>
 
 <app-modal-default
-  titulo="Agregar flota"
+  titulo="Flota"
   size="large"
   [id]="'agregar-flota'"
-  (emitirModalCerrado)="cerrarModalFlotas()"
+  (emitirModalCerrado)="cerrarModalAgregarFlota()"
 >
   <section
     *ngIf="!(cargandoConsultas$ | async) && (toggleModalAgregarFlota$ | async)"
     modal-body
   >
     <app-agregar-flota
+      [flotaActual]="arrFlota()"
       (emitirConsultarLista)="consultarFlotas(arrParametrosConsultaFlota)"
-      [itemsSeleccionados]="flotasSeleccionadas"
+      (emitirEliminarFlota)="eliminarFlota($event)"
+      (emitirActualizarPrioridad)="actualizarPrioridadDesdeModal($event)"
     ></app-agregar-flota>
   </section>
 </app-modal-default>
@@ -739,83 +713,6 @@
       [isModal]="true"
       (dataFormulario)="cerrarModalVisitaNuevoEmitir()"
     ></app-visita-formulario>
-  </section>
-</app-modal-default>
-
-<app-modal-default
-  size="medium"
-  [id]="'flotas'"
-  titulo="Flotas"
-  (emitirModalCerrado)="cerrarModalFlotas()"
-  #visitaNuevo
->
-  <section *ngIf="toggleModalFlotas$ | async" modal-body>
-    <div class="card mt-2">
-      <div
-        class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"
-      >
-        <table
-          class="table align-middle text-gray-700 font-medium text-sm w-full fixed-header-table"
-        >
-          <thead>
-            <tr>
-              <th>Placa</th>
-              <th>Capacidad</th>
-              <th>Tiempo</th>
-              <th style="width: 180px">Franja</th>
-              <th>Asignado</th>
-              <th style="width: 150px">Prioridad</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (vehiculo of arrFlota(); track vehiculo.id) {
-            <tr>
-              <td>{{ vehiculo.vehiculo_placa }}</td>
-              <td>{{ vehiculo.vehiculo_capacidad }}</td>
-              <td>{{ vehiculo.vehiculo_tiempo }}</td>
-              <td>
-                @for (franja of vehiculo.vehiculo_franjas; track franja.id) {
-                <span class="badge badge-sm badge-outline badge-primary mr-1">
-                  {{ franja.nombre }}
-                </span>
-                }
-              </td>
-              <td>
-                <span
-                  *ngIf="!vehiculo.vehiculo_estado_asignado"
-                  class="badge badge-sm badge-outline badge-success"
-                >
-                  Sin asignar
-                </span>
-                <span
-                  *ngIf="vehiculo.vehiculo_estado_asignado"
-                  class="badge badge-sm badge-outline badge-danger"
-                >
-                  Asignado
-                </span>
-              </td>
-              <td>
-                <input
-                  [value]="vehiculo.prioridad"
-                  type="number"
-                  [disabled]="vehiculo.vehiculo_estado_asignado"
-                  (blur)="actualizarPrioridad($event, vehiculo)"
-                  class="input input-sm max-w-xs"
-                  appSoloNumeros
-                />
-              </td>
-              <td>
-                <button (click)="eliminarFlota(vehiculo.id)">
-                  <i class="ki-filled ki-trash text-lg"></i>
-                </button>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-    </div>
   </section>
 </app-modal-default>
 
