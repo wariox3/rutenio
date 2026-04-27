@@ -1,121 +1,274 @@
-<div class="grid">
-  <div class="min-w-full">
-    <div class="py-4 flex-wrap flex items-center justify-between">
-      <div class="flex gap-6">
-        <div class="relative">
-          <i
-            class="ki-outline ki-magnifier leading-none text-md text-gray-500 absolute top-1/2 left-0 -translate-y-1/2 ml-3"
-          >
-          </i>
-          <input
-            [formControl]="textoBusqueda"
-            class="input input-sm pl-8"
-            placeholder="Buscar vehículo"
-            type="text"
-          />
-        </div>
+<div class="flex flex-col gap-5">
+  <div
+    class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-300 bg-gradient-to-br from-primary/5 via-white to-white dark:from-coal-300 dark:via-coal-300 dark:to-coal-400"
+  >
+    <div class="grid grid-cols-3 divide-x divide-gray-200 dark:divide-gray-300">
+      <div class="flex flex-col items-center justify-center gap-0.5 px-3 py-3">
+        <span class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-300">
+          Vehículos
+        </span>
+        <span class="text-xl font-bold text-gray-900 dark:text-gray-100">
+          {{ flotaActual.length }}
+        </span>
       </div>
-      <div>
-        <app-button
-          texto="Guardar"
-          clases="btn-sm"
-          [estaDeshabilitado]="vehiculosIds.length <= 0"
-          (emitirBotonClicked)="enviar()"
-        ></app-button>
+      <div class="flex flex-col items-center justify-center gap-0.5 px-3 py-3">
+        <span class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-300">
+          Capacidad disponible
+        </span>
+        <span class="text-xl font-bold text-gray-900 dark:text-gray-100">
+          {{ capacidadDisponible | number }}
+          <span class="text-xs font-medium text-gray-500">kg</span>
+        </span>
+      </div>
+      <div class="flex flex-col items-center justify-center gap-0.5 px-3 py-3">
+        <span class="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-300">
+          Tiempo disponible
+        </span>
+        <span class="text-xl font-bold text-gray-900 dark:text-gray-100">
+          {{ tiempoDisponible | number }}
+          <span class="text-xs font-medium text-gray-500">min</span>
+        </span>
       </div>
     </div>
   </div>
-  <div>
-    <div>
-      <div class="scrollable-x-auto scrollable-y-auto max-h-72">
-        <table
-          class="table table-auto table-border"
-          data-datatable-table="true"
-          id="grid_table"
+
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between gap-2">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-200">
+        Agregar vehículos
+      </label>
+      @if (cargando) {
+        <span
+          class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-gray-300"
         >
-          <thead>
-            <tr>
-              <th class="min-w-[100px]">
-                <span class="sort asc">
-                  <span class="sort-label"> Placa </span>
+          <span
+            class="inline-block h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-primary"
+          ></span>
+          Cargando
+        </span>
+      }
+    </div>
+
+    @if (franjasDisponibles.length > 1) {
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="text-xs font-medium text-gray-500 dark:text-gray-300 mr-1">Franjas:</span>
+        <button
+          type="button"
+          class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors"
+          [ngClass]="{
+            'bg-primary text-white': !franjaFiltro,
+            'bg-gray-100 dark:bg-coal-400 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-coal-300': franjaFiltro
+          }"
+          (click)="filtrarPorFranja(null)"
+        >
+          Todas
+        </button>
+        @for (franja of franjasDisponibles; track franja.id) {
+          <button
+            type="button"
+            class="rounded-full px-2.5 py-1 text-xs font-medium transition-colors"
+            [ngClass]="{
+              'bg-primary text-white': franjaFiltro === franja.id,
+              'bg-gray-100 dark:bg-coal-400 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-coal-300': franjaFiltro !== franja.id
+            }"
+            (click)="filtrarPorFranja(franja.id)"
+          >
+            {{ franja.nombre }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="flex items-start gap-2">
+      <ng-select
+        [items]="vehiculosFiltrados"
+        [multiple]="true"
+        [closeOnSelect]="false"
+        [searchable]="true"
+        [clearSearchOnAdd]="true"
+        bindLabel="placa"
+        bindValue="id"
+        notFoundText="No hay vehículos disponibles"
+        placeholder="Busca por placa…"
+        [(ngModel)]="vehiculosSeleccionados"
+        class="flex-1 border border-gray-300 dark:border-gray-300 rounded-lg focus-within:border-primary hover:border-gray-400 transition-colors"
+      >
+        <ng-template ng-option-tmp let-item="item">
+          <div class="flex items-center gap-3 py-1">
+            <div
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary"
+            >
+              <i class="ki-filled ki-truck text-base"></i>
+            </div>
+            <div class="flex min-w-0 flex-1 flex-col gap-1">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-semibold text-sm text-gray-900 dark:text-gray-100">
+                  {{ item.placa }}
                 </span>
-              </th>
-              <th class="min-w-[150px]">
-                <span class="sort">
-                  <span class="sort-label"> Capacidad </span>
-                </span>
-              </th>
-              <th class="min-w-[150px]">
-                <span class="sort">
-                  <span class="sort-label"> Tiempo </span>
-                </span>
-              </th>
-              <th class="min-w-[150px]">
-                <span class="sort">
-                  <span class="sort-label"> Franja </span>
-                </span>
-              </th>
-              <th class="w-[60px]">
-                <input
-                  class="checkbox checkbox-sm"
-                  data-datatable-check="true"
-                  type="checkbox"
-                  (change)="manejarCheckGlobal($event)"
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (vehiculo of vehiculosDisponibles$ | async; track $index){
-            <tr>
-              <td>
-                <div class="flex items-center gap-2.5">
-                  <div class="flex flex-col gap-0.5">
-                    <p class="leading-none font-semibold text-sm text-gray-900">
-                      {{ vehiculo.placa }}
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="flex items-center gap-1.5">
-                  <span class="leading-none text-gray-700">
-                    {{ vehiculo.capacidad }}
+                <div class="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-300">
+                  <span class="inline-flex items-center gap-1">
+                    <i class="ki-outline ki-package text-sm"></i>{{ item.capacidad }} kg
+                  </span>
+                  <span class="inline-flex items-center gap-1">
+                    <i class="ki-outline ki-time text-sm"></i>{{ item.tiempo }} min
                   </span>
                 </div>
-              </td>
-              <td>
-                <div class="flex items-center gap-1.5">
-                  <span class="leading-none text-gray-700">
-                    {{ vehiculo.tiempo }}
-                  </span>
+              </div>
+              @if (item.franjas?.length) {
+                <div class="flex flex-wrap gap-1">
+                  @for (franja of item.franjas; track franja.id) {
+                    <span class="badge badge-xs badge-outline badge-primary">
+                      {{ franja.nombre }}
+                    </span>
+                  }
                 </div>
-              </td>
-              <td>
-                <div class="flex items-center gap-1.5">
-                  <span class="leading-none text-gray-700">
-                    @for (franja of vehiculo.franjas; track franja.id) {
-                      <span class="badge badge-sm badge-outline badge-primary mr-1">
-                        {{ franja.nombre }}
+              }
+            </div>
+          </div>
+        </ng-template>
+
+        <ng-template ng-label-tmp let-item="item" let-clear="clear">
+          <span class="inline-flex items-center gap-1 rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
+            <i class="ki-filled ki-truck text-xs"></i>
+            {{ item.placa }}
+            <span class="ml-0.5 cursor-pointer hover:text-red-500" (click)="clear(item)">×</span>
+          </span>
+        </ng-template>
+      </ng-select>
+
+      <button
+        type="button"
+        class="btn btn-sm btn-primary inline-flex items-center gap-1.5 shrink-0"
+        [disabled]="vehiculosSeleccionados.length <= 0 || guardando"
+        (click)="agregar()"
+      >
+        @if (guardando) {
+          <span
+            class="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+          ></span>
+          Agregando…
+        } @else {
+          <i class="ki-filled ki-plus text-sm"></i>
+          Agregar
+          @if (vehiculosSeleccionados.length > 0) {
+            ({{ vehiculosSeleccionados.length }})
+          }
+        }
+      </button>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <div class="flex items-center justify-between gap-2">
+      <label class="text-xs font-semibold text-gray-700 dark:text-gray-200">
+        En flota
+        <span class="ml-1 text-gray-500 dark:text-gray-400 font-normal">
+          ({{ flotaActual.length }})
+        </span>
+      </label>
+    </div>
+
+    @if (flotaActual.length === 0) {
+      <div
+        class="flex flex-col items-center gap-2 rounded-lg border border-dashed border-gray-300 dark:border-gray-300 py-8 text-center"
+      >
+        <i class="ki-outline ki-information-5 text-3xl text-gray-400"></i>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
+          Aún no hay vehículos en la flota
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-300">
+          Agrega vehículos desde la sección de arriba.
+        </p>
+      </div>
+    } @else {
+      <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-300">
+        <div class="max-h-72 overflow-y-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 dark:bg-coal-400 sticky top-0 z-10">
+              <tr class="text-left">
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Placa</th>
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Capacidad</th>
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Tiempo</th>
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Franja</th>
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200">Estado</th>
+                <th class="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-gray-200 w-28">Prioridad</th>
+                <th class="px-3 py-2 w-10"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-300">
+              @for (item of flotaActual; track item.id) {
+                <tr
+                  [ngClass]="{
+                    'bg-white dark:bg-coal-300': !item.vehiculo_estado_asignado,
+                    'bg-gray-50 dark:bg-coal-400': item.vehiculo_estado_asignado
+                  }"
+                >
+                  <td class="px-3 py-2 font-semibold text-gray-900 dark:text-gray-100">
+                    {{ item.vehiculo_placa }}
+                  </td>
+                  <td class="px-3 py-2 text-gray-700 dark:text-gray-200">
+                    {{ item.vehiculo_capacidad | number }} kg
+                  </td>
+                  <td class="px-3 py-2 text-gray-700 dark:text-gray-200">
+                    {{ item.vehiculo_tiempo | number }} min
+                  </td>
+                  <td class="px-3 py-2">
+                    <div class="flex flex-wrap gap-1">
+                      @for (franja of item.vehiculo_franjas; track franja.id) {
+                        <span class="badge badge-xs badge-outline badge-primary">
+                          {{ franja.nombre }}
+                        </span>
+                      }
+                    </div>
+                  </td>
+                  <td class="px-3 py-2">
+                    @if (item.vehiculo_estado_asignado) {
+                      <span class="badge badge-sm badge-outline badge-danger">
+                        En tráfico
+                      </span>
+                    } @else {
+                      <span class="badge badge-sm badge-outline badge-success">
+                        Disponible
                       </span>
                     }
-                  </span>
-                </div>
-              </td>
-              <td>
-                <input
-                  class="checkbox checkbox-sm"
-                  type="checkbox"
-                  [checked]="estoyEnListaEliminar(vehiculo.id)"
-                  (change)="manejarCheckItem($event, vehiculo.id)"
-                  [disabled]="isVehiculoAsignadoFlota(vehiculo.id)"
-                />
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
+                  </td>
+                  <td class="px-3 py-2">
+                    <input
+                      [value]="item.prioridad"
+                      type="number"
+                      [disabled]="item.vehiculo_estado_asignado"
+                      (blur)="actualizarPrioridad($event, item)"
+                      class="input input-sm w-20"
+                      appSoloNumeros
+                    />
+                  </td>
+                  <td class="px-3 py-2">
+                    <button
+                      type="button"
+                      class="text-gray-500 hover:text-red-500 disabled:text-gray-300 disabled:cursor-not-allowed"
+                      [disabled]="item.vehiculo_estado_asignado"
+                      [title]="item.vehiculo_estado_asignado ? 'No se puede quitar: vehículo en tráfico activo' : 'Quitar de la flota'"
+                      (click)="eliminar(item.id)"
+                    >
+                      <i class="ki-filled ki-trash text-base"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    }
+  </div>
+
+  <div class="flex items-center justify-end gap-2 border-t border-gray-200 dark:border-gray-300 pt-3">
+    <button
+      type="button"
+      class="btn btn-sm btn-light"
+      (click)="cerrar()"
+    >
+      Cerrar
+    </button>
   </div>
 </div>

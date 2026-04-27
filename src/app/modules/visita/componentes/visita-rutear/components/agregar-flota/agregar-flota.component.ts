@@ -5,214 +5,180 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  finalize,
-  forkJoin,
-  map,
-  Observable,
-  of,
-  switchMap,
-} from 'rxjs';
+import { finalize, forkJoin, tap } from 'rxjs';
 import { KTModal } from '../../../../../../../metronic/core';
 import { General } from '../../../../../../common/clases/general';
-import { ButtonComponent } from '../../../../../../common/components/ui/button/button.component';
-import { ParametrosConsulta } from '../../../../../../interfaces/general/api.interface';
-import { ListaVehiculo } from '../../../../../../interfaces/vehiculo/vehiculo.interface';
+import { SoloNumerosDirective } from '../../../../../../common/directivas/solo-numeros.directive';
+import { ListaFlota } from '../../../../../../interfaces/flota/flota.interface';
+import {
+  ListaFranja,
+  ListaVehiculo,
+} from '../../../../../../interfaces/vehiculo/vehiculo.interface';
 import { FlotaService } from '../../../../../flota/servicios/flota.service';
-import { VehiculoService } from '../../../../../vehiculo/servicios/vehiculo.service';
 import { ParametrosApi, RespuestaApi } from '../../../../../../core/types/api.type';
 import { GeneralApiService } from '../../../../../../core';
 
 @Component({
   selector: 'app-agregar-flota',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, NgSelectModule, SoloNumerosDirective],
   templateUrl: './agregar-flota.component.html',
   styleUrl: './agregar-flota.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgregarFlotaComponent extends General implements OnInit {
-  @Input() itemsSeleccionados: number[] = [];
+export class AgregarFlotaComponent
+  extends General
+  implements OnInit, OnChanges
+{
+  @Input() flotaActual: ListaFlota[] = [];
   @Output() emitirConsultarLista: EventEmitter<void>;
-  private _vehiculoService = inject(VehiculoService);
+  @Output() emitirEliminarFlota = new EventEmitter<number>();
+  @Output() emitirActualizarPrioridad = new EventEmitter<{
+    flota: ListaFlota;
+    prioridad: number;
+  }>();
+
   private _generalApiService = inject(GeneralApiService);
   private _flotaService = inject(FlotaService);
-  public vehiculosDisponibles$: Observable<ListaVehiculo[]>;
-  public textoBusqueda = new FormControl();
-  private _vehiculosSeleccionados: { id: number }[] = [];
+
+  public vehiculosDisponibles: ListaVehiculo[] = [];
+  public vehiculosSeleccionados: number[] = [];
+  public franjasDisponibles: ListaFranja[] = [];
+  public franjaFiltro: number | null = null;
+  public cargando = false;
+  public guardando = false;
+
   private _parametrosConsulta: ParametrosApi = {
-    estado_activo: 'True'
-
-    // filtros: [
-    //   { propiedad: 'estado_activo', operador: 'exact', valor1: true },
-    // ],
-    // limite: 50,
-    // desplazar: 0,
-    // ordenamientos: [],
-    // limite_conteo: 10000,
-    // modelo: 'RutVehiculo',
+    estado_activo: 'True',
   };
-
-  formularioFlota: FormGroup = new FormGroup({
-    flota: new FormControl(),
-  });
 
   constructor() {
     super();
-    this.vehiculosDisponibles$ = new Observable();
     this.emitirConsultarLista = new EventEmitter();
   }
 
   ngOnInit(): void {
     this._consultarVehiculos();
-    this.formularioFlota.patchValue({
-      flota: this.itemsSeleccionados,
-    });
-
-    // Inicializar los items ya seleccionados con sus prioridades
-    this.itemsSeleccionados.forEach((id) => {
-      this._vehiculosSeleccionados.push({ id });
-    });
-
-    this._initBusqueda();
   }
 
-  private _limpiarVehiculosSeleccionados() {
-    this._vehiculosSeleccionados = [];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['flotaActual'] && !changes['flotaActual'].firstChange) {
+      const ids = this.idsEnFlota;
+      this.vehiculosSeleccionados = this.vehiculosSeleccionados.filter(
+        (id) => !ids.includes(id)
+      );
+      this.changeDetectorRef.detectChanges();
+    }
   }
 
-  private _initBusqueda() {
-    this.textoBusqueda.valueChanges
+  get idsEnFlota(): number[] {
+    return this.flotaActual.map((f) => f.vehiculo_id);
+  }
+
+  get capacidadDisponible(): number {
+    return this.flotaActual
+      .filter((f) => !f.vehiculo_estado_asignado)
+      .reduce((sum, f) => sum + (f.vehiculo_capacidad || 0), 0);
+  }
+
+  get tiempoDisponible(): number {
+    return this.flotaActual
+      .filter((f) => !f.vehiculo_estado_asignado)
+      .reduce((sum, f) => sum + (f.vehiculo_tiempo || 0), 0);
+  }
+
+  get vehiculosFiltrados(): ListaVehiculo[] {
+    const ids = this.idsEnFlota;
+    let lista = this.vehiculosDisponibles.filter((v) => !ids.includes(v.id));
+    if (this.franjaFiltro !== null) {
+      lista = lista.filter((v) =>
+        v.franjas?.some((f) => f.id === this.franjaFiltro)
+      );
+    }
+    return lista;
+  }
+
+  filtrarPorFranja(franjaId: number | null) {
+    this.franjaFiltro = franjaId;
+  }
+
+  agregar() {
+    if (this.vehiculosSeleccionados.length === 0 || this.guardando) {
+      return;
+    }
+
+    this.guardando = true;
+    const peticiones = this.vehiculosSeleccionados.map((id) =>
+      this._flotaService.agregarFlota(id)
+    );
+
+    forkJoin(peticiones)
       .pipe(
-        debounceTime(500),
-        distinctUntilChanged(),
-        switchMap((busqueda) => {
-          const parametrosConsulta = {
-              ...this._parametrosConsulta,
-              placa__icontains : busqueda
-          };
-
-          return this._generalApiService
-            .consultaApi<RespuestaApi<any>>('ruteo/vehiculo/', parametrosConsulta)
-            .pipe(map((response) => response.results));
+        finalize(() => {
+          this.guardando = false;
+          this.changeDetectorRef.detectChanges();
         })
       )
+      .subscribe(() => {
+        this.alerta.mensajaExitoso('Flota actualizada');
+        this.vehiculosSeleccionados = [];
+        this.emitirConsultarLista.emit();
+      });
+  }
+
+  eliminar(flotaId: number) {
+    this.emitirEliminarFlota.emit(flotaId);
+  }
+
+  actualizarPrioridad(event: Event, flota: ListaFlota) {
+    const valor = (event.target as HTMLInputElement).value;
+    if (!valor || flota.prioridad === Number(valor)) {
+      return;
+    }
+    this.emitirActualizarPrioridad.emit({ flota, prioridad: Number(valor) });
+  }
+
+  cerrar() {
+    this._dismissModal();
+  }
+
+  private _consultarVehiculos() {
+    this.cargando = true;
+    this._generalApiService
+      .consultaApi<RespuestaApi<ListaVehiculo>>(
+        'ruteo/vehiculo/',
+        this._parametrosConsulta
+      )
+      .pipe(tap(() => (this.cargando = false)))
       .subscribe((response) => {
-        this.vehiculosDisponibles$ = of(response);
-        this._limpiarVehiculosSeleccionados();
+        this.vehiculosDisponibles = response.results;
+        this.franjasDisponibles = this._extraerFranjasUnicas(
+          this.vehiculosDisponibles
+        );
         this.changeDetectorRef.detectChanges();
       });
   }
 
-  estoyEnListaEliminar(id: number): boolean {
-    return this._vehiculosSeleccionados.some(v => v.id === id);
-  }
-
-  manejarCheckGlobal(event: any) {
-    if (event.target.checked) {
-      this._agregarTodosLosItemsAListaEliminar();
-    } else {
-      this._removerTodosLosItemsAListaEliminar();
-    }
-  }
-
-  manejarCheckItem(event: any, id: number) {
-    if (event.target.checked) {
-      this._agregarItemAListaEliminar(id);
-    } else {
-      this._removerItemDeListaEliminar(id);
-    }
-  }
-
-  private _agregarItemAListaEliminar(id: number) {
-    this._vehiculosSeleccionados.push({ id });
-  }
-
-  private _removerItemDeListaEliminar(id: number) {
-    this._vehiculosSeleccionados = this._vehiculosSeleccionados
-      .filter(item => item.id !== id)
-      .map((item) => ({ ...item }));
-  }
-
-  private _removerTodosLosItemsAListaEliminar() {
-    this._vehiculosSeleccionados = [
-      ...this.itemsSeleccionados.map((id) => ({ id })),
-    ];
-  }
-
-  isVehiculoAsignadoFlota(vehiculoId: number) {
-    return this.itemsSeleccionados.some((itemId) => itemId === vehiculoId);
-  }
-
-  private _agregarTodosLosItemsAListaEliminar() {
-    this.vehiculosDisponibles$.subscribe((response) => {
-      response.forEach((item) => {
-        const isVehiculoAsignado = this.isVehiculoAsignadoFlota(item.id);
-
-        if (!this.estoyEnListaEliminar(item.id) && !isVehiculoAsignado) {
-          this._agregarItemAListaEliminar(item.id);
-        }
-      });
-
-      this.changeDetectorRef.detectChanges();
-    });
-  }
-
-  private _consultarVehiculos() {
-    this.vehiculosDisponibles$ = this._generalApiService
-      .consultaApi<RespuestaApi<any>>('ruteo/vehiculo/',this._parametrosConsulta)
-      .pipe(
-        map((response) => {
-          return response.results;
-        })
-      );
-  }
-
-  get flota() {
-    return this.formularioFlota.get('flota');
-  }
-
-  get vehiculosIds() {
-    return this._vehiculosSeleccionados.map(v => v.id);
-  }
-
-  enviar() {
-    // Filtrar solo los vehículos nuevos (los que no estaban en itemsSeleccionados)
-    const nuevosVehiculos = this._vehiculosSeleccionados
-      .filter(item => !this.itemsSeleccionados.includes(item.id));
-
-    if (nuevosVehiculos.length === 0) {
-      this._dismissModal();
-      return;
-    }
-
-    const agregarFlotas = nuevosVehiculos.map((item) => {
-      return this._flotaService.agregarFlota(item.id);
-    });
-
-    forkJoin(agregarFlotas)
-      .pipe(
-        finalize(() => {
-          this.emitirConsultarLista.emit();
-          this._dismissModal();
-        })
-      )
-      .subscribe(() => {
-        this.alerta.mensajaExitoso('Flotas agregadas');
-      });
+  private _extraerFranjasUnicas(vehiculos: ListaVehiculo[]): ListaFranja[] {
+    const mapa = new Map<number, ListaFranja>();
+    vehiculos.forEach((v) =>
+      v.franjas?.forEach((f) => {
+        if (!mapa.has(f.id)) mapa.set(f.id, f);
+      })
+    );
+    return Array.from(mapa.values());
   }
 
   private _dismissModal() {
     const modalEl: HTMLElement = document.querySelector('#agregar-flota');
     const modal = KTModal.getInstance(modalEl);
-
     modal.toggle();
   }
 }

@@ -157,7 +157,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
   arrFlota = signal<ListaFlota[]>([]);
   arrVisitas: Visita[] = [];
-  public flotasSeleccionadas: number[] = [];
   public capacidadTotal: number = 0;
   public pesoTotal: number = 0;
   public servicio = signal<number>(0);
@@ -188,7 +187,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalVisitaNuevo$ = new BehaviorSubject(false);
   public toggleModalVisitaEditar$ = new BehaviorSubject(false);
   public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
-  public toggleModalFlotas$ = new BehaviorSubject(false);
   public toggleModalPendientesRutear$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
   public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS;
@@ -353,10 +351,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
       .consultaApi<RespuestaApi<ListaFlota>>('ruteo/flota/', parametros)
       .pipe(finalize(() => this.cargandoConsultas$.next(false)))
       .subscribe((response) => {
-        this.flotasSeleccionadas = response.results.map(
-          (registro) => registro.vehiculo_id
-        );
-
         this._calcularCapacidadTotal(response.results);
         this._calcularTiempoTotal(response.results);
         this._calcularPorcentajeCapacidad();
@@ -573,10 +567,6 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaNuevo$.next(true);
   }
 
-  abrirModalFlotas() {
-    this.toggleModalFlotas$.next(true);
-  }
-
   cerrarModalImportarPorExcel() {
     this.toggleModalImportarPorExcel$.next(false);
   }
@@ -597,8 +587,8 @@ export default class VisitaRutearComponent extends General implements OnInit {
     this.toggleModalVisitaDetalle$.next(false);
   }
 
-  cerrarModalFlotas() {
-    this.toggleModalFlotas$.next(false);
+  cerrarModalAgregarFlota() {
+    this.toggleModalAgregarFlota$.next(false);
   }
 
   cerrarModalFiltrosVisita() {
@@ -837,14 +827,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
     return this.arrFlota()?.length || 0;
   }
 
-  actualizarPrioridad(event: Event, flota: ListaFlota) {
-    const prioridad = (event.target as HTMLInputElement).value;
-    if (flota.prioridad === Number(prioridad) || !prioridad) {
-      return;
-    }
-
+  actualizarPrioridadDesdeModal(payload: { flota: ListaFlota; prioridad: number }) {
     this._flotaService
-      .actualizarPrioridad(flota.id, Number(prioridad))
+      .actualizarPrioridad(payload.flota.id, payload.prioridad)
       .subscribe({
         next: () => {
           this.alerta.mensajaExitoso('Prioridad actualizada exitosamente');
