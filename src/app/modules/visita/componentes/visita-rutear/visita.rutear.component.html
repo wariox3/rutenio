@@ -608,6 +608,44 @@
 
 <app-modal-default
   size="medium"
+  [id]="'rotulo-preview'"
+  titulo="Vista previa del rótulo"
+  (emitirModalCerrado)="cerrarModalRotuloPreview()"
+>
+  <section *ngIf="toggleModalRotuloPreview$ | async" modal-body>
+    <div class="flex flex-col gap-3">
+      @if (rotuloPreviewUrl) {
+        <iframe
+          id="rotulo-preview-iframe"
+          [src]="rotuloPreviewUrl | safeUrl"
+          class="w-full rounded border border-gray-200 dark:border-gray-300"
+          style="height: 480px"
+        ></iframe>
+      }
+      <div class="flex items-center justify-end gap-2 border-t border-gray-200 dark:border-gray-300 pt-3">
+        <button
+          type="button"
+          class="btn btn-sm btn-light"
+          data-modal-toggle="#rotulo-preview"
+          (click)="cerrarModalRotuloPreview()"
+        >
+          Cerrar
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-primary inline-flex items-center gap-1.5"
+          (click)="imprimirRotuloDesdePreview()"
+        >
+          <i class="ki-filled ki-printer text-sm"></i>
+          Imprimir
+        </button>
+      </div>
+    </div>
+  </section>
+</app-modal-default>
+
+<app-modal-default
+  size="medium"
   [id]="'filtros-visita'"
   titulo="Filtrar visita"
   (emitirModalCerrado)="cerrarModalFiltrosVisita()"

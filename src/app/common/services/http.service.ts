@@ -158,6 +158,14 @@ export class HttpService extends Subdomino {
       });
   }
 
+  public previsualizarArchivoDominio(endpoint: string, data: any) {
+    const url = `${this.urlSubDominio}/${endpoint}`;
+    return this.http.post(url, data, {
+      observe: 'response' as const,
+      responseType: 'blob' as 'json',
+    });
+  }
+
   public descargarArchivoDominio(endpoint: string, data: any): void {
     const url = `${this.urlSubDominio}/${endpoint}`;
     this.alertaService.mensajaEspera('Cargando');
