@@ -39,6 +39,7 @@ import { PaginadorComponent } from '../../../../common/components/ui/paginacion/
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { FiltrosCompactosPipe } from '../../../../common/pipes/filtros-compactos.pipe';
 import { GeneralApiService } from '../../../../core';
+import { GeneralService } from '../../../../common/services/general.service';
 import {
   EstadoPaginacion,
   ParametrosApi,
@@ -203,6 +204,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _flotaService = inject(FlotaService);
   private _filtroBaseService = inject(FiltroBaseService);
   private _generalApiService = inject(GeneralApiService);
+  private _generalService = inject(GeneralService);
   private _visitaApiService = inject(VisitaApiService);
   private _franjaService = inject(FranjaService);
   private _filterTransformerService = inject(FilterTransformerService);
@@ -785,6 +787,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
           this.eliminarVisita(id);
         }
       });
+  }
+
+  imprimirRotuloVisita(visita: Visita) {
+    this._generalService.imprimir('ruteo/visita/imprimir-rotulo/', {
+      id: visita.id,
+    });
   }
 
   eliminarVisita(id: number) {
