@@ -46,6 +46,7 @@
       </div>
     </div>
     <div class="flex items-center gap-2 lg:gap-3.5">
+      <app-selector-contenedor></app-selector-contenedor>
       <app-menu
         [nombre]="(usuario$ | async)?.nombre"
         [contenedorNombre]="contenedorNombre$ | async"
