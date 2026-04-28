@@ -18,6 +18,8 @@ export class AdminNavComponent {
   abierto = false;
 
   enlaces = [
+    { ruta: '/admin/contenedores', etiqueta: 'Contenedores', icono: 'ki-filled ki-abstract-26' },
+    { ruta: '/admin/usuarios', etiqueta: 'Usuarios', icono: 'ki-filled ki-people' },
     { ruta: '/admin/entregas', etiqueta: 'Entregas', icono: 'ki-filled ki-chart-line' },
     { ruta: '/admin/whatsapp', etiqueta: 'WhatsApp', icono: 'ki-filled ki-messages' },
   ];

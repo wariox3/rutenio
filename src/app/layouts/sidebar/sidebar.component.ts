@@ -151,13 +151,6 @@ export class SidebarComponent extends General implements OnInit {
       activo: false,
       soloAdmin: true,
     },
-    {
-      nombre: 'Super Admin',
-      link: '/super-admin/contenedores',
-      iconoClase: 'ki-filled ki-shield-tick',
-      activo: false,
-      soloSuperAdmin: true,
-    },
   ];
 
   public esAdmin = true;
