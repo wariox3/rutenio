@@ -3,6 +3,7 @@
     <div class="card-body">
       <div class="flex flex-row gap-2">
         <app-button
+          *appAdmin
           id="tour-rutear-boton"
           type="button"
           texto="Rutear"
@@ -191,7 +192,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appAdmin>
                 <button
                   class="menu-link"
                   data-modal-toggle="#importar-por-excel-modal"
@@ -204,7 +205,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appAdmin>
                 <button
                   class="menu-link"
                   data-modal-toggle="#importar-por-complemento-modal"
@@ -230,7 +231,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appAdmin>
                 <button
                   class="menu-link"
                   [ngClass]="{
@@ -268,7 +269,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appAdmin>
                 <button class="menu-link" (click)="confirmarEliminarErrores()">
                   <span class="menu-icon">
                     <i class="ki-filled ki-delete-files"></i>
@@ -277,7 +278,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appAdmin>
                 <button class="menu-link" (click)="confirmarEliminarTodos()">
                   <span class="menu-icon">
                     <i class="ki-filled ki-trash trash-icon"></i>

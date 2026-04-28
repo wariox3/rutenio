@@ -1,6 +1,10 @@
 import { Component, HostBinding, OnInit, ElementRef } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
-import { SidebarMenu } from '../../interfaces/general/sidebar/menu.interface';
+import { SidebarMenu, SidebarMenuItem } from '../../interfaces/general/sidebar/menu.interface';
+import { Store } from '@ngrx/store';
+import { obtenerEsAdminContenedor } from '../../redux/selectors/contenedor.selector';
+import { takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { RouterLinkActive } from '@angular/router';
 import { General } from '../../common/clases/general';
 import { CommonModule } from '@angular/common';
@@ -86,10 +90,12 @@ export class SidebarComponent extends General implements OnInit {
       iconoClase: 'ki-filled ki-setting-2',
       activo: false,
       tipoAcordion: true,
+      soloAdmin: true,
       children: [
         {
           nombre: 'Vehículos',
           link: '/administracion/vehiculo/lista',
+          soloAdmin: true,
         },
         // {
         //   nombre: 'Contactos',
@@ -98,6 +104,7 @@ export class SidebarComponent extends General implements OnInit {
         {
           nombre: 'Franjas',
           link: '/administracion/franja/lista',
+          soloAdmin: true,
         },
       ],
     },
@@ -107,14 +114,17 @@ export class SidebarComponent extends General implements OnInit {
       iconoClase: 'ki-filled ki-abstract-22',
       activo: false,
       tipoAcordion: true,
+      soloAdmin: true,
       children: [
         {
           nombre: 'Enviar entrega complemento',
           link: '/proceso/enviar-entrega-complemento',
+          soloAdmin: true,
         },
         {
           nombre: 'Enviar novedad complemento',
           link: '/proceso/enviar-novedad-complemento',
+          soloAdmin: true,
         },
       ],
     },
@@ -124,10 +134,12 @@ export class SidebarComponent extends General implements OnInit {
       iconoClase: 'ki-filled ki-setting-3',
       activo: false,
       tipoAcordion: true,
+      soloAdmin: true,
       children: [
         {
           nombre: 'Decodificar dirección',
           link: '/utilidad/decodificar-direccion',
+          soloAdmin: true,
         },
       ],
     },
@@ -136,12 +148,40 @@ export class SidebarComponent extends General implements OnInit {
       link: '/complemento/lista',
       iconoClase: 'ki-filled ki-plus-squared',
       activo: false,
+      soloAdmin: true,
     },
   ];
 
+  public esAdmin = true;
+  private _destroy$ = new Subject<void>();
+
   ngOnInit(): void {
+    this.store
+      .select(obtenerEsAdminContenedor)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((esAdmin) => {
+        this.esAdmin = !!esAdmin;
+      });
     this.initializeAccordionStates();
     this.subscribeToRouteChanges();
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
+
+  puedeVerMenu(menu: SidebarMenu): boolean {
+    if (this.esAdmin) return true;
+    if (menu.soloAdmin) return false;
+    if (menu.children?.length) {
+      return menu.children.some((c) => !c.soloAdmin);
+    }
+    return true;
+  }
+
+  puedeVerSubmenu(sub: SidebarMenuItem): boolean {
+    return this.esAdmin || !sub.soloAdmin;
   }
 
   private initializeAccordionStates(): void {
