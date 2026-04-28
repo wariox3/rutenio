@@ -67,6 +67,17 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "qa": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.qa.ts"
+                }
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
@@ -79,6 +90,9 @@
             },
             "development": {
               "buildTarget": "metronic-tailwind-angular:build:development"
+            },
+            "qa": {
+              "buildTarget": "metronic-tailwind-angular:build:qa"
             }
           },
           "defaultConfiguration": "development"

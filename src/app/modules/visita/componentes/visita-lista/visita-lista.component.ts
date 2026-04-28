@@ -19,7 +19,9 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { GeneralService } from '../../../../common/services/general.service';
+import { HttpService } from '../../../../common/services/http.service';
 import { GeneralApiService } from '../../../../core';
+import { SafeUrlPipe } from '../../../../common/pipes/safe-url.pipe';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { Visita } from '../../interfaces/visita.interface';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
@@ -43,7 +45,8 @@ import { VISITA_LISTA_FILTERS } from '../../mapeos/visita-lista-mapeo';
     ReactiveFormsModule,
     RouterLink,
     PaginadorComponent,
-    FiltroComponent
+    FiltroComponent,
+    SafeUrlPipe,
   ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
@@ -55,7 +58,16 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _directionsService = inject(MapDirectionsService);
   private _listaItemsEliminar: number[] = [];
   private _generalService = inject(GeneralService);
+  private _httpService = inject(HttpService);
   private _filtroBaseService = inject(FiltroBaseService);
+
+  public toggleModalRotuloPreview$ = new BehaviorSubject(false);
+  public rotuloPreviewUrl: string | null = null;
+  public rotuloCargando = false;
+  public rotuloError = false;
+  private _rotuloBlobUrl: string | null = null;
+  private _ultimosIdsImpresion: number[] | null = null;
+  private _ultimoFormatoImpresion: 'termica' | 'a4' = 'termica';
 
   public actualizandoLista = signal<boolean>(false);
   public guiaMapeo = guiaMapeo
@@ -285,6 +297,86 @@ export default class VisitaListaComponent extends General implements OnInit {
 
   actualizarItemsSeleccionados(itemsSeleccionados: number[]) {
     this._listaItemsEliminar = itemsSeleccionados;
+  }
+
+  get cantidadSeleccionada(): number {
+    return this._listaItemsEliminar.length;
+  }
+
+  imprimirRotulosSeleccionados() {
+    if (this._listaItemsEliminar.length === 0) {
+      this.alerta.mensajeError('Selección vacía', 'Selecciona al menos una visita.');
+      return;
+    }
+    this._abrirPreviewYConsultar([...this._listaItemsEliminar], 'termica');
+  }
+
+  reintentarRotulo() {
+    if (this._ultimosIdsImpresion?.length) {
+      this._abrirPreviewYConsultar(this._ultimosIdsImpresion, this._ultimoFormatoImpresion);
+    }
+  }
+
+  imprimirRotuloDesdePreview() {
+    const iframe = document.getElementById(
+      'rotulo-preview-iframe-lista'
+    ) as HTMLIFrameElement | null;
+    if (iframe?.contentWindow) {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+  }
+
+  cerrarModalRotuloPreview() {
+    this.toggleModalRotuloPreview$.next(false);
+    if (this._rotuloBlobUrl) {
+      URL.revokeObjectURL(this._rotuloBlobUrl);
+      this._rotuloBlobUrl = null;
+    }
+    this.rotuloPreviewUrl = null;
+    const modalEl = document.querySelector('#rotulo-preview-lista') as HTMLElement | null;
+    if (modalEl) {
+      KTModal.getInstance(modalEl)?.hide();
+    }
+  }
+
+  private _abrirPreviewYConsultar(ids: number[], formato: 'termica' | 'a4' = 'termica') {
+    this._ultimosIdsImpresion = ids;
+    this._ultimoFormatoImpresion = formato;
+    this.rotuloCargando = true;
+    this.rotuloError = false;
+    this.rotuloPreviewUrl = null;
+    if (this._rotuloBlobUrl) {
+      URL.revokeObjectURL(this._rotuloBlobUrl);
+      this._rotuloBlobUrl = null;
+    }
+    this.toggleModalRotuloPreview$.next(true);
+    this.changeDetectorRef.detectChanges();
+    setTimeout(() => {
+      const modalEl = document.querySelector('#rotulo-preview-lista') as HTMLElement | null;
+      if (modalEl) {
+        KTModal.getOrCreateInstance(modalEl)?.show();
+      }
+    }, 50);
+
+    const payload: any = ids.length === 1 ? { id: ids[0] } : { ids };
+    payload.formato = formato;
+    this._httpService
+      .previsualizarArchivoDominio('ruteo/visita/imprimir-rotulo/', payload)
+      .subscribe({
+        next: (response: any) => {
+          const blob = new Blob([response.body], { type: 'application/pdf' });
+          this._rotuloBlobUrl = URL.createObjectURL(blob);
+          this.rotuloPreviewUrl = this._rotuloBlobUrl;
+          this.rotuloCargando = false;
+          this.changeDetectorRef.detectChanges();
+        },
+        error: () => {
+          this.rotuloCargando = false;
+          this.rotuloError = true;
+          this.changeDetectorRef.detectChanges();
+        },
+      });
   }
 
   async eliminarItemsSeleccionados() {
