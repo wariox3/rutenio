@@ -210,6 +210,17 @@ export default [
     ],
   },
   {
+    path: 'super-admin',
+    canActivate: [authGuard],
+    loadComponent: () => import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('../modules/super-admin/super-admin.routes'),
+      },
+    ],
+  },
+  {
     path: 'movimiento',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),
