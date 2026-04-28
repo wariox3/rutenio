@@ -138,8 +138,16 @@
                     } @else {
                       <div class="flex flex-wrap gap-1">
                         @for (c of u.invitado_a; track c.schema_name) {
-                          <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10.5px] bg-gray-800 text-gray-300 border border-gray-700">
+                          <span class="group inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] bg-gray-800 text-gray-300 border border-gray-700">
                             {{ c.nombre || c.schema_name }}
+                            <button
+                              type="button"
+                              class="opacity-0 group-hover:opacity-100 transition-opacity hover:text-green-400"
+                              title="Hacer admin de este contenedor"
+                              (click)="hacerAdmin(u, c)"
+                            >
+                              <i class="ki-filled ki-shield-tick text-[11px]"></i>
+                            </button>
                           </span>
                         }
                       </div>
