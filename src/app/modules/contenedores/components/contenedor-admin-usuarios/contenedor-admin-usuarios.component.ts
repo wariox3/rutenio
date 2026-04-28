@@ -92,6 +92,33 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
       });
   }
 
+  hacerAdmin(usuario: UsuarioGlobal, contenedor: ContenedorRef) {
+    if (
+      !confirm(
+        `¿Convertir a ${usuario.username} en administrador de "${contenedor.nombre || contenedor.schema_name}"?\n\nEl admin actual pasará a ser usuario regular.`
+      )
+    ) {
+      return;
+    }
+    this.http
+      .post<{ mensaje: string; contenedor_id: number }>(
+        `${environment.url_api}/contenedor/usuario/admin-cambiar-admin-contenedor/`,
+        { usuario_id: usuario.id, schema_name: contenedor.schema_name },
+        { headers: this.headers }
+      )
+      .subscribe({
+        next: () => {
+          this.cargar();
+        },
+        error: (err) => {
+          alert(
+            'No se pudo cambiar el admin: ' +
+              (err?.error?.mensaje || 'Error inesperado')
+          );
+        },
+      });
+  }
+
   get usuariosFiltrados(): UsuarioGlobal[] {
     const q = this.busqueda.trim().toLowerCase();
     return this.usuarios().filter((u) => {
