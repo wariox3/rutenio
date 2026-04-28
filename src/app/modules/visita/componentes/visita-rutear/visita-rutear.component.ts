@@ -195,8 +195,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
   public toggleModalPendientesRutear$ = new BehaviorSubject(false);
   public toggleModalRotuloPreview$ = new BehaviorSubject(false);
+  public toggleModalImprimirVarios$ = new BehaviorSubject(false);
   public rotuloPreviewUrl: string | null = null;
+  public rotuloCargando = false;
+  public rotuloError = false;
+  public rotuloVisitaActual: Visita | null = null;
+  public busquedaImprimir = '';
+  public idsImprimirVarios = new Set<number>();
+  public formatoImprimir: 'termica' | 'a4' = 'termica';
   private _rotuloBlobUrl: string | null = null;
+  private _ultimosIdsImpresion: number[] | null = null;
+  private _ultimoFormatoImpresion: 'termica' | 'a4' = 'termica';
   public cantidadRegistros: number = 0;
   public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS;
   public filtroKey = signal<string>('filtro_visita_rutear');
@@ -797,26 +806,119 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   imprimirRotuloVisita(visita: Visita) {
-    this.alerta.mensajaEspera('Cargando');
+    this.rotuloVisitaActual = visita;
+    this._abrirPreviewYConsultar([visita.id], 'termica');
+  }
+
+  abrirModalImprimirVarios() {
+    this.busquedaImprimir = '';
+    this.idsImprimirVarios = new Set<number>();
+    this.toggleModalImprimirVarios$.next(true);
+  }
+
+  cerrarModalImprimirVarios() {
+    this.toggleModalImprimirVarios$.next(false);
+    const modalEl = document.querySelector('#imprimir-rotulos-seleccion') as HTMLElement | null;
+    if (modalEl) {
+      KTModal.getInstance(modalEl)?.hide();
+    }
+  }
+
+  get visitasFiltradasImprimir(): Visita[] {
+    const termino = this.busquedaImprimir.trim().toLowerCase();
+    if (!termino) {
+      return this.arrVisitas;
+    }
+    return this.arrVisitas.filter((v) => {
+      const destinatario = (v.destinatario || '').toLowerCase();
+      const direccion = (v.destinatario_direccion || '').toLowerCase();
+      const numero = String(v.numero || '');
+      return (
+        destinatario.includes(termino) ||
+        direccion.includes(termino) ||
+        numero.includes(termino)
+      );
+    });
+  }
+
+  get todasFiltradasSeleccionadasImprimir(): boolean {
+    const filtradas = this.visitasFiltradasImprimir;
+    if (filtradas.length === 0) return false;
+    return filtradas.every((v) => this.idsImprimirVarios.has(v.id));
+  }
+
+  toggleSeleccionImprimirVarios(visita: Visita) {
+    if (this.idsImprimirVarios.has(visita.id)) {
+      this.idsImprimirVarios.delete(visita.id);
+    } else {
+      this.idsImprimirVarios.add(visita.id);
+    }
+    this.idsImprimirVarios = new Set(this.idsImprimirVarios);
+  }
+
+  estaSeleccionadoImprimirVarios(id: number): boolean {
+    return this.idsImprimirVarios.has(id);
+  }
+
+  seleccionarTodasImprimir() {
+    const ids = this.visitasFiltradasImprimir.map((v) => v.id);
+    this.idsImprimirVarios = new Set([...this.idsImprimirVarios, ...ids]);
+  }
+
+  limpiarSeleccionImprimirVarios() {
+    this.idsImprimirVarios = new Set<number>();
+  }
+
+  confirmarImprimirVarios() {
+    const ids = Array.from(this.idsImprimirVarios);
+    if (ids.length === 0) return;
+    const formato = this.formatoImprimir;
+    this.cerrarModalImprimirVarios();
+    this.rotuloVisitaActual = null;
+    setTimeout(() => this._abrirPreviewYConsultar(ids, formato), 200);
+  }
+
+  reintentarRotulo() {
+    if (this._ultimosIdsImpresion?.length) {
+      this._abrirPreviewYConsultar(this._ultimosIdsImpresion, this._ultimoFormatoImpresion);
+    }
+  }
+
+  private _abrirPreviewYConsultar(ids: number[], formato: 'termica' | 'a4' = 'termica') {
+    this._ultimosIdsImpresion = ids;
+    this._ultimoFormatoImpresion = formato;
+    this.rotuloCargando = true;
+    this.rotuloError = false;
+    this.rotuloPreviewUrl = null;
+    if (this._rotuloBlobUrl) {
+      URL.revokeObjectURL(this._rotuloBlobUrl);
+      this._rotuloBlobUrl = null;
+    }
+    this.toggleModalRotuloPreview$.next(true);
+    this.changeDetectorRef.detectChanges();
+    setTimeout(() => {
+      const modalEl = document.querySelector('#rotulo-preview') as HTMLElement | null;
+      if (modalEl) {
+        KTModal.getOrCreateInstance(modalEl)?.show();
+      }
+    }, 50);
+
+    const payload: any = ids.length === 1 ? { id: ids[0] } : { ids };
+    payload.formato = formato;
     this._httpServiceArchivos
-      .previsualizarArchivoDominio('ruteo/visita/imprimir-rotulo/', {
-        id: visita.id,
-      })
+      .previsualizarArchivoDominio('ruteo/visita/imprimir-rotulo/', payload)
       .subscribe({
         next: (response: any) => {
-          this.alerta.cerrarMensajes();
-          if (this._rotuloBlobUrl) {
-            URL.revokeObjectURL(this._rotuloBlobUrl);
-          }
           const blob = new Blob([response.body], { type: 'application/pdf' });
           this._rotuloBlobUrl = URL.createObjectURL(blob);
           this.rotuloPreviewUrl = this._rotuloBlobUrl;
-          this.toggleModalRotuloPreview$.next(true);
+          this.rotuloCargando = false;
           this.changeDetectorRef.detectChanges();
         },
         error: () => {
-          this.alerta.cerrarMensajes();
-          this.alerta.mensajeError('Error', 'No se pudo cargar el rótulo');
+          this.rotuloCargando = false;
+          this.rotuloError = true;
+          this.changeDetectorRef.detectChanges();
         },
       });
   }
@@ -838,6 +940,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
       this._rotuloBlobUrl = null;
     }
     this.rotuloPreviewUrl = null;
+    const modalEl = document.querySelector('#rotulo-preview') as HTMLElement | null;
+    if (modalEl) {
+      KTModal.getInstance(modalEl)?.hide();
+    }
   }
 
   eliminarVisita(id: number) {
