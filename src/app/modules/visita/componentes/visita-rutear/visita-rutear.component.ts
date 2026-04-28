@@ -38,8 +38,10 @@ import { PaginacionDefaultComponent } from '../../../../common/components/ui/pag
 import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { FiltrosCompactosPipe } from '../../../../common/pipes/filtros-compactos.pipe';
+import { SafeUrlPipe } from '../../../../common/pipes/safe-url.pipe';
 import { GeneralApiService } from '../../../../core';
 import { GeneralService } from '../../../../common/services/general.service';
+import { HttpService } from '../../../../common/services/http.service';
 import {
   EstadoPaginacion,
   ParametrosApi,
@@ -85,6 +87,7 @@ import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
     VisitaResumenPedienteComponent,
     RedondearPipe,
     FiltrosCompactosPipe,
+    SafeUrlPipe,
     VisitaFormularioComponent,
     VisitaImportarPorComplementoComponent,
     PaginadorComponent,
@@ -191,6 +194,9 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public toggleModalVisitaEditar$ = new BehaviorSubject(false);
   public toggleModalVisitaDetalle$ = new BehaviorSubject(false);
   public toggleModalPendientesRutear$ = new BehaviorSubject(false);
+  public toggleModalRotuloPreview$ = new BehaviorSubject(false);
+  public rotuloPreviewUrl: string | null = null;
+  private _rotuloBlobUrl: string | null = null;
   public cantidadRegistros: number = 0;
   public VISITA_RUTEAR_FILTERS = VISITA_RUTEAR_FILTERS;
   public filtroKey = signal<string>('filtro_visita_rutear');
@@ -205,6 +211,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _filtroBaseService = inject(FiltroBaseService);
   private _generalApiService = inject(GeneralApiService);
   private _generalService = inject(GeneralService);
+  private _httpServiceArchivos = inject(HttpService);
   private _visitaApiService = inject(VisitaApiService);
   private _franjaService = inject(FranjaService);
   private _filterTransformerService = inject(FilterTransformerService);
@@ -790,9 +797,47 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   imprimirRotuloVisita(visita: Visita) {
-    this._generalService.imprimir('ruteo/visita/imprimir-rotulo/', {
-      id: visita.id,
-    });
+    this.alerta.mensajaEspera('Cargando');
+    this._httpServiceArchivos
+      .previsualizarArchivoDominio('ruteo/visita/imprimir-rotulo/', {
+        id: visita.id,
+      })
+      .subscribe({
+        next: (response: any) => {
+          this.alerta.cerrarMensajes();
+          if (this._rotuloBlobUrl) {
+            URL.revokeObjectURL(this._rotuloBlobUrl);
+          }
+          const blob = new Blob([response.body], { type: 'application/pdf' });
+          this._rotuloBlobUrl = URL.createObjectURL(blob);
+          this.rotuloPreviewUrl = this._rotuloBlobUrl;
+          this.toggleModalRotuloPreview$.next(true);
+          this.changeDetectorRef.detectChanges();
+        },
+        error: () => {
+          this.alerta.cerrarMensajes();
+          this.alerta.mensajeError('Error', 'No se pudo cargar el rótulo');
+        },
+      });
+  }
+
+  imprimirRotuloDesdePreview() {
+    const iframe = document.getElementById(
+      'rotulo-preview-iframe'
+    ) as HTMLIFrameElement | null;
+    if (iframe?.contentWindow) {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+    }
+  }
+
+  cerrarModalRotuloPreview() {
+    this.toggleModalRotuloPreview$.next(false);
+    if (this._rotuloBlobUrl) {
+      URL.revokeObjectURL(this._rotuloBlobUrl);
+      this._rotuloBlobUrl = null;
+    }
+    this.rotuloPreviewUrl = null;
   }
 
   eliminarVisita(id: number) {
