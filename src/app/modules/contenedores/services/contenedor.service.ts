@@ -98,14 +98,28 @@ export class ContenedorService {
     );
   }
 
+  cederAdmin(contenedorId: number, nuevoAdminId: number) {
+    return this.http.post<{ mensaje: string }>(
+      `${environment.url_api}/contenedor/usuariocontenedor/ceder-admin/`,
+      {
+        contenedor_id: contenedorId,
+        nuevo_admin_id: nuevoAdminId,
+      }
+    );
+  }
+
   invitarUsuario(payload: InvitarUsuario) {
+    const body: any = {
+      contenedor_id: payload.contenedorId,
+      usuario_id: payload.usuarioId,
+      usuario_invitado_id: payload.usuarioInvitadoId,
+    };
+    if (payload.contenedoresIds && payload.contenedoresIds.length > 0) {
+      body.contenedores_ids = payload.contenedoresIds;
+    }
     return this.http.post<RespuestaInvitacionUsuario>(
       `${environment.url_api}/contenedor/usuariocontenedor/nuevo/`,
-      {
-        contenedor_id: payload.contenedorId,
-        usuario_id: payload.usuarioId,
-        usuario_invitado_id: payload.usuarioInvitadoId,
-      }
+      body
     );
   }
 
