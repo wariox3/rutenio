@@ -398,6 +398,17 @@
                           <div class="menu-item" data-menu-dismiss="true">
                             <button
                               class="menu-link"
+                              (click)="imprimirRotuloVisita(visita)"
+                            >
+                              <span class="menu-icon">
+                                <i class="ki-filled ki-printer"></i>
+                              </span>
+                              <span class="menu-title"> Imprimir </span>
+                            </button>
+                          </div>
+                          <div class="menu-item" data-menu-dismiss="true">
+                            <button
+                              class="menu-link"
                               (click)="confirmarEliminarVisita(visita.id)"
                             >
                               <span class="menu-icon">
