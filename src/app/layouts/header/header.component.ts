@@ -9,7 +9,7 @@ import {
 import { filter, map, Observable } from 'rxjs';
 import { General } from '../../common/clases/general';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
-import { obtenerContenedorNombre } from '../../redux/selectors/contenedor.selector';
+import { obtenerContenedorNombre, obtenerContenedorRol } from '../../redux/selectors/contenedor.selector';
 import { obtenerUsuario } from '../../redux/selectors/usuario.selector';
 import { MenuComponent } from '../menu/menu.component';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
@@ -33,6 +33,8 @@ export class HeaderComponent extends General implements OnInit {
 
   public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
+  public contenedorRol$: Observable<string>;
+  public esSuperAdmin$: Observable<boolean>;
 
   public menuItems: MenuItems[] = [
     {
@@ -70,6 +72,10 @@ export class HeaderComponent extends General implements OnInit {
 
   ngOnInit(): void {
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
+    this.contenedorRol$ = this.store.select(obtenerContenedorRol);
+    this.esSuperAdmin$ = this.usuario$.pipe(
+      map((u: any) => !!u?.is_superuser)
+    );
 
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))

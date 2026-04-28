@@ -49,6 +49,8 @@
       <app-menu
         [nombre]="(usuario$ | async)?.nombre"
         [contenedorNombre]="contenedorNombre$ | async"
+        [rolContenedor]="(contenedorRol$ | async) || ''"
+        [esSuperAdmin]="(esSuperAdmin$ | async) || false"
         [menuItems]="menuItems"
         [imagen]="getUserImageUrl() | async"
       ></app-menu>
