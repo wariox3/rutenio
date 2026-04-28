@@ -33,6 +33,12 @@ interface UsuarioGlobal {
   invitado_a: ContenedorRef[];
 }
 
+interface ContenedorOpcion {
+  id: number;
+  schema_name: string;
+  nombre: string;
+}
+
 @Component({
   selector: 'app-contenedor-admin-usuarios',
   standalone: true,
@@ -47,6 +53,14 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
   usuarios = signal<UsuarioGlobal[]>([]);
   busqueda = '';
   filtroEstado: 'todos' | 'activos' | 'inactivos' | 'super_admin' = 'todos';
+
+  // Modal asignar contenedor
+  modalAsignar = signal<boolean>(false);
+  usuarioSeleccionado = signal<UsuarioGlobal | null>(null);
+  contenedoresDisponibles = signal<ContenedorOpcion[]>([]);
+  contenedorElegido: number | null = null;
+  rolAsignar: 'admin' | 'usuario' = 'usuario';
+  asignando = signal<boolean>(false);
 
   private get headers(): HttpHeaders {
     const token = getCookie('admin_token');
@@ -87,6 +101,60 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
         next: ({ is_active }) => {
           this.usuarios.update((lista) =>
             lista.map((x) => (x.id === u.id ? { ...x, is_active } : x))
+          );
+        },
+      });
+  }
+
+  abrirModalAsignar(u: UsuarioGlobal) {
+    this.usuarioSeleccionado.set(u);
+    this.contenedorElegido = null;
+    this.rolAsignar = 'usuario';
+    this.modalAsignar.set(true);
+    if (this.contenedoresDisponibles().length === 0) {
+      this.http
+        .get<ContenedorOpcion[]>(
+          `${environment.url_api}/contenedor/contenedor/admin-lista/`,
+          { headers: this.headers }
+        )
+        .subscribe((lista) => this.contenedoresDisponibles.set(lista || []));
+    }
+  }
+
+  cerrarModalAsignar() {
+    this.modalAsignar.set(false);
+    this.usuarioSeleccionado.set(null);
+  }
+
+  confirmarAsignacion() {
+    const u = this.usuarioSeleccionado();
+    if (!u || !this.contenedorElegido) return;
+    const contenedor = this.contenedoresDisponibles().find(
+      (c) => c.id === this.contenedorElegido
+    );
+    if (!contenedor) return;
+    this.asignando.set(true);
+    this.http
+      .post<{ mensaje: string }>(
+        `${environment.url_api}/contenedor/usuario/admin-asignar-contenedor/`,
+        {
+          usuario_id: u.id,
+          schema_name: contenedor.schema_name,
+          rol: this.rolAsignar,
+        },
+        { headers: this.headers }
+      )
+      .subscribe({
+        next: () => {
+          this.asignando.set(false);
+          this.cerrarModalAsignar();
+          this.cargar();
+        },
+        error: (err) => {
+          this.asignando.set(false);
+          alert(
+            'Error al asignar: ' +
+              (err?.error?.mensaje || 'Error inesperado')
           );
         },
       });
