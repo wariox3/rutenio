@@ -4,11 +4,13 @@ export interface SidebarMenu {
     iconoClase: string;
     activo?: boolean;
     tipoAcordion?: boolean;
+    soloAdmin?: boolean;
     children?: SidebarMenuItem[];
   }
-  
+
   export interface SidebarMenuItem {
     nombre: string;
     link: string;
     activo?: boolean;
+    soloAdmin?: boolean;
   }
