@@ -12,13 +12,14 @@ import { MenuItems } from '../../interfaces/general/header/menu.interface';
 import { obtenerContenedorNombre, obtenerContenedorRol } from '../../redux/selectors/contenedor.selector';
 import { obtenerUsuario } from '../../redux/selectors/usuario.selector';
 import { MenuComponent } from '../menu/menu.component';
+import { SelectorContenedorComponent } from '../selector-contenedor/selector-contenedor.component';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { ContenedorActionBorrarInformacion } from '../../redux/actions/contenedor/contenedor.actions';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MenuComponent, RouterLink],
+  imports: [CommonModule, MenuComponent, SelectorContenedorComponent, RouterLink],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
