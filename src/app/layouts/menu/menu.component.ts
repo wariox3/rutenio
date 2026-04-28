@@ -19,11 +19,26 @@ import { environment } from '../../../environments/environment';
 export class MenuComponent {
   @Input({ required: true }) nombre: string;
   @Input() contenedorNombre: string;
+  @Input() rolContenedor: string = '';
+  @Input() esSuperAdmin: boolean = false;
   @Input({ required: true }) menuItems: MenuItems[];
   @Input() imagen: string;
 
   private _authService = inject(AuthService);
   public url_reddoc_cuenta = environment.url_reddoc_cuenta;
+
+  get rolEtiqueta(): { texto: string; clase: string } | null {
+    if (this.esSuperAdmin) {
+      return { texto: 'Super admin', clase: 'badge-primary' };
+    }
+    if (this.rolContenedor === 'propietario') {
+      return { texto: 'Admin', clase: 'badge-success' };
+    }
+    if (this.rolContenedor === 'usuario' || this.rolContenedor === 'invitado') {
+      return { texto: 'Usuario', clase: 'badge-info' };
+    }
+    return null;
+  }
 
   cerrarSesion() {
     this._authService.logout();
