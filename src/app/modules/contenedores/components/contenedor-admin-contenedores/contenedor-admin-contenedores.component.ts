@@ -8,9 +8,12 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { getCookie } from 'typescript-cookie';
 import { environment } from '../../../../../environments/environment';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
+import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
 
 interface ContenedorGlobal {
   id: number;
@@ -34,10 +37,13 @@ interface ContenedorGlobal {
 })
 export default class ContenedorAdminContenedoresComponent implements OnInit {
   private http = inject(HttpClient);
+  private store = inject(Store);
+  private router = inject(Router);
 
   cargando = signal<boolean>(true);
   contenedores = signal<ContenedorGlobal[]>([]);
   busqueda = '';
+  accediendoId = signal<number | null>(null);
 
   private get headers(): HttpHeaders {
     const token = getCookie('admin_token');
@@ -82,6 +88,50 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
 
   get totalConWhatsapp(): number {
     return this.contenedores().filter((c) => c.whatsapp_phone_number_id).length;
+  }
+
+  acceder(c: ContenedorGlobal) {
+    if (this.accediendoId()) return;
+    this.accediendoId.set(c.id);
+    // Pedir el detalle del contenedor desde el endpoint público (auth normal del user)
+    this.http
+      .get<any>(`${environment.url_api}/contenedor/contenedor/${c.id}/`)
+      .subscribe({
+        next: (resp) => {
+          this.store.dispatch(
+            ContenedorActionInit({
+              contenedor: {
+                nombre: resp.nombre,
+                imagen: resp.imagen,
+                contenedor_id: resp.id,
+                subdominio: resp.subdominio,
+                id: resp.id,
+                usuario_id: resp.usuario_id,
+                seleccion: true,
+                rol: 'propietario',
+                perfil_web: null,
+                perfil_movil: null,
+                plan_id: resp.plan_id,
+                plan_nombre: resp.plan_nombre,
+                usuarios: resp.plan_limite_usuarios,
+                usuarios_base: resp.plan_usuarios_base,
+                reddoc: resp.reddoc,
+                ruteo: resp.ruteo,
+                acceso_restringido: resp.acceso_restringido,
+              } as any,
+            })
+          );
+          this.accediendoId.set(null);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          this.accediendoId.set(null);
+          alert(
+            'No se pudo acceder al contenedor: ' +
+              (err?.error?.mensaje || 'Verifica que tu sesión esté iniciada como super admin en el dashboard.')
+          );
+        },
+      });
   }
 
   whatsappEstadoBadge(c: ContenedorGlobal): { texto: string; clase: string } {
