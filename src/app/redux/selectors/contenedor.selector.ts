@@ -27,3 +27,13 @@ export const obtenerContenedorSubdominio = createSelector(
   Contenedor,
   (Contenedor) => `${Contenedor.subdominio}`
 );
+
+export const obtenerContenedorRol = createSelector(
+  Contenedor,
+  (Contenedor) => Contenedor?.rol || ''
+);
+
+export const obtenerEsAdminContenedor = createSelector(
+  Contenedor,
+  (Contenedor) => (Contenedor?.rol || '') === 'propietario'
+);

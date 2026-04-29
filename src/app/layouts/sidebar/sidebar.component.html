@@ -45,7 +45,7 @@
         data-menu-accordion-expand-all="false"
         id="sidebar_menu"
       >
-        @for (menu of sidebarMenu; track $index) { @if (!menu.tipoAcordion) {
+        @for (menu of sidebarMenu; track $index) { @if (puedeVerMenu(menu)) { @if (!menu.tipoAcordion) {
         <div class="menu-item" data-menu-item-trigger="click">
           <div
             class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent rounded-lg transition-colors cursor-pointer"
@@ -115,6 +115,7 @@
             [class.hidden]="!isAccordionOpen(menu.nombre)"
           >
             @for (subMenu of menu?.children; track $index) {
+            @if (puedeVerSubmenu(subMenu)) {
             <div class="menu-item">
               <a
                 class="menu-link gap-[14px] pl-[10px] pr-[10px] py-[8px] border border-transparent items-center grow hover:bg-gray-100 dark:hover:bg-coal-400 hover:rounded-lg transition-colors"
@@ -142,9 +143,12 @@
               </a>
             </div>
             }
+            }
           </div>
         </div>
-        } }
+        }
+        }
+        }
       </div>
     </div>
   </div>

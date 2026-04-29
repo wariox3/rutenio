@@ -111,7 +111,7 @@
                   contenedor.acceso_restringido && contenedor.rol !== 'control'
                 "
                 (emitirBotonClicked)="
-                  seleccionarEmpresa(contenedor.contenedor_id, idx)
+                  seleccionarEmpresa(contenedor.contenedor_id, idx, contenedor.rol)
                 "
                 [texto]="'Conectar'"
                 textoCargando="Espere..."

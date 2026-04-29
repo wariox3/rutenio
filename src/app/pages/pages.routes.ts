@@ -28,6 +28,18 @@ export default [
       import('../modules/contenedores/components/contenedor-admin-whatsapp/contenedor-admin-whatsapp.component'),
   },
   {
+    path: 'admin/contenedores',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-contenedores/contenedor-admin-contenedores.component'),
+  },
+  {
+    path: 'admin/usuarios',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-usuarios/contenedor-admin-usuarios.component'),
+  },
+  {
     path: 'contenedor',
     canActivate: [authGuard],
     loadComponent: () =>

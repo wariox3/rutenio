@@ -39,6 +39,7 @@ import { PaginadorComponent } from '../../../../common/components/ui/paginacion/
 import { RedondearPipe } from '../../../../common/pipes/redondear.pipe';
 import { FiltrosCompactosPipe } from '../../../../common/pipes/filtros-compactos.pipe';
 import { SafeUrlPipe } from '../../../../common/pipes/safe-url.pipe';
+import { AdminDirective } from '../../../../common/directivas/admin.directive';
 import { GeneralApiService } from '../../../../core';
 import { GeneralService } from '../../../../common/services/general.service';
 import { HttpService } from '../../../../common/services/http.service';
@@ -88,6 +89,7 @@ import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
     RedondearPipe,
     FiltrosCompactosPipe,
     SafeUrlPipe,
+    AdminDirective,
     VisitaFormularioComponent,
     VisitaImportarPorComplementoComponent,
     PaginadorComponent,

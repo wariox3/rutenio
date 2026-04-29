@@ -2,6 +2,7 @@ export interface InvitarUsuario {
   contenedorId: number;
   usuarioId: string;
   usuarioInvitadoId: string;
+  contenedoresIds?: number[];
 }
 
 export interface RespuestaInvitacionUsuario {

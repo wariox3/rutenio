@@ -46,9 +46,11 @@ export class ContenedorInvitarComponent extends General implements OnInit {
 
   formularioInvitacionUsuario = this._formBuilder.group({
     id: [null, [Validators.required]],
+    contenedoresExtras: [<number[]>[]],
   });
   listaUsuarios = signal<ContenedorInvitacionLista[]>([]);
   listaUsuariosOpciones = signal<any[]>([]);
+  contenedoresAdmin = signal<ContenedorLista[]>([]);
 
   private _busquedaUsuarioSubject$ = new Subject<string>();
 
@@ -60,6 +62,22 @@ export class ContenedorInvitarComponent extends General implements OnInit {
     this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
     this._buscarUsuarios();
     this._inicializarBusquedaUsuarios();
+    this._cargarContenedoresAdmin();
+  }
+
+  private _cargarContenedoresAdmin() {
+    this._contenedorService
+      .lista({ rol: 'propietario' })
+      .pipe(
+        map((res: any) =>
+          (res?.results || []).filter(
+            (c: ContenedorLista) =>
+              c.contenedor_id !== this.contenedor.contenedor_id &&
+              (c.rol === 'propietario' || !c.rol)
+          )
+        )
+      )
+      .subscribe((lista) => this.contenedoresAdmin.set(lista));
   }
 
   private _inicializarBusquedaUsuarios() {
@@ -85,6 +103,9 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   }
 
   enviarInvitacionUsuario(contenedorId: number) {
+    const extras = this.formularioInvitacionUsuario.controls.contenedoresExtras.value || [];
+    const ids = [contenedorId, ...extras.filter((id) => id !== contenedorId)];
+
     this.store
       .select(obtenerUsuarioId)
       .pipe(
@@ -93,10 +114,14 @@ export class ContenedorInvitarComponent extends General implements OnInit {
             contenedorId: contenedorId,
             usuarioId: usuarioId,
             usuarioInvitadoId: this.formularioInvitacionUsuario.controls.id.value,
+            contenedoresIds: ids.length > 1 ? ids : undefined,
           })
         ),
         tap(() => {
-          this.alerta.mensajaExitoso('Se ha enviado un correo de invitación.');
+          const mensaje = ids.length > 1
+            ? `Usuario asignado a ${ids.length} contenedores.`
+            : 'Se ha enviado un correo de invitación.';
+          this.alerta.mensajaExitoso(mensaje);
           this._limpiarFormulario();
         })
       )
@@ -104,6 +129,28 @@ export class ContenedorInvitarComponent extends General implements OnInit {
         next: () => {
           this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
         }
+      });
+  }
+
+  cederAdminA(usuario: ContenedorInvitacionLista) {
+    this._alertaService
+      .confirmar({
+        titulo: '¿Ceder administración?',
+        texto: `El usuario ${usuario.usuario__username} pasará a ser el administrador del contenedor. Tú quedarás como usuario regular y perderás permisos de admin.`,
+        textoBotonCofirmacion: 'Sí, ceder',
+        colorConfirmar: '#d33',
+      })
+      .then(({ isConfirmed }) => {
+        if (!isConfirmed) return;
+        this._contenedorService
+          .cederAdmin(this.contenedor.contenedor_id, usuario.usuario)
+          .pipe(
+            tap(() => {
+              this.alerta.mensajaExitoso('Administración transferida.');
+              this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
+            })
+          )
+          .subscribe();
       });
   }
 
