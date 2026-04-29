@@ -37,3 +37,23 @@ export const obtenerEsAdminContenedor = createSelector(
   Contenedor,
   (Contenedor) => (Contenedor?.rol || '') === 'propietario'
 );
+
+export const obtenerPerfilWeb = createSelector(
+  Contenedor,
+  (Contenedor) => Contenedor?.perfil_web || null
+);
+
+export const obtenerPuedeEscribir = createSelector(
+  Contenedor,
+  (Contenedor) => {
+    const rol = Contenedor?.rol || '';
+    if (rol === 'propietario') return true;
+    const perfil = Contenedor?.perfil_web || 'operativo';
+    return perfil === 'operativo' || perfil === 'supervisor';
+  }
+);
+
+export const obtenerPerfilMovil = createSelector(
+  Contenedor,
+  (Contenedor) => Contenedor?.perfil_movil || null
+);

@@ -27,6 +27,10 @@ export interface ContenedorLista {
   usuario_id: number;
   seleccion?: boolean;
   acceso_restringido: boolean;
+  tiene_acceso_web?: boolean;
+  tiene_acceso_movil?: boolean;
+  perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null;
+  perfil_movil?: 'conductor' | 'coordinador' | null;
 }
 
 
@@ -47,6 +51,8 @@ export interface Contenedor extends BaseContenedor, BaseUsuarioAcceso, BasePlanU
   contenedor_id: number;
   rol: string;
   seleccion?: boolean;
+  perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null;
+  perfil_movil?: 'conductor' | 'coordinador' | null;
 }
 
 export interface ContenedorDetalle extends BaseContenedor, BaseUsuarioAcceso {

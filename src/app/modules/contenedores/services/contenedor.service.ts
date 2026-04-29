@@ -117,6 +117,18 @@ export class ContenedorService {
     if (payload.contenedoresIds && payload.contenedoresIds.length > 0) {
       body.contenedores_ids = payload.contenedoresIds;
     }
+    if (payload.tieneAccesoWeb !== undefined) {
+      body.tiene_acceso_web = payload.tieneAccesoWeb;
+    }
+    if (payload.tieneAccesoMovil !== undefined) {
+      body.tiene_acceso_movil = payload.tieneAccesoMovil;
+    }
+    if (payload.perfilWeb) {
+      body.perfil_web = payload.perfilWeb;
+    }
+    if (payload.perfilMovil) {
+      body.perfil_movil = payload.perfilMovil;
+    }
     return this.http.post<RespuestaInvitacionUsuario>(
       `${environment.url_api}/contenedor/usuariocontenedor/nuevo/`,
       body

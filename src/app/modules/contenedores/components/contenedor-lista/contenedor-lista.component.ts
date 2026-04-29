@@ -144,7 +144,13 @@ export default class ContenedorListaComponent
       .subscribe();
   }
 
-  seleccionarEmpresa(contenedor_id: number, indexContenedor: number, rol: string = '') {
+  seleccionarEmpresa(
+    contenedor_id: number,
+    indexContenedor: number,
+    rol: string = '',
+    perfil_web: string | null = null,
+    perfil_movil: string | null = null
+  ) {
     this.arrConectando[indexContenedor] = true;
     this.contenedorService
       .detalle(contenedor_id)
@@ -159,6 +165,8 @@ export default class ContenedorListaComponent
             usuario_id: respuesta.usuario_id,
             seleccion: true,
             rol: rol,
+            perfil_web: perfil_web as any,
+            perfil_movil: perfil_movil as any,
             plan_id: respuesta.plan_id,
             plan_nombre: respuesta.plan_nombre,
             usuarios: respuesta.plan_limite_usuarios,

@@ -38,6 +38,62 @@
           </small>
         </div>
       }
+
+      <div class="mb-5">
+        <app-label [required]="true">Acceso</app-label>
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-sm" formControlName="tieneAccesoWeb" />
+            <span class="text-sm text-gray-700 dark:text-gray-200">Web (dashboard)</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" class="checkbox checkbox-sm" formControlName="tieneAccesoMovil" />
+            <span class="text-sm text-gray-700 dark:text-gray-200">App móvil</span>
+          </label>
+        </div>
+      </div>
+
+      @if (formularioInvitacionUsuario.controls.tieneAccesoWeb.value) {
+        <div class="mb-5">
+          <app-label [required]="true">Perfil web</app-label>
+          <div class="grid grid-cols-3 gap-2">
+            @for (p of perfilesWeb; track p.valor) {
+              <label
+                class="flex flex-col gap-0.5 rounded-lg border p-2.5 cursor-pointer transition-colors"
+                [ngClass]="{
+                  'border-primary bg-primary/5': formularioInvitacionUsuario.controls.perfilWeb.value === p.valor,
+                  'border-gray-200 dark:border-gray-300 hover:border-gray-400': formularioInvitacionUsuario.controls.perfilWeb.value !== p.valor
+                }"
+              >
+                <input type="radio" class="sr-only" formControlName="perfilWeb" [value]="p.valor" />
+                <span class="text-xs font-semibold text-gray-900 dark:text-gray-100">{{ p.titulo }}</span>
+                <span class="text-[11px] text-gray-500 dark:text-gray-300">{{ p.descripcion }}</span>
+              </label>
+            }
+          </div>
+        </div>
+      }
+
+      @if (formularioInvitacionUsuario.controls.tieneAccesoMovil.value) {
+        <div class="mb-5">
+          <app-label [required]="true">Perfil móvil</app-label>
+          <div class="grid grid-cols-2 gap-2">
+            @for (p of perfilesMovil; track p.valor) {
+              <label
+                class="flex flex-col gap-0.5 rounded-lg border p-2.5 cursor-pointer transition-colors"
+                [ngClass]="{
+                  'border-primary bg-primary/5': formularioInvitacionUsuario.controls.perfilMovil.value === p.valor,
+                  'border-gray-200 dark:border-gray-300 hover:border-gray-400': formularioInvitacionUsuario.controls.perfilMovil.value !== p.valor
+                }"
+              >
+                <input type="radio" class="sr-only" formControlName="perfilMovil" [value]="p.valor" />
+                <span class="text-xs font-semibold text-gray-900 dark:text-gray-100">{{ p.titulo }}</span>
+                <span class="text-[11px] text-gray-500 dark:text-gray-300">{{ p.descripcion }}</span>
+              </label>
+            }
+          </div>
+        </div>
+      }
     </form>
   </div>
   <div class="card-footer justify-end">
@@ -60,6 +116,8 @@
         <tr>
           <th>Email</th>
           <th>Rol</th>
+          <th>Acceso</th>
+          <th>Perfil</th>
           <th></th>
         </tr>
       </thead>
@@ -69,6 +127,32 @@
           <td>{{ usuario.usuario__username }}</td>
           <td>
             <span class="badge badge-outline badge-xs">{{ usuario.rol }}</span>
+          </td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              @if (usuario.tiene_acceso_web) {
+                <span class="badge badge-xs badge-outline badge-primary">Web</span>
+              }
+              @if (usuario.tiene_acceso_movil) {
+                <span class="badge badge-xs badge-outline badge-info">Móvil</span>
+              }
+              @if (!usuario.tiene_acceso_web && !usuario.tiene_acceso_movil) {
+                <span class="text-xs text-gray-400">—</span>
+              }
+            </div>
+          </td>
+          <td>
+            <div class="flex flex-col gap-0.5">
+              @if (usuario.perfil_web) {
+                <span class="badge badge-xs badge-outline">{{ usuario.perfil_web | titlecase }}</span>
+              }
+              @if (usuario.perfil_movil) {
+                <span class="badge badge-xs badge-outline">{{ usuario.perfil_movil | titlecase }}</span>
+              }
+              @if (!usuario.perfil_web && !usuario.perfil_movil) {
+                <span class="text-xs text-gray-400">—</span>
+              }
+            </div>
           </td>
           <td class="w-50px">
             @if(usuario.rol !== 'propietario'){

@@ -3,6 +3,10 @@ export interface InvitarUsuario {
   usuarioId: string;
   usuarioInvitadoId: string;
   contenedoresIds?: number[];
+  tieneAccesoWeb?: boolean;
+  tieneAccesoMovil?: boolean;
+  perfilWeb?: 'operativo' | 'supervisor' | 'consulta';
+  perfilMovil?: 'conductor' | 'coordinador' | null;
 }
 
 export interface RespuestaInvitacionUsuario {
