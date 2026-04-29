@@ -16,5 +16,9 @@ export interface RespuestaConsultaContenedor {
     usuario__nombre: string,
     usuario__username: string,
     contenedor: number,
-    rol: string
+    rol: string,
+    tiene_acceso_web?: boolean,
+    tiene_acceso_movil?: boolean,
+    perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null,
+    perfil_movil?: 'conductor' | 'coordinador' | null,
 }

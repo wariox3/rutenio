@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -30,7 +31,8 @@ import { ContenedorService } from '../../services/contenedor.service';
     LabelComponent,
     ReactiveFormsModule,
     ButtonComponent,
-    NgSelectModule
+    NgSelectModule,
+    CommonModule,
   ],
   templateUrl: 'contenedor-invitar.component.html',
   styleUrl: './contenedor-invitar.component.css',
@@ -47,10 +49,24 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   formularioInvitacionUsuario = this._formBuilder.group({
     id: [null, [Validators.required]],
     contenedoresExtras: [<number[]>[]],
+    tieneAccesoWeb: [true],
+    tieneAccesoMovil: [false],
+    perfilWeb: ['operativo'],
+    perfilMovil: ['conductor'],
   });
   listaUsuarios = signal<ContenedorInvitacionLista[]>([]);
   listaUsuariosOpciones = signal<any[]>([]);
   contenedoresAdmin = signal<ContenedorLista[]>([]);
+
+  public perfilesWeb = [
+    { valor: 'operativo', titulo: 'Operativo', descripcion: 'Crear/editar visitas, imprimir' },
+    { valor: 'supervisor', titulo: 'Supervisor', descripcion: 'Operativo + cerrar despachos, exportar' },
+    { valor: 'consulta', titulo: 'Consulta', descripcion: 'Solo lectura, sin escribir' },
+  ];
+  public perfilesMovil = [
+    { valor: 'conductor', titulo: 'Conductor', descripcion: 'Sus despachos asignados' },
+    { valor: 'coordinador', titulo: 'Coordinador', descripcion: 'Despachos del grupo' },
+  ];
 
   private _busquedaUsuarioSubject$ = new Subject<string>();
 
@@ -103,8 +119,19 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   }
 
   enviarInvitacionUsuario(contenedorId: number) {
-    const extras = this.formularioInvitacionUsuario.controls.contenedoresExtras.value || [];
+    const f = this.formularioInvitacionUsuario.controls;
+    const extras = f.contenedoresExtras.value || [];
     const ids = [contenedorId, ...extras.filter((id) => id !== contenedorId)];
+    const tieneAccesoWeb = !!f.tieneAccesoWeb.value;
+    const tieneAccesoMovil = !!f.tieneAccesoMovil.value;
+
+    if (!tieneAccesoWeb && !tieneAccesoMovil) {
+      this.alerta.mensajeError(
+        'Falta acceso',
+        'El usuario debe tener al menos acceso web o móvil.'
+      );
+      return;
+    }
 
     this.store
       .select(obtenerUsuarioId)
@@ -113,8 +140,12 @@ export class ContenedorInvitarComponent extends General implements OnInit {
           this._contenedorService.invitarUsuario({
             contenedorId: contenedorId,
             usuarioId: usuarioId,
-            usuarioInvitadoId: this.formularioInvitacionUsuario.controls.id.value,
+            usuarioInvitadoId: f.id.value,
             contenedoresIds: ids.length > 1 ? ids : undefined,
+            tieneAccesoWeb: tieneAccesoWeb,
+            tieneAccesoMovil: tieneAccesoMovil,
+            perfilWeb: tieneAccesoWeb ? (f.perfilWeb.value as any) : undefined,
+            perfilMovil: tieneAccesoMovil ? (f.perfilMovil.value as any) : undefined,
           })
         ),
         tap(() => {
