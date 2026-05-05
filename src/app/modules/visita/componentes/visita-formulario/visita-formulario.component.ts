@@ -135,6 +135,17 @@ export default class VisitaFormularioComponent
         id: this.informacionVisita.ciudad,
         nombre: this.informacionVisita.ciudad__nombre,
       };
+      // Pre-cargar la ciudad actual en arrCiudades para que ng-select pueda
+      // resolver el label antes de que la consulta async traiga la lista.
+      // Sin esto, el control tiene el id correcto pero el select se pinta vacio.
+      if (this.informacionVisita.ciudad && this.informacionVisita.ciudad__nombre) {
+        this.arrCiudades = [
+          {
+            id: this.informacionVisita.ciudad,
+            nombre: this.informacionVisita.ciudad__nombre,
+          } as AutocompletarCiudades,
+        ];
+      }
     }
 
     this.consultarCiudad(this.formularioVisita.get('ciudad_nombre').value);
@@ -211,7 +222,18 @@ export default class VisitaFormularioComponent
       })
       .pipe(
         tap((respuesta) => {
-          this.arrCiudades = respuesta;
+          // Asegurar que la ciudad seleccionada actual sigue presente, sino
+          // ng-select la "pierde" cuando reemplaza items y queda con id sin label.
+          const ciudadIdActual = this.formularioVisita.get('ciudad')?.value;
+          const lista = respuesta || [];
+          if (
+            ciudadIdActual &&
+            !lista.some((c) => c.id === ciudadIdActual) &&
+            this.ciudadSeleccionada
+          ) {
+            lista.unshift(this.ciudadSeleccionada);
+          }
+          this.arrCiudades = lista;
           this.changeDetectorRef.detectChanges();
         })
       )
