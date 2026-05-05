@@ -66,6 +66,18 @@
       @if (menuItems.length) {
       <div class="menu-separator"></div>
       }
+      @if (puedeAdmin) {
+        <div class="menu-item">
+          <a class="menu-link" routerLink="/admin/contenedores">
+            <span class="menu-icon">
+              <i class="ki-filled ki-shield-tick text-primary"></i>
+            </span>
+            <span class="menu-title">Panel admin</span>
+            <span class="badge badge-xs badge-primary ms-auto">Staff</span>
+          </a>
+        </div>
+        <div class="menu-separator"></div>
+      }
       <div class="flex flex-col">
         <div class="menu-item mb-0.5">
           <div class="menu-link">

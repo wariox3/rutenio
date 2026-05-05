@@ -36,6 +36,7 @@ export class HeaderComponent extends General implements OnInit {
   public contenedorNombre$: Observable<string>;
   public contenedorRol$: Observable<string>;
   public esSuperAdmin$: Observable<boolean>;
+  public puedeAdmin$: Observable<boolean>;
 
   public menuItems: MenuItems[] = [
     {
@@ -76,6 +77,9 @@ export class HeaderComponent extends General implements OnInit {
     this.contenedorRol$ = this.store.select(obtenerContenedorRol);
     this.esSuperAdmin$ = this.usuario$.pipe(
       map((u: any) => !!u?.is_superuser)
+    );
+    this.puedeAdmin$ = this.usuario$.pipe(
+      map((u: any) => !!(u?.is_staff || u?.is_superuser))
     );
 
     this.router.events

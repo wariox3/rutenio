@@ -52,6 +52,7 @@
         [contenedorNombre]="contenedorNombre$ | async"
         [rolContenedor]="(contenedorRol$ | async) || ''"
         [esSuperAdmin]="(esSuperAdmin$ | async) || false"
+        [puedeAdmin]="(puedeAdmin$ | async) || false"
         [menuItems]="menuItems"
         [imagen]="getUserImageUrl() | async"
       ></app-menu>
