@@ -295,6 +295,21 @@
           Conversación cerrada — reabrir para enviar mensajes
         </div>
 
+        <!-- Aviso ventana 24h vencida: WhatsApp solo permite plantillas pre-aprobadas. -->
+        <div *ngIf="conv.estado === 'abierta' && ventana24hVencida"
+             class="flex items-start gap-2 mb-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-[12px] text-amber-800 dark:text-amber-300">
+          <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 9v4m0 4h.01M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/>
+          </svg>
+          <span>
+            Ventana de 24 horas vencida
+            <span *ngIf="horasDesdeUltimoMensajeCliente !== null">
+              (hace {{ horasDesdeUltimoMensajeCliente }}h)
+            </span>.
+            WhatsApp solo permite plantillas pre-aprobadas hasta que el cliente vuelva a escribir.
+          </span>
+        </div>
+
         <div *ngIf="conv.estado === 'abierta'" class="flex items-center gap-2">
           <button type="button"
                   class="shrink-0 p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition"

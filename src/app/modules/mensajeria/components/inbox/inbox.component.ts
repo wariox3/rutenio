@@ -5,6 +5,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  HostListener,
   inject,
   OnInit,
   ViewChild,
@@ -12,7 +13,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { interval, startWith, Subject, switchMap, takeUntil } from 'rxjs';
+import { filter, interval, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 import { MensajeriaApiService } from '../../servicios/mensajeria-api.service';
 import { Conversacion } from '../../interfaces/conversacion.interface';
 import { Mensaje } from '../../interfaces/mensaje.interface';
@@ -48,6 +49,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   controlBusqueda = new FormControl('');
 
   readonly POLLING_MS = 5000;
+  pestanaVisible = !document.hidden;
 
   private readonly _coloresAvatar = [
     { bg: 'bg-green-100', text: 'text-green-700', ring: 'ring-green-200' },
@@ -60,6 +62,8 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     interval(this.POLLING_MS).pipe(
       startWith(0),
+      // Pausar polling cuando la pestana esta oculta (ahorro de bateria/red).
+      filter(() => this.pestanaVisible),
       switchMap(() => this._api.listarConversaciones({ estado: 'abierta' })),
       takeUntilDestroyed(this._destroyRef),
     ).subscribe({
@@ -77,6 +81,11 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
         this._cdr.detectChanges();
       },
     });
+  }
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange(): void {
+    this.pestanaVisible = !document.hidden;
   }
 
   ngAfterViewChecked(): void {
@@ -122,6 +131,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     this.cargandoMensajes = true;
     interval(this.POLLING_MS).pipe(
       startWith(0),
+      filter(() => this.pestanaVisible),
       switchMap(() => this._api.listarMensajes(conversacionId)),
       takeUntil(this._detenerMensajes$),
       takeUntilDestroyed(this._destroyRef),
@@ -144,6 +154,13 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   enviar(): void {
     const texto = (this.controlTexto.value || '').trim();
     if (!texto || !this.conversacionActiva || this.enviando) return;
+    if (this.ventana24hVencida) {
+      this._alerta.mensajeError(
+        'Ventana de 24h vencida',
+        'WhatsApp solo permite plantillas pre-aprobadas. Espera a que el cliente escriba.',
+      );
+      return;
+    }
 
     this.enviando = true;
     this._api.enviarMensaje(this.conversacionActiva.id, { tipo: 'texto', contenido: texto })
@@ -160,10 +177,36 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
         },
         error: (err) => {
           this.enviando = false;
-          this._alerta.mensajeError('Error al enviar', err?.error?.mensaje || err?.message || '');
+          // Caso especial: ventana 24h vencida (codigo backend).
+          if (err?.error?.codigo === 'ventana_24h_vencida') {
+            this._alerta.mensajeError(
+              'Ventana de 24h vencida',
+              err.error.detail || 'Solo se permiten plantillas fuera de la ventana de 24h.',
+            );
+          } else {
+            this._alerta.mensajeError(
+              'Error al enviar',
+              err?.error?.detail || err?.error?.mensaje || err?.message || 'Error desconocido',
+            );
+          }
           this._cdr.detectChanges();
         },
       });
+  }
+
+  /** Devuelve true si la ventana de 24h con el cliente esta vencida (basado en fecha_ventana_24h). */
+  get ventana24hVencida(): boolean {
+    const fecha = this.conversacionActiva?.fecha_ventana_24h;
+    if (!fecha) return true;
+    const ms24h = 24 * 60 * 60 * 1000;
+    return Date.now() - new Date(fecha).getTime() > ms24h;
+  }
+
+  /** Horas desde el ultimo mensaje del cliente — util para mostrar advertencia. */
+  get horasDesdeUltimoMensajeCliente(): number | null {
+    const fecha = this.conversacionActiva?.fecha_ventana_24h;
+    if (!fecha) return null;
+    return Math.round((Date.now() - new Date(fecha).getTime()) / 3600000);
   }
 
   cerrar(): void {
