@@ -20,4 +20,5 @@ export interface Usuario {
   socio_id: number | null;
   verificado: boolean;
   debe_cambiar_clave?: boolean;
+  fecha_creacion?: string;
 }
