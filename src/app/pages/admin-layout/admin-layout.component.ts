@@ -9,7 +9,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { FooterComponent } from '../../layouts/footer/footer.component';
 import { HeaderComponent } from '../../layouts/header/header.component';
 import { SidebarComponent } from '../../layouts/sidebar/sidebar.component';
@@ -19,7 +19,7 @@ import { AlertaSuspensionComponent } from "../../common/components/alerta-suspen
 import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../common/components/ui/modals/service/modal.service';
 import { TutorialComponent } from '../../common/components/tutorial/tutorial.component';
-import { Subject, take, takeUntil } from 'rxjs';
+import { Subject, filter, take, takeUntil, throttleTime } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/configuracion.selectors';
 import { obtenerContenedorId } from '../../redux/selectors/contenedor.selector';
@@ -57,9 +57,43 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
   public mostrarModalConfiguracion = signal<boolean>(true);
 
   ngOnInit(): void {
-    // Refresca permisos del usuario en el contenedor activo cada vez que se carga
-    // el layout (refresh de pagina, cambio de ruta). Mantiene el store sincronizado
-    // cuando un admin modifica los permisos del usuario en otra sesion.
+    // Refresca permisos al cargar el layout (mount inicial / refresh de pagina).
+    this._refrescarPermisos();
+
+    // Y tambien en cada navegacion router (porque admin-layout no se remonta
+    // entre rutas hijas que comparten parent — el ngOnInit no vuelve a correr).
+    // Throttle de 5s para no spamear el endpoint si el usuario navega rapido.
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        throttleTime(5000),
+        takeUntil(this.destroy$),
+      )
+      .subscribe(() => this._refrescarPermisos());
+
+    // Modal "Configurar direccion": reactivo al state de configuracion.
+    this.store
+      .select(obtenerConfiguracionDireccionOrigenVacia)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (estaVacia) => {
+          setTimeout(() => {
+            if (estaVacia && !this.tutorialService.tourActivo()) {
+              this.mostrarModalConfiguracion.set(true);
+              this.modalService.open('modalConfiguracionDireccion');
+            } else if (estaVacia && this.tutorialService.tourActivo()) {
+              this.mostrarModalConfiguracion.set(false);
+            } else {
+              this.mostrarModalConfiguracion.set(false);
+              this.modalService.close('modalConfiguracionDireccion');
+            }
+            this.cdr.detectChanges();
+          }, 0);
+        },
+      });
+  }
+
+  private _refrescarPermisos(): void {
     this.store
       .select(obtenerContenedorId)
       .pipe(take(1))
@@ -79,36 +113,12 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
             );
           },
           error: () => {
-            // Si el endpoint falla (usuario perdio acceso), redirigir a contenedor lista
-            // para que escoja otro o cierre sesion.
             this.router.navigate(['/contenedor/lista']);
           },
         });
       });
-
-    // Suscripción ÚNICA y reactiva al selector
-    // Se actualizará automáticamente cuando cambie la configuración en el store
-    this.store
-      .select(obtenerConfiguracionDireccionOrigenVacia)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (estaVacia) => {
-          // setTimeout para asegurar que el DOM esté listo
-          setTimeout(() => {
-            if (estaVacia && !this.tutorialService.tourActivo()) {
-              this.mostrarModalConfiguracion.set(true);
-              this.modalService.open('modalConfiguracionDireccion');
-            } else if (estaVacia && this.tutorialService.tourActivo()) {
-              this.mostrarModalConfiguracion.set(false);
-            } else {
-              this.mostrarModalConfiguracion.set(false);
-              this.modalService.close('modalConfiguracionDireccion');
-            }
-            this.cdr.detectChanges();
-          }, 0);
-        }
-      });
   }
+
 
   ngAfterViewInit(): void {
     KTLayout.init();

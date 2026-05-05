@@ -21,7 +21,11 @@ export class ContenedorEffects {
           let calcularTresHoras = new Date(
             new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
-          setCookie('contenedor', JSON.stringify(action.contenedor), {
+          // No persistir permisos en cookie. Siempre se refrescan desde server
+          // via mi-membresia para evitar mostrar items con datos stale.
+          const { permisos: _permisos, ...contenedorSinPermisos } =
+            action.contenedor as any;
+          setCookie('contenedor', JSON.stringify(contenedorSinPermisos), {
             expires: calcularTresHoras,
             path: '/',
           });
@@ -39,9 +43,9 @@ export class ContenedorEffects {
           if (!cookieRaw) return;
           try {
             const actual = JSON.parse(cookieRaw);
+            // permisos NO se persisten en cookie (se refrescan desde server).
             const actualizado = {
               ...actual,
-              permisos: payload.permisos,
               ...(payload.rol !== undefined ? { rol: payload.rol } : {}),
               ...(payload.tiene_acceso_web !== undefined ? { tiene_acceso_web: payload.tiene_acceso_web } : {}),
               ...(payload.tiene_acceso_movil !== undefined ? { tiene_acceso_movil: payload.tiene_acceso_movil } : {}),
