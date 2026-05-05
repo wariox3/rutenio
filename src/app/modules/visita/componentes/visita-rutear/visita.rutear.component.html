@@ -218,7 +218,7 @@
                 </button>
               </div>
 
-              <div class="menu-item">
+              <div class="menu-item" *appPermisoPor="'visita.editar'">
                 <button
                   class="menu-link"
                   data-modal-toggle="#nuevo-visita"
@@ -231,7 +231,7 @@
                 </button>
               </div>
 
-              <div class="menu-item" *appAdmin>
+              <div class="menu-item" *appPermisoPor="'visita.editar'">
                 <button
                   class="menu-link"
                   [ngClass]="{
