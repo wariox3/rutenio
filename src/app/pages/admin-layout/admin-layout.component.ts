@@ -19,9 +19,12 @@ import { AlertaSuspensionComponent } from "../../common/components/alerta-suspen
 import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../common/components/ui/modals/service/modal.service';
 import { TutorialComponent } from '../../common/components/tutorial/tutorial.component';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, take, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/configuracion.selectors';
+import { obtenerContenedorId } from '../../redux/selectors/contenedor.selector';
+import { ContenedorActionActualizarPermisos } from '../../redux/actions/contenedor/contenedor.actions';
+import { ContenedorService } from '../../modules/contenedores/services/contenedor.service';
 import { TutorialService } from '../../common/components/tutorial/tutorial.service';
 
 @Component({
@@ -48,11 +51,41 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private tutorialService = inject(TutorialService);
+  private contenedorService = inject(ContenedorService);
   private destroy$ = new Subject<void>();
 
   public mostrarModalConfiguracion = signal<boolean>(true);
 
   ngOnInit(): void {
+    // Refresca permisos del usuario en el contenedor activo cada vez que se carga
+    // el layout (refresh de pagina, cambio de ruta). Mantiene el store sincronizado
+    // cuando un admin modifica los permisos del usuario en otra sesion.
+    this.store
+      .select(obtenerContenedorId)
+      .pipe(take(1))
+      .subscribe((id) => {
+        const contenedorId = Number(id);
+        if (!contenedorId || isNaN(contenedorId)) return;
+        this.contenedorService.miMembresia(contenedorId).subscribe({
+          next: (m) => {
+            this.store.dispatch(
+              ContenedorActionActualizarPermisos({
+                rol: m.rol,
+                tiene_acceso_web: m.tiene_acceso_web,
+                tiene_acceso_movil: m.tiene_acceso_movil,
+                perfil_movil: m.perfil_movil,
+                permisos: m.permisos,
+              }),
+            );
+          },
+          error: () => {
+            // Si el endpoint falla (usuario perdio acceso), redirigir a contenedor lista
+            // para que escoja otro o cierre sesion.
+            this.router.navigate(['/contenedor/lista']);
+          },
+        });
+      });
+
     // Suscripción ÚNICA y reactiva al selector
     // Se actualizará automáticamente cuando cambie la configuración en el store
     this.store

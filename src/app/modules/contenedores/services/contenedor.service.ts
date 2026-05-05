@@ -76,6 +76,16 @@ export class ContenedorService {
     );
   }
 
+  miMembresia(contenedorId: number) {
+    return this.http.get<{
+      rol: string;
+      tiene_acceso_web: boolean;
+      tiene_acceso_movil: boolean;
+      perfil_movil: 'conductor' | 'coordinador' | null;
+      permisos: Record<string, { ver: boolean; editar: boolean }> | null;
+    }>(`${environment.url_api}/contenedor/usuariocontenedor/mi-membresia/?contenedor_id=${contenedorId}`);
+  }
+
   consultarNombre(subdominio: string) {
     return this.http.post<{ validar: boolean }>(
       `${environment.url_api}/contenedor/contenedor/validar/`,

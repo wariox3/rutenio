@@ -19,3 +19,14 @@ export const ContenedorSeleccionAction = createAction(
 export const ContenedorActionBorrarInformacion = createAction(
   '[Contenedor] borrar informacion'
 );
+
+export const ContenedorActionActualizarPermisos = createAction(
+  '[Contenedor] actualizar permisos',
+  props<{
+    rol?: string;
+    tiene_acceso_web?: boolean;
+    tiene_acceso_movil?: boolean;
+    perfil_movil?: 'conductor' | 'coordinador' | null;
+    permisos: Record<string, { ver: boolean; editar: boolean }> | null;
+  }>(),
+);
