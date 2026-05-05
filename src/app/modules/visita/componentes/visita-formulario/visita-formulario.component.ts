@@ -93,6 +93,7 @@ export default class VisitaFormularioComponent
     unidades: new FormControl('', [Validators.required, Validators.min(1)]),
     peso: new FormControl('', [Validators.required, Validators.min(1)]),
     volumen: new FormControl('', [Validators.required, Validators.min(1)]),
+    cobro: new FormControl(0, [Validators.min(0)]),
     tiempo_servicio: new FormControl('', [
       Validators.required,
       Validators.min(1),
@@ -120,6 +121,7 @@ export default class VisitaFormularioComponent
         peso: this.informacionVisita.peso,
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
+        cobro: this.informacionVisita.cobro || 0,
         fecha: this.informacionVisita.fecha,
         observacion: this.informacionVisita.observacion,
         destinatario_direccion_complemento: this.informacionVisita.destinatario_direccion_complemento,

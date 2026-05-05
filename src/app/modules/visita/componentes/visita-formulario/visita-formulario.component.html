@@ -443,6 +443,20 @@
             ></ui-input>
           </div>
         </div>
+        <div class="mb-5">
+          <div>
+            <app-label [required]="false">Recaudo</app-label>
+            <ui-input
+              type="number"
+              placeholder="0"
+              formControlName="cobro"
+              [control]="formularioVisita.get('cobro')"
+              [errors]="{
+                min: 'No puede ser negativo',
+              }"
+            ></ui-input>
+          </div>
+        </div>
       </div>
       <div class="grid grid-cols-1 gap-4 mb-2">
         <div class="mb-5">
