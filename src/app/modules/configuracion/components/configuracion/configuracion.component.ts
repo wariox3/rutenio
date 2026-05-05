@@ -23,6 +23,8 @@ import {
 } from '../../../../redux/selectors/configuracion.selectors';
 import { EmpresaService } from '../../../empresa/servicios/empresa.service';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
+
 @Component({
   selector: 'app-configuracion',
   standalone: true,
@@ -32,6 +34,7 @@ import { AlertaService } from '../../../../common/services/alerta.service';
     BuscadorDireccionesComponent,
     CommonModule,
     CargarImagenComponent,
+    PermisoPorDirective,
   ],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.css',
