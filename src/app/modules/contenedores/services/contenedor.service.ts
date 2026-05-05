@@ -76,6 +76,20 @@ export class ContenedorService {
     );
   }
 
+  actualizarMembresia(membresiaId: number, datos: any) {
+    return this.http.patch<any>(
+      `${environment.url_api}/contenedor/usuariocontenedor/${membresiaId}/admin-actualizar/`,
+      datos,
+    );
+  }
+
+  aplicarPlantilla(membresiaId: number, plantilla: 'consulta' | 'operativo' | 'supervisor') {
+    return this.http.post<any>(
+      `${environment.url_api}/contenedor/usuariocontenedor/${membresiaId}/aplicar-plantilla/`,
+      { plantilla },
+    );
+  }
+
   miMembresia(contenedorId: number) {
     return this.http.get<{
       rol: string;

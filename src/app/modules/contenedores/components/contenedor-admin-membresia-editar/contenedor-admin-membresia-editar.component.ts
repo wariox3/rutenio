@@ -16,6 +16,7 @@ import {
   PermisosMembresia,
   Plantilla,
 } from '../../services/contenedor-admin.service';
+import { ContenedorService } from '../../services/contenedor.service';
 
 interface MembresiaEditable {
   id: number;
@@ -36,8 +37,14 @@ interface MembresiaEditable {
 })
 export class ContenedorAdminMembresiaEditarComponent {
   private adminService = inject(ContenedorAdminService);
+  private contenedorService = inject(ContenedorService);
 
   @Input({ required: true }) membresia!: MembresiaEditable;
+  /**
+   * 'super-admin' (default) usa el cookie admin_token contra ContenedorAdminService.
+   * 'admin-contenedor' usa el token regular del usuario via ContenedorService.
+   */
+  @Input() flujo: 'super-admin' | 'admin-contenedor' = 'super-admin';
   @Output() cerrar = new EventEmitter<void>();
   @Output() guardado = new EventEmitter<any>();
 
@@ -88,22 +95,25 @@ export class ContenedorAdminMembresiaEditarComponent {
   guardar() {
     this.guardando.set(true);
     this.error.set(null);
-    this.adminService
-      .actualizarMembresia(this.membresia.id, {
-        tiene_acceso_web: this.tieneAccesoWeb,
-        tiene_acceso_movil: this.tieneAccesoMovil,
-        perfil_movil: this.tieneAccesoMovil ? this.perfilMovil : null,
-        permisos: this.permisoLocal,
-      })
-      .subscribe({
-        next: (res) => {
-          this.guardando.set(false);
-          this.guardado.emit(res);
-        },
-        error: (err) => {
-          this.guardando.set(false);
-          this.error.set(err?.error?.mensaje || 'No se pudo guardar.');
-        },
-      });
+    const payload = {
+      tiene_acceso_web: this.tieneAccesoWeb,
+      tiene_acceso_movil: this.tieneAccesoMovil,
+      perfil_movil: this.tieneAccesoMovil ? this.perfilMovil : null,
+      permisos: this.permisoLocal,
+    };
+    const obs$ =
+      this.flujo === 'super-admin'
+        ? this.adminService.actualizarMembresia(this.membresia.id, payload)
+        : this.contenedorService.actualizarMembresia(this.membresia.id, payload);
+    obs$.subscribe({
+      next: (res) => {
+        this.guardando.set(false);
+        this.guardado.emit(res);
+      },
+      error: (err) => {
+        this.guardando.set(false);
+        this.error.set(err?.error?.mensaje || 'No se pudo guardar.');
+      },
+    });
   }
 }

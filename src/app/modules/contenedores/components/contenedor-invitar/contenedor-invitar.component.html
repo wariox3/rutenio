@@ -159,6 +159,14 @@
               <div class="flex items-center gap-2">
                 <button
                   type="button"
+                  title="Editar permisos"
+                  class="text-gray-500 hover:text-primary"
+                  (click)="abrirEditarPermisos(usuario)"
+                >
+                  <i class="ki-filled ki-key-square text-lg"></i>
+                </button>
+                <button
+                  type="button"
                   title="Ceder administración"
                   class="text-gray-500 hover:text-primary"
                   (click)="cederAdminA(usuario)"
@@ -182,3 +190,12 @@
     </table>
   </div>
 </div>
+
+@if (membresiaEditando(); as me) {
+  <app-contenedor-admin-membresia-editar
+    [membresia]="me"
+    flujo="admin-contenedor"
+    (cerrar)="cerrarEditarPermisos()"
+    (guardado)="permisosGuardados()"
+  ></app-contenedor-admin-membresia-editar>
+}

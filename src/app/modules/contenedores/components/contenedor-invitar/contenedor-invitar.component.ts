@@ -23,6 +23,7 @@ import { obtenerUsuarioId } from '../../../../redux/selectors/usuario.selector';
 import { ContenedorLista } from '../../interfaces/contenedor.interface';
 import { ContenedorInvitacionLista } from '../../interfaces/usuarios-contenedores.interface';
 import { ContenedorService } from '../../services/contenedor.service';
+import { ContenedorAdminMembresiaEditarComponent } from '../contenedor-admin-membresia-editar/contenedor-admin-membresia-editar.component';
 
 @Component({
   selector: 'app-contenedor-invitar',
@@ -33,6 +34,7 @@ import { ContenedorService } from '../../services/contenedor.service';
     ButtonComponent,
     NgSelectModule,
     CommonModule,
+    ContenedorAdminMembresiaEditarComponent,
   ],
   templateUrl: 'contenedor-invitar.component.html',
   styleUrl: './contenedor-invitar.component.css',
@@ -57,6 +59,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   listaUsuarios = signal<ContenedorInvitacionLista[]>([]);
   listaUsuariosOpciones = signal<any[]>([]);
   contenedoresAdmin = signal<ContenedorLista[]>([]);
+  membresiaEditando = signal<any | null>(null);
 
   public perfilesWeb = [
     { valor: 'operativo', titulo: 'Operativo', descripcion: 'Crear/editar visitas, imprimir' },
@@ -205,6 +208,28 @@ export class ContenedorInvitarComponent extends General implements OnInit {
             .subscribe();
         }
       });
+  }
+
+  abrirEditarPermisos(usuario: ContenedorInvitacionLista) {
+    this.membresiaEditando.set({
+      id: usuario.id,
+      contenedor__nombre: this.contenedor.contenedor__nombre,
+      contenedor__schema_name: (this.contenedor as any).contenedor__schema_name,
+      tiene_acceso_web: !!usuario.tiene_acceso_web,
+      tiene_acceso_movil: !!usuario.tiene_acceso_movil,
+      perfil_movil: usuario.perfil_movil ?? null,
+      permisos: (usuario as any).permisos ?? null,
+    });
+  }
+
+  cerrarEditarPermisos() {
+    this.membresiaEditando.set(null);
+  }
+
+  permisosGuardados() {
+    this.cerrarEditarPermisos();
+    this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
+    this._alertaService.mensajaExitoso('Permisos actualizados.');
   }
 
   seleccionarUsuario(usuario: any) {
