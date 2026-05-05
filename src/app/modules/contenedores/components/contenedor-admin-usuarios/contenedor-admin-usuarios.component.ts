@@ -4,14 +4,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { getCookie } from 'typescript-cookie';
 import { environment } from '../../../../../environments/environment';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
+import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 
 interface ContenedorRef {
   nombre: string;
@@ -40,25 +43,55 @@ interface ContenedorOpcion {
   nombre: string;
 }
 
+interface RespuestaListado {
+  count: number;
+  page: number;
+  page_size: number;
+  results: UsuarioGlobal[];
+  estadisticas: {
+    total: number;
+    activos: number;
+    super_admins: number;
+  };
+}
+
+type FiltroEstado = 'todos' | 'activos' | 'inactivos' | 'super_admin';
+
 @Component({
   selector: 'app-contenedor-admin-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, RouterLink, AdminNavComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DatePipe,
+    RouterLink,
+    AdminNavComponent,
+    PaginadorComponent,
+  ],
   templateUrl: './contenedor-admin-usuarios.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class ContenedorAdminUsuariosComponent implements OnInit {
+export default class ContenedorAdminUsuariosComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  abrirDetalle(id: number) {
-    this.router.navigate(['/admin/usuarios', id]);
-  }
-
   cargando = signal<boolean>(true);
   usuarios = signal<UsuarioGlobal[]>([]);
+  totalUsuarios = signal<number>(0);
+  estadisticas = signal<{ total: number; activos: number; super_admins: number }>({
+    total: 0,
+    activos: 0,
+    super_admins: 0,
+  });
+  pagina = signal<number>(1);
+  porPagina = 25;
+  Math = Math;
+
   busqueda = '';
-  filtroEstado: 'todos' | 'activos' | 'inactivos' | 'super_admin' = 'todos';
+  filtroEstado: FiltroEstado = 'todos';
+
+  private busqueda$ = new Subject<string>();
+  private destroy$ = new Subject<void>();
 
   // Modal asignar contenedor
   modalAsignar = signal<boolean>(false);
@@ -74,24 +107,64 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.busqueda$
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.pagina.set(1);
+        this.cargar();
+      });
+    this.cargar();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  abrirDetalle(id: number) {
+    this.router.navigate(['/admin/usuarios', id]);
+  }
+
+  onBusquedaChange(valor: string) {
+    this.busqueda = valor;
+    this.busqueda$.next(valor);
+  }
+
+  cambiarFiltroEstado(estado: FiltroEstado) {
+    if (this.filtroEstado === estado) return;
+    this.filtroEstado = estado;
+    this.pagina.set(1);
+    this.cargar();
+  }
+
+  onPageChange(page: number) {
+    this.pagina.set(page);
     this.cargar();
   }
 
   cargar() {
     this.cargando.set(true);
+    const params = new URLSearchParams({
+      page: String(this.pagina()),
+      page_size: String(this.porPagina),
+      estado: this.filtroEstado,
+    });
+    if (this.busqueda.trim()) {
+      params.set('q', this.busqueda.trim());
+    }
     this.http
-      .get<UsuarioGlobal[]>(
-        `${environment.url_api}/contenedor/usuario/admin-lista/`,
-        { headers: this.headers }
+      .get<RespuestaListado>(
+        `${environment.url_api}/contenedor/usuario/admin-lista/?${params.toString()}`,
+        { headers: this.headers },
       )
       .subscribe({
-        next: (lista) => {
-          this.usuarios.set(lista || []);
+        next: (resp) => {
+          this.usuarios.set(resp?.results || []);
+          this.totalUsuarios.set(resp?.count || 0);
+          if (resp?.estadisticas) this.estadisticas.set(resp.estadisticas);
           this.cargando.set(false);
         },
-        error: () => {
-          this.cargando.set(false);
-        },
+        error: () => this.cargando.set(false),
       });
   }
 
@@ -101,13 +174,17 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
       .post<{ is_active: boolean }>(
         `${environment.url_api}/contenedor/usuario/${u.id}/admin-toggle-activo/`,
         {},
-        { headers: this.headers }
+        { headers: this.headers },
       )
       .subscribe({
         next: ({ is_active }) => {
           this.usuarios.update((lista) =>
-            lista.map((x) => (x.id === u.id ? { ...x, is_active } : x))
+            lista.map((x) => (x.id === u.id ? { ...x, is_active } : x)),
           );
+          this.estadisticas.update((est) => ({
+            ...est,
+            activos: est.activos + (is_active ? 1 : -1),
+          }));
         },
       });
   }
@@ -121,7 +198,7 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
       this.http
         .get<ContenedorOpcion[]>(
           `${environment.url_api}/contenedor/contenedor/admin-lista/`,
-          { headers: this.headers }
+          { headers: this.headers },
         )
         .subscribe((lista) => this.contenedoresDisponibles.set(lista || []));
     }
@@ -136,7 +213,7 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
     const u = this.usuarioSeleccionado();
     if (!u || !this.contenedorElegido) return;
     const contenedor = this.contenedoresDisponibles().find(
-      (c) => c.id === this.contenedorElegido
+      (c) => c.id === this.contenedorElegido,
     );
     if (!contenedor) return;
     this.asignando.set(true);
@@ -148,7 +225,7 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
           schema_name: contenedor.schema_name,
           rol: this.rolAsignar,
         },
-        { headers: this.headers }
+        { headers: this.headers },
       )
       .subscribe({
         next: () => {
@@ -159,8 +236,7 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
         error: (err) => {
           this.asignando.set(false);
           alert(
-            'Error al asignar: ' +
-              (err?.error?.mensaje || 'Error inesperado')
+            'Error al asignar: ' + (err?.error?.mensaje || 'Error inesperado'),
           );
         },
       });
@@ -169,7 +245,7 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
   hacerAdmin(usuario: UsuarioGlobal, contenedor: ContenedorRef) {
     if (
       !confirm(
-        `¿Convertir a ${usuario.username} en administrador de "${contenedor.nombre || contenedor.schema_name}"?\n\nEl admin actual pasará a ser usuario regular.`
+        `¿Convertir a ${usuario.username} en administrador de "${contenedor.nombre || contenedor.schema_name}"?\n\nEl admin actual pasará a ser usuario regular.`,
       )
     ) {
       return;
@@ -178,41 +254,15 @@ export default class ContenedorAdminUsuariosComponent implements OnInit {
       .post<{ mensaje: string; contenedor_id: number }>(
         `${environment.url_api}/contenedor/usuario/admin-cambiar-admin-contenedor/`,
         { usuario_id: usuario.id, schema_name: contenedor.schema_name },
-        { headers: this.headers }
+        { headers: this.headers },
       )
       .subscribe({
-        next: () => {
-          this.cargar();
-        },
-        error: (err) => {
+        next: () => this.cargar(),
+        error: (err) =>
           alert(
             'No se pudo cambiar el admin: ' +
-              (err?.error?.mensaje || 'Error inesperado')
-          );
-        },
+              (err?.error?.mensaje || 'Error inesperado'),
+          ),
       });
-  }
-
-  get usuariosFiltrados(): UsuarioGlobal[] {
-    const q = this.busqueda.trim().toLowerCase();
-    return this.usuarios().filter((u) => {
-      if (this.filtroEstado === 'activos' && !u.is_active) return false;
-      if (this.filtroEstado === 'inactivos' && u.is_active) return false;
-      if (this.filtroEstado === 'super_admin' && !u.is_superuser) return false;
-      if (!q) return true;
-      return (
-        (u.username || '').toLowerCase().includes(q) ||
-        (u.nombre || '').toLowerCase().includes(q) ||
-        (u.apellido || '').toLowerCase().includes(q)
-      );
-    });
-  }
-
-  get totalActivos(): number {
-    return this.usuarios().filter((u) => u.is_active).length;
-  }
-
-  get totalSuperAdmins(): number {
-    return this.usuarios().filter((u) => u.is_superuser).length;
   }
 }

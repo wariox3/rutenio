@@ -34,19 +34,19 @@
         <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
           Total usuarios
         </div>
-        <div class="text-2xl font-bold text-white mt-1">{{ usuarios().length }}</div>
+        <div class="text-2xl font-bold text-white mt-1">{{ estadisticas().total }}</div>
       </div>
       <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
         <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
           Activos
         </div>
-        <div class="text-2xl font-bold text-green-400 mt-1">{{ totalActivos }}</div>
+        <div class="text-2xl font-bold text-green-400 mt-1">{{ estadisticas().activos }}</div>
       </div>
       <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
         <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
           Super admins
         </div>
-        <div class="text-2xl font-bold text-blue-400 mt-1">{{ totalSuperAdmins }}</div>
+        <div class="text-2xl font-bold text-blue-400 mt-1">{{ estadisticas().super_admins }}</div>
       </div>
     </div>
 
@@ -66,7 +66,7 @@
                 'bg-blue-500 text-white': filtroEstado === f.v,
                 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700': filtroEstado !== f.v
               }"
-              (click)="filtroEstado = $any(f.v)"
+              (click)="cambiarFiltroEstado($any(f.v))"
             >
               {{ f.t }}
             </button>
@@ -78,7 +78,8 @@
             type="text"
             class="w-full pl-9 pr-3 py-1.5 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
             placeholder="Buscar por correo, nombre…"
-            [(ngModel)]="busqueda"
+            [ngModel]="busqueda"
+            (ngModelChange)="onBusquedaChange($event)"
           />
         </div>
       </div>
@@ -103,7 +104,7 @@
                 </td>
               </tr>
             } @else {
-              @for (u of usuariosFiltrados; track u.id) {
+              @for (u of usuarios(); track u.id) {
                 <tr class="hover:bg-gray-800/40 transition-colors align-top">
                   <td class="px-4 py-2.5">
                     <div class="font-semibold text-white">{{ u.nombre }} {{ u.apellido }}</div>
@@ -211,6 +212,20 @@
           </tbody>
         </table>
       </div>
+      @if (totalUsuarios() > porPagina) {
+        <div class="flex items-center justify-between px-4 py-3 border-t border-gray-800">
+          <div class="text-xs text-gray-400">
+            Pagina {{ pagina() }} de {{ Math.ceil(totalUsuarios() / porPagina) }}
+            · {{ totalUsuarios() }} resultado(s)
+          </div>
+          <app-paginador
+            [currentPage]="pagina()"
+            [itemsPerPage]="porPagina"
+            [totalItems]="totalUsuarios()"
+            (pageChange)="onPageChange($event)"
+          ></app-paginador>
+        </div>
+      }
     </div>
   </div>
 </main>
