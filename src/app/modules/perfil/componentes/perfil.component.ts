@@ -11,6 +11,11 @@ import {
   obtenerUsuario,
   obtenerUsuarioId,
 } from '../../../redux/selectors/usuario.selector';
+import {
+  obtenerContenedorNombre,
+  obtenerContenedorRol,
+  obtenerEsAdminContenedor,
+} from '../../../redux/selectors/contenedor.selector';
 import { InformacionUsuarioComponent } from "../../auth/components/informacion-usuario/informacion-usuario.component";
 import { AuthService } from '../../auth/services/auth.service';
 
@@ -26,6 +31,9 @@ export default class PerfilComponent extends General {
   private _modalService = inject(ModalService);
   private _location = inject(Location);
   public usuario$ = this._store.select(obtenerUsuario);
+  public esAdminContenedor$ = this._store.select(obtenerEsAdminContenedor);
+  public rolContenedor$ = this._store.select(obtenerContenedorRol);
+  public contenedorNombre$ = this._store.select(obtenerContenedorNombre);
 
   constructor() {
     super();

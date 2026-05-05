@@ -21,7 +21,7 @@
       <div class="flex-grow">
         <div class="flex justify-between items-start flex-wrap mb-1">
           <div class="flex flex-col">
-            <div class="flex items-center mb-2">
+            <div class="flex items-center mb-2 flex-wrap gap-1.5">
               <a
                 class="text-gray-800 hover:text-primary text-xl font-bold mr-1 cursor-pointer"
               >
@@ -33,7 +33,29 @@
                   <span class="path2"></span>
                 </i>
               </a>
+              @if ((usuario$ | async)?.is_superuser) {
+                <span class="badge badge-sm badge-primary">Super admin</span>
+              } @else if ((usuario$ | async)?.is_staff) {
+                <span class="badge badge-sm badge-info">Staff</span>
+              }
+              @if (esAdminContenedor$ | async) {
+                <span class="badge badge-sm badge-success">Admin del contenedor</span>
+              } @else {
+                @if ((rolContenedor$ | async); as rol) {
+                  @if (rol === 'usuario' || rol === 'invitado') {
+                    <span class="badge badge-sm badge-light">Usuario</span>
+                  }
+                }
+              }
             </div>
+            @if (contenedorNombre$ | async; as ctn) {
+              @if (ctn && ctn !== 'null' && ctn !== 'undefined') {
+                <div class="flex items-center text-xs text-gray-500 mb-2">
+                  <i class="ki-filled ki-home mr-1.5"></i>
+                  Contenedor activo: <span class="font-semibold ml-1">{{ ctn }}</span>
+                </div>
+              }
+            }
             <div class="flex flex-wrap font-bold text-base pr-2">
               <a
                 class="flex items-center text-gray-400 hover:text-primary mr-5 mb-2 cursor-pointer text-md"
