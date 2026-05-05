@@ -9,7 +9,6 @@
   </button>
   <app-button
     texto="Guardar"
-    [estaDeshabilitado]="!formularioVisita.valid"
     (emitirBotonClicked)="enviar()"
   ></app-button>
 </div>
@@ -231,8 +230,7 @@
   <div class="flex justify-end mt-3">
     <app-button
       texto="Guardar"
-      [estaDeshabilitado]="!formularioVisita.valid"
-      (emitirBotonClicked)="enviarModal()"
+        (emitirBotonClicked)="enviarModal()"
     ></app-button>
   </div>
 </form>

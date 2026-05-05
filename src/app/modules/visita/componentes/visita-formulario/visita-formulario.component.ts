@@ -162,11 +162,24 @@ export default class VisitaFormularioComponent
       this.dataFormulario.emit(formularioPreparado);
     } else {
       this.formularioVisita.markAllAsTouched();
+      this.changeDetectorRef.detectChanges();
     }
   }
 
   enviarModal() {
+    if (!this.formularioVisita.valid) {
+      this.formularioVisita.markAllAsTouched();
+      this.changeDetectorRef.detectChanges();
+      return;
+    }
     const datos = this.prepararDatosEnvio(this.formularioVisita.value);
+
+    // En modo editar el modal delega al padre (que decide el endpoint).
+    // En modo crear, sigue llamando guardar() directo.
+    if (this.formularioTipo === 'editar') {
+      this.dataFormulario.emit(datos);
+      return;
+    }
     this._visitaApiService
       .guardar(datos)
       .pipe(takeUntil(this.destroy$))
@@ -215,11 +228,14 @@ export default class VisitaFormularioComponent
   }
 
   private prepararDatosEnvio(formData: any): any {
-    const direccionCompleta =
-      `${formData.destinatario_direccion}, ${formData.ciudad_nombre}`
-        .toUpperCase()
-        .trim()
-        .replace(/\s+/g, ' ');
+    const direccionBase = (formData.destinatario_direccion || '').trim();
+    const ciudad = (formData.ciudad_nombre || '').trim();
+    const direccionCompleta = (ciudad
+      ? `${direccionBase}, ${ciudad}`
+      : direccionBase)
+      .toUpperCase()
+      .replace(/\s+/g, ' ')
+      .trim();
 
     const datos = {
       ...formData,
