@@ -176,4 +176,75 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
     const editar = Object.values<any>(m.permisos).filter((p) => p?.editar).length;
     return `${ver}/${total} ver · ${editar}/${total} editar`;
   }
+
+  // ---- Hacer admin de un contenedor donde ya es miembro ----
+
+  hacerAdminEnContenedor(m: MembresiaDetalle) {
+    const u = this.usuario();
+    if (!u || !m.contenedor__schema_name) return;
+    const nombre = m.contenedor__nombre || m.contenedor__schema_name;
+    if (
+      !confirm(
+        `¿Convertir a ${u.username} en administrador de "${nombre}"?\n\nEl admin actual pasará a ser usuario regular.`,
+      )
+    )
+      return;
+    this.adminService
+      .cambiarAdminContenedor(u.id, m.contenedor__schema_name)
+      .subscribe({
+        next: () => this.cargar(u.id),
+        error: (err) =>
+          alert('No se pudo cambiar el admin: ' + (err?.error?.mensaje || 'Error inesperado')),
+      });
+  }
+
+  // ---- Asignar a un contenedor donde no es miembro ----
+
+  modalAsignar = signal<boolean>(false);
+  contenedoresDisponibles = signal<Array<{ id: number; schema_name: string; nombre: string }>>([]);
+  schemaElegido: string | null = null;
+  rolAsignar: 'admin' | 'usuario' = 'usuario';
+  asignando = signal<boolean>(false);
+  errorAsignar = signal<string | null>(null);
+
+  abrirModalAsignar() {
+    this.schemaElegido = null;
+    this.rolAsignar = 'usuario';
+    this.errorAsignar.set(null);
+    this.modalAsignar.set(true);
+    if (this.contenedoresDisponibles().length === 0) {
+      this.adminService.listaContenedoresAdmin().subscribe({
+        next: (lista) => this.contenedoresDisponibles.set(lista || []),
+      });
+    }
+  }
+
+  cerrarModalAsignar() {
+    this.modalAsignar.set(false);
+  }
+
+  /** Devuelve true si el usuario aun no es miembro de ese contenedor (para filtrar el select). */
+  esContenedorDisponible(c: { id: number }): boolean {
+    return !this.membresias().some((m) => m.contenedor_id === c.id);
+  }
+
+  confirmarAsignacion() {
+    const u = this.usuario();
+    if (!u || !this.schemaElegido) return;
+    this.asignando.set(true);
+    this.errorAsignar.set(null);
+    this.adminService
+      .asignarContenedor(u.id, this.schemaElegido, this.rolAsignar)
+      .subscribe({
+        next: () => {
+          this.asignando.set(false);
+          this.modalAsignar.set(false);
+          this.cargar(u.id);
+        },
+        error: (err) => {
+          this.asignando.set(false);
+          this.errorAsignar.set(err?.error?.mensaje || 'No se pudo asignar.');
+        },
+      });
+  }
 }

@@ -95,6 +95,32 @@ export class ContenedorAdminService {
     );
   }
 
+  /** Hace al usuario admin de un contenedor donde ya es miembro (cambia Contenedor.usuario). */
+  cambiarAdminContenedor(usuarioId: number, schemaName: string) {
+    return this.http.post<{ mensaje: string; contenedor_id: number }>(
+      `${environment.url_api}/contenedor/usuario/admin-cambiar-admin-contenedor/`,
+      { usuario_id: usuarioId, schema_name: schemaName },
+      { headers: this.headers },
+    );
+  }
+
+  /** Asigna al usuario a un contenedor (admin o usuario). Crea membresia si no existe. */
+  asignarContenedor(usuarioId: number, schemaName: string, rol: 'admin' | 'usuario') {
+    return this.http.post<{ mensaje: string }>(
+      `${environment.url_api}/contenedor/usuario/admin-asignar-contenedor/`,
+      { usuario_id: usuarioId, schema_name: schemaName, rol },
+      { headers: this.headers },
+    );
+  }
+
+  /** Lista de contenedores existentes (para el modal de asignacion). */
+  listaContenedoresAdmin() {
+    return this.http.get<Array<{ id: number; schema_name: string; nombre: string }>>(
+      `${environment.url_api}/contenedor/contenedor/admin-lista/`,
+      { headers: this.headers },
+    );
+  }
+
   actualizarUsuario(usuarioId: number, datos: Record<string, any>) {
     return this.http.patch<{ usuario: any }>(
       `${environment.url_api}/contenedor/usuario/${usuarioId}/admin-actualizar/`,
