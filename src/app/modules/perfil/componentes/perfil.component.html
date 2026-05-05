@@ -48,14 +48,6 @@
                 }
               }
             </div>
-            @if (contenedorNombre$ | async; as ctn) {
-              @if (ctn && ctn !== 'null' && ctn !== 'undefined') {
-                <div class="flex items-center text-xs text-gray-500 mb-2">
-                  <i class="ki-filled ki-home mr-1.5"></i>
-                  Contenedor activo: <span class="font-semibold ml-1">{{ ctn }}</span>
-                </div>
-              }
-            }
             <div class="flex flex-wrap font-bold text-base pr-2">
               <a
                 class="flex items-center text-gray-400 hover:text-primary mr-5 mb-2 cursor-pointer text-md"
@@ -99,6 +91,51 @@
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header">
+    <h3 class="card-title">Mis contenedores</h3>
+    <span class="text-xs text-gray-400">{{ membresias().length }} en total</span>
+  </div>
+  <div class="card-body p-0">
+    @if (cargandoMembresias()) {
+      <div class="px-5 py-8 text-center text-xs text-gray-500">Cargando…</div>
+    } @else if (membresias().length === 0) {
+      <div class="px-5 py-8 text-center text-xs text-gray-500">
+        No perteneces a ningún contenedor.
+      </div>
+    } @else {
+      <ul class="divide-y divide-gray-200">
+        @for (m of membresias(); track m.contenedor_id) {
+          <li class="flex items-center justify-between px-5 py-3">
+            <div class="flex items-center gap-3">
+              <i class="ki-filled ki-home text-gray-400"></i>
+              <div class="flex flex-col">
+                <span class="text-sm font-semibold text-gray-800">
+                  {{ m.contenedor__nombre || m.contenedor__schema_name }}
+                </span>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  @if (esActivo(m, contenedorActivoId$ | async)) {
+                    <span class="badge badge-xs badge-primary">Activo</span>
+                  }
+                  <span class="badge badge-xs" [ngClass]="rolEtiqueta(m.rol).clase">
+                    {{ rolEtiqueta(m.rol).texto }}
+                  </span>
+                  @if (m.tiene_acceso_web) {
+                    <span class="badge badge-xs badge-outline">Web</span>
+                  }
+                  @if (m.tiene_acceso_movil) {
+                    <span class="badge badge-xs badge-outline">Móvil</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </li>
+        }
+      </ul>
+    }
   </div>
 </div>
 
