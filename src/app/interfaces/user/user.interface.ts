@@ -18,4 +18,5 @@ export interface Usuario {
   is_staff: boolean;
   socio_id: number | null;
   verificado: boolean;
+  debe_cambiar_clave?: boolean;
 }

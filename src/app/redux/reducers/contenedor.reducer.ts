@@ -24,6 +24,7 @@ let estadoInicializado: Contenedor = {
   acceso_restringido: false,
   reddoc: false,
   ruteo: true,
+  permisos: null,
 };
 
 export const initialState: Contenedor = contenedorDatos

@@ -1,0 +1,62 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-950 px-4">
+  <div class="w-full max-w-md rounded-lg border border-gray-800 bg-gray-900 p-6 shadow-2xl">
+    <div class="mb-5 text-center">
+      <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-yellow-500/15 text-yellow-300 mb-3">
+        <i class="ki-filled ki-lock text-xl"></i>
+      </div>
+      <h1 class="text-lg font-bold text-white">Debes cambiar tu clave</h1>
+      <p class="text-xs text-gray-400 mt-1">
+        Por seguridad, define una nueva clave antes de continuar.
+      </p>
+    </div>
+
+    <form [formGroup]="formulario" (ngSubmit)="enviar()" class="space-y-4">
+      <div>
+        <label class="block text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+          Nueva clave
+        </label>
+        <input
+          type="password"
+          class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+          formControlName="password"
+          autocomplete="new-password"
+        />
+        @if (formulario.controls.password.invalid && formulario.controls.password.touched) {
+          <p class="text-[11px] text-red-400 mt-1">Minimo 8 caracteres.</p>
+        }
+      </div>
+      <div>
+        <label class="block text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+          Confirmar clave
+        </label>
+        <input
+          type="password"
+          class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+          formControlName="confirmacion"
+          autocomplete="new-password"
+        />
+        @if (formulario.errors?.['clavesDiferentes'] && formulario.controls.confirmacion.touched) {
+          <p class="text-[11px] text-red-400 mt-1">Las claves no coinciden.</p>
+        }
+      </div>
+
+      @if (error()) {
+        <div class="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+          {{ error() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="w-full px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="enviando()"
+      >
+        @if (enviando()) {
+          Guardando…
+        } @else {
+          Guardar y continuar
+        }
+      </button>
+    </form>
+  </div>
+</div>

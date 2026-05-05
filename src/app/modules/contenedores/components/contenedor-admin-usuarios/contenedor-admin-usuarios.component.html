@@ -9,15 +9,24 @@
           Vista global de todos los usuarios del sistema y sus contenedores.
         </span>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
-        (click)="cargar()"
-        [disabled]="cargando()"
-      >
-        <i class="ki-filled ki-arrows-circle text-sm"></i>
-        Recargar
-      </button>
+      <div class="flex items-center gap-2">
+        <a
+          routerLink="/admin/usuarios/crear"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors"
+        >
+          <i class="ki-filled ki-plus text-sm"></i>
+          Crear usuario
+        </a>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
+          (click)="cargar()"
+          [disabled]="cargando()"
+        >
+          <i class="ki-filled ki-arrows-circle text-sm"></i>
+          Recargar
+        </button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
@@ -158,6 +167,15 @@
                   </td>
                   <td class="px-4 py-2.5">
                     <div class="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 transition-colors"
+                        title="Ver detalle"
+                        (click)="abrirDetalle(u.id)"
+                      >
+                        <i class="ki-filled ki-eye text-[10px]"></i>
+                        Detalle
+                      </button>
                       <button
                         type="button"
                         class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-blue-300 bg-blue-500/15 hover:bg-blue-500/25 transition-colors"

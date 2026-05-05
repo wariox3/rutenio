@@ -57,3 +57,22 @@ export const obtenerPerfilMovil = createSelector(
   Contenedor,
   (Contenedor) => Contenedor?.perfil_movil || null
 );
+
+export const obtenerPermisos = createSelector(
+  Contenedor,
+  (Contenedor) => Contenedor?.permisos || null
+);
+
+/**
+ * Devuelve true si el usuario activo puede `ver` o `editar` el modulo dado.
+ * Admin/propietario tiene acceso total. Si no hay permisos cargados, asume false
+ * salvo cuando el usuario es propietario.
+ */
+export const obtenerPermisoPor = (modulo: string, accion: 'ver' | 'editar') =>
+  createSelector(Contenedor, (c) => {
+    if ((c?.rol || '') === 'propietario') return true;
+    const permisos = c?.permisos;
+    if (!permisos) return false;
+    const m = permisos[modulo];
+    return !!(m && m[accion]);
+  });

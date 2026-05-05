@@ -8,6 +8,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { getCookie } from 'typescript-cookie';
 import { environment } from '../../../../../environments/environment';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
@@ -42,12 +43,17 @@ interface ContenedorOpcion {
 @Component({
   selector: 'app-contenedor-admin-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, AdminNavComponent],
+  imports: [CommonModule, FormsModule, DatePipe, RouterLink, AdminNavComponent],
   templateUrl: './contenedor-admin-usuarios.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class ContenedorAdminUsuariosComponent implements OnInit {
   private http = inject(HttpClient);
+  private router = inject(Router);
+
+  abrirDetalle(id: number) {
+    this.router.navigate(['/admin/usuarios', id]);
+  }
 
   cargando = signal<boolean>(true);
   usuarios = signal<UsuarioGlobal[]>([]);

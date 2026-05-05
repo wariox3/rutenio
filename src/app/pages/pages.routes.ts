@@ -40,6 +40,18 @@ export default [
       import('../modules/contenedores/components/contenedor-admin-usuarios/contenedor-admin-usuarios.component'),
   },
   {
+    path: 'admin/usuarios/crear',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-usuario-crear/contenedor-admin-usuario-crear.component'),
+  },
+  {
+    path: 'admin/usuarios/:id',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('../modules/contenedores/components/contenedor-admin-usuario-detalle/contenedor-admin-usuario-detalle.component'),
+  },
+  {
     path: 'contenedor',
     canActivate: [authGuard],
     loadComponent: () =>
