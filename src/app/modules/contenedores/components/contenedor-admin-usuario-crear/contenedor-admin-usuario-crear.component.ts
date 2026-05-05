@@ -58,9 +58,19 @@ export default class ContenedorAdminUsuarioCrearComponent {
       enviar_invitacion: this.modo() === 'invitacion',
     };
     this.adminService.crearUsuario(payload).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.enviando.set(false);
         const id = res?.usuario?.id;
+        if (this.modo() === 'invitacion' && res?.invitacion_enviada === false) {
+          const token = res?.token_verificacion;
+          const url = token
+            ? `${window.location.origin}/auth/verificacion/${token}`
+            : '';
+          alert(
+            'El usuario se creo pero el correo de invitacion no pudo enviarse.' +
+              (url ? `\n\nLink de verificacion para compartir manualmente:\n${url}` : ''),
+          );
+        }
         if (id) {
           this.router.navigate(['/admin/usuarios', id]);
         } else {
