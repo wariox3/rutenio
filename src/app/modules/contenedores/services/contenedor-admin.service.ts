@@ -103,7 +103,7 @@ export class ContenedorAdminService {
 
   obtenerMembresiasDeUsuario(usuarioId: number) {
     return this.http.get<any>(
-      `${environment.url_api}/contenedor/usuariocontenedor/?usuario_id=${usuarioId}&page_size=100`,
+      `${environment.url_api}/contenedor/usuariocontenedor/?usuario_id=${usuarioId}&serializador=lista&page_size=100`,
       { headers: this.headers },
     );
   }
