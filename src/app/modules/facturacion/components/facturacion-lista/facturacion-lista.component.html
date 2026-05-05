@@ -168,7 +168,7 @@
       }
 
       <!-- Tarjeta para agregar nueva información -->
-      <div class="col h-full">
+      <div class="col h-full" *appPermisoPor="'facturacion.editar'">
         <div
           (click)="abrirModalParaNuevo()"
           data-modal-toggle="#informacion-facturacion"

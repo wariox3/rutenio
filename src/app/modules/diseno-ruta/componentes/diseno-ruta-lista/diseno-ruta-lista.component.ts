@@ -39,6 +39,7 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { HttpService } from '../../../../common/services/http.service';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -57,7 +58,8 @@ import { HttpService } from '../../../../common/services/http.service';
     VisitaAdicionarComponent,
     ModalStandardComponent,
     NuevoDesdeComplementoComponent,
-    PaginadorComponent
+    PaginadorComponent,
+    PermisoPorDirective,
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
