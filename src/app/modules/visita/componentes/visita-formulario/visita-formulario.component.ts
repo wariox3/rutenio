@@ -112,7 +112,10 @@ export default class VisitaFormularioComponent
         numero: this.informacionVisita.numero,
         documento: this.informacionVisita.documento,
         destinatario: this.informacionVisita.destinatario,
-        destinatario_direccion: this.informacionVisita.destinatario_direccion,
+        destinatario_direccion: this._desconcatenarCiudad(
+          this.informacionVisita.destinatario_direccion,
+          this.informacionVisita.ciudad__nombre,
+        ),
         destinatario_telefono: this.informacionVisita.destinatario_telefono,
         destinatario_correo: this.informacionVisita.destinatario_correo,
         ciudad: this.informacionVisita.ciudad,
@@ -227,8 +230,30 @@ export default class VisitaFormularioComponent
     });
   }
 
+  /**
+   * Quita la ciudad concatenada al final de la direccion para evitar duplicarla
+   * al re-editar. Compara case-insensitive y tolera variaciones de espacios.
+   * Ej: "CL 4 17 115, MEDELLÍN" + ciudad "MEDELLÍN" -> "CL 4 17 115"
+   */
+  private _desconcatenarCiudad(direccion: string | null | undefined, ciudad: string | null | undefined): string {
+    if (!direccion) return '';
+    if (!ciudad) return direccion;
+    const direccionTrim = direccion.trim();
+    const ciudadTrim = ciudad.trim();
+    if (!ciudadTrim) return direccionTrim;
+    const sufijo = `, ${ciudadTrim}`.toUpperCase().replace(/\s+/g, ' ');
+    const directoUpper = direccionTrim.toUpperCase().replace(/\s+/g, ' ');
+    if (directoUpper.endsWith(sufijo)) {
+      return direccionTrim.substring(0, direccionTrim.length - sufijo.length).trim().replace(/,\s*$/, '');
+    }
+    return direccionTrim;
+  }
+
   private prepararDatosEnvio(formData: any): any {
-    const direccionBase = (formData.destinatario_direccion || '').trim();
+    const direccionBase = this._desconcatenarCiudad(
+      formData.destinatario_direccion,
+      formData.ciudad_nombre,
+    );
     const ciudad = (formData.ciudad_nombre || '').trim();
     const direccionCompleta = (ciudad
       ? `${direccionBase}, ${ciudad}`
