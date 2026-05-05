@@ -132,8 +132,31 @@ export default class VisitaFormularioComponent
   // Loading state expuesto al template para desactivar el boton Guardar.
   public guardando = false;
 
+  /** Valores por defecto del formulario (usados al crear o al resetear). */
+  private readonly _defaultsFormulario = {
+    numero: null,
+    documento: null,
+    destinatario: '',
+    destinatario_direccion: '',
+    fecha: new Date(),
+    destinatario_telefono: null,
+    destinatario_correo: null,
+    unidades: null,
+    peso: null,
+    volumen: null,
+    cobro: 0,
+    tiempo_servicio: null,
+    ciudad_nombre: '',
+    ciudad: null,
+    observacion: null,
+    destinatario_direccion_complemento: null,
+    cita_inicio: null,
+    cita_fin: null,
+  };
+
   ngOnInit(): void {
     if (this.formularioTipo === 'editar') {
+      this.formularioVisita.reset(this._defaultsFormulario);
       this.formularioVisita.patchValue({
         numero: this.informacionVisita.numero,
         documento: this.informacionVisita.documento,
@@ -172,6 +195,13 @@ export default class VisitaFormularioComponent
           } as AutocompletarCiudades,
         ];
       }
+    } else {
+      // Modo crear: si Angular reuso la instancia (modal abierto despues de un
+      // editar, o navegacion entre crear/editar), el formGroup mantiene los
+      // valores anteriores. Reseteamos a defaults para evitar arrastre de datos.
+      this.formularioVisita.reset(this._defaultsFormulario);
+      this.ciudadSeleccionada = null;
+      this.arrCiudades = [];
     }
 
     this.consultarCiudad(this.formularioVisita.get('ciudad_nombre').value);
