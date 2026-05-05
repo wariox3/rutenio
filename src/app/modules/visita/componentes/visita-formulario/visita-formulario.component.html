@@ -8,7 +8,8 @@
     Atrás
   </button>
   <app-button
-    texto="Guardar"
+    [texto]="guardando ? 'Guardando…' : 'Guardar'"
+    [estaDeshabilitado]="guardando"
     (emitirBotonClicked)="enviar()"
   ></app-button>
 </div>
@@ -90,10 +91,9 @@
         formControlName="ciudad"
         bindLabel="nombre"
         bindValue="id"
-        [(ngModel)]="ciudadSeleccionada"
-        notFoundText="Sin elementos"
-        placeholder="Selecciona un elemento"
-        loadingText="Buscando..."
+        notFoundText="Sin resultados"
+        placeholder="Buscar ciudad…"
+        loadingText="Buscando…"
         class="select2Custom"
         (change)="seleccionarCiudad($event)"
         (keyup)="buscarCiudadPorNombre($event)"
@@ -127,65 +127,77 @@
     <div class="mb-3">
       <app-label [required]="false">Correo</app-label>
       <ui-input
-        placeholder="jhon.doe@example.com"
+        placeholder="cliente@empresa.com"
         formControlName="destinatario_correo"
         [control]="formularioVisita.get('destinatario_correo')"
         [errors]="{
-          email: 'El correo es invalido',
+          pattern: 'Correo no válido',
         }"
       ></ui-input>
     </div>
     <div class="mb-3">
-      <app-label [required]="true">Tiempo servicio</app-label>
+      <app-label [required]="true">Tiempo servicio (min)</app-label>
       <ui-input
         type="number"
-        placeholder=""
+        placeholder="Minutos"
         formControlName="tiempo_servicio"
         [control]="formularioVisita.get('tiempo_servicio')"
         [errors]="{
-          min: 'Ingresa un número mayor a 0',
-          required: 'El tiempo servicio es requerido',
+          min: 'No puede ser negativo',
+          required: 'El tiempo de servicio es requerido',
         }"
       ></ui-input>
     </div>
   </div>
-  <div class="grid grid-cols-3 gap-3 mb-1">
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
     <div class="mb-3">
       <app-label [required]="true">Unidades</app-label>
       <ui-input
         type="number"
-        placeholder=""
+        placeholder="1"
         formControlName="unidades"
         [control]="formularioVisita.get('unidades')"
         [errors]="{
-          min: 'Ingresa un número mayor a 0',
+          min: 'Al menos 1',
           required: 'Requerido',
         }"
       ></ui-input>
     </div>
     <div class="mb-3">
-      <app-label [required]="true">Peso</app-label>
+      <app-label [required]="true">Peso (kg)</app-label>
       <ui-input
         type="number"
-        placeholder=""
+        placeholder="0"
         formControlName="peso"
         [control]="formularioVisita.get('peso')"
         [errors]="{
-          min: 'Ingresa un número mayor a 0',
+          min: 'No puede ser negativo',
           required: 'Requerido',
         }"
       ></ui-input>
     </div>
     <div class="mb-3">
-      <app-label [required]="true">Volumen</app-label>
+      <app-label [required]="true">Volumen (m³)</app-label>
       <ui-input
         type="number"
-        placeholder=""
+        placeholder="0"
         formControlName="volumen"
         [control]="formularioVisita.get('volumen')"
         [errors]="{
-          min: 'Ingresa un número mayor a 0',
+          min: 'No puede ser negativo',
           required: 'Requerido',
+        }"
+      ></ui-input>
+    </div>
+    <div class="mb-3">
+      <app-label [required]="false">Recaudo ($)</app-label>
+      <ui-input
+        type="number"
+        placeholder="0"
+        formControlName="cobro"
+        [control]="formularioVisita.get('cobro')"
+        [errors]="{
+          min: 'No puede ser negativo',
         }"
       ></ui-input>
     </div>
@@ -195,13 +207,18 @@
     <textarea
       class="input w-full"
       rows="2"
-      placeholder=""
+      placeholder="Notas adicionales para el conductor"
+      maxlength="500"
       formControlName="observacion"
     ></textarea>
   </div>
-  <div class="border-t border-purple-200 pt-3 mt-1">
-    <p class="text-xs text-purple-500 mb-2">
-      <i class="ki-filled ki-time"></i> Ventana de cita (opcional)
+  <div class="border-t border-gray-200 pt-3 mt-1">
+    <p class="text-xs text-gray-600 mb-1 flex items-center gap-1">
+      <i class="ki-filled ki-time text-primary"></i>
+      <span class="font-semibold">Ventana de cita (opcional)</span>
+    </p>
+    <p class="text-[11px] text-gray-400 mb-2">
+      Si especificas una, debes indicar inicio y fin del mismo día. La entrega se programará dentro de esa ventana.
     </p>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="mb-2">
@@ -229,8 +246,9 @@
   </div>
   <div class="flex justify-end mt-3">
     <app-button
-      texto="Guardar"
-        (emitirBotonClicked)="enviarModal()"
+      [texto]="guardando ? 'Guardando…' : 'Guardar'"
+      [estaDeshabilitado]="guardando"
+      (emitirBotonClicked)="enviarModal()"
     ></app-button>
   </div>
 </form>
@@ -367,12 +385,11 @@
           <div>
             <app-label [required]="false">Correo</app-label>
              <ui-input
-              placeholder="jhon.doe@example.com"
+              placeholder="cliente@empresa.com"
               formControlName="destinatario_correo"
               [control]="formularioVisita.get('destinatario_correo')"
               [errors]="{
-                required: 'El correo es requerido',
-                email: 'El correo es invalido',
+                pattern: 'Correo no válido',
               }"
             ></ui-input>
           </div>
@@ -382,11 +399,11 @@
             <app-label [required]="true">Unidades</app-label>
              <ui-input
               type="number"
-              placeholder=""
+              placeholder="1"
               formControlName="unidades"
               [control]="formularioVisita.get('unidades')"
               [errors]="{
-                min: 'Ingresa un número mayor a 0',
+                min: 'Al menos 1 unidad',
                 required: 'Las unidades son requeridas',
               }"
             ></ui-input>
@@ -396,14 +413,14 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
         <div class="mb-5">
           <div>
-            <app-label [required]="true">Peso</app-label>
+            <app-label [required]="true">Peso (kg)</app-label>
              <ui-input
               type="number"
-              placeholder=""
+              placeholder="0"
               formControlName="peso"
               [control]="formularioVisita.get('peso')"
               [errors]="{
-                min: 'Ingresa un número mayor a 0',
+                min: 'No puede ser negativo',
                 required: 'El peso es requerido',
               }"
             ></ui-input>
@@ -411,14 +428,14 @@
         </div>
         <div class="mb-5">
           <div>
-            <app-label [required]="true">Volumen</app-label>
+            <app-label [required]="true">Volumen (m³)</app-label>
             <ui-input
               type="number"
-              placeholder=""
+              placeholder="0"
               formControlName="volumen"
               [control]="formularioVisita.get('volumen')"
               [errors]="{
-                min: 'Ingresa un número mayor a 0',
+                min: 'No puede ser negativo',
                 required: 'El volumen es requerido',
               }"
             ></ui-input>
@@ -428,22 +445,22 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
         <div class="mb-5">
           <div>
-            <app-label [required]="true">Tiempo servicio</app-label>
+            <app-label [required]="true">Tiempo servicio (min)</app-label>
             <ui-input
               type="number"
-              placeholder=""
+              placeholder="Minutos"
               formControlName="tiempo_servicio"
               [control]="formularioVisita.get('tiempo_servicio')"
               [errors]="{
-                min: 'Ingresa un número mayor a 0',
-                required: 'El tiempo servicio es requerido',
+                min: 'No puede ser negativo',
+                required: 'El tiempo de servicio es requerido',
               }"
             ></ui-input>
           </div>
         </div>
         <div class="mb-5">
           <div>
-            <app-label [required]="false">Recaudo</app-label>
+            <app-label [required]="false">Recaudo ($)</app-label>
             <ui-input
               type="number"
               placeholder="0"
@@ -463,15 +480,20 @@
             <textarea
               class="input w-full"
               rows="2"
-              placeholder=""
+              placeholder="Notas adicionales para el conductor"
+              maxlength="500"
               formControlName="observacion"
             ></textarea>
           </div>
         </div>
       </div>
-      <div class="border-t border-purple-200 pt-3 mt-1">
-        <p class="text-xs text-purple-500 mb-2">
-          <i class="ki-filled ki-time"></i> Ventana de cita (opcional)
+      <div class="border-t border-gray-200 pt-3 mt-1">
+        <p class="text-xs text-gray-600 mb-1 flex items-center gap-1">
+          <i class="ki-filled ki-time text-primary"></i>
+          <span class="font-semibold">Ventana de cita (opcional)</span>
+        </p>
+        <p class="text-[11px] text-gray-400 mb-2">
+          Si especificas una, debes indicar inicio y fin del mismo día. La entrega se programará dentro de esa ventana.
         </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="mb-2">

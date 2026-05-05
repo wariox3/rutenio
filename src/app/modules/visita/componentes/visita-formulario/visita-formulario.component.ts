@@ -67,44 +67,70 @@ export default class VisitaFormularioComponent
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   }
 
+  // Pattern: digitos, espacios, +, -, () — minimo 7 (telefono local) y maximo 15 (E.164).
+  private readonly PATRON_TELEFONO = /^[0-9+\-\s()]+$/;
+  // Email RFC-ish basico pero mas estricto que Validators.email (que acepta a@b).
+  private readonly PATRON_EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
   public formularioVisita = new FormGroup({
-    numero: new FormControl(null, [
+    numero: new FormControl<number | null>(null, [
       cambiarVacioPorNulo.validar,
       Validators.min(1),
       Validators.max(2147483647),
     ]),
-    documento: new FormControl(null, [NoSoloEspacios.validar]),
+    documento: new FormControl<string | null>(null, [NoSoloEspacios.validar]),
     destinatario: new FormControl('', [
       Validators.required,
       NoSoloEspacios.validar,
+      Validators.maxLength(150),
     ]),
     destinatario_direccion: new FormControl('', [
       Validators.required,
       NoSoloEspacios.validar,
+      Validators.maxLength(200),
     ]),
-    fecha: new FormControl(new Date(), [Validators.required]),
-    destinatario_telefono: new FormControl(null, [
-      Validators.pattern(/^[0-9+\-\s()]+$/),
+    fecha: new FormControl<Date | string>(new Date(), [Validators.required]),
+    destinatario_telefono: new FormControl<string | null>(null, [
+      Validators.pattern(this.PATRON_TELEFONO),
       Validators.minLength(7),
       Validators.maxLength(15),
       NoSoloEspacios.validar,
     ]),
-    destinatario_correo: new FormControl(null, [Validators.email]),
-    unidades: new FormControl('', [Validators.required, Validators.min(1)]),
-    peso: new FormControl('', [Validators.required, Validators.min(1)]),
-    volumen: new FormControl('', [Validators.required, Validators.min(1)]),
-    cobro: new FormControl(0, [Validators.min(0)]),
-    tiempo_servicio: new FormControl('', [
+    destinatario_correo: new FormControl<string | null>(null, [
+      Validators.pattern(this.PATRON_EMAIL),
+    ]),
+    // Unidades: minimo 1 (al menos una unidad real para entregar).
+    unidades: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(1),
     ]),
-    ciudad_nombre: new FormControl(''),
-    ciudad: new FormControl(null, [Validators.required]),
-    observacion: new FormControl(null),
-    destinatario_direccion_complemento: new FormControl(null),
-    cita_inicio: new FormControl(null),
-    cita_fin: new FormControl(null),
+    // Peso, volumen: aceptamos 0 (ej. documentos). Si quieren forzar, lo cambian luego.
+    peso: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    volumen: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    cobro: new FormControl<number | null>(0, [Validators.min(0)]),
+    // Tiempo servicio: aceptamos 0 (entrega expresa sin demora).
+    tiempo_servicio: new FormControl<number | null>(null, [
+      Validators.required,
+      Validators.min(0),
+    ]),
+    ciudad_nombre: new FormControl<string | null>(''),
+    ciudad: new FormControl<number | null>(null, [Validators.required]),
+    observacion: new FormControl<string | null>(null, [Validators.maxLength(500)]),
+    destinatario_direccion_complemento: new FormControl<string | null>(null, [
+      Validators.maxLength(200),
+    ]),
+    cita_inicio: new FormControl<string | null>(null),
+    cita_fin: new FormControl<string | null>(null),
   }, { validators: CitaRangoValidator.validar });
+
+  // Loading state expuesto al template para desactivar el boton Guardar.
+  public guardando = false;
 
   ngOnInit(): void {
     if (this.formularioTipo === 'editar') {
@@ -169,11 +195,15 @@ export default class VisitaFormularioComponent
   }
 
   enviar() {
+    if (this.guardando) return;
     if (this.formularioVisita.valid) {
+      this.guardando = true;
       const formularioPreparado = this.prepararDatosEnvio(
         this.formularioVisita.value
       );
       this.dataFormulario.emit(formularioPreparado);
+      // El padre maneja la respuesta. Si vuelve a este formulario el guardando
+      // se reinicia desde el padre o al re-abrir el modal.
     } else {
       this.formularioVisita.markAllAsTouched();
       this.changeDetectorRef.detectChanges();
@@ -181,6 +211,7 @@ export default class VisitaFormularioComponent
   }
 
   enviarModal() {
+    if (this.guardando) return;
     if (!this.formularioVisita.valid) {
       this.formularioVisita.markAllAsTouched();
       this.changeDetectorRef.detectChanges();
@@ -191,15 +222,25 @@ export default class VisitaFormularioComponent
     // En modo editar el modal delega al padre (que decide el endpoint).
     // En modo crear, sigue llamando guardar() directo.
     if (this.formularioTipo === 'editar') {
+      this.guardando = true;
       this.dataFormulario.emit(datos);
       return;
     }
+    this.guardando = true;
     this._visitaApiService
       .guardar(datos)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta: any) => {
-        this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
-        this.dataFormulario.emit();
+      .subscribe({
+        next: () => {
+          this.guardando = false;
+          this.alerta.mensajaExitoso('Se ha creado la visita exitosamente.');
+          this.dataFormulario.emit();
+          this.changeDetectorRef.detectChanges();
+        },
+        error: () => {
+          this.guardando = false;
+          this.changeDetectorRef.detectChanges();
+        },
       });
   }
 
