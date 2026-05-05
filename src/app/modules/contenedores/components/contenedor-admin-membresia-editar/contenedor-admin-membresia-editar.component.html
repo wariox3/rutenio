@@ -111,39 +111,51 @@
             </button>
           </div>
         </div>
-        <div class="rounded-md border border-gray-800 overflow-hidden">
-          <table class="w-full text-sm">
-            <thead class="bg-gray-800/50">
-              <tr class="text-left text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
-                <th class="px-3 py-2">Modulo</th>
-                <th class="px-3 py-2 text-center">Ver</th>
-                <th class="px-3 py-2 text-center">Editar</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800">
-              @for (m of modulos; track m) {
-                <tr class="hover:bg-gray-800/40">
-                  <td class="px-3 py-2 text-gray-200 capitalize">{{ m }}</td>
-                  <td class="px-3 py-2 text-center">
-                    <input
-                      type="checkbox"
-                      class="cursor-pointer"
-                      [checked]="permisoLocal[m].ver"
-                      (change)="toggle(m, 'ver')"
-                    />
-                  </td>
-                  <td class="px-3 py-2 text-center">
-                    <input
-                      type="checkbox"
-                      class="cursor-pointer"
-                      [checked]="permisoLocal[m].editar"
-                      (change)="toggle(m, 'editar')"
-                    />
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+        <p class="text-[11px] text-gray-400 mb-2">
+          Las plantillas son un punto de partida. Despues podes activar o desactivar
+          cualquier modulo manualmente para personalizar lo que el usuario tiene.
+        </p>
+        <div class="space-y-3">
+          @for (grupo of grupos; track grupo.titulo) {
+            <div class="rounded-md border border-gray-800 overflow-hidden">
+              <div class="px-3 py-2 bg-gray-800/70 border-b border-gray-800">
+                <div class="text-xs font-semibold text-gray-200">{{ grupo.titulo }}</div>
+                <div class="text-[11px] text-gray-400 mt-0.5">{{ grupo.descripcion }}</div>
+              </div>
+              <table class="w-full text-sm">
+                <thead class="bg-gray-800/30">
+                  <tr class="text-left text-[10px] uppercase tracking-wide text-gray-500 font-semibold">
+                    <th class="px-3 py-1.5">Modulo</th>
+                    <th class="px-3 py-1.5 text-center w-20">Ver</th>
+                    <th class="px-3 py-1.5 text-center w-20">Editar</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-800">
+                  @for (m of grupo.modulos; track m) {
+                    <tr class="hover:bg-gray-800/40">
+                      <td class="px-3 py-2 text-gray-200 capitalize">{{ m }}</td>
+                      <td class="px-3 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          [checked]="permisoLocal[m].ver"
+                          (change)="toggle($any(m), 'ver')"
+                        />
+                      </td>
+                      <td class="px-3 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          [checked]="permisoLocal[m].editar"
+                          (change)="toggle($any(m), 'editar')"
+                        />
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
       </div>
 

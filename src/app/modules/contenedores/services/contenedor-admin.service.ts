@@ -28,7 +28,7 @@ export interface ActualizarMembresiaPayload {
   permisos?: PermisosMembresia;
 }
 
-export const MODULOS_PERMISOS = [
+export const MODULOS_OPERATIVOS = [
   'visita',
   'vehiculo',
   'despacho',
@@ -36,6 +36,9 @@ export const MODULOS_PERMISOS = [
   'flota',
   'novedad',
   'contacto',
+] as const;
+
+export const MODULOS_ADMINISTRATIVOS = [
   'empresa',
   'configuracion',
   'mensajeria',
@@ -43,7 +46,29 @@ export const MODULOS_PERMISOS = [
   'usuario',
 ] as const;
 
+export const MODULOS_PERMISOS = [
+  ...MODULOS_OPERATIVOS,
+  ...MODULOS_ADMINISTRATIVOS,
+] as const;
+
 export type ModuloPermiso = (typeof MODULOS_PERMISOS)[number];
+
+export const GRUPOS_MODULOS: Array<{
+  titulo: string;
+  descripcion: string;
+  modulos: readonly string[];
+}> = [
+  {
+    titulo: 'Operativos',
+    descripcion: 'Día a día: visitas, vehículos, despachos, etc.',
+    modulos: MODULOS_OPERATIVOS,
+  },
+  {
+    titulo: 'Administrativos',
+    descripcion: 'Configuración del contenedor, empresa, facturación y usuarios.',
+    modulos: MODULOS_ADMINISTRATIVOS,
+  },
+];
 
 @Injectable({ providedIn: 'root' })
 export class ContenedorAdminService {

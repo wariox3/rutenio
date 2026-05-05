@@ -11,6 +11,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import {
   ContenedorAdminService,
+  GRUPOS_MODULOS,
   MODULOS_PERMISOS,
   ModuloPermiso,
   PermisosMembresia,
@@ -49,6 +50,7 @@ export class ContenedorAdminMembresiaEditarComponent {
   @Output() guardado = new EventEmitter<any>();
 
   modulos = MODULOS_PERMISOS;
+  grupos = GRUPOS_MODULOS;
   guardando = signal<boolean>(false);
   error = signal<string | null>(null);
 
