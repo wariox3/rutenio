@@ -6,6 +6,7 @@ export interface SidebarMenu {
     tipoAcordion?: boolean;
     soloAdmin?: boolean;
     soloSuperAdmin?: boolean;
+    modulo?: string;
     children?: SidebarMenuItem[];
   }
 
@@ -15,4 +16,5 @@ export interface SidebarMenu {
     activo?: boolean;
     soloAdmin?: boolean;
     soloSuperAdmin?: boolean;
+    modulo?: string;
   }

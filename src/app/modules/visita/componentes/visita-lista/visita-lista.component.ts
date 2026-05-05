@@ -23,6 +23,7 @@ import { HttpService } from '../../../../common/services/http.service';
 import { GeneralApiService } from '../../../../core';
 import { SafeUrlPipe } from '../../../../common/pipes/safe-url.pipe';
 import { AdminDirective } from '../../../../common/directivas/admin.directive';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { Visita } from '../../interfaces/visita.interface';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
@@ -49,6 +50,7 @@ import { VISITA_LISTA_FILTERS } from '../../mapeos/visita-lista-mapeo';
     FiltroComponent,
     SafeUrlPipe,
     AdminDirective,
+    PermisoPorDirective,
   ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',

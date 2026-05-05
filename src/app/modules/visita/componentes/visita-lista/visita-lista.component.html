@@ -29,6 +29,7 @@
       </button>
       }
       <app-button
+        *appPermisoPor="'visita.editar'"
         id="tour-visita-nuevo"
         class="ms-2"
         routerLink="/movimiento/visita/nuevo"
@@ -49,7 +50,7 @@
       ></app-paginador>
 
       <div class="inline-flex rounded-md shadow-s my-5">
-        <div class="menu menu-default p-0" data-menu="true">
+        <div class="menu menu-default p-0" data-menu="true" *appPermisoPor="'visita.editar'">
           <div
             id="tour-visita-importar"
             class="menu-item"

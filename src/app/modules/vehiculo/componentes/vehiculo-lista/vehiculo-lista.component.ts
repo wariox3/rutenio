@@ -24,6 +24,7 @@ import { VEHICULO_LISTA_FILTERS } from '../../mapeos/vehiculos-lista-mapeo';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { ImportarComponent } from "../../../../common/components/importar/importar.component";
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-vehiculo-lista',
@@ -37,7 +38,8 @@ import { ImportarComponent } from "../../../../common/components/importar/import
     FileUploadComponent,
     FiltroComponent,
     PaginadorComponent,
-    ImportarComponent
+    ImportarComponent,
+    PermisoPorDirective,
 ],
   templateUrl: './vehiculo-lista.component.html',
   styleUrl: './vehiculo-lista.component.css',

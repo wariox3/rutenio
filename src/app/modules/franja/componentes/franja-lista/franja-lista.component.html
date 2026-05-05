@@ -4,7 +4,7 @@
       <section>
         <h3 class="card-title">Franjas</h3>
       </section>
-      <section class="flex gap-2">
+      <section class="flex gap-2" *appPermisoPor="'franja.editar'">
         <app-button
           data-modal-toggle="#importar-kml-modal"
           type="button"
@@ -61,7 +61,7 @@
                     <i class="ki-filled ki-pointers"></i>
                     <span>Código: {{ franja.codigo }}</span>
                   </div>
-                  <section class="flex gap-2">
+                  <section class="flex gap-2" *appPermisoPor="'franja.editar'">
                     <button
                       (click)="
                         toggleModal('editar-franja'); seleccionarFranja(franja)

@@ -25,6 +25,7 @@ import FranjaEditarComponent from '../franja-editar/franja-editar.component';
 import { GeneralService } from '../../../../common/services/general.service';
 import { RespuestaApi } from '../../../../core/types/api.type';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-franja-lista',
@@ -37,6 +38,7 @@ import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
     ModalDefaultComponent,
     FranjaEditarComponent,
     TruncatePipe,
+    PermisoPorDirective,
   ],
   templateUrl: './franja-lista.component.html',
   styleUrl: './franja-lista.component.css',
