@@ -163,7 +163,7 @@ export class SidebarComponent extends General implements OnInit {
     },
   ];
 
-  public esAdmin = true;
+  public esAdmin = false;
   public esSuperAdmin = false;
   public permisos: Record<string, { ver: boolean; editar: boolean }> | null = null;
   private _destroy$ = new Subject<void>();
