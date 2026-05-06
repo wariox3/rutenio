@@ -114,6 +114,7 @@ export default class VisitaFormularioComponent
       Validators.min(0),
     ]),
     cobro: new FormControl<number | null>(0, [Validators.min(0)]),
+    tarifa: new FormControl<number | null>(0, [Validators.min(0)]),
     // Tiempo servicio: aceptamos 0 (entrega expresa sin demora).
     tiempo_servicio: new FormControl<number | null>(null, [
       Validators.required,
@@ -145,6 +146,7 @@ export default class VisitaFormularioComponent
     peso: null,
     volumen: null,
     cobro: 0,
+    tarifa: 0,
     tiempo_servicio: null,
     ciudad_nombre: '',
     ciudad: null,
@@ -174,6 +176,7 @@ export default class VisitaFormularioComponent
         volumen: this.informacionVisita.volumen,
         unidades: this.informacionVisita.unidades,
         cobro: this.informacionVisita.cobro || 0,
+        tarifa: this.informacionVisita.tarifa || 0,
         fecha: this.informacionVisita.fecha,
         observacion: this.informacionVisita.observacion,
         destinatario_direccion_complemento: this.informacionVisita.destinatario_direccion_complemento,
