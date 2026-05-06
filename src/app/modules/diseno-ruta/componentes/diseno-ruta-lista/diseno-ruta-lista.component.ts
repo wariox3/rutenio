@@ -413,8 +413,24 @@ export default class DisenoRutaListaComponent
   }
 
   aprobarDespacho(id: number) {
-    this._despachoApiService.aprobar(id).subscribe((respuesta) => {
-      this.alerta.mensajaExitoso('Despacho aprobado con exito');
+    this._despachoApiService.aprobar(id).subscribe((respuesta: any) => {
+      // Mensaje principal segun resultado de notificaciones WhatsApp.
+      const notif = respuesta?.notificaciones;
+      if (notif?.enviado) {
+        const n = notif.destinatarios;
+        this.alerta.mensajaExitoso(
+          n > 0
+            ? `Despacho aprobado. Notificaciones WhatsApp en cola para ${n} destinatario(s).`
+            : 'Despacho aprobado. (Sin destinatarios con teléfono válido).',
+        );
+      } else if (notif && notif.razon !== 'ok') {
+        // No se enviaron — mostrar la razón al usuario.
+        this.alerta.mensajaExitoso(
+          `Despacho aprobado. WhatsApp no enviado: ${notif.mensaje || notif.razon}`,
+        );
+      } else {
+        this.alerta.mensajaExitoso('Despacho aprobado con exito');
+      }
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
       this.router.navigate(['/trafico/lista']);
