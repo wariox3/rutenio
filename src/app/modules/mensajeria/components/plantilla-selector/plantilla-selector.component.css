@@ -1,0 +1,17 @@
+/* Scrollbar discreto para la lista de plantillas en navegadores tipo webkit. */
+.plantilla-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.plantilla-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+.plantilla-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+:host-context(.dark) .plantilla-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+:host-context(.dark) .plantilla-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

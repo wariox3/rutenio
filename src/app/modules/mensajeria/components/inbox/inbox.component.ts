@@ -19,11 +19,12 @@ import { Conversacion } from '../../interfaces/conversacion.interface';
 import { Mensaje } from '../../interfaces/mensaje.interface';
 import { AlertaService } from '../../../../common/services/alerta.service';
 import { NuevaConversacionModalComponent } from '../nueva-conversacion-modal/nueva-conversacion-modal.component';
+import { EnviarPlantillaModalComponent } from '../enviar-plantilla-modal/enviar-plantilla-modal.component';
 
 @Component({
   selector: 'app-mensajeria-inbox',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePipe, NuevaConversacionModalComponent],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, NuevaConversacionModalComponent, EnviarPlantillaModalComponent],
   templateUrl: './inbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -49,6 +50,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   controlTexto = new FormControl('');
   controlBusqueda = new FormControl('');
   modalNuevaAbierto = false;
+  modalEnviarPlantillaAbierto = false;
 
   readonly POLLING_MS = 5000;
   pestanaVisible = !document.hidden;
@@ -238,6 +240,40 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
 
   cerrarModalNueva(): void {
     this.modalNuevaAbierto = false;
+  }
+
+  // ---- Enviar plantilla en conversacion existente ----
+  abrirEnvioPlantilla(): void {
+    if (!this.conversacionActiva) return;
+    this.modalEnviarPlantillaAbierto = true;
+  }
+
+  cerrarEnvioPlantilla(): void {
+    this.modalEnviarPlantillaAbierto = false;
+  }
+
+  /** Etiqueta legible del destinatario para el header del modal de envio. */
+  get destinatarioLabel(): string | null {
+    const c = this.conversacionActiva;
+    if (!c) return null;
+    return c.cliente_nombre?.trim() || c.cliente_telefono;
+  }
+
+  onPlantillaEnviada(_resp: { mensaje_id?: number; whatsapp_message_id?: string }): void {
+    // Refresca los mensajes en la próxima vuelta para que el operador vea el envío
+    // sin esperar el polling de 5s.
+    if (!this.conversacionActiva) return;
+    const idActual = this.conversacionActiva.id;
+    setTimeout(() => {
+      this._api.listarMensajes(idActual).subscribe((mensajes) => {
+        if (this.conversacionActiva?.id === idActual) {
+          this.mensajes = mensajes;
+          this._ultimoLenMensajes = mensajes.length;
+          this._scrollPendiente = true;
+          this._cdr.detectChanges();
+        }
+      });
+    }, 300);
   }
 
   onConversacionCreada(conversacionId: number): void {
