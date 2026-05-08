@@ -111,7 +111,7 @@
           <div class="overflow-x-auto">
             <table class="table table-auto w-full text-sm">
               <thead>
-                <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-700">
+                <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-200">
                   <th (click)="ordenarPor('nombre')" class="text-left px-5 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-600 select-none">
                     Empresa
                     @if (ordenColumna === 'nombre') {
@@ -162,7 +162,7 @@
               </thead>
               <tbody>
                 @for (empresa of empresasOrdenadas; track empresa.contenedor_id) {
-                  <tr (click)="verDetalle(empresa.schema_name)" class="border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-colors cursor-pointer">
+                  <tr (click)="verDetalle(empresa.schema_name)" class="border-t border-gray-100 dark:border-gray-200 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-colors cursor-pointer">
                     <td class="px-5 py-3">
                       <div class="flex items-center gap-2.5">
                         <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -208,7 +208,7 @@
               </tbody>
               @if (totales) {
                 <tfoot>
-                  <tr class="border-t-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                  <tr class="border-t-2 border-gray-200 dark:border-gray-200 bg-gray-50 dark:bg-gray-900/50">
                     <td class="px-5 py-3.5 font-bold text-gray-900" colspan="2">Total ({{ empresas.length }} empresas)</td>
                     <td class="px-4 py-3.5 text-right font-bold text-purple-700">{{ totales.decodificadas | number }}</td>
                     <td class="px-4 py-3.5 text-right font-bold text-green-700">{{ totales.whatsapp_enviados | number }}</td>

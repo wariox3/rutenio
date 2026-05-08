@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="flex flex-wrap items-center gap-4 mb-6">
       <a routerLink="/admin/entregas" [queryParams]="{ desde: fechaDesde, hasta: fechaHasta }"
-        class="flex items-center justify-center w-9 h-9 rounded-lg bg-white dark:bg-gray-100 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-950/40 transition-colors">
+        class="flex items-center justify-center w-9 h-9 rounded-lg bg-white dark:bg-gray-100 border border-gray-200 dark:border-gray-200 hover:bg-gray-50 dark:bg-gray-950/40 transition-colors">
         <i class="ki-filled ki-arrow-left text-sm text-gray-500"></i>
       </a>
       <div class="flex-1">
@@ -89,7 +89,7 @@
           <div class="overflow-x-auto">
             <table class="table table-auto w-full text-sm">
               <thead>
-                <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-700">
+                <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-200">
                   <th class="w-10 px-4 py-3"></th>
                   <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">ID</th>
                   <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Fecha</th>
@@ -108,7 +108,7 @@
                   <!-- Fila despacho -->
                   <tr
                     (click)="toggleDespacho(despacho.id)"
-                    class="border-t border-gray-100 dark:border-gray-700 cursor-pointer transition-colors"
+                    class="border-t border-gray-100 dark:border-gray-200 cursor-pointer transition-colors"
                     [ngClass]="despachoExpandido === despacho.id ? 'bg-blue-50/60' : 'hover:bg-gray-50 dark:bg-gray-900/50'"
                   >
                     <td class="px-4 py-3 text-center">
@@ -151,7 +151,7 @@
                   @if (despachoExpandido === despacho.id && despacho.visitas_detalle.length > 0) {
                     <tr>
                       <td colspan="11" class="p-0">
-                        <div class="bg-gray-50 dark:bg-gray-950/40/50 border-y border-gray-200 dark:border-gray-700">
+                        <div class="bg-gray-50 dark:bg-gray-950/40/50 border-y border-gray-200 dark:border-gray-200">
                           <div class="px-8 py-3">
                             <div class="text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">
                               Visitas del despacho #{{ despacho.id }} ({{ despacho.visitas_detalle.length }})

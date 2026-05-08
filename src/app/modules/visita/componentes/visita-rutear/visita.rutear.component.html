@@ -314,18 +314,18 @@
               <div class="flex flex-col space-y-0.5">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center gap-2">
-                    <span class="font-semibold text-gray-800 dark:text-gray-100 text-sm">
+                    <span class="font-semibold text-gray-800 text-sm">
                       {{ visita.destinatario }}
                     </span>
                   </div>
                   <span class="text-xs font-medium">
                     Número: {{ visita.numero }} ·
-                    <span class="font-semibold text-sm text-gray-800 dark:text-gray-100">
+                    <span class="font-semibold text-sm text-gray-800">
                       {{ visita.orden }}
                     </span>
                   </span>
                 </div>
-                <div class="text-gray-700 dark:text-gray-200 text-xs max-w-[24rem]">
+                <div class="text-gray-700 text-xs max-w-[24rem]">
                   <i class="ki-filled ki-geolocation-home"></i>
                   {{ visita.destinatario_direccion }}
                 </div>
@@ -556,28 +556,28 @@
 </app-modal-default>
 
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_capacidad"
 >
   Capacidad disponible en kilos
 </div>
 
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_tiempo"
 >
   Capacidad disponible en minutos
 </div>
 
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_vehiculos_disponibles"
 >
   Vehículos disponibles
 </div>
 
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_visitas_pendientes"
 >
   Visitas pendientes
@@ -629,7 +629,7 @@
   <section *ngIf="toggleModalRotuloPreview$ | async" modal-body>
     <div class="flex flex-col gap-3">
       <div
-        class="relative w-full rounded border border-gray-200 dark:border-gray-700 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/40 dark:bg-coal-400 overflow-hidden"
+        class="relative w-full rounded border border-gray-200 dark:border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/40 dark:bg-coal-400 overflow-hidden"
         style="height: 480px"
       >
         @if (rotuloCargando) {
@@ -637,17 +637,17 @@
             <span
               class="inline-block h-8 w-8 animate-spin rounded-full border-2 border-gray-300 dark:border-gray-600 border-t-primary"
             ></span>
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-300">
+            <span class="text-xs font-medium text-gray-500">
               Generando rótulo…
             </span>
           </div>
         } @else if (rotuloError) {
           <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-6">
             <i class="ki-outline ki-information-5 text-3xl text-red-500"></i>
-            <p class="text-sm font-medium text-gray-800 dark:text-gray-100">
+            <p class="text-sm font-medium text-gray-800">
               No se pudo generar el rótulo
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-300">
+            <p class="text-xs text-gray-500">
               Intenta de nuevo o revisa que la visita exista en el servidor.
             </p>
             <button
@@ -669,8 +669,8 @@
         }
       </div>
 
-      <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-700 dark:border-gray-600 pt-3">
-        <span class="text-xs text-gray-500 dark:text-gray-300">
+      <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-200 dark:border-gray-600 pt-3">
+        <span class="text-xs text-gray-500">
           @if (rotuloCargando) {
             Cargando rótulo…
           } @else if (rotuloPreviewUrl) {
@@ -742,7 +742,7 @@
 >
   <section *ngIf="toggleModalPendientesRutear$ | async" modal-body>
     <div class="mb-4 p-3 bg-blue-50 rounded-lg flex items-center justify-between">
-      <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Total entregas pendientes</span>
+      <span class="text-sm font-medium text-gray-700">Total entregas pendientes</span>
       <div class="flex items-center gap-4">
         @if (totalErroresPendientes > 0) {
           <span class="text-sm font-semibold px-2 py-0.5 rounded-full bg-red-200 text-red-800">
@@ -759,12 +759,12 @@
     </div>
     @if (cargandoPendientes$ | async) {
       <div class="flex justify-center py-8">
-        <span class="text-sm text-gray-500 dark:text-gray-400">Cargando...</span>
+        <span class="text-sm text-gray-500">Cargando...</span>
       </div>
     } @else {
       <div class="h-[500px] overflow-y-auto">
         <table class="table w-full border-collapse text-sm">
-          <thead class="sticky top-0 bg-gray-100 dark:bg-gray-800">
+          <thead class="sticky top-0 bg-gray-100 dark:bg-gray-100">
             <tr>
               <th class="px-2 py-1 text-left">Destinatario</th>
               <th class="px-2 py-1 text-left">Dirección</th>
@@ -843,7 +843,7 @@
     <div class="flex flex-col gap-3">
       <div class="relative">
         <i
-          class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-gray-500 dark:text-gray-400"
+          class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-gray-500"
         ></i>
         <input
           type="text"
@@ -854,7 +854,7 @@
         @if (busquedaImprimir) {
           <button
             type="button"
-            class="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-300"
+            class="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             (click)="busquedaImprimir = ''"
             title="Limpiar"
           >
@@ -875,18 +875,18 @@
         <span class="text-gray-300 dark:text-gray-600">|</span>
         <button
           type="button"
-          class="font-medium text-gray-600 dark:text-gray-300 hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
+          class="font-medium text-gray-600 hover:underline disabled:text-gray-400 disabled:no-underline disabled:cursor-not-allowed"
           [disabled]="idsImprimirVarios.size === 0"
           (click)="limpiarSeleccionImprimirVarios()"
         >
           Limpiar
         </button>
-        <span class="ml-auto text-gray-500 dark:text-gray-300">
+        <span class="ml-auto text-gray-500">
           {{ idsImprimirVarios.size }} seleccionada(s)
         </span>
       </div>
 
-      <div class="max-h-80 overflow-y-auto rounded border border-gray-200 dark:border-gray-700 dark:border-gray-600">
+      <div class="max-h-80 overflow-y-auto rounded border border-gray-200 dark:border-gray-200 dark:border-gray-600">
         @for (visita of visitasFiltradasImprimir; track visita.id) {
           <label
             class="flex items-start gap-3 px-3 py-2 border-b border-gray-100 dark:border-coal-400 last:border-b-0 hover:bg-gray-50 dark:bg-gray-800/40 dark:hover:bg-coal-400 cursor-pointer"
@@ -899,19 +899,19 @@
             />
             <div class="flex flex-col gap-0.5 flex-1 min-w-0">
               <div class="flex items-center justify-between gap-2">
-                <span class="font-semibold text-sm text-gray-900 dark:text-gray-100 truncate">
+                <span class="font-semibold text-sm text-gray-900 truncate">
                   {{ visita.destinatario }}
                 </span>
-                <span class="text-xs text-gray-500 dark:text-gray-300 shrink-0">
+                <span class="text-xs text-gray-500 shrink-0">
                   #{{ visita.numero }}
                 </span>
               </div>
-              <span class="text-xs text-gray-600 dark:text-gray-300 truncate">
+              <span class="text-xs text-gray-600 truncate">
                 <i class="ki-outline ki-geolocation-home"></i>
                 {{ visita.destinatario_direccion }}
               </span>
               @if (visita.franja_codigo) {
-                <span class="text-[11px] text-gray-500 dark:text-gray-400">
+                <span class="text-[11px] text-gray-500">
                   Franja {{ visita.franja_codigo }}
                 </span>
               }
@@ -920,7 +920,7 @@
         } @empty {
           <div class="flex flex-col items-center gap-2 py-8 text-center">
             <i class="ki-outline ki-information-5 text-2xl text-gray-400 dark:text-gray-500"></i>
-            <p class="text-xs text-gray-500 dark:text-gray-300">
+            <p class="text-xs text-gray-500">
               @if (busquedaImprimir) {
                 Sin resultados para "{{ busquedaImprimir }}"
               } @else {
@@ -931,9 +931,9 @@
         }
       </div>
 
-      <div class="flex flex-col gap-2 border-t border-gray-200 dark:border-gray-700 dark:border-gray-600 pt-3">
+      <div class="flex flex-col gap-2 border-t border-gray-200 dark:border-gray-200 dark:border-gray-600 pt-3">
         <div class="flex flex-col gap-1.5">
-          <span class="text-xs font-semibold text-gray-700 dark:text-gray-200">
+          <span class="text-xs font-semibold text-gray-700">
             Formato de impresión
           </span>
           <div class="grid grid-cols-2 gap-2">
@@ -941,7 +941,7 @@
               class="flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer transition-colors"
               [ngClass]="{
                 'border-primary bg-primary/5': formatoImprimir === 'termica',
-                'border-gray-200 dark:border-gray-700 dark:border-gray-600 hover:border-gray-400': formatoImprimir !== 'termica'
+                'border-gray-200 dark:border-gray-200 dark:border-gray-600 hover:border-gray-400': formatoImprimir !== 'termica'
               }"
             >
               <input
@@ -952,10 +952,10 @@
                 [(ngModel)]="formatoImprimir"
               />
               <div class="flex flex-col gap-0.5">
-                <span class="text-xs font-semibold text-gray-900 dark:text-gray-100">
+                <span class="text-xs font-semibold text-gray-900">
                   Térmica
                 </span>
-                <span class="text-[11px] text-gray-500 dark:text-gray-300">
+                <span class="text-[11px] text-gray-500">
                   100×150mm · 1 etiqueta por página
                 </span>
               </div>
@@ -964,7 +964,7 @@
               class="flex items-start gap-2 rounded-lg border p-2.5 cursor-pointer transition-colors"
               [ngClass]="{
                 'border-primary bg-primary/5': formatoImprimir === 'a4',
-                'border-gray-200 dark:border-gray-700 dark:border-gray-600 hover:border-gray-400': formatoImprimir !== 'a4'
+                'border-gray-200 dark:border-gray-200 dark:border-gray-600 hover:border-gray-400': formatoImprimir !== 'a4'
               }"
             >
               <input
@@ -975,10 +975,10 @@
                 [(ngModel)]="formatoImprimir"
               />
               <div class="flex flex-col gap-0.5">
-                <span class="text-xs font-semibold text-gray-900 dark:text-gray-100">
+                <span class="text-xs font-semibold text-gray-900">
                   Hoja A4
                 </span>
-                <span class="text-[11px] text-gray-500 dark:text-gray-300">
+                <span class="text-[11px] text-gray-500">
                   4 etiquetas por página · marcas de corte
                 </span>
               </div>

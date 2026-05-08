@@ -61,7 +61,7 @@
           @if (errorDespachos()) {
             <div class="px-6 py-10 text-center">
               <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
-              <p class="text-sm text-gray-700 dark:text-gray-200 mt-2">{{ errorDespachos() }}</p>
+              <p class="text-sm text-gray-700 mt-2">{{ errorDespachos() }}</p>
               <button class="btn btn-sm btn-light mt-3" (click)="reintentarDespachos()">
                 <i class="ki-outline ki-arrows-circle text-sm"></i>
                 Reintentar
@@ -74,14 +74,14 @@
                 <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.15s"></span>
                 <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.3s"></span>
               </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Cargando despachos…</p>
+              <p class="text-xs text-gray-500 mt-2">Cargando despachos…</p>
             </div>
           } @else if (arrDespachos.length === 0) {
             <div class="px-6 py-10 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-100 mb-2">
                 <i class="ki-outline ki-package text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-300">No hay despachos pendientes</p>
+              <p class="text-sm font-medium text-gray-600">No hay despachos pendientes</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Creá uno desde el menú ⋮ arriba a la derecha.</p>
             </div>
           } @else {
@@ -89,7 +89,7 @@
             <tbody>
               @for (despacho of arrDespachos; track despacho.id) {
               <tr
-                class="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                class="cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-coal-200/40"
                 cdkDropList
                 (click)="seleccionarDespacho(despacho)"
                 [id]="'listB-' + $index"
@@ -105,7 +105,7 @@
                   <div draggable="true" class="flex-1 min-w-0">
                     <!-- Linea 1: ID + estado + placa + fecha -->
                     <div class="flex flex-wrap items-center gap-2 mb-1">
-                      <span class="font-semibold text-gray-800 dark:text-gray-100 text-sm">
+                      <span class="font-semibold text-gray-800 text-sm">
                         #{{ despacho.id }}
                       </span>
                       @switch (estadoDominanteDespacho(despacho)) {
@@ -123,18 +123,18 @@
                         }
                       }
                       @if (despacho.vehiculo__placa) {
-                        <span class="text-gray-600 dark:text-gray-300 text-xs font-medium">
+                        <span class="text-gray-600 text-xs font-medium">
                           {{ despacho.vehiculo__placa }}
                         </span>
                       }
-                      <span class="text-xs text-gray-500 dark:text-gray-400">
+                      <span class="text-xs text-gray-500">
                         <i class="ki-filled ki-calendar-2 mr-0.5"></i>
                         {{ despacho.fecha | date : "yyyy-MM-dd" }}
                       </span>
                     </div>
 
                     <!-- Linea 2: stats compactos en chips -->
-                    <div class="flex flex-wrap items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+                    <div class="flex flex-wrap items-center gap-2 text-[11px] text-gray-500">
                       <span class="inline-flex items-center gap-0.5">
                         <i class="ki-filled ki-geolocation"></i>
                         <span class="tabular-nums">{{ despacho.visitas }}</span> visitas
@@ -294,7 +294,7 @@
           @if (errorVisitas()) {
             <div class="px-6 py-10 text-center">
               <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
-              <p class="text-sm text-gray-700 dark:text-gray-200 mt-2">{{ errorVisitas() }}</p>
+              <p class="text-sm text-gray-700 mt-2">{{ errorVisitas() }}</p>
               <button class="btn btn-sm btn-light mt-3" (click)="reintentarVisitas()">
                 <i class="ki-outline ki-arrows-circle text-sm"></i>
                 Reintentar
@@ -302,10 +302,10 @@
             </div>
           } @else if (!despachoSeleccionado) {
             <div class="px-6 py-10 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-100 mb-2">
                 <i class="ki-outline ki-arrow-left text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Selecciona un despacho</p>
+              <p class="text-sm font-medium text-gray-600">Selecciona un despacho</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Vas a ver acá las visitas asignadas y la ruta en el mapa.</p>
             </div>
           } @else if (actualizandoLista() && arrVisitasPorDespacho.length === 0) {
@@ -315,14 +315,14 @@
                 <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.15s"></span>
                 <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.3s"></span>
               </div>
-              <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Cargando visitas…</p>
+              <p class="text-xs text-gray-500 mt-2">Cargando visitas…</p>
             </div>
           } @else if (arrVisitasPorDespacho.length === 0) {
             <div class="px-6 py-10 text-center">
-              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
+              <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-100 mb-2">
                 <i class="ki-outline ki-package text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
-              <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Despacho sin visitas</p>
+              <p class="text-sm font-medium text-gray-600">Despacho sin visitas</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Adicioná visitas desde el menú ⋮ del despacho o arrastrá desde otra lista.</p>
             </div>
           } @else {
@@ -334,7 +334,7 @@
             >
               @for (visita of arrVisitasPorDespacho; track visita.id) {
               <tr
-                class="cursor-grab active:cursor-grabbing transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                class="cursor-grab active:cursor-grabbing transition-colors hover:bg-gray-50 dark:hover:bg-coal-200/40"
                 cdkDrag
                 [ngClass]="{
                   'bg-blue-50 dark:bg-blue-500/10 border-l-4 border-blue-500':
@@ -347,22 +347,22 @@
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
                     <div class="flex justify-between items-center">
-                      <span class="font-semibold text-gray-800 dark:text-gray-100 text-sm">
+                      <span class="font-semibold text-gray-800 text-sm">
                         {{ visita.destinatario }}
                       </span>
-                      <span class="text-gray-600 dark:text-gray-300 text-xs font-medium">
+                      <span class="text-gray-600 text-xs font-medium">
                         Número: {{ visita.numero }} ·
-                        <span class="font-semibold text-sm text-gray-800 dark:text-gray-100">
+                        <span class="font-semibold text-sm text-gray-800">
                           {{ visita.orden }}
                         </span>
                       </span>
                     </div>
-                    <div class="text-gray-700 dark:text-gray-200 text-xs max-w-[24rem]">
+                    <div class="text-gray-700 text-xs max-w-[24rem]">
                       <i class="ki-filled ki-geolocation-home"></i>
                       {{ visita.destinatario_direccion }}
                     </div>
                     <div
-                      class="flex justify-between text-gray-500 dark:text-gray-400 text-xs mt-1"
+                      class="flex justify-between text-gray-500 text-xs mt-1"
                     >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-cube-2"></i>
@@ -391,7 +391,7 @@
 
                       <section class="flex gap-1">
                         <button
-                          class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-all"
+                          class="text-gray-500 hover:text-blue-500 transition-all"
                           data-modal-toggle="#detalle-visita"
                           (click)="abrirModalDetalleVisita()"
                         >
@@ -470,8 +470,8 @@
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 mb-3">
               <i class="ki-outline ki-map text-2xl text-blue-500"></i>
             </div>
-            <p class="text-sm font-medium text-gray-700 dark:text-gray-200">Selecciona un despacho</p>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-xs">
+            <p class="text-sm font-medium text-gray-700">Selecciona un despacho</p>
+            <p class="text-xs text-gray-500 mt-1 max-w-xs">
               Al elegir un despacho de la lista, vas a ver acá la ruta optimizada con las visitas marcadas en orden.
             </p>
           </div>

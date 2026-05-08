@@ -38,22 +38,22 @@
       </div>
       <div class="space-y-4">
         <div>
-          <label class="form-label font-normal text-gray-900 dark:text-gray-100">Hora de salida de vehículos</label>
+          <label class="form-label font-normal text-gray-900">Hora de salida de vehículos</label>
           <input
             type="time"
             class="input w-auto"
             formControlName="rut_hora_inicio"
           />
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hora estimada de salida de los vehículos. Se usa para calcular ventanas horarias de citas.</p>
+          <p class="text-xs text-gray-500 mt-1">Hora estimada de salida de los vehículos. Se usa para calcular ventanas horarias de citas.</p>
         </div>
         <div>
-          <label class="form-label font-normal text-gray-900 dark:text-gray-100">Estrategia de ruteo</label>
+          <label class="form-label font-normal text-gray-900">Estrategia de ruteo</label>
           <select class="select w-auto" formControlName="rut_estrategia_ruteo">
             <option value="distancia">Ruta más corta</option>
             <option value="balanceado">Balanceado</option>
             <option value="tiempo">Menor tiempo</option>
           </select>
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p class="text-xs text-gray-500 mt-1">
             Ruta más corta: prioriza distancia, pasa por citas de camino.
             Menor tiempo: evita esperas, llega justo a las citas.
             Balanceado: equilibrio entre ambas.
@@ -70,36 +70,36 @@
         ></app-switch>
 
         <div>
-          <label class="form-label font-normal text-gray-900 dark:text-gray-100">Límite de entregas por complemento</label>
+          <label class="form-label font-normal text-gray-900">Límite de entregas por complemento</label>
           <input
             type="number"
             min="1"
             class="input w-auto"
             formControlName="rut_limite_complemento"
           />
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde complemento.</p>
+          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde complemento.</p>
         </div>
 
         <div>
-          <label class="form-label font-normal text-gray-900 dark:text-gray-100">Límite de registros por importación</label>
+          <label class="form-label font-normal text-gray-900">Límite de registros por importación</label>
           <input
             type="number"
             min="1"
             class="input w-auto"
             formControlName="rut_limite_importacion"
           />
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Cantidad máxima de filas permitidas al importar visitas desde archivo Excel.</p>
+          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de filas permitidas al importar visitas desde archivo Excel.</p>
         </div>
 
         <div>
-          <label class="form-label font-normal text-gray-900 dark:text-gray-100">Intervalo de alertas (segundos)</label>
+          <label class="form-label font-normal text-gray-900">Intervalo de alertas (segundos)</label>
           <input
             type="number"
             min="5"
             class="input w-auto"
             formControlName="rut_alertas_intervalo_segundos"
           />
-          <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Frecuencia con la que el módulo de Tráfico consulta nuevas alertas.</p>
+          <p class="text-xs text-gray-500 mt-1">Frecuencia con la que el módulo de Tráfico consulta nuevas alertas.</p>
         </div>
 
         <app-switch
@@ -122,27 +122,27 @@
 
         <div
           *ngIf="formularioConfiguracion.controls.rut_alerta_parada_activa.value"
-          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-700"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-200"
         >
           <div>
-            <label class="form-label font-normal text-gray-900 dark:text-gray-100">Minutos detenido para alertar</label>
+            <label class="form-label font-normal text-gray-900">Minutos detenido para alertar</label>
             <input
               type="number"
               min="1"
               class="input w-auto"
               formControlName="rut_alerta_parada_minutos"
             />
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tiempo mínimo sin movimiento para generar la alerta.</p>
+            <p class="text-xs text-gray-500 mt-1">Tiempo mínimo sin movimiento para generar la alerta.</p>
           </div>
           <div>
-            <label class="form-label font-normal text-gray-900 dark:text-gray-100">Radio (metros)</label>
+            <label class="form-label font-normal text-gray-900">Radio (metros)</label>
             <input
               type="number"
               min="10"
               class="input w-auto"
               formControlName="rut_alerta_parada_radio_metros"
             />
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Distancia máxima dentro de la cual se considera detenido.</p>
+            <p class="text-xs text-gray-500 mt-1">Distancia máxima dentro de la cual se considera detenido.</p>
           </div>
         </div>
 
@@ -159,7 +159,7 @@
 <!-- Modal de confirmación al cambiar switch -->
 <div *ngIf="mostrarModalConfirmacion" class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="fixed inset-0 bg-black/50" (click)="cerrarConfirmacion()"></div>
-  <div class="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-md mx-4 z-10">
+  <div class="relative bg-white dark:bg-gray-100 rounded-lg shadow-xl w-full max-w-md mx-4 z-10">
     <div class="p-6">
       <div class="flex items-center gap-3 mb-4">
         <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
@@ -169,19 +169,19 @@
             <span class="path3"></span>
           </i>
         </div>
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ modalTitulo }}</h3>
+        <h3 class="text-lg font-semibold text-gray-900">{{ modalTitulo }}</h3>
       </div>
 
-      <div class="bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-6">
-        <p class="text-sm text-gray-700 dark:text-gray-200">{{ modalDescripcion }}</p>
+      <div class="bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-200 dark:border-gray-200 mb-6">
+        <p class="text-sm text-gray-700">{{ modalDescripcion }}</p>
       </div>
 
-      <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">¿Está seguro de realizar este cambio?</p>
+      <p class="text-sm text-gray-600 mb-6">¿Está seguro de realizar este cambio?</p>
 
       <div class="flex justify-end gap-3">
         <button
           (click)="cerrarConfirmacion()"
-          class="btn btn-light px-4 py-2 text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 rounded-md hover:bg-gray-200 dark:bg-gray-700 transition-colors"
+          class="btn btn-light px-4 py-2 text-gray-700 bg-gray-100 dark:bg-gray-100 rounded-md hover:bg-gray-200 dark:bg-gray-100 transition-colors"
         >
           Cancelar
         </button>

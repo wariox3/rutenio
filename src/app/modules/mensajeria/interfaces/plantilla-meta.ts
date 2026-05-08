@@ -154,7 +154,7 @@ const META_BY_NAME: Record<string, PlantillaMeta> = {
     titulo: 'Saludo de prueba',
     descripcion: 'Plantilla por defecto de Meta. Útil para verificar conexión.',
     icono: 'ki-filled ki-message-text',
-    acento: 'bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-300',
+    acento: 'bg-gray-100 text-gray-600 dark:bg-gray-500/20',
     variables: [],
   },
 };
@@ -172,7 +172,7 @@ export function obtenerPlantillaMeta(
     titulo: nombre,
     descripcion: 'Plantilla disponible.',
     icono: 'ki-filled ki-document',
-    acento: 'bg-gray-100 text-gray-600 dark:bg-gray-500/20 dark:text-gray-300',
+    acento: 'bg-gray-100 text-gray-600 dark:bg-gray-500/20',
     variables: Array.from({ length: variablesCount }, (_, i) => ({
       label: `Variable ${i + 1}`,
       ejemplo: '',

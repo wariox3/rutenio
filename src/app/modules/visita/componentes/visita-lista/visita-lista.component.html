@@ -5,8 +5,8 @@
       (click)="recargarLista()"
       class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-blue-400"
     >
-      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Total visitas</p>
-      <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100 tabular-nums mt-0.5">
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Total visitas</p>
+      <p class="text-2xl font-semibold text-gray-800 tabular-nums mt-0.5">
         {{ kpi.total | number:'1.0-0' }}
       </p>
     </button>
@@ -17,7 +17,7 @@
       (click)="aplicarFiltroPreset({ estado_decodificado: 'False' })"
       class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-red-400 disabled:opacity-60 disabled:cursor-not-allowed"
     >
-      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Sin decodificar</p>
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Sin decodificar</p>
       <p class="text-2xl font-semibold text-red-600 dark:text-red-400 tabular-nums mt-0.5">
         {{ kpi.sinDecodificar | number:'1.0-0' }}
       </p>
@@ -29,7 +29,7 @@
       (click)="aplicarFiltroPreset({ estado_decodificado_alerta: 'True' })"
       class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
     >
-      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Con alerta</p>
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Con alerta</p>
       <p class="text-2xl font-semibold text-amber-600 dark:text-amber-400 tabular-nums mt-0.5">
         {{ kpi.conAlerta | number:'1.0-0' }}
       </p>
@@ -57,7 +57,7 @@
     @if (cantidadSeleccionada > 0) {
       <!-- Barra contextual: solo cuando hay items seleccionados -->
       <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200 mr-1">
+        <span class="text-sm font-medium text-gray-700 mr-1">
           {{ cantidadSeleccionada }} seleccionada{{ cantidadSeleccionada === 1 ? '' : 's' }}
         </span>
         <button class="btn btn-sm btn-light" (click)="imprimirRotulosSeleccionados()">
@@ -92,7 +92,7 @@
           <i class="ki-filled ki-arrows-circle" [class.animate-spin]="actualizandoLista()"></i>
         </button>
 
-        <span class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></span>
+        <span class="w-px h-5 bg-gray-200 dark:bg-gray-100 mx-1"></span>
 
         <div class="menu menu-default p-0" data-menu="true" *appPermisoPor="'visita.editar'">
           <div
@@ -173,7 +173,7 @@
   <div>
     @if (chipsFiltrosActivos.length > 0) {
       <div class="px-8 pt-3 pb-1 flex flex-wrap items-center gap-2">
-        <span class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium mr-1">Filtros:</span>
+        <span class="text-[11px] uppercase tracking-wide text-gray-500 font-medium mr-1">Filtros:</span>
         @for (chip of chipsFiltrosActivos; track chip.key) {
           <span class="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 rounded-full pl-2.5 pr-1 py-0.5">
             {{ chip.label }}: {{ chip.valor }}
@@ -190,7 +190,7 @@
         <button
           type="button"
           (click)="limpiarFiltrosYRecargar()"
-          class="text-[11px] text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline ms-1"
+          class="text-[11px] text-gray-500 hover:text-gray-700 dark:hover:text-gray-800 underline ms-1"
         >
           Limpiar todo
         </button>
@@ -211,10 +211,10 @@
         <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 mb-3">
           <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
         </div>
-        <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
+        <p class="text-sm font-medium text-gray-700">
           No se pudieron cargar las visitas
         </p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">{{ errorLista() }}</p>
+        <p class="text-xs text-gray-500 mt-1 mb-3">{{ errorLista() }}</p>
         <button class="btn btn-sm btn-light" (click)="reintentarConsulta()">
           <i class="ki-outline ki-arrows-circle text-sm"></i>
           Reintentar
@@ -227,14 +227,14 @@
           <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.15s"></span>
           <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.3s"></span>
         </div>
-        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Cargando visitas…</p>
+        <p class="text-xs text-gray-500 mt-2">Cargando visitas…</p>
       </div>
     } @else if (!arrGuia || arrGuia.length === 0) {
       <div class="px-6 py-12 text-center">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-100 mb-3">
           <i class="ki-outline ki-package text-2xl text-gray-400"></i>
         </div>
-        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+        <p class="text-sm font-medium text-gray-600">
           No hay visitas con estos filtros
         </p>
         <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 mb-3">
@@ -321,17 +321,17 @@
             <span
               class="inline-block h-8 w-8 animate-spin rounded-full border-2 border-gray-300 border-t-primary"
             ></span>
-            <span class="text-xs font-medium text-gray-500 dark:text-gray-300">
+            <span class="text-xs font-medium text-gray-500">
               Generando rótulos…
             </span>
           </div>
         } @else if (rotuloError) {
           <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center px-6">
             <i class="ki-outline ki-information-5 text-3xl text-red-500"></i>
-            <p class="text-sm font-medium text-gray-800 dark:text-gray-100">
+            <p class="text-sm font-medium text-gray-800">
               No se pudo generar los rótulos
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-300">
+            <p class="text-xs text-gray-500">
               Intenta de nuevo o revisa que las visitas existan.
             </p>
             <button
@@ -354,7 +354,7 @@
       </div>
 
       <div class="flex items-center justify-between gap-2 border-t border-gray-200 dark:border-gray-300 pt-3">
-        <span class="text-xs text-gray-500 dark:text-gray-300">
+        <span class="text-xs text-gray-500">
           @if (rotuloCargando) {
             Cargando rótulos…
           } @else if (rotuloPreviewUrl) {
