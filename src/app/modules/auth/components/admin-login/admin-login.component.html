@@ -9,13 +9,13 @@
       (submit)="enviar()"
     >
       <div class="text-center mb-4">
-        <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gray-100 mx-auto mb-5">
-          <i class="ki-filled ki-setting-2 text-2xl text-gray-600"></i>
+        <div class="flex items-center justify-center w-14 h-14 rounded-xl bg-gray-100 dark:bg-gray-800 mx-auto mb-5">
+          <i class="ki-filled ki-setting-2 text-2xl text-gray-600 dark:text-gray-300"></i>
         </div>
-        <h3 class="text-lg font-bold text-gray-900 leading-none mb-1">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 leading-none mb-1">
           Panel de Administración
         </h3>
-        <p class="text-2sm text-gray-500">Acceso exclusivo para administradores</p>
+        <p class="text-2sm text-gray-500 dark:text-gray-400">Acceso exclusivo para administradores</p>
       </div>
 
       @if (errorMensaje) {
@@ -26,13 +26,13 @@
       }
 
       <div class="flex flex-col gap-1">
-        <label class="form-label font-normal text-gray-900">Email</label>
+        <label class="form-label font-normal text-gray-900 dark:text-gray-100">Email</label>
         <app-input-email
           [control]="formularioLogin.controls.username"
         ></app-input-email>
       </div>
       <div class="flex flex-col gap-1">
-        <label class="form-label font-normal text-gray-900">Contraseña</label>
+        <label class="form-label font-normal text-gray-900 dark:text-gray-100">Contraseña</label>
         <app-input-password
           [control]="formularioLogin.controls.password"
         ></app-input-password>
@@ -50,7 +50,7 @@
       </div>
 
       <div class="text-center">
-        <a routerLink="/auth/login" class="text-2sm link text-gray-500 hover:text-primary transition-colors">
+        <a routerLink="/auth/login" class="text-2sm link text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
           <i class="ki-filled ki-arrow-left text-xs mr-1"></i>
           Volver al login
         </a>

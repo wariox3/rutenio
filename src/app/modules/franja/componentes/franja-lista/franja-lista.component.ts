@@ -23,6 +23,7 @@ import { ModalDefaultComponent } from '../../../../common/components/ui/modals/m
 import { KTModal } from '../../../../../metronic/core';
 import FranjaEditarComponent from '../franja-editar/franja-editar.component';
 import { GeneralService } from '../../../../common/services/general.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 import { RespuestaApi } from '../../../../core/types/api.type';
 import { TruncatePipe } from '../../../../common/pipes/truncate.pipe';
 import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
@@ -82,6 +83,7 @@ export default class FranjaListaComponent extends General implements OnInit {
 
   private _franjaService = inject(FranjaService);
   private _generalService = inject(GeneralService);
+  public mapaTheme = inject(MapaThemeService);
   private franjasSubject = new BehaviorSubject<Franja[]>([]);
   franjas$ = this.franjasSubject.asObservable();
   @ViewChild('map', { static: false }) map!: GoogleMap;

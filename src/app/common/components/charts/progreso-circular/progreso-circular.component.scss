@@ -20,7 +20,11 @@
   }
 
   .background {
-    stroke: #e6e6e6; // Color de fondo de la barra
+    stroke: #e6e6e6; // Color de fondo de la barra (light)
+  }
+
+  :host-context(.dark) & .background {
+    stroke: #374151; // gray-700 — visible sobre fondos oscuros
   }
 
   .foreground {

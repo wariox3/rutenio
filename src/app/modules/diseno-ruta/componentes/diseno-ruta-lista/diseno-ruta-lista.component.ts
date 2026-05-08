@@ -39,6 +39,7 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { HttpService } from '../../../../common/services/http.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
@@ -77,6 +78,7 @@ export default class DisenoRutaListaComponent
   private _generalService = inject(GeneralService);
   private _httpService = inject(HttpService);
   private _modalService = inject(ModalService);
+  public mapaTheme = inject(MapaThemeService);
   private ultimoDespachoSeleccionadoId: number | null = null;
 
   public despachoSeleccionado: Despacho;

@@ -79,7 +79,7 @@
           } @else if (arrDespachos.length === 0) {
             <div class="px-6 py-10 text-center">
               <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
-                <i class="ki-outline ki-package text-xl text-gray-400"></i>
+                <i class="ki-outline ki-package text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
               <p class="text-sm font-medium text-gray-600 dark:text-gray-300">No hay despachos pendientes</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Creá uno desde el menú ⋮ arriba a la derecha.</p>
@@ -282,7 +282,7 @@
             }
           </div>
           @if (actualizandoLista() && arrVisitasPorDespacho.length > 0) {
-            <span class="text-xs text-gray-400 inline-flex items-center gap-1">
+            <span class="text-xs text-gray-400 dark:text-gray-500 inline-flex items-center gap-1">
               <i class="ki-filled ki-loading animate-spin text-[#0098d7]"></i>
               Actualizando…
             </span>
@@ -303,7 +303,7 @@
           } @else if (!despachoSeleccionado) {
             <div class="px-6 py-10 text-center">
               <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
-                <i class="ki-outline ki-arrow-left text-xl text-gray-400"></i>
+                <i class="ki-outline ki-arrow-left text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
               <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Selecciona un despacho</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Vas a ver acá las visitas asignadas y la ruta en el mapa.</p>
@@ -320,7 +320,7 @@
           } @else if (arrVisitasPorDespacho.length === 0) {
             <div class="px-6 py-10 text-center">
               <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-2">
-                <i class="ki-outline ki-package text-xl text-gray-400"></i>
+                <i class="ki-outline ki-package text-xl text-gray-400 dark:text-gray-500"></i>
               </div>
               <p class="text-sm font-medium text-gray-600 dark:text-gray-300">Despacho sin visitas</p>
               <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">Adicioná visitas desde el menú ⋮ del despacho o arrastrá desde otra lista.</p>
@@ -347,22 +347,22 @@
                 <td class="p-3 w-full">
                   <div class="flex flex-col space-y-1">
                     <div class="flex justify-between items-center">
-                      <span class="font-semibold text-gray-800 text-sm">
+                      <span class="font-semibold text-gray-800 dark:text-gray-100 text-sm">
                         {{ visita.destinatario }}
                       </span>
-                      <span class="text-gray-600 text-xs font-medium">
+                      <span class="text-gray-600 dark:text-gray-300 text-xs font-medium">
                         Número: {{ visita.numero }} ·
-                        <span class="font-semibold text-sm text-gray-800">
+                        <span class="font-semibold text-sm text-gray-800 dark:text-gray-100">
                           {{ visita.orden }}
                         </span>
                       </span>
                     </div>
-                    <div class="text-gray-700 text-xs max-w-[24rem]">
+                    <div class="text-gray-700 dark:text-gray-200 text-xs max-w-[24rem]">
                       <i class="ki-filled ki-geolocation-home"></i>
                       {{ visita.destinatario_direccion }}
                     </div>
                     <div
-                      class="flex justify-between text-gray-500 text-xs mt-1"
+                      class="flex justify-between text-gray-500 dark:text-gray-400 text-xs mt-1"
                     >
                       <div class="flex items-center space-x-1">
                         <i class="ki-filled ki-cube-2"></i>
@@ -391,7 +391,7 @@
 
                       <section class="flex gap-1">
                         <button
-                          class="text-gray-500 hover:text-blue-500 transition-all"
+                          class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-all"
                           data-modal-toggle="#detalle-visita"
                           (click)="abrirModalDetalleVisita()"
                         >
@@ -466,7 +466,7 @@
       </div>
       <div class="card-body h-full relative">
         @if (!despachoSeleccionado) {
-          <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50/95 dark:bg-gray-950/95 text-center px-6">
+          <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800/40/95 dark:bg-gray-950/95 text-center px-6">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 mb-3">
               <i class="ki-outline ki-map text-2xl text-blue-500"></i>
             </div>
@@ -476,7 +476,7 @@
             </p>
           </div>
         }
-        <google-map height="100%" width="100%" [center]="center" [zoom]="zoom">
+        <google-map height="100%" width="100%" [center]="center" [zoom]="zoom" [options]="{ styles: mapaTheme.styles() }">
           @for (markerPosition of customMarkers; track $index) {
           <map-marker
             [position]="markerPosition.position"

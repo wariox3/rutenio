@@ -1,6 +1,6 @@
 <app-admin-nav></app-admin-nav>
 
-<div class="bg-gray-50 min-h-screen md:ml-64">
+<div class="bg-gray-50 dark:bg-gray-950 min-h-screen md:ml-64">
   <div class="container-fixed max-w-[1200px] py-8">
     <!-- Header + Filtros -->
     <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
@@ -10,12 +10,12 @@
       </div>
       <div class="flex flex-wrap items-end gap-3">
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Desde</label>
-          <input type="date" [(ngModel)]="fechaDesde" class="input input-sm w-40 border-gray-300" />
+          <label class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Desde</label>
+          <input type="date" [(ngModel)]="fechaDesde" class="input input-sm w-40 border-gray-300 dark:border-gray-600" />
         </div>
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Hasta</label>
-          <input type="date" [(ngModel)]="fechaHasta" class="input input-sm w-40 border-gray-300" />
+          <label class="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Hasta</label>
+          <input type="date" [(ngModel)]="fechaHasta" class="input input-sm w-40 border-gray-300 dark:border-gray-600" />
         </div>
         <button (click)="consultar()" [disabled]="cargando" class="btn btn-sm btn-primary gap-1.5">
           @if (cargando) {
@@ -100,25 +100,25 @@
         @if (cargando) {
           <div class="flex flex-col items-center justify-center py-20">
             <span class="animate-spin inline-block w-8 h-8 border-3 border-primary border-t-transparent rounded-full mb-3"></span>
-            <span class="text-sm text-gray-400">Consultando datos...</span>
+            <span class="text-sm text-gray-400 dark:text-gray-500">Consultando datos...</span>
           </div>
         } @else if (empresas.length === 0) {
           <div class="flex flex-col items-center justify-center py-20">
-            <i class="ki-filled ki-chart-line text-5xl text-gray-200 mb-4"></i>
-            <span class="text-sm text-gray-400">No hay datos para el rango seleccionado</span>
+            <i class="ki-filled ki-chart-line text-5xl text-gray-200 dark:text-gray-700 mb-4"></i>
+            <span class="text-sm text-gray-400 dark:text-gray-500">No hay datos para el rango seleccionado</span>
           </div>
         } @else {
           <div class="overflow-x-auto">
             <table class="table table-auto w-full text-sm">
               <thead>
-                <tr class="bg-gray-50 border-b border-gray-200">
+                <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-700">
                   <th (click)="ordenarPor('nombre')" class="text-left px-5 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-600 select-none">
                     Empresa
                     @if (ordenColumna === 'nombre') {
                       <i class="ki-filled text-[10px] ml-1" [ngClass]="ordenDireccion === 'asc' ? 'ki-arrow-up' : 'ki-arrow-down'"></i>
                     }
                   </th>
-                  <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Conexión</th>
+                  <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Conexión</th>
                   <th (click)="ordenarPor('decodificadas')" class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-600 select-none">
                     Decodificadas
                     @if (ordenColumna === 'decodificadas') {
@@ -149,20 +149,20 @@
                       <i class="ki-filled text-[10px] ml-0.5" [ngClass]="ordenDireccion === 'asc' ? 'ki-arrow-up' : 'ki-arrow-down'"></i>
                     }
                   </th>
-                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">%</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">%</th>
                   <th (click)="ordenarPor('visitas_novedad')" class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider cursor-pointer hover:text-gray-600 select-none">
                     Novedades
                     @if (ordenColumna === 'visitas_novedad') {
                       <i class="ki-filled text-[10px] ml-0.5" [ngClass]="ordenDireccion === 'asc' ? 'ki-arrow-up' : 'ki-arrow-down'"></i>
                     }
                   </th>
-                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Unids</th>
-                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Peso</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Unids</th>
+                  <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Peso</th>
                 </tr>
               </thead>
               <tbody>
                 @for (empresa of empresasOrdenadas; track empresa.contenedor_id) {
-                  <tr (click)="verDetalle(empresa.schema_name)" class="border-t border-gray-100 hover:bg-blue-50/50 transition-colors cursor-pointer">
+                  <tr (click)="verDetalle(empresa.schema_name)" class="border-t border-gray-100 dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-colors cursor-pointer">
                     <td class="px-5 py-3">
                       <div class="flex items-center gap-2.5">
                         <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
@@ -170,7 +170,7 @@
                         </div>
                         <div class="min-w-0">
                           <div class="font-semibold text-gray-900 truncate">{{ empresa.nombre }}</div>
-                          <div class="text-[11px] text-gray-400">{{ empresa.schema_name }}</div>
+                          <div class="text-[11px] text-gray-400 dark:text-gray-500">{{ empresa.schema_name }}</div>
                         </div>
                       </div>
                     </td>
@@ -179,7 +179,7 @@
                         [ngClass]="{
                           'text-green-600': diasDesdeConexion(empresa.fecha_ultima_conexion) === 'Hoy',
                           'text-yellow-600': diasDesdeConexion(empresa.fecha_ultima_conexion) === 'Ayer',
-                          'text-gray-400': diasDesdeConexion(empresa.fecha_ultima_conexion) !== 'Hoy' && diasDesdeConexion(empresa.fecha_ultima_conexion) !== 'Ayer'
+                          'text-gray-400 dark:text-gray-500': diasDesdeConexion(empresa.fecha_ultima_conexion) !== 'Hoy' && diasDesdeConexion(empresa.fecha_ultima_conexion) !== 'Ayer'
                         }">
                         {{ diasDesdeConexion(empresa.fecha_ultima_conexion) }}
                       </span>
@@ -208,7 +208,7 @@
               </tbody>
               @if (totales) {
                 <tfoot>
-                  <tr class="border-t-2 border-gray-200 bg-gray-50/80">
+                  <tr class="border-t-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                     <td class="px-5 py-3.5 font-bold text-gray-900" colspan="2">Total ({{ empresas.length }} empresas)</td>
                     <td class="px-4 py-3.5 text-right font-bold text-purple-700">{{ totales.decodificadas | number }}</td>
                     <td class="px-4 py-3.5 text-right font-bold text-green-700">{{ totales.whatsapp_enviados | number }}</td>

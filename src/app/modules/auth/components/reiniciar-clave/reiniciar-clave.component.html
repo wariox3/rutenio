@@ -10,24 +10,24 @@
       method="post"
     >
       <div class="text-center mb-2.5">
-        <h3 class="text-lg font-medium text-gray-900 leading-none mb-2.5">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 leading-none mb-2.5">
           Restablecer contraseña
         </h3>
         <div class="flex items-center justify-center">
-          <span class="text-2sm text-gray-700 me-1.5">
+          <span class="text-2sm text-gray-700 dark:text-gray-200 me-1.5">
             ¿Ya tiene una cuenta?
           </span>
           <a class="text-2sm link" routerLink="/auth/login"> Iniciar sesión </a>
         </div>
       </div>
       <div class="flex flex-col gap-1">
-        <label class="form-label font-normal text-gray-900"> Contraseña </label>
+        <label class="form-label font-normal text-gray-900 dark:text-gray-100"> Contraseña </label>
         <app-input-password
           [control]="formulario.controls.clave"
         ></app-input-password>
       </div>
       <div class="flex flex-col gap-1">
-        <label class="form-label font-normal text-gray-900">
+        <label class="form-label font-normal text-gray-900 dark:text-gray-100">
           Confirmar contraseña
         </label>
         <app-input-password

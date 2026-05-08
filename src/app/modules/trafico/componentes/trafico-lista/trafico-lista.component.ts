@@ -58,6 +58,7 @@ import { TRAFICO_LISTA_FILTERS } from '../../mapeos/trafico-lista-mapeo';
 import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { HttpService } from '../../../../common/services/http.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 
 interface CustomMarker {
   position: google.maps.LatLngLiteral;
@@ -116,6 +117,7 @@ export default class TraficoListaComponent
   private novedadService = inject(NovedadService);
   private _filterTransformerService = inject(FilterTransformerService);
   private _filtroBaseService = inject(FiltroBaseService);
+  public mapaTheme = inject(MapaThemeService);
   public TRAFICO_LISTA_FILTERS = TRAFICO_LISTA_FILTERS;
 
   public visitaSeleccionada: Visita;

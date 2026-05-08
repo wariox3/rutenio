@@ -3,7 +3,17 @@
   background-color: #0098d715;
 }
 
+:host-context(.dark) .comparacion-positivo {
+  color: #38bdf8; /* sky-400 — más vibrante sobre fondo oscuro */
+  background-color: rgba(56, 189, 248, 0.15);
+}
+
 .comparacion-negativo {
   color: #f1416c;
   background-color: #f1416c15;
+}
+
+:host-context(.dark) .comparacion-negativo {
+  color: #fb7185; /* rose-400 */
+  background-color: rgba(251, 113, 133, 0.15);
 }

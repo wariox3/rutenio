@@ -1,10 +1,10 @@
 <div class="">
   <div class="flex flex-wrap items-center lg:items-end justify-between gap-5 pb-7.5">
     <div class="flex flex-col justify-center gap-2">
-      <h1 class="text-xl font-semibold leading-none text-gray-900">
+      <h1 class="text-xl font-semibold leading-none text-gray-900 dark:text-gray-100">
         Decodificar dirección
       </h1>
-      <div class="flex items-center gap-2 text-sm font-medium text-gray-600">
+      <div class="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300">
         Ingrese una dirección para decodificar
       </div>
     </div>
@@ -17,7 +17,7 @@
       <div class="card-body">
         <div class="flex flex-col gap-5">
           <div class="flex flex-col gap-2">
-            <label class="form-label text-gray-900">Dirección</label>
+            <label class="form-label text-gray-900 dark:text-gray-100">Dirección</label>
             <input
               type="text"
               class="input"
@@ -62,11 +62,11 @@
           </div>
           <div class="card-body">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <table class="table-auto border border-gray-300 text-sm w-full">
+              <table class="table-auto border border-gray-300 dark:border-gray-600 text-sm w-full">
                 <tbody>
-                  <tr class="border-b border-gray-300">
+                  <tr class="border-b border-gray-300 dark:border-gray-600">
                     <td
-                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                      class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
                     >
                       Dirección original
                     </td>
@@ -74,9 +74,9 @@
                       {{ resultado$()?.datos?.direccion_original }}
                     </td>
                   </tr>
-                  <tr class="border-b border-gray-300">
+                  <tr class="border-b border-gray-300 dark:border-gray-600">
                     <td
-                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                      class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
                     >
                       Dirección formateada
                     </td>
@@ -84,17 +84,17 @@
                       {{ resultado$()?.datos?.direccion_formato }}
                     </td>
                   </tr>
-                  <tr class="border-b border-gray-300">
+                  <tr class="border-b border-gray-300 dark:border-gray-600">
                     <td
-                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                      class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
                     >
                       Latitud
                     </td>
-                    <td class="px-4 py-3 border-r border-gray-300">
+                    <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                       {{ resultado$()?.datos?.latitud }}
                     </td>
                     <td
-                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                      class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
                     >
                       Longitud
                     </td>
@@ -102,9 +102,9 @@
                       {{ resultado$()?.datos?.longitud }}
                     </td>
                   </tr>
-                  <tr class="border-b border-gray-300">
+                  <tr class="border-b border-gray-300 dark:border-gray-600">
                     <td
-                      class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
+                      class="px-4 py-3 font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800"
                     >
                       Cantidad de resultados
                     </td>
@@ -114,13 +114,13 @@
                   </tr>
                 </tbody>
               </table>
-              <div class="w-full h-[300px] rounded-lg overflow-hidden border border-gray-300">
+              <div class="w-full h-[300px] rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
               <google-map
                 height="100%"
                 width="100%"
                 [center]="mapCenter()"
                 [zoom]="mapZoom"
-                [options]="mapOptions"
+                [options]="mapaTheme.conTheme(mapOptions)"
               >
                 <map-marker
                   [position]="mapCenter()"
@@ -143,45 +143,45 @@
             </div>
             <div class="card-body">
               <div class="overflow-x-auto">
-                <table class="table-auto border border-gray-300 text-sm w-full">
+                <table class="table-auto border border-gray-300 dark:border-gray-600 text-sm w-full">
                   <thead>
-                    <tr class="bg-gray-100 border-b border-gray-300">
-                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                    <tr class="bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600">
                         #
                       </th>
-                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600">
                         Dirección formateada
                       </th>
-                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600">
                         Latitud
                       </th>
-                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600">
                         Longitud
                       </th>
-                      <th class="px-4 py-3 text-left font-bold text-gray-700 border-r border-gray-300">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200 border-r border-gray-300 dark:border-gray-600">
                         Tipo de ubicación
                       </th>
-                      <th class="px-4 py-3 text-left font-bold text-gray-700">
+                      <th class="px-4 py-3 text-left font-bold text-gray-700 dark:text-gray-200">
                         Place ID
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (resultado of resultado$()?.datos?.resultados; track resultado.place_id) {
-                      <tr class="border-b border-gray-300">
-                        <td class="px-4 py-3 border-r border-gray-300">
+                      <tr class="border-b border-gray-300 dark:border-gray-600">
+                        <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                           {{ $index + 1 }}
                         </td>
-                        <td class="px-4 py-3 border-r border-gray-300">
+                        <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                           {{ resultado.formatted_address }}
                         </td>
-                        <td class="px-4 py-3 border-r border-gray-300">
+                        <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                           {{ resultado.geometry.location.lat }}
                         </td>
-                        <td class="px-4 py-3 border-r border-gray-300">
+                        <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                           {{ resultado.geometry.location.lng }}
                         </td>
-                        <td class="px-4 py-3 border-r border-gray-300">
+                        <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
                           {{ resultado.geometry.location_type }}
                         </td>
                         <td class="px-4 py-3">

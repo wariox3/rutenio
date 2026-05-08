@@ -15,15 +15,20 @@
 
 /* Estilo del elemento que se arrastra */
 .cdk-drag-preview {
-  background-color: #dddddd; /* Azul sólido */
+  background-color: #f3f4f6; /* gray-100 */
   display: flex;
-  color: white;
+  color: #1f2937; /* gray-800 — legible sobre fondo claro */
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-  opacity: 0.9;
+  opacity: 0.95;
   padding: 10px;
-  overflow: hidden; /* Previene overflow del contenido */
-  white-space: nowrap; /* Evita texto multilínea */
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+:host-context(.dark) .cdk-drag-preview {
+  background-color: #1f2937; /* gray-800 */
+  color: #f3f4f6; /* gray-100 */
 }
 
 /* Placeholder: espacio que deja el elemento arrastrado */

@@ -1,4 +1,4 @@
-<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full">
+<div class="card bg-white dark:bg-gray-900 dark:bg-coal-300 rounded-lg shadow-md p-6 w-full">
   <!-- Card principal - Facturación -->
   <div class="mb-6">
     <h5 class="card-title">Facturación</h5>
@@ -6,7 +6,7 @@
 
   <!-- Sección Pendiente por pagar -->
   <div
-    class="bg-white dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-300"
+    class="bg-white dark:bg-gray-900 dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700 dark:border-gray-600"
   >
     <div class="flex justify-between items-center mb-4">
       <h5>Pendiente por pagar</h5>
@@ -14,12 +14,12 @@
         <div id="wompiWidget"></div>
       }
     </div>
-    <p class="mb-4 text-gray-600 text-sm">Seleccione las facturas para pago.</p>
+    <p class="mb-4 text-gray-600 dark:text-gray-300 text-sm">Seleccione las facturas para pago.</p>
 
     <!-- Tabla de facturas -->
     <div class="overflow-x-auto">
       <table class="table align-middle">
-        <thead class="bg-gray-50 dark:bg-coal-400">
+        <thead class="bg-gray-50 dark:bg-gray-800/40 dark:bg-coal-400">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium">Fecha</th>
             <th class="px-6 py-3 text-left text-xs font-medium">Descripción</th>
@@ -27,7 +27,7 @@
             <th class="w-[60px]"></th>
           </tr>
         </thead>
-        <tbody class="bg-white dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
+        <tbody class="bg-white dark:bg-gray-900 dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
           @for (factura of facturas; let idx = $index; track idx;) {
           <tr>
             <td>{{ factura.fecha | formatFecha : "Y-m-d" }}</td>
@@ -47,7 +47,7 @@
         </tbody>
       </table>
     </div>
-    <p class="my-4 text-gray-600 text-sm">
+    <p class="my-4 text-gray-600 dark:text-gray-300 text-sm">
       * La factura electrónica se envía al correo o podrá descargarla en la
       pestaña historial después de realizar el pago.
     </p>
@@ -69,7 +69,7 @@
                       {{
             informacionFacturacionSeleccionada === informacion.id
               ? 'border-blue-500 bg-blue-50 shadow-md'
-              : 'border-gray-200 hover:border-blue-300'
+              : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
           }}"
         >
           <!-- Área principal de selección -->
@@ -81,10 +81,10 @@
               <div class="space-y-2 w-full">
                 <!-- Información -->
                 <div class="flex items-center">
-                  <span class="text-gray-600 text-xs font-medium mr-2"
+                  <span class="text-gray-600 dark:text-gray-300 text-xs font-medium mr-2"
                     >ID:</span
                   >
-                  <span class="text-gray-800 text-sm">
+                  <span class="text-gray-800 dark:text-gray-100 text-sm">
                     {{ getIdentificacionPrefix(informacion.identificacion_id) }}
                     {{ informacion.numero_identificacion }}
                   </span>
@@ -94,30 +94,30 @@
                   class="{{
                     informacionFacturacionSeleccionada === informacion.id
                       ? 'text-blue-600'
-                      : 'text-gray-800'
+                      : 'text-gray-800 dark:text-gray-100'
                   }} font-bold text-base truncate"
                 >
                   {{ informacion.nombre_corto }}
                 </h6>
 
                 <!-- Iconos y detalles -->
-                <div class="flex items-center text-sm text-gray-600">
+                <div class="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <i
-                    class="ki-outline ki-phone text-gray-500 mr-2 text-base"
+                    class="ki-outline ki-phone text-gray-500 dark:text-gray-400 mr-2 text-base"
                   ></i>
                   {{ informacion.telefono }}
                 </div>
 
-                <div class="flex items-start text-sm text-gray-600">
+                <div class="flex items-start text-sm text-gray-600 dark:text-gray-300">
                   <i
-                    class="ki-outline ki-location text-gray-500 mr-2 mt-0.5 text-base"
+                    class="ki-outline ki-location text-gray-500 dark:text-gray-400 mr-2 mt-0.5 text-base"
                   ></i>
                   {{ informacion.direccion }}
                 </div>
 
-                <div class="flex items-center text-sm text-gray-600">
+                <div class="flex items-center text-sm text-gray-600 dark:text-gray-300">
                   <i
-                    class="ki-outline ki-geolocation text-gray-500 mr-2 text-base"
+                    class="ki-outline ki-geolocation text-gray-500 dark:text-gray-400 mr-2 text-base"
                   ></i>
                   {{ informacion.ciudad_nombre }} -
                   {{ informacion.ciudad_estado_nombre }}
@@ -147,7 +147,7 @@
             <!-- Icono Eliminar -->
             <button
               (click)="eliminarInformacion(informacion.id)"
-              class="text-red-500 hover:text-red-700 bg-white/90 backdrop-blur-sm p-1 rounded-md border border-gray-200 hover:bg-red-50 transition-all"
+              class="text-red-500 hover:text-red-700 bg-white/90 backdrop-blur-sm p-1 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-red-50 transition-all"
             >
               <i class="ki-outline ki-trash text-base"></i>
             </button>
@@ -156,7 +156,7 @@
             <div data-modal-toggle="#informacion-facturacion">
               <button
                 (click)="editarInformacion(informacion.id)"
-                class="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200 hover:bg-blue-50 transition-all"
+                class="text-blue-500 hover:text-blue-700 text-sm font-medium flex items-center bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md border border-gray-200 dark:border-gray-700 hover:bg-blue-50 transition-all"
               >
                 <i class="ki-outline ki-pencil text-base mr-1"></i>
                 Editar
@@ -182,7 +182,7 @@
   </div>
 
   <!-- Sección Valor estimado -->
-  <div class="bg-white dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-300">
+  <div class="bg-white dark:bg-gray-900 dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700 dark:border-gray-600">
     <div class="flex items-center">
       <h5 class="d-inline-block">Valor estimado</h5>
       <span
@@ -192,7 +192,7 @@
       </span>
     </div>
     <b style="font-size: 24px">{{ consumoTotal | convertir_valor_moneda }}</b>
-    <p class="mb-4 text-gray-600 text-sm">
+    <p class="mb-4 text-gray-600 dark:text-gray-300 text-sm">
       Esta es una estimación de la cantidad que debe pagar de este usuario en el
       mes hasta la fecha después de créditos y pagos por adelantado.
     </p>
@@ -244,14 +244,14 @@
   </div>
 </div>
 
-<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
+<div class="card bg-white dark:bg-gray-900 dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
   <div class="flex items-center mb-4">
     <h5 class="card-title">Consumos</h5>
   </div>
 
   <div class="overflow-x-auto">
     <table class="table align-middle">
-      <thead class="bg-gray-50 dark:bg-coal-400">
+      <thead class="bg-gray-50 dark:bg-gray-800/40 dark:bg-coal-400">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium">Subdominio</th>
           <th class="px-6 py-3 text-left text-xs font-medium">Empresa</th>
@@ -259,7 +259,7 @@
           <th class="px-6 py-3 text-left text-xs font-medium">Total</th>
         </tr>
       </thead>
-      <tbody class="bg-white dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
+      <tbody class="bg-white dark:bg-gray-900 dark:bg-coal-300 divide-y divide-gray-200 dark:divide-gray-300">
         @for (consumo of consumos; let idx = $index; track idx;) {
         <tr>
           <td>{{ consumo.subdominio }}</td>
@@ -275,7 +275,7 @@
   </div>
 </div>
 
-<div class="card bg-white dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
+<div class="card bg-white dark:bg-gray-900 dark:bg-coal-300 rounded-lg shadow-md p-6 w-full mt-6">
   <div class="mb-6">  
     <h5 class="card-title">Historial facturación</h5>
   </div>

@@ -7,7 +7,7 @@
         height="300px"
         [center]="centro"
         [zoom]="zoom"
-        [options]="opcionesMapa"
+        [options]="mapaTheme.conTheme(opcionesMapa)"
       >
         @for (marcador of marcadores; track marcador.titulo) {
           <map-marker

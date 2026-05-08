@@ -2,11 +2,11 @@
   <div class="relative">
     <button
       type="button"
-      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-200 dark:border-coal-200 hover:bg-gray-50 dark:hover:bg-coal-400 text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors"
+      class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700 dark:border-coal-200 hover:bg-gray-50 dark:bg-gray-800/40 dark:hover:bg-coal-400 text-sm font-medium text-gray-700 dark:text-gray-200 transition-colors"
       [disabled]="cargandoCambio()"
       (click)="toggle()"
     >
-      <i class="ki-filled ki-abstract-26 text-base text-gray-500"></i>
+      <i class="ki-filled ki-abstract-26 text-base text-gray-500 dark:text-gray-400"></i>
       <span class="max-w-[160px] truncate">
         {{ contenedorActivoNombre$ | async }}
       </span>
@@ -23,7 +23,7 @@
         (click)="cerrar()"
       ></div>
       <div
-        class="absolute right-0 mt-1 w-72 rounded-lg border border-gray-200 dark:border-coal-200 bg-white dark:bg-coal-500 shadow-lg z-20 max-h-96 overflow-y-auto"
+        class="absolute right-0 mt-1 w-72 rounded-lg border border-gray-200 dark:border-gray-700 dark:border-coal-200 bg-white dark:bg-gray-900 dark:bg-coal-500 shadow-lg z-20 max-h-96 overflow-y-auto"
       >
         <div class="px-3 py-2 border-b border-gray-100 dark:border-coal-300">
           <span class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-300 font-semibold">
@@ -33,7 +33,7 @@
         @for (item of contenedores(); track item.contenedor_id) {
           <button
             type="button"
-            class="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-coal-400 text-left transition-colors"
+            class="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:bg-gray-800/40 dark:hover:bg-coal-400 text-left transition-colors"
             [class.bg-primary]="esActivo(item, contenedorActivoId$ | async)"
             [class.bg-opacity-5]="esActivo(item, contenedorActivoId$ | async)"
             (click)="cambiar(item)"

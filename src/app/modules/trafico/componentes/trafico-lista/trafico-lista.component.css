@@ -28,6 +28,11 @@
   background-color: #dcfce7;
 }
 
+:host-context(.dark) .bg-green-100 {
+  background-color: rgba(16, 185, 129, 0.15); /* green-500 con alfa */
+  color: #6ee7b7; /* green-300 — legible sobre dark */
+}
+
 .menu-dropdown {
   width: auto !important;  /* Ancho automático */
   min-width: 48px;        /* Ancho mínimo por si acaso */

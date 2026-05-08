@@ -429,3 +429,17 @@ html.dark {
   app-dashboard-utilizacion-flota .text-gray-400,
   app-dashboard-utilizacion-flota .text-gray-300 { color: rgb(107 114 128) !important; }
 }
+
+/* ========== Google Maps — fondo oscuro mientras los tiles cargan ==========
+   Sin esto, el contenedor del mapa muestra blanco y luego cambia a oscuro
+   cuando llegan los tiles del estilo dark. */
+google-map,
+google-map > div,
+google-map .map-container {
+  background-color: #fefefe;
+}
+html.dark google-map,
+html.dark google-map > div,
+html.dark google-map .map-container {
+  background-color: #0D0E12; /* coal-500 */
+}

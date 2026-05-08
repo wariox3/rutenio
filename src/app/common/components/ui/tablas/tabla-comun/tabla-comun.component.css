@@ -7,6 +7,11 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  background: white;
+}
+
+:host-context(.dark) .fixed-header-table thead th {
+  background: rgb(17 24 39); /* gray-900 */
 }
 
 .tabla-responsiva {
@@ -24,4 +29,12 @@
 
 .row-alerta:hover {
   background: rgba(245, 158, 11, 0.1);
+}
+
+:host-context(.dark) .row-alerta {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+:host-context(.dark) .row-alerta:hover {
+  background: rgba(245, 158, 11, 0.15);
 }

@@ -44,6 +44,7 @@ import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.d
 import { GeneralApiService } from '../../../../core';
 import { GeneralService } from '../../../../common/services/general.service';
 import { HttpService } from '../../../../common/services/http.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 import {
   EstadoPaginacion,
   ParametrosApi,
@@ -228,6 +229,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   private _visitaApiService = inject(VisitaApiService);
   private _franjaService = inject(FranjaService);
   private _filterTransformerService = inject(FilterTransformerService);
+  public mapaTheme = inject(MapaThemeService);
   selectedVisita: any = null;
   visitarEditar: any;
   datos: any[];

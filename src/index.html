@@ -19,30 +19,30 @@ License: https://keenthemes.com/metronic/tailwind/docs/getting-started/license
 	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<link href="./assets/css/styles.css" rel="stylesheet" />
 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyABnddF-aGC5kNcSk74Brfqd4U0ZDlKAgM&libraries=geometry"></script>
-  </head>
 
-<body root class="antialiased h-full demo1 sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
-	<!--begin::Theme mode setup on page load-->
+	<!--begin::Theme mode pre-load (evita FOUC antes que Tailwind compile)-->
 	<script>
-		const defaultThemeMode = 'light'; // light|dark|system
-		let themeMode;
-
-		if (document.documentElement) {
-			if (localStorage.getItem('theme')) {
-				themeMode = localStorage.getItem('theme');
-			} else if (document.documentElement.hasAttribute('data-theme-mode')) {
-				themeMode = document.documentElement.getAttribute('data-theme-mode');
-			} else {
-				themeMode = defaultThemeMode;
-			}
-
+		(function() {
+			const defaultThemeMode = 'light';
+			let themeMode = localStorage.getItem('theme')
+				|| document.documentElement.getAttribute('data-theme-mode')
+				|| defaultThemeMode;
 			if (themeMode === 'system') {
 				themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 			}
-
 			document.documentElement.classList.add(themeMode);
-		}
+		})();
 	</script>
+	<style>
+		/* Fondo aplicado inmediatamente al <html> según el modo, antes de que
+		   Tailwind compile dark:bg-coal-500. Evita el flash blanco al cargar. */
+		html { background: #fefefe; }
+		html.dark { background: #0D0E12; /* coal-500 */ }
+		html.dark body { background: #0D0E12; }
+	</style>
+  </head>
+
+<body root class="antialiased h-full demo1 sidebar-fixed header-fixed bg-[#fefefe] dark:bg-coal-500">
 </body>
 
 </html>
