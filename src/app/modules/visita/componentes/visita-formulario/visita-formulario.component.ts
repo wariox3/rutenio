@@ -27,6 +27,7 @@ import { VisitaApiService } from '../../servicios/visita-api.service';
 import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-obligatorio.validator';
 import { CitaRangoValidator } from '../../../../common/validaciones/cita-rango.validator';
 import { NoSoloEspacios } from '../../../../common/validaciones/no-solo-espacios.validator';
+import { TelefonoWhatsappValidator } from '../../../../common/validaciones/telefono-whatsapp.validator';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
 import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
 
@@ -67,8 +68,6 @@ export default class VisitaFormularioComponent
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   }
 
-  // Pattern: digitos, espacios, +, -, () — minimo 7 (telefono local) y maximo 15 (E.164).
-  private readonly PATRON_TELEFONO = /^[0-9+\-\s()]+$/;
   // Email RFC-ish basico pero mas estricto que Validators.email (que acepta a@b).
   private readonly PATRON_EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -91,10 +90,8 @@ export default class VisitaFormularioComponent
     ]),
     fecha: new FormControl<Date | string>(new Date(), [Validators.required]),
     destinatario_telefono: new FormControl<string | null>(null, [
-      Validators.pattern(this.PATRON_TELEFONO),
-      Validators.minLength(7),
-      Validators.maxLength(15),
       NoSoloEspacios.validar,
+      TelefonoWhatsappValidator.validar,
     ]),
     destinatario_correo: new FormControl<string | null>(null, [
       Validators.pattern(this.PATRON_EMAIL),
@@ -132,6 +129,20 @@ export default class VisitaFormularioComponent
 
   // Loading state expuesto al template para desactivar el boton Guardar.
   public guardando = false;
+
+  /** True si el telefono actual cumple formato y ademas parece celular CO (recibira WhatsApp). */
+  get telefonoRecibiraWhatsapp(): boolean {
+    const ctrl = this.formularioVisita.get('destinatario_telefono');
+    if (!ctrl || ctrl.invalid || !ctrl.value) return false;
+    return TelefonoWhatsappValidator.esCelularCO(ctrl.value);
+  }
+
+  /** True si el telefono es valido pero NO parece celular CO (no recibira la plantilla). */
+  get telefonoSinWhatsapp(): boolean {
+    const ctrl = this.formularioVisita.get('destinatario_telefono');
+    if (!ctrl || ctrl.invalid || !ctrl.value) return false;
+    return !TelefonoWhatsappValidator.esCelularCO(ctrl.value);
+  }
 
   /** Valores por defecto del formulario (usados al crear o al resetear). */
   private readonly _defaultsFormulario = {
