@@ -1,0 +1,159 @@
+<div *ngIf="abierto"
+     class="fixed inset-0 z-50 flex"
+     (click)="onCerrar()">
+
+  <!-- Backdrop -->
+  <div class="flex-1 bg-black/40 dark:bg-black/60"></div>
+
+  <!-- Drawer -->
+  <aside
+    (click)="$event.stopPropagation()"
+    class="w-full sm:w-[480px] bg-white dark:bg-gray-900 shadow-2xl flex flex-col h-full overflow-hidden animate-slide-in-right">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
+      <div class="min-w-0 flex-1">
+        <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Visita</p>
+        <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 truncate">
+          @if (visita) { {{ visita.destinatario || 'Sin nombre' }} }
+          @else if (cargando) { Cargando… }
+          @else { — }
+        </h3>
+      </div>
+      <button type="button" (click)="onCerrar()"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M6 18 18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="flex-1 overflow-y-auto px-5 py-4">
+
+      @if (cargando) {
+        <div class="py-12 text-center">
+          <div class="inline-flex gap-1.5">
+            <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></span>
+            <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.15s"></span>
+            <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.3s"></span>
+          </div>
+        </div>
+      } @else if (error) {
+        <div class="py-8 text-center">
+          <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
+          <p class="text-sm text-gray-700 dark:text-gray-200 mt-2">{{ error }}</p>
+        </div>
+      } @else if (visita) {
+
+        <!-- Estado dominante + estado decodificado -->
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          @switch (estadoDominante) {
+            @case ('novedad') { <span class="badge badge-sm badge-warning">Novedad</span> }
+            @case ('entregado') { <span class="badge badge-sm badge-success">Entregado</span> }
+            @case ('despachado') { <span class="badge badge-sm badge-info">Despachado</span> }
+            @default { <span class="badge badge-sm badge-light">Pendiente</span> }
+          }
+          @if (visita.estado_decodificado_alerta) {
+            <span class="badge badge-sm badge-outline badge-warning inline-flex items-center gap-1">
+              <i class="ki-outline ki-information-5 text-xs"></i>
+              Geocodificación dudosa
+            </span>
+          } @else if (!visita.estado_decodificado) {
+            <span class="badge badge-sm badge-outline badge-danger">Sin decodificar</span>
+          }
+        </div>
+
+        <!-- Datos principales -->
+        <dl class="space-y-3 text-sm">
+          <div>
+            <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Documento / Guía</dt>
+            <dd class="text-gray-800 dark:text-gray-100 mt-0.5">{{ visita.documento || '—' }}</dd>
+          </div>
+
+          <div>
+            <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Dirección</dt>
+            <dd class="text-gray-800 dark:text-gray-100 mt-0.5 break-words">
+              {{ visita.destinatario_direccion || '—' }}
+              @if (visita.destinatario_direccion_complemento) {
+                <span class="text-gray-500 dark:text-gray-400 block text-xs mt-0.5">
+                  {{ visita.destinatario_direccion_complemento }}
+                </span>
+              }
+            </dd>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Teléfono</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 tabular-nums">{{ visita.destinatario_telefono || '—' }}</dd>
+            </div>
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Correo</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 truncate">{{ visita.destinatario_correo || '—' }}</dd>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Unidades</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 tabular-nums">{{ visita.unidades || 0 }}</dd>
+            </div>
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Peso</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 tabular-nums">{{ visita.peso || 0 }} kg</dd>
+            </div>
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Volumen</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 tabular-nums">{{ visita.volumen || 0 }}</dd>
+            </div>
+          </div>
+
+          @if (visita.cita_inicio || visita.cita_fin) {
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Cita</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 text-xs">
+                {{ visita.cita_inicio | date:'dd/MM HH:mm' }} – {{ visita.cita_fin | date:'HH:mm' }}
+              </dd>
+            </div>
+          }
+
+          @if (visita.observacion) {
+            <div>
+              <dt class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Observación</dt>
+              <dd class="text-gray-800 dark:text-gray-100 mt-0.5 text-xs italic">{{ visita.observacion }}</dd>
+            </div>
+          }
+
+          @if (visita.recibe || visita.recibeCelular || visita.recibeNumeroIdentificacion) {
+            <div class="pt-3 border-t border-gray-100 dark:border-gray-800">
+              <p class="text-[11px] uppercase tracking-wide text-green-700 dark:text-green-400 font-semibold mb-2">Recibió</p>
+              <div class="space-y-1 text-xs">
+                @if (visita.recibe) { <p>{{ visita.recibe }} <span class="text-gray-500 dark:text-gray-400">({{ visita.recibeParentesco || '—' }})</span></p> }
+                @if (visita.recibeNumeroIdentificacion) { <p class="tabular-nums">Cédula: {{ visita.recibeNumeroIdentificacion }}</p> }
+                @if (visita.recibeCelular) { <p class="tabular-nums">Celular: {{ visita.recibeCelular }}</p> }
+              </div>
+            </div>
+          }
+        </dl>
+      }
+    </div>
+
+    <!-- Footer -->
+    <div class="px-5 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/40 flex items-center justify-between gap-2">
+      <button type="button" (click)="abrirPaginaCompleta()"
+              class="btn btn-sm btn-clear btn-light"
+              [disabled]="!visita">
+        <i class="ki-outline ki-arrow-up-right text-sm"></i>
+        Abrir página completa
+      </button>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="onCerrar()" class="btn btn-sm btn-light">Cerrar</button>
+        <button type="button" (click)="irAEditar()" class="btn btn-sm btn-primary" [disabled]="!visita">
+          <i class="ki-outline ki-notepad-edit text-sm"></i>
+          Editar
+        </button>
+      </div>
+    </div>
+  </aside>
+</div>

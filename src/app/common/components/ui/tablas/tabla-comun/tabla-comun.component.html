@@ -28,6 +28,7 @@
             </th>
             <th class="w-[60px]" *ngIf="!ocultarEditar"></th>
             <th class="w-[60px]"></th>
+            <th class="w-[60px]" *ngIf="accionesFila?.length"></th>
             <th class="w-[60px]">
               <input
                 #checkboxGlobal
@@ -41,7 +42,7 @@
         </thead>
         <tbody>
           @for (item of datos; track $index) {
-          <tr>
+          <tr [class.row-alerta]="resaltarFila ? resaltarFila(item) : false">
             @for (encabezado of encabezados; track $index) {
             <td>
               <app-tabla-campo
@@ -68,6 +69,42 @@
                 <i class="ki-filled ki-eye"> </i>
               </button>
             </td>
+            @if (accionesFila?.length) {
+              @if (accionesVisibles(item).length > 0) {
+                <td>
+                  <div class="menu menu-default p-0" data-menu="true">
+                    <div
+                      class="menu-item"
+                      data-menu-item-placement="bottom-end"
+                      data-menu-item-toggle="dropdown"
+                      data-menu-item-trigger="click"
+                    >
+                      <button class="btn btn-sm btn-icon btn-clear btn-light menu-toggle" title="Más acciones">
+                        <i class="ki-filled ki-dots-vertical"></i>
+                      </button>
+                      <div class="menu-dropdown w-52 py-2">
+                        @for (accion of accionesVisibles(item); track $index) {
+                          <div class="menu-item" data-menu-dismiss="true">
+                            <button
+                              class="menu-link"
+                              [class.text-red-600]="accion.variante === 'danger'"
+                              (click)="accion.ejecutar(item)"
+                            >
+                              <span class="menu-icon">
+                                <i [ngClass]="accion.icono"></i>
+                              </span>
+                              <span class="menu-title">{{ accion.label }}</span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              } @else {
+                <td></td>
+              }
+            }
             <td class="w-[60px]">
               <input
                 class="checkbox checkbox-sm"

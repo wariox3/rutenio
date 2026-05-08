@@ -1,3 +1,42 @@
+@if (resumenKpis(); as kpi) {
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+    <button
+      type="button"
+      (click)="recargarLista()"
+      class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-blue-400"
+    >
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Total visitas</p>
+      <p class="text-2xl font-semibold text-gray-800 dark:text-gray-100 tabular-nums mt-0.5">
+        {{ kpi.total | number:'1.0-0' }}
+      </p>
+    </button>
+
+    <button
+      type="button"
+      [disabled]="kpi.sinDecodificar === 0"
+      (click)="aplicarFiltroPreset({ estado_decodificado: 'False' })"
+      class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-red-400 disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Sin decodificar</p>
+      <p class="text-2xl font-semibold text-red-600 dark:text-red-400 tabular-nums mt-0.5">
+        {{ kpi.sinDecodificar | number:'1.0-0' }}
+      </p>
+    </button>
+
+    <button
+      type="button"
+      [disabled]="kpi.conAlerta === 0"
+      (click)="aplicarFiltroPreset({ estado_decodificado_alerta: 'True' })"
+      class="card text-left px-4 py-3 hover:shadow-md transition-shadow border-l-4 border-l-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      <p class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">Con alerta</p>
+      <p class="text-2xl font-semibold text-amber-600 dark:text-amber-400 tabular-nums mt-0.5">
+        {{ kpi.conAlerta | number:'1.0-0' }}
+      </p>
+    </button>
+  </div>
+}
+
 <div class="card mb-5">
   <div class="card-header">
     <h3 class="card-title">Filtros</h3>
@@ -14,33 +53,150 @@
 <div id="tour-visita-tabla" class="card min-w-full">
   <div class="card-header">
     <h3 class="card-title">Visitas</h3>
-    <div class="flex">
-      @if (actualizandoLista()) {
-      <app-button
-        textoCargando="Actualizando..."
-        [estaCargando]="true"
-        class="ms-2"
-      >
-      </app-button>
-      } @else {
-      <button class="btn btn-primary ms-2" (click)="recargarConsulta()">
-        <i class="ki-filled ki-arrows-circle"></i>
-        Actualizar
-      </button>
-      }
-      <app-button
-        *appPermisoPor="'visita.editar'"
-        id="tour-visita-nuevo"
-        class="ms-2"
-        routerLink="/movimiento/visita/nuevo"
-        type="button"
-        texto="Nuevo"
-      ></app-button>
-      <!-- <button class="btn btn-secondary">Acciones</button> -->
-    </div>
+
+    @if (cantidadSeleccionada > 0) {
+      <!-- Barra contextual: solo cuando hay items seleccionados -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-sm font-medium text-gray-700 dark:text-gray-200 mr-1">
+          {{ cantidadSeleccionada }} seleccionada{{ cantidadSeleccionada === 1 ? '' : 's' }}
+        </span>
+        <button class="btn btn-sm btn-light" (click)="imprimirRotulosSeleccionados()">
+          <i class="ki-filled ki-printer text-sm"></i>
+          Imprimir rótulos
+        </button>
+        <button class="btn btn-sm btn-light" (click)="eliminarItemsSeleccionados()" *appPermisoPor="'visita.editar'">
+          <i class="ki-filled ki-trash text-sm trash-icon"></i>
+          Eliminar
+        </button>
+        <button class="btn btn-sm btn-clear btn-light" (click)="limpiarSeleccion()">
+          Limpiar selección
+        </button>
+      </div>
+    } @else {
+      <!-- Header normal: acción primaria + actualizar + dropdowns secundarios -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <app-button
+          *appPermisoPor="'visita.editar'"
+          id="tour-visita-nuevo"
+          routerLink="/movimiento/visita/nuevo"
+          type="button"
+          texto="+ Nuevo"
+        ></app-button>
+
+        <button
+          class="btn btn-sm btn-icon btn-light"
+          [disabled]="actualizandoLista()"
+          (click)="recargarConsulta()"
+          title="Actualizar"
+        >
+          <i class="ki-filled ki-arrows-circle" [class.animate-spin]="actualizandoLista()"></i>
+        </button>
+
+        <span class="w-px h-5 bg-gray-200 dark:bg-gray-700 mx-1"></span>
+
+        <div class="menu menu-default p-0" data-menu="true" *appPermisoPor="'visita.editar'">
+          <div
+            id="tour-visita-importar"
+            class="menu-item"
+            data-menu-item-placement="bottom-end"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button class="btn btn-sm btn-light menu-toggle">
+              <i class="ki-outline ki-cloud-add text-sm"></i>
+              Importar
+              <i class="ki-outline ki-down text-xs"></i>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="abrirModalImportarExcel()">
+                  <span class="menu-title">Por excel</span>
+                </button>
+              </div>
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="abrirModalImportarComplemento()">
+                  <span class="menu-title">Por complemento</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu menu-default p-0" data-menu="true">
+          <div
+            class="menu-item"
+            data-menu-item-placement="bottom-end"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button class="btn btn-sm btn-light menu-toggle">
+              <i class="ki-outline ki-exit-down text-sm"></i>
+              Exportar
+              <i class="ki-outline ki-down text-xs"></i>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="exportarExcel()">
+                  <span class="menu-title">Excel</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu menu-default p-0" data-menu="true" *appAdmin>
+          <div
+            class="menu-item"
+            data-menu-item-placement="bottom-end"
+            data-menu-item-toggle="dropdown"
+            data-menu-item-trigger="click"
+          >
+            <button class="btn btn-sm btn-icon btn-light menu-toggle" title="Más acciones">
+              <i class="ki-outline ki-dots-vertical text-sm"></i>
+            </button>
+            <div class="menu-dropdown w-48 py-2">
+              <div class="menu-item" data-menu-dismiss="true">
+                <button class="menu-link" (click)="confirmarEliminarTodos()">
+                  <span class="menu-icon">
+                    <i class="ki-filled ki-delete-files"></i>
+                  </span>
+                  <span class="menu-title">Eliminar todas</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
   </div>
 
   <div>
+    @if (chipsFiltrosActivos.length > 0) {
+      <div class="px-8 pt-3 pb-1 flex flex-wrap items-center gap-2">
+        <span class="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium mr-1">Filtros:</span>
+        @for (chip of chipsFiltrosActivos; track chip.key) {
+          <span class="inline-flex items-center gap-1 text-[11px] font-medium text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/30 rounded-full pl-2.5 pr-1 py-0.5">
+            {{ chip.label }}: {{ chip.valor }}
+            <button
+              type="button"
+              (click)="removerChip(chip.key)"
+              class="inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-blue-100 dark:hover:bg-blue-500/20"
+              title="Quitar filtro"
+            >
+              <i class="ki-outline ki-cross text-[10px]"></i>
+            </button>
+          </span>
+        }
+        <button
+          type="button"
+          (click)="limpiarFiltrosYRecargar()"
+          class="text-[11px] text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 underline ms-1"
+        >
+          Limpiar todo
+        </button>
+      </div>
+    }
+
     <div class="flex justify-between items-center mx-8">
       <app-paginador
         [currentPage]="currentPage()"
@@ -48,154 +204,61 @@
         (pageChange)="onPageChange($event)"
         [totalItems]="cantidadRegistros"
       ></app-paginador>
-
-      <div class="inline-flex rounded-md shadow-s my-5">
-        <div class="menu menu-default p-0" data-menu="true" *appPermisoPor="'visita.editar'">
-          <div
-            id="tour-visita-importar"
-            class="menu-item"
-            data-menu-item-placement="bottom-start"
-            data-menu-item-toggle="dropdown"
-            data-menu-item-trigger="click"
-          >
-            <button
-              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-200 bg-white dark:bg-coal-300 border-l border-y border-gray-200 rounded-s-lg"
-            >
-              <span class=""> Importar </span>
-              <span class="menu-arrow">
-                <i class="ki-outline ki-down"> </i>
-              </span>
-            </button>
-            <div class="menu-dropdown w-48 py-2">
-              <div class="menu-item" data-menu-dismiss="true">
-                <button
-                  class="menu-link"
-                  data-modal-toggle="#importar-por-excel-modal"
-                  (click)="abrirModalImportarExcel()"
-                >
-                  <span class="menu-title"> Por excel </span>
-                </button>
-              </div>
-              <div class="menu-item" data-menu-dismiss="true">
-                <button
-                  class="menu-link"
-                  data-modal-toggle="#importar-por-complemento-modal"
-                  (click)="abrirModalImportarComplemento()"
-                >
-                  <span class="menu-title"> Por complemento </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="menu menu-default p-0" data-menu="true">
-          <div
-            class="menu-item"
-            data-menu-item-placement="bottom-start"
-            data-menu-item-toggle="dropdown"
-            data-menu-item-trigger="click"
-          >
-            <button
-              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-200 bg-white dark:bg-coal-300 border-l border-y border-gray-200"
-            >
-              <span class=""> Exportar </span>
-              <span class="menu-arrow">
-                <i class="ki-outline ki-down"> </i>
-              </span>
-            </button>
-            <div class="menu-dropdown w-48 py-2">
-              <div class="menu-item" data-menu-dismiss="true">
-                <button class="menu-link" (click)="exportarExcel()">
-                  <span class="menu-title"> Excel </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- <button
-          class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-200 bg-white dark:bg-coal-300 border-y border-l border-gray-200"
-          (click)="decodificar()"
-        >
-          Decodificar
-        </button>
-
-        <button
-          class="px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-200 bg-white dark:bg-coal-300 border-y border-l border-gray-200"
-          (click)="ordenar()"
-        >
-          Ordenar
-        </button> -->
-
-        <div class="menu menu-default p-0" data-menu="true">
-          <div
-            class="menu-item"
-            data-menu-item-placement="bottom-start"
-            data-menu-item-toggle="dropdown"
-            data-menu-item-trigger="click"
-          >
-            <button
-              class="menu-toggle px-4 py-2 text-sm font-medium text-gray-900 dark:text-gray-200 bg-white dark:bg-coal-300 border-y border-x border-gray-200 rounded-e-lg"
-            >
-              <span class=""> Acciones </span>
-              <span class="menu-arrow">
-                <i class="ki-outline ki-down"> </i>
-              </span>
-            </button>
-            <div class="menu-dropdown w-48 py-2">
-              <div class="menu-item" data-menu-dismiss="true">
-                <button
-                  class="menu-link"
-                  (click)="imprimirRotulosSeleccionados()"
-                >
-                  <span class="menu-icon">
-                    <i class="ki-filled ki-printer"></i>
-                  </span>
-                  <span class="menu-title">
-                    Imprimir rótulos
-                    @if (cantidadSeleccionada > 0) {
-                      ({{ cantidadSeleccionada }})
-                    }
-                  </span>
-                </button>
-              </div>
-              <div class="menu-item" data-menu-dismiss="true" *appPermisoPor="'visita.editar'">
-                <button
-                  class="menu-link"
-                  (click)="eliminarItemsSeleccionados()"
-                >
-                  <span class="menu-icon">
-                    <i class="ki-filled ki-trash trash-icon"></i>
-                  </span>
-                  <span class="menu-title"> Eliminar </span>
-                </button>
-              </div>
-              <div class="menu-item" data-menu-dismiss="true" *appAdmin>
-                <button class="menu-link" (click)="confirmarEliminarTodos()">
-                  <span class="menu-icon">
-                    <i class="ki-filled ki-delete-files"></i>
-                  </span>
-                  <span class="menu-title"> Eliminar todas </span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <app-tabla-comun
-      campoMapeo="Visita"
-      [mapeo]="mapeoDocumento"
-      [datos]="arrGuia"
-      [ocultarEditar]="true"
-      ordenamientoInicial="-id"
-      (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
-      (emitirDetalleItem)="detalleVisita($event)"
-      (emitirEditarItem)="editarVisita($event)"
-      (emitirOrdenamiento)="onOrdenamientoChange($event)"
-    ></app-tabla-comun>
+    @if (errorLista()) {
+      <div class="px-6 py-12 text-center">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-50 dark:bg-red-500/10 mb-3">
+          <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-700 dark:text-gray-200">
+          No se pudieron cargar las visitas
+        </p>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">{{ errorLista() }}</p>
+        <button class="btn btn-sm btn-light" (click)="reintentarConsulta()">
+          <i class="ki-outline ki-arrows-circle text-sm"></i>
+          Reintentar
+        </button>
+      </div>
+    } @else if (actualizandoLista() && (!arrGuia || arrGuia.length === 0)) {
+      <div class="py-12 text-center">
+        <div class="inline-flex gap-1.5">
+          <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></span>
+          <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.15s"></span>
+          <span class="w-2 h-2 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse" style="animation-delay:.3s"></span>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Cargando visitas…</p>
+      </div>
+    } @else if (!arrGuia || arrGuia.length === 0) {
+      <div class="px-6 py-12 text-center">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-800 mb-3">
+          <i class="ki-outline ki-package text-2xl text-gray-400"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+          No hay visitas con estos filtros
+        </p>
+        <p class="text-xs text-gray-400 dark:text-gray-500 mt-1 mb-3">
+          Probá ajustar los filtros o creá una visita nueva.
+        </p>
+        <button class="btn btn-sm btn-light" (click)="limpiarFiltrosYRecargar()">
+          Limpiar filtros
+        </button>
+      </div>
+    } @else {
+      <app-tabla-comun
+        campoMapeo="Visita"
+        [mapeo]="mapeoDocumento"
+        [datos]="arrGuia"
+        [ocultarEditar]="true"
+        ordenamientoInicial="-id"
+        [resaltarFila]="resaltarFilaConAlerta"
+        [accionesFila]="accionesFila"
+        (emitirItemsSeleccionados)="actualizarItemsSeleccionados($event)"
+        (emitirDetalleItem)="detalleVisita($event)"
+        (emitirEditarItem)="editarVisita($event)"
+        (emitirOrdenamiento)="onOrdenamientoChange($event)"
+      ></app-tabla-comun>
+    }
   </div>
 </div>
 
@@ -234,6 +297,12 @@
     ></app-importar>
   </section>
 </app-modal-default>
+
+<app-visita-detalle-drawer
+  [abierto]="drawerAbierto()"
+  [visitaId]="drawerVisitaId()"
+  (cerrar)="cerrarDrawerVisita()">
+</app-visita-detalle-drawer>
 
 <app-modal-default
   size="medium"

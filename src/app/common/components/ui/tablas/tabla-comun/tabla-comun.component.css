@@ -13,3 +13,15 @@
   height: calc(100vh - 35rem);
   min-height: 25rem;
 }
+
+.row-alerta > td:first-child {
+  border-left: 4px solid #f59e0b;
+}
+
+.row-alerta {
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.row-alerta:hover {
+  background: rgba(245, 158, 11, 0.1);
+}
