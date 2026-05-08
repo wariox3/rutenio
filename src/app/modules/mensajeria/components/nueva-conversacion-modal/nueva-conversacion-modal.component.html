@@ -1,0 +1,104 @@
+<div *ngIf="abierto"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 dark:bg-black/60"
+     (click)="cerrarSinEnviar()">
+
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col"
+       (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800">
+      <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100">Nueva conversación</h3>
+      <button type="button" (click)="cerrarSinEnviar()"
+              class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path d="M6 18 18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <form [formGroup]="form" (ngSubmit)="enviar()"
+          class="px-5 py-4 overflow-y-auto flex flex-col gap-4">
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Teléfono <span class="text-red-500">*</span>
+        </label>
+        <input type="tel" formControlName="telefono" placeholder="Ej: 3006134088"
+               class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/40"/>
+        <ng-container *ngIf="form.controls.telefono.touched && form.controls.telefono.errors as errs">
+          <p *ngIf="errs['required']" class="mt-1 text-[11px] text-red-600 dark:text-red-400">El teléfono es requerido.</p>
+          <p *ngIf="errs['telefonoFormato']" class="mt-1 text-[11px] text-red-600 dark:text-red-400">Solo se permiten números, espacios, +, - y ()</p>
+          <p *ngIf="errs['telefonoCorto']" class="mt-1 text-[11px] text-red-600 dark:text-red-400">El teléfono debe tener al menos 10 dígitos.</p>
+          <p *ngIf="errs['telefonoLargo']" class="mt-1 text-[11px] text-red-600 dark:text-red-400">El teléfono no puede tener más de 15 dígitos.</p>
+        </ng-container>
+      </div>
+
+      <!-- Nombre -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Nombre <span class="text-gray-400 dark:text-gray-500 font-normal">(opcional)</span>
+        </label>
+        <input type="text" formControlName="nombre" placeholder="Ej: Otto Hernández"
+               class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/40"/>
+      </div>
+
+      <!-- Plantilla -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+          Plantilla <span class="text-red-500">*</span>
+        </label>
+        <select formControlName="plantilla_nombre" (change)="onPlantillaCambia()"
+                class="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/40">
+          <option value="" disabled>Seleccionar plantilla…</option>
+          <option *ngFor="let p of plantillas" [value]="p.nombre">{{ p.nombre }}</option>
+        </select>
+        <p *ngIf="cargandoPlantillas" class="mt-1 text-[11px] text-gray-500 dark:text-gray-400">Cargando plantillas…</p>
+        <p *ngIf="!cargandoPlantillas && plantillas.length === 0" class="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
+          No hay plantillas disponibles. Verifica la configuración.
+        </p>
+      </div>
+
+      <!-- Variables dinámicas -->
+      <div *ngIf="plantillaSeleccionada && plantillaSeleccionada.variables.length > 0"
+           formArrayName="variables"
+           class="flex flex-col gap-2 pt-1 border-t border-gray-100 dark:border-gray-800">
+        <p class="text-xs font-medium text-gray-700 dark:text-gray-300">Variables</p>
+        <div *ngFor="let v of plantillaSeleccionada.variables; let i = index; trackBy: trackByIndice">
+          <label class="block text-[11px] text-gray-600 dark:text-gray-400 mb-0.5">
+            Variable {{ v.indice + 1 }}
+          </label>
+          <input type="text" [formControlName]="i" [placeholder]="v.nombre_sugerido"
+                 class="w-full px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-500/40"/>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div *ngIf="plantillaSeleccionada"
+           class="rounded-lg bg-green-50 dark:bg-green-500/10 border border-green-200/60 dark:border-green-500/20 px-3 py-2">
+        <p class="text-[10px] uppercase font-medium tracking-wide text-green-700 dark:text-green-400 mb-1">
+          Vista previa del mensaje
+        </p>
+        <p class="text-[13px] text-gray-800 dark:text-gray-100 whitespace-pre-wrap break-words">
+          {{ previewTexto }}
+        </p>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="flex justify-end gap-2 px-5 py-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950/40">
+      <button type="button" (click)="cerrarSinEnviar()" [disabled]="enviando"
+              class="px-4 py-2 text-sm rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition-colors">
+        Cancelar
+      </button>
+      <button type="button" (click)="enviar()" [disabled]="form.invalid || enviando"
+              class="px-4 py-2 text-sm rounded-lg bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2">
+        <svg *ngIf="enviando" class="w-3.5 h-3.5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <circle cx="12" cy="12" r="10" stroke-dasharray="60" stroke-dashoffset="40"/>
+        </svg>
+        {{ enviando ? 'Enviando…' : 'Enviar plantilla' }}
+      </button>
+    </div>
+  </div>
+</div>

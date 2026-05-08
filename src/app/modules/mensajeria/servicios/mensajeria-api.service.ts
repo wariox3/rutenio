@@ -11,10 +11,13 @@ import {
   ListaConversaciones,
 } from '../interfaces/conversacion.interface';
 import {
+  IniciarConversacionPayload,
+  IniciarConversacionRespuesta,
   Mensaje,
   PayloadEnvio,
   RespuestaEnvio,
 } from '../interfaces/mensaje.interface';
+import { PlantillaWhatsapp } from '../interfaces/plantilla.interface';
 
 @Injectable({ providedIn: 'root' })
 export class MensajeriaApiService {
@@ -62,5 +65,14 @@ export class MensajeriaApiService {
 
   reabrirConversacion(conversacionId: number): Observable<Conversacion> {
     return this._http.post<Conversacion>(`mensajeria/conversacion/${conversacionId}/reabrir/`, {});
+  }
+
+  // === Plantillas + iniciar conversacion nueva ===
+  listarPlantillas(): Observable<PlantillaWhatsapp[]> {
+    return this._http.getDetalle<PlantillaWhatsapp[]>('mensajeria/conversacion/plantillas/');
+  }
+
+  iniciarConversacion(payload: IniciarConversacionPayload): Observable<IniciarConversacionRespuesta> {
+    return this._http.post<IniciarConversacionRespuesta>('mensajeria/conversacion/iniciar/', payload);
   }
 }

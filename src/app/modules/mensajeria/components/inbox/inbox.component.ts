@@ -18,11 +18,12 @@ import { MensajeriaApiService } from '../../servicios/mensajeria-api.service';
 import { Conversacion } from '../../interfaces/conversacion.interface';
 import { Mensaje } from '../../interfaces/mensaje.interface';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { NuevaConversacionModalComponent } from '../nueva-conversacion-modal/nueva-conversacion-modal.component';
 
 @Component({
   selector: 'app-mensajeria-inbox',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePipe],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, NuevaConversacionModalComponent],
   templateUrl: './inbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -47,6 +48,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   enviando = false;
   controlTexto = new FormControl('');
   controlBusqueda = new FormControl('');
+  modalNuevaAbierto = false;
 
   readonly POLLING_MS = 5000;
   pestanaVisible = !document.hidden;
@@ -227,6 +229,37 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
 
   trackById(_: number, item: { id: number }): number {
     return item.id;
+  }
+
+  // ---- Nueva conversacion ----
+  abrirNueva(): void {
+    this.modalNuevaAbierto = true;
+  }
+
+  cerrarModalNueva(): void {
+    this.modalNuevaAbierto = false;
+  }
+
+  onConversacionCreada(conversacionId: number): void {
+    this.modalNuevaAbierto = false;
+    // Refresca la lista de abiertas y selecciona la nueva. Si por algun motivo no
+    // aparece (filtro distinto), pedimos el detalle y la insertamos arriba.
+    this._api.listarConversaciones({ estado: 'abierta' }).subscribe({
+      next: (resp) => {
+        this.conversaciones = resp.results;
+        const conv = resp.results.find((c) => c.id === conversacionId);
+        if (conv) {
+          this.seleccionar(conv);
+        } else {
+          this._api.obtenerConversacion(conversacionId).subscribe((c) => {
+            this.conversaciones = [c, ...this.conversaciones];
+            this.seleccionar(c);
+            this._cdr.detectChanges();
+          });
+        }
+        this._cdr.detectChanges();
+      },
+    });
   }
 
   // ---- Helpers de presentación ----
