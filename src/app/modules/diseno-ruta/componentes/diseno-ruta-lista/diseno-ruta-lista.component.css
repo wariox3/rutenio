@@ -60,9 +60,10 @@
   background-color: rgba(40, 167, 69, 0.1); /* Fondo suave verde */
 }
 
-tr:hover {
-    background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
-  }
+/* Resalta visitas con cita programada con borde lateral morado. */
+.fila-cita > td:first-child {
+  border-left: 3px solid #8b5cf6;
+}
 
   .menu-dropdown {
     width: auto !important;  /* Ancho automático */
