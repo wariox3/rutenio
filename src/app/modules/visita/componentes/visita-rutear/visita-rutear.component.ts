@@ -533,7 +533,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
       ...this.arrParametrosConsultaResumen,
       filtros: [
         ...(this.arrParametrosConsultaResumen?.filtros || []),
-        { propiedad: 'id', operador: 'in', valor: ids },
+        { propiedad: 'id', operador: 'in', valor1: ids },
       ],
     };
     this._ejecutarRutear(parametros, () => this.limpiarSeleccionRutear());
