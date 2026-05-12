@@ -326,8 +326,8 @@
       </div>
     }
 
-    <div class="card-table h-100 overflow-auto scrollable">
-      <table class="table w-full min-w-[44rem] border-collapse compact-row">
+    <div class="card-table h-100 overflow-y-auto overflow-x-hidden scrollable">
+      <table class="table w-full border-collapse compact-row">
         <tbody>
           <tr
             *ngFor="let visita of arrVisitas; let i = index"
@@ -510,7 +510,22 @@
         </button>
       </div>
     </div>
-    <div class="card-body h-full">
+    <div class="card-body h-full relative">
+      @if (markerPositions.length === 0) {
+      <div
+        class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800/40 text-center px-6"
+      >
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 mb-3"
+        >
+          <i class="ki-outline ki-map text-2xl text-blue-500"></i>
+        </div>
+        <p class="text-sm font-medium text-gray-700">Sin visitas para mostrar</p>
+        <p class="text-xs text-gray-500 mt-1 max-w-xs">
+          Importa o crea visitas para ver el mapa con sus ubicaciones.
+        </p>
+      </div>
+      } @else {
       <google-map height="100%" width="100%" [center]="center" [zoom]="zoom" [options]="{ styles: mapaTheme.styles() }">
         @for (franja of franjas$ | async; track $index) {
         <map-polygon
@@ -577,6 +592,7 @@
           </section>
         </map-info-window>
       </google-map>
+      }
     </div>
   </div>
 </div>

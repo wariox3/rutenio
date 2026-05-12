@@ -1,10 +1,61 @@
+<!-- KPI strip + progress bar -->
+<div class="grid grid-cols-2 xl:grid-cols-4 gap-3 mt-2">
+  <div class="card card-body p-3">
+    <p class="text-xs text-gray-500">Total</p>
+    <p class="text-lg font-semibold text-gray-800 tabular-nums">
+      {{ totalVisitas() }}
+    </p>
+  </div>
+  <div class="card card-body p-3">
+    <p class="text-xs text-gray-500">Entregadas</p>
+    <p class="text-lg font-semibold text-green-600 tabular-nums">
+      {{ entregadas() }}
+      <span class="text-xs font-normal text-gray-400">
+        · {{ pctEntregadas() }}%
+      </span>
+    </p>
+  </div>
+  <div class="card card-body p-3">
+    <p class="text-xs text-gray-500">Con novedad</p>
+    <p class="text-lg font-semibold text-orange-600 tabular-nums">
+      {{ conNovedad() }}
+      <span class="text-xs font-normal text-gray-400">
+        · {{ pctNovedad() }}%
+      </span>
+    </p>
+  </div>
+  <div class="card card-body p-3">
+    <p class="text-xs text-gray-500">Pendientes</p>
+    <p class="text-lg font-semibold text-gray-700 tabular-nums">
+      {{ pendientes() }}
+    </p>
+  </div>
+</div>
+
+@if (totalVisitas() > 0) {
+<div
+  class="mt-3 h-2 rounded-full overflow-hidden bg-gray-100 flex"
+  title="Avance del despacho"
+>
+  <div
+    class="bg-green-500"
+    [style.width.%]="pctEntregadas()"
+  ></div>
+  <div
+    class="bg-orange-400"
+    [style.width.%]="pctNovedad()"
+  ></div>
+</div>
+}
+
+<!-- Filtros + paginador + acciones -->
 <div class="mt-4">
   <app-filtro
     (filtersApply)="filterChange($event)"
     [availableFields]="VISITA_LISTA_FILTERS"
   ></app-filtro>
 </div>
-<div class="flex justify-between items-center my-4">
+<div class="flex justify-between items-center my-4 flex-wrap gap-2">
   <app-paginador
     [currentPage]="currentPage()"
     [totalPages]="totalPages()"
@@ -22,7 +73,7 @@
       <button
         class="dropdown-toggle btn btn-secondary flex items-center rounded-r-none"
       >
-        <span class=""> Imprimir </span>
+        <span> Imprimir </span>
         <span class="menu-arrow">
           <i class="ki-outline ki-down"> </i>
         </span>
@@ -49,7 +100,7 @@
       <button
         class="dropdown-toggle btn btn-secondary flex items-center rounded-l-none"
       >
-        <span class=""> Exportar </span>
+        <span> Exportar </span>
         <span class="menu-arrow">
           <i class="ki-outline ki-down"> </i>
         </span>
@@ -69,102 +120,159 @@
     </div>
   </div>
 </div>
-<div class="overflow-auto max-h-[700px] border border-gray-300 dark:border-gray-600">
-  <table class="table border border-gray-300 dark:border-gray-600 text-sm w-full">
-    <thead class="sticky top-0 z-10">
-      <tr class="bg-gray-100 dark:bg-gray-100">
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Id
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Fecha
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Número
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Documento
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Destinatario
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Dirección
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Teléfono
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-        >
-          Und
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-          title="Entregado"
-        >
-          E
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-          title="Novedad"
-        >
-          N
-        </th>
-        <th
-          class="px-4 py-2 font-bold text-purple-700 border-r border-gray-300 dark:border-gray-600 bg-purple-50"
-          title="Ventana de cita"
-        >
-          <i class="ki-filled ki-time text-purple-500 mr-1"></i>Cita
-        </th>
+
+<!-- Estado vacío -->
+@if (totalVisitas() === 0) {
+<div
+  class="card card-body flex flex-col items-center justify-center text-center px-6 py-16"
+>
+  <div
+    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 dark:bg-blue-500/10 mb-3"
+  >
+    <i class="ki-outline ki-package text-2xl text-blue-500"></i>
+  </div>
+  <p class="text-sm font-medium text-gray-700">No hay visitas en este despacho</p>
+  <p class="text-xs text-gray-500 mt-1 max-w-sm">
+    Cuando se agreguen visitas al despacho aparecerán acá con su estado de entrega.
+  </p>
+</div>
+} @else {
+
+<!-- Tabla -->
+<div class="overflow-auto max-h-[640px] border border-gray-200 dark:border-gray-600 rounded">
+  <table class="table text-sm w-full">
+    <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-100">
+      <tr>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">#</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">Destinatario</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">Dirección</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">Contacto</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-center">Und</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">Estado</th>
+        <th class="px-3 py-2 font-semibold text-gray-600 text-left">Cita</th>
+        <th class="px-2 py-2"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let visita of visitas()" class="border-b border-gray-300 dark:border-gray-600">
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">{{ visita.id }}</td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.fecha | formatFecha : "Y-m-d" }}
+      @for (visita of visitas(); track visita.id) {
+      <tr
+        class="border-t border-gray-100 dark:border-gray-300 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-coal-200/40"
+        [class.bg-green-50]="estadoVisita(visita) === 'entregada'"
+        [class.bg-orange-50]="estadoVisita(visita) === 'novedad'"
+        [class.bg-red-50]="estadoVisita(visita) === 'alerta'"
+        (click)="abrirDrawer(visita.id)"
+      >
+        <!-- Identificadores: numero (grande) + documento (pequeño) -->
+        <td class="px-3 py-2 align-top whitespace-nowrap">
+          <div class="font-semibold text-gray-800 tabular-nums">
+            {{ visita.numero || '—' }}
+          </div>
+          <div class="text-[11px] text-gray-500 truncate max-w-[8rem]" [title]="visita.documento">
+            {{ visita.documento }}
+          </div>
         </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">{{ visita.numero }}</td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">{{ visita.documento }}</td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.destinatario }}
+
+        <!-- Destinatario + fecha -->
+        <td class="px-3 py-2 align-top">
+          <div class="font-medium text-gray-800 truncate max-w-[14rem]" [title]="visita.destinatario">
+            {{ visita.destinatario }}
+          </div>
+          <div class="text-[11px] text-gray-500">
+            {{ visita.fecha | formatFecha : "Y-m-d" }}
+          </div>
         </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.destinatario_direccion }}
+
+        <!-- Dirección con icono -->
+        <td class="px-3 py-2 align-top">
+          <div
+            class="text-gray-700 text-[13px] truncate max-w-[18rem]"
+            [title]="visita.destinatario_direccion"
+          >
+            <i class="ki-filled ki-geolocation text-gray-400 mr-1"></i>
+            {{ visita.destinatario_direccion }}
+          </div>
         </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.destinatario_telefono }}
-        </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.unidades }}
-        </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.estado_entregado | validarBooleano }}
-        </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          {{ visita.estado_novedad | validarBooleano }}
-        </td>
-        <td class="px-4 py-2 border border-gray-300 dark:border-gray-600">
-          @if (visita.cita_inicio) {
-            <span class="text-purple-600">{{ visita.cita_inicio | date:'dd/MM HH:mm' }} - {{ visita.cita_fin | date:'HH:mm' }}</span>
+
+        <!-- Contacto: telefono clickeable -->
+        <td class="px-3 py-2 align-top whitespace-nowrap">
+          @if (visita.destinatario_telefono && visita.destinatario_telefono !== 'None') {
+            <a
+              [href]="'tel:' + visita.destinatario_telefono"
+              class="text-blue-600 hover:underline text-[13px]"
+              (click)="$event.stopPropagation()"
+            >
+              {{ visita.destinatario_telefono }}
+            </a>
+          } @else {
+            <span class="text-gray-400 text-[13px]">—</span>
           }
         </td>
+
+        <!-- Unidades -->
+        <td class="px-3 py-2 align-top text-center tabular-nums text-gray-700">
+          {{ visita.unidades }}
+        </td>
+
+        <!-- Estado: badge único -->
+        <td class="px-3 py-2 align-top whitespace-nowrap">
+          @switch (estadoVisita(visita)) {
+            @case ('entregada') {
+              <span class="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
+                <i class="ki-filled ki-check"></i> Entregada
+              </span>
+            }
+            @case ('novedad') {
+              <span class="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium">
+                <i class="ki-filled ki-information-3"></i> Novedad
+              </span>
+            }
+            @case ('alerta') {
+              <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
+                <i class="ki-filled ki-warning"></i> Alerta
+              </span>
+            }
+            @default {
+              <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">
+                Pendiente
+              </span>
+            }
+          }
+        </td>
+
+        <!-- Cita inline -->
+        <td class="px-3 py-2 align-top whitespace-nowrap">
+          @if (visita.cita_inicio) {
+            <span class="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">
+              <i class="ki-filled ki-time mr-1"></i>
+              {{ visita.cita_inicio | date:'dd/MM HH:mm' }}
+              –
+              {{ visita.cita_fin | date:'HH:mm' }}
+            </span>
+          } @else {
+            <span class="text-gray-300 text-[13px]">—</span>
+          }
+        </td>
+
+        <!-- Acción: ojo (redundante con click en fila pero discoverable) -->
+        <td class="px-2 py-1 text-center">
+          <button
+            type="button"
+            class="btn btn-sm btn-icon btn-clear btn-light p-1"
+            title="Ver detalle"
+            (click)="$event.stopPropagation(); abrirDrawer(visita.id)"
+          >
+            <i class="ki-filled ki-eye"></i>
+          </button>
+        </td>
       </tr>
+      }
     </tbody>
   </table>
 </div>
+}
+
+<app-visita-detalle-drawer
+  [abierto]="drawerAbierto()"
+  [visitaId]="drawerVisitaId()"
+  (cerrar)="cerrarDrawer()"
+></app-visita-detalle-drawer>

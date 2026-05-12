@@ -51,6 +51,7 @@ import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despac
 import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
+import { VisitaService } from '../../../visita/servicios/visita.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
@@ -115,6 +116,7 @@ export default class TraficoListaComponent
   private _httpService = inject(HttpService);
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
+  private _visitaService = inject(VisitaService);
   private _filterTransformerService = inject(FilterTransformerService);
   private _filtroBaseService = inject(FiltroBaseService);
   public mapaTheme = inject(MapaThemeService);
@@ -419,6 +421,9 @@ export default class TraficoListaComponent
    */
   recargarDespachos(): void {
     this._cargarDespachos({}, true); // Con mensaje de éxito
+    // Notifica al tab de visitas (si está abierto en el modal) para que
+    // refresque sus KPIs y barra de progreso.
+    this._visitaService.notificarActualizacionLista();
   }
 
   descargarPlanoSemantica(id: number) {

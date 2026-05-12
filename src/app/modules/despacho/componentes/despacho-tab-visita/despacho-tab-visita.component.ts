@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   Input,
   OnDestroy,
@@ -20,6 +21,7 @@ import { PaginadorComponent } from '../../../../common/components/ui/paginacion/
 import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { VISITA_TRAFICO_TAB_FILTERS } from '../../../visita/mapeos/visita-trafico-tab-mapeo';
 import { GeneralService } from '../../../../common/services/general.service';
+import { VisitaDetalleDrawerComponent } from '../../../visita/componentes/visita-detalle-drawer/visita-detalle-drawer.component';
 
 @Component({
   selector: 'app-despacho-tab-visita',
@@ -30,6 +32,7 @@ import { GeneralService } from '../../../../common/services/general.service';
     FormatFechaPipe,
     PaginadorComponent,
     FiltroComponent,
+    VisitaDetalleDrawerComponent,
   ],
   templateUrl: './despacho-tab-visita.component.html',
   styleUrl: './despacho-tab-visita.component.css',
@@ -52,6 +55,49 @@ export class DespachoTabVisitaComponent
   public filtroKey = signal<string>('');
 
   visitas = signal<Visita[]>([]);
+  drawerAbierto = signal<boolean>(false);
+  drawerVisitaId = signal<number | null>(null);
+
+  // KPIs derivados — se actualizan solos cuando cambia la lista.
+  totalVisitas = computed(() => this.visitas().length);
+  entregadas = computed(
+    () => this.visitas().filter((v) => v.estado_entregado).length
+  );
+  conNovedad = computed(
+    () =>
+      this.visitas().filter((v) => v.estado_novedad && !v.estado_entregado)
+        .length
+  );
+  pendientes = computed(
+    () =>
+      this.totalVisitas() - this.entregadas() - this.conNovedad()
+  );
+  pctEntregadas = computed(() =>
+    this.totalVisitas() > 0
+      ? Math.round((this.entregadas() / this.totalVisitas()) * 100)
+      : 0
+  );
+  pctNovedad = computed(() =>
+    this.totalVisitas() > 0
+      ? Math.round((this.conNovedad() / this.totalVisitas()) * 100)
+      : 0
+  );
+
+  abrirDrawer(id: number): void {
+    this.drawerVisitaId.set(id);
+    this.drawerAbierto.set(true);
+  }
+
+  cerrarDrawer(): void {
+    this.drawerAbierto.set(false);
+  }
+
+  estadoVisita(v: Visita): 'entregada' | 'novedad' | 'alerta' | 'pendiente' {
+    if (v.estado_entregado) return 'entregada';
+    if (v.estado_novedad) return 'novedad';
+    if (v.estado_decodificado_alerta || !v.estado_decodificado) return 'alerta';
+    return 'pendiente';
+  }
 
   private baseParametrosConsulta: ParametrosApi = {
     limit: 100,
