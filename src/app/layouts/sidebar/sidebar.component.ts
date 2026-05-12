@@ -2,7 +2,10 @@ import { Component, HostBinding, OnInit, ElementRef } from '@angular/core';
 import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { SidebarMenu, SidebarMenuItem } from '../../interfaces/general/sidebar/menu.interface';
 import { Store } from '@ngrx/store';
-import { obtenerEsAdminContenedor } from '../../redux/selectors/contenedor.selector';
+import {
+  obtenerEsAdminContenedor,
+  obtenerPermisos,
+} from '../../redux/selectors/contenedor.selector';
 import { obtenerEsSuperAdmin } from '../../redux/selectors/auth.selector';
 import { takeUntil } from 'rxjs';
 import { Subject } from 'rxjs';
@@ -45,24 +48,28 @@ export class SidebarComponent extends General implements OnInit {
       link: '/rutear',
       iconoClase: 'ki-filled ki-map',
       activo: false,
+      modulo: 'visita',
     },
     {
       nombre: 'Diseño ruta',
       link: '/diseno-ruta/lista',
       iconoClase: 'ki-filled ki-design-1',
       activo: false,
+      modulo: 'visita',
     },
     {
       nombre: 'Tráfico',
       link: '/trafico/lista',
       iconoClase: 'ki-filled ki-delivery',
       activo: false,
+      modulo: 'despacho',
     },
     {
       nombre: 'Mensajería',
       link: '/mensajeria',
       iconoClase: 'ki-filled ki-messages',
       activo: false,
+      modulo: 'mensajeria',
     },
     {
       nombre: 'Movimiento',
@@ -74,14 +81,17 @@ export class SidebarComponent extends General implements OnInit {
         {
           nombre: 'Visita',
           link: '/movimiento/visita/lista',
+          modulo: 'visita',
         },
         {
           nombre: 'Despacho',
           link: '/movimiento/despacho/lista',
+          modulo: 'despacho',
         },
         {
           nombre: 'Novedad',
           link: '/movimiento/novedad/lista',
+          modulo: 'novedad',
         },
       ],
     },
@@ -91,21 +101,21 @@ export class SidebarComponent extends General implements OnInit {
       iconoClase: 'ki-filled ki-setting-2',
       activo: false,
       tipoAcordion: true,
-      soloAdmin: true,
       children: [
         {
           nombre: 'Vehículos',
           link: '/administracion/vehiculo/lista',
-          soloAdmin: true,
+          modulo: 'vehiculo',
         },
         // {
         //   nombre: 'Contactos',
         //   link: '/administracion/contacto/lista',
+        //   modulo: 'contacto',
         // },
         {
           nombre: 'Franjas',
           link: '/administracion/franja/lista',
-          soloAdmin: true,
+          modulo: 'franja',
         },
       ],
     },
@@ -153,8 +163,9 @@ export class SidebarComponent extends General implements OnInit {
     },
   ];
 
-  public esAdmin = true;
+  public esAdmin = false;
   public esSuperAdmin = false;
+  public permisos: Record<string, { ver: boolean; editar: boolean }> | null = null;
   private _destroy$ = new Subject<void>();
 
   ngOnInit(): void {
@@ -170,6 +181,12 @@ export class SidebarComponent extends General implements OnInit {
       .subscribe((es) => {
         this.esSuperAdmin = !!es;
       });
+    this.store
+      .select(obtenerPermisos)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((p) => {
+        this.permisos = p;
+      });
     this.initializeAccordionStates();
     this.subscribeToRouteChanges();
   }
@@ -179,19 +196,26 @@ export class SidebarComponent extends General implements OnInit {
     this._destroy$.complete();
   }
 
+  private tienePermisoVer(modulo?: string): boolean {
+    if (!modulo) return true;
+    if (this.esAdmin || this.esSuperAdmin) return true;
+    return !!this.permisos?.[modulo]?.ver;
+  }
+
   puedeVerMenu(menu: SidebarMenu): boolean {
     if (menu.soloSuperAdmin) return this.esSuperAdmin;
-    if (this.esAdmin) return true;
-    if (menu.soloAdmin) return false;
+    if (menu.soloAdmin && !this.esAdmin && !this.esSuperAdmin) return false;
     if (menu.children?.length) {
-      return menu.children.some((c) => !c.soloAdmin);
+      // Acordeón: visible si al menos uno de sus hijos lo es.
+      return menu.children.some((c) => this.puedeVerSubmenu(c));
     }
-    return true;
+    return this.tienePermisoVer(menu.modulo);
   }
 
   puedeVerSubmenu(sub: SidebarMenuItem): boolean {
     if (sub.soloSuperAdmin) return this.esSuperAdmin;
-    return this.esAdmin || !sub.soloAdmin;
+    if (sub.soloAdmin && !this.esAdmin && !this.esSuperAdmin) return false;
+    return this.tienePermisoVer(sub.modulo);
   }
 
   private initializeAccordionStates(): void {

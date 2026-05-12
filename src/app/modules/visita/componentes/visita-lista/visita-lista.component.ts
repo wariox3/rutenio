@@ -5,24 +5,27 @@ import {
   inject,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MapDirectionsService } from '@angular/google-maps';
 import { RouterLink } from '@angular/router';
-import { BehaviorSubject, finalize, forkJoin, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, catchError, finalize, forkJoin, of, Subject, takeUntil } from 'rxjs';
+import { VisitaResumen } from '../../../../interfaces/visita/rutear.interface';
 import { KTModal } from '../../../../../metronic/core';
 import { General } from '../../../../common/clases/general';
-import { FiltroBaseService } from '../../../../common/components/filtros/filtro-base/services/filtro-base.service';
 import { ImportarComponent } from '../../../../common/components/importar/importar.component';
+import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
-import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
+import { AccionFila, TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { GeneralService } from '../../../../common/services/general.service';
 import { HttpService } from '../../../../common/services/http.service';
 import { GeneralApiService } from '../../../../core';
 import { SafeUrlPipe } from '../../../../common/pipes/safe-url.pipe';
 import { AdminDirective } from '../../../../common/directivas/admin.directive';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { Visita } from '../../interfaces/visita.interface';
 import { guiaMapeo } from '../../mapeos/guia-mapeo';
@@ -32,6 +35,7 @@ import { PaginadorComponent } from '../../../../common/components/ui/paginacion/
 import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
 import { VISITA_LISTA_FILTERS } from '../../mapeos/visita-lista-mapeo';
+import { VisitaDetalleDrawerComponent } from '../visita-detalle-drawer/visita-detalle-drawer.component';
 
 @Component({
   selector: 'app-visita-lista',
@@ -49,6 +53,8 @@ import { VISITA_LISTA_FILTERS } from '../../mapeos/visita-lista-mapeo';
     FiltroComponent,
     SafeUrlPipe,
     AdminDirective,
+    PermisoPorDirective,
+    VisitaDetalleDrawerComponent,
   ],
   templateUrl: './visita-lista.component.html',
   styleUrl: './visita-lista.component.css',
@@ -61,7 +67,8 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _listaItemsEliminar: number[] = [];
   private _generalService = inject(GeneralService);
   private _httpService = inject(HttpService);
-  private _filtroBaseService = inject(FiltroBaseService);
+  private _filterTransformerService = inject(FilterTransformerService);
+  private static readonly FILTRO_LOCALSTORAGE_KEY = 'visita_lista_filtro';
 
   public toggleModalRotuloPreview$ = new BehaviorSubject(false);
   public rotuloPreviewUrl: string | null = null;
@@ -71,12 +78,17 @@ export default class VisitaListaComponent extends General implements OnInit {
   private _ultimosIdsImpresion: number[] | null = null;
   private _ultimoFormatoImpresion: 'termica' | 'a4' = 'termica';
 
+  @ViewChild(TablaComunComponent) tablaComun?: TablaComunComponent;
+
   public actualizandoLista = signal<boolean>(false);
+  public errorLista = signal<string | null>(null);
+  public resumenKpis = signal<{ total: number; sinDecodificar: number; conAlerta: number } | null>(null);
+  public drawerVisitaId = signal<number | null>(null);
+  public drawerAbierto = signal<boolean>(false);
   public guiaMapeo = guiaMapeo
   public VISITA_LISTA_FILTERS = VISITA_LISTA_FILTERS
   public toggleModalImportarComplemento$ = new BehaviorSubject(false);
   public toggleModalImportarExcel$ = new BehaviorSubject(false);
-  public nombreFiltro = '';
   public cantidadRegistros: number = 0;
   public arrGuia: any[];
   public arrGuiasOrdenadas: any[];
@@ -110,19 +122,97 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    this._construirFiltros();
-    this.filtroKey.set(
-      'visita_lista_filtro'
-    );
+    this.filtroKey.set(VisitaListaComponent.FILTRO_LOCALSTORAGE_KEY);
+    // Restaurar filtros guardados en localStorage antes de la primera consulta.
+    // El FiltroComponent tambien lee el storage por su cuenta para mostrar las
+    // condiciones en sus inputs; aca solo los aplicamos al payload de la API.
+    this.arrFiltros = {
+      ...this.arrFiltros,
+      ...this._restaurarFiltrosDesdeLocalStorage(),
+    };
+    this._consultarLista();
+    this._cargarResumen();
+  }
+
+  private _cargarResumen(): void {
+    this._visitaApiService.resumen()
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError(() => of(null as VisitaResumen | null)),
+      )
+      .subscribe((resp) => {
+        if (!resp) return;
+        this.resumenKpis.set({
+          total: resp.resumen?.cantidad || 0,
+          sinDecodificar: resp.errores?.cantidad || 0,
+          conAlerta: resp.alertas?.cantidad || 0,
+        });
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
+  /** Atajo desde los KPIs: aplica un filtro y recarga. */
+  aplicarFiltroPreset(filtros: Record<string, any>): void {
+    this.filterChange(filtros);
+  }
+
+  /** Etiquetas legibles para los chips de filtros activos. */
+  private static readonly FILTRO_LABELS: Record<string, string> = {
+    id: 'Id',
+    numero: 'Número',
+    destinatario: 'Destinatario',
+    despacho__vehiculo__placa: 'Placa',
+    fecha: 'Fecha',
+    despacho_id: 'Despacho',
+    estado_despacho: 'Despachado',
+    estado_decodificado: 'Decodificado',
+    estado_decodificado_alerta: 'Con alerta',
+    estado_entregado: 'Entregado',
+    estado_novedad: 'Con novedad',
+  };
+
+  /** Filtros activos derivados de arrFiltros, listos para mostrar como chips. */
+  get chipsFiltrosActivos(): { key: string; label: string; valor: string }[] {
+    const ignorar = new Set(['page', 'ordering', 'limit', 'serializador']);
+    return Object.entries(this.arrFiltros)
+      .filter(([k, v]) => !ignorar.has(k) && v !== '' && v !== null && v !== undefined)
+      .map(([key, valor]) => {
+        const baseKey = key.split('__')[0] in VisitaListaComponent.FILTRO_LABELS
+          ? key.split('__')[0]
+          : key;
+        const label = VisitaListaComponent.FILTRO_LABELS[baseKey] || key;
+        return { key, label, valor: this._formatearValorChip(valor) };
+      });
+  }
+
+  private _formatearValorChip(valor: any): string {
+    if (typeof valor === 'string') {
+      if (valor.toLowerCase() === 'true') return 'Sí';
+      if (valor.toLowerCase() === 'false') return 'No';
+    }
+    return String(valor);
+  }
+
+  removerChip(key: string): void {
+    const { [key]: _, ...resto } = this.arrFiltros;
+    this.arrFiltros = { ...resto, page: 1 };
     this._consultarLista();
   }
 
-  private _construirFiltros() {
-    this.nombreFiltro = this._filtroBaseService.construirFiltroKey();
-    const filtroGuardado = localStorage.getItem(this.nombreFiltro);
-    if (filtroGuardado !== null) {
-      const filtros = JSON.parse(filtroGuardado);
-      //this.arrFiltros.filtros = [...filtros];
+  private _restaurarFiltrosDesdeLocalStorage(): Record<string, any> {
+    if (typeof localStorage === 'undefined') return {};
+    try {
+      const raw = localStorage.getItem(VisitaListaComponent.FILTRO_LOCALSTORAGE_KEY);
+      if (!raw) return {};
+      const conditions: FilterCondition[] = JSON.parse(raw);
+      const validas = (Array.isArray(conditions) ? conditions : []).filter(
+        (c) => c && c.field && c.operator && c.value !== undefined && c.value !== ''
+      );
+      if (validas.length === 0) return {};
+      return this._filterTransformerService.transformToApiParams(validas) || {};
+    } catch (err) {
+      console.error('Error restaurando filtros visita_lista_filtro', err);
+      return {};
     }
   }
 
@@ -140,6 +230,7 @@ export default class VisitaListaComponent extends General implements OnInit {
         this.arrGuia = respuesta.results?.map((guia) => ({
           ...guia,
           selected: false,
+          estado_dominante: this._derivarEstadoDominante(guia),
         }));
         this.cantidadRegistros = respuesta?.results?.length;
         respuesta?.results?.forEach((punto) => {
@@ -148,6 +239,7 @@ export default class VisitaListaComponent extends General implements OnInit {
         this.alerta.mensajaExitoso('Se ha actualizado correctamente', 'Actualizado');
         this.changeDetectorRef.detectChanges();
       });
+    this._cargarResumen();
     if (this.arrGuiasOrdenadas?.length >= 1) {
       this.arrGuiasOrdenadas.forEach((punto) => {
         this.addMarkerOrdenadas({ lat: punto.latitud, lng: punto.longitud });
@@ -168,10 +260,45 @@ export default class VisitaListaComponent extends General implements OnInit {
       ...this.arrFiltros,
     };
 
+    this.actualizandoLista.set(true);
+    this.errorLista.set(null);
+    this.changeDetectorRef.detectChanges();
+
     this._generalApiService
       .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsulta)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((respuesta) => this._procesarRespuestaLista(respuesta));
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => {
+          this.actualizandoLista.set(false);
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (respuesta) => this._procesarRespuestaLista(respuesta),
+        error: (err) => {
+          this.errorLista.set(
+            err?.error?.detail || err?.error?.mensaje || err?.message || 'Error al cargar las visitas'
+          );
+          this.changeDetectorRef.detectChanges();
+        },
+      });
+  }
+
+  reintentarConsulta(): void {
+    this._consultarLista();
+  }
+
+  limpiarFiltrosYRecargar(): void {
+    this.arrFiltros = { page: 1 };
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem(VisitaListaComponent.FILTRO_LOCALSTORAGE_KEY); } catch {}
+    }
+    // Forzar re-render del FiltroComponent cambiando la key (ngOnChanges la detecta).
+    this.filtroKey.set('');
+    setTimeout(() => {
+      this.filtroKey.set(VisitaListaComponent.FILTRO_LOCALSTORAGE_KEY);
+      this._consultarLista();
+    }, 0);
   }
 
 
@@ -435,7 +562,14 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   detalleVisita(id: number) {
-    this.router.navigateByUrl(`/movimiento/visita/detalle/${id}`);
+    // Abrir drawer en lugar de navegar — la pagina completa sigue accesible
+    // desde el boton "Abrir pagina completa" dentro del drawer y vía URL directa.
+    this.drawerVisitaId.set(id);
+    this.drawerAbierto.set(true);
+  }
+
+  cerrarDrawerVisita(): void {
+    this.drawerAbierto.set(false);
   }
 
   editarVisita(id: number) {
@@ -466,6 +600,7 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.arrGuia = respuesta.results?.map((guia) => ({
       ...guia,
       selected: false,
+      estado_dominante: this._derivarEstadoDominante(guia),
     })) ?? [];
     this.cantidadRegistros = respuesta?.count || 0;
     this.totalItems = respuesta?.count || 0;
@@ -476,6 +611,99 @@ export default class VisitaListaComponent extends General implements OnInit {
     });
 
     // if (ordenarRuta) this.calculateRoute();
+    this.changeDetectorRef.detectChanges();
+  }
+
+  /** Estado dominante para mostrar como un solo badge en la columna "Estado".
+   *  Prioridad: novedad > entregado > despachado > pendiente. */
+  private _derivarEstadoDominante(visita: any): 'novedad' | 'entregado' | 'despachado' | 'pendiente' {
+    if (visita?.estado_novedad) return 'novedad';
+    if (visita?.estado_entregado) return 'entregado';
+    if (visita?.estado_despacho) return 'despachado';
+    return 'pendiente';
+  }
+
+  /** Resalta filas con geocodificacion dudosa para que el operador las arregle. */
+  resaltarFilaConAlerta = (item: any): boolean => !!item?.estado_decodificado_alerta;
+
+  /** Acciones disponibles en el menu kebab de cada fila. Se filtran segun estado. */
+  accionesFila: AccionFila[] = [
+    {
+      icono: 'ki-outline ki-exit-up',
+      label: 'Liberar',
+      mostrar: (v) => !!v.estado_despacho && !v.estado_entregado,
+      ejecutar: (v) => this._liberarVisita(v.id),
+    },
+    {
+      icono: 'ki-outline ki-package',
+      label: 'Cambiar de despacho',
+      mostrar: (v) => !!v.estado_despacho && !v.estado_entregado,
+      ejecutar: (v) => this._cambiarDespacho(v),
+    },
+    {
+      icono: 'ki-outline ki-printer',
+      label: 'Imprimir rótulo',
+      ejecutar: (v) => this._abrirPreviewYConsultar([v.id], 'termica'),
+    },
+    {
+      icono: 'ki-outline ki-geolocation',
+      label: 'Ver en Google Maps',
+      mostrar: (v) => !!v.latitud && !!v.longitud,
+      ejecutar: (v) => window.open(`https://www.google.com/maps?q=${v.latitud},${v.longitud}`, '_blank'),
+    },
+  ];
+
+  private _liberarVisita(id: number): void {
+    this.alerta.confirmar({
+      titulo: '¿Liberar visita?',
+      texto: 'La visita saldrá de su despacho y volverá a la lista de pendientes.',
+      textoBotonCofirmacion: 'Sí, liberar',
+    }).then((respuesta) => {
+      if (!respuesta.isConfirmed) return;
+      this._visitaApiService.liberar(String(id)).subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Visita liberada');
+          this._consultarLista();
+          this._cargarResumen();
+        },
+        error: (err) => {
+          this.alerta.mensajeError(
+            'No se pudo liberar',
+            err?.error?.detail || err?.error?.mensaje || 'Error desconocido'
+          );
+        },
+      });
+    });
+  }
+
+  private _cambiarDespacho(visita: any): void {
+    // Implementacion mínima: pedir el id del nuevo despacho. Una version mas
+    // pulida abriria un modal con buscador de despachos pendientes; por ahora
+    // resuelve el caso comun y aprovecha el endpoint existente.
+    const inputDespacho = window.prompt('ID del despacho destino:');
+    if (!inputDespacho) return;
+    const despachoId = Number(inputDespacho);
+    if (!Number.isFinite(despachoId) || despachoId <= 0) {
+      this.alerta.mensajeError('ID inválido', 'Debe ser un número positivo.');
+      return;
+    }
+    this._visitaApiService.cambiarDespacho(visita.id, despachoId).subscribe({
+      next: () => {
+        this.alerta.mensajaExitoso('Visita movida al despacho ' + despachoId);
+        this._consultarLista();
+      },
+      error: (err) => {
+        this.alerta.mensajeError(
+          'No se pudo cambiar',
+          err?.error?.detail || err?.error?.mensaje || 'Error desconocido'
+        );
+      },
+    });
+  }
+
+  limpiarSeleccion(): void {
+    this._listaItemsEliminar = [];
+    this.tablaComun?.limpiarSeleccion();
     this.changeDetectorRef.detectChanges();
   }
 

@@ -4,7 +4,7 @@
       <section>
         <h3 class="card-title">Franjas</h3>
       </section>
-      <section class="flex gap-2">
+      <section class="flex gap-2" *appPermisoPor="'franja.editar'">
         <app-button
           data-modal-toggle="#importar-kml-modal"
           type="button"
@@ -61,7 +61,7 @@
                     <i class="ki-filled ki-pointers"></i>
                     <span>Código: {{ franja.codigo }}</span>
                   </div>
-                  <section class="flex gap-2">
+                  <section class="flex gap-2" *appPermisoPor="'franja.editar'">
                     <button
                       (click)="
                         toggleModal('editar-franja'); seleccionarFranja(franja)
@@ -106,7 +106,7 @@
         [center]="center"
         [zoom]="zoom"
         (mapClick)="clickMap($event)"
-      >
+       [options]="{ styles: mapaTheme.styles() }">
 
         <map-polygon
           *ngFor="let franja of franjas$ | async"
@@ -183,7 +183,7 @@
 <!-- Tooltips para nombres de franjas -->
 @for (franja of franjas$ | async; track $index) {
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   [id]="'tooltip_franja_' + franja.id"
 >
   {{ franja.nombre }}

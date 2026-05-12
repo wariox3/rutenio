@@ -31,6 +31,7 @@ export interface ContenedorLista {
   tiene_acceso_movil?: boolean;
   perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null;
   perfil_movil?: 'conductor' | 'coordinador' | null;
+  permisos?: Record<string, { ver: boolean; editar: boolean }> | null;
 }
 
 
@@ -53,6 +54,7 @@ export interface Contenedor extends BaseContenedor, BaseUsuarioAcceso, BasePlanU
   seleccion?: boolean;
   perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null;
   perfil_movil?: 'conductor' | 'coordinador' | null;
+  permisos?: Record<string, { ver: boolean; editar: boolean }> | null;
 }
 
 export interface ContenedorDetalle extends BaseContenedor, BaseUsuarioAcceso {

@@ -21,6 +21,7 @@ import { ContenedorService } from '../../../contenedores/services/contenedor.ser
 import { HistorialFacturacionComponent } from '../historial-facturacion/historial-facturacion.component';
 import { ModalDefaultComponent } from '../../../../common/components/ui/modals/modal-default/modal-default.component';
 import { InformacionFacturacionComponent } from '../informacion-facturacion/informacion-facturacion.component';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-facturacion',
@@ -32,6 +33,7 @@ import { InformacionFacturacionComponent } from '../informacion-facturacion/info
     HistorialFacturacionComponent,
     ModalDefaultComponent,
     InformacionFacturacionComponent,
+    PermisoPorDirective,
   ],
   templateUrl: './facturacion-lista.component.html',
   styleUrl: './facturacion-lista.component.css',

@@ -121,6 +121,8 @@ export default class LoginComponent extends General implements OnInit {
       localStorage.removeItem('recordar_usuario_email');
     }
 
+    let cambioClaveForzado = false;
+
     this.authService
       .login(loginData)
       .pipe(
@@ -142,9 +144,13 @@ export default class LoginComponent extends General implements OnInit {
                 path: '/',
               });
             }
+            cambioClaveForzado = !!resultado.user?.debe_cambiar_clave;
           }
         }),
         switchMap(() => {
+          if (cambioClaveForzado) {
+            return of(null);
+          }
           if (tokenUrl) {
             return this.authService.confirmarInivitacion(tokenUrl).pipe(
               catchError(() => {
@@ -156,8 +162,12 @@ export default class LoginComponent extends General implements OnInit {
           return of(null);
         }),
         tap((resultado) => {
+          if (cambioClaveForzado) {
+            this._router.navigate(['/auth/cambio-clave-obligatorio']);
+            return;
+          }
           this._router.navigate(['contenedor']);
-          if (resultado.confirmar) {
+          if (resultado?.confirmar) {
             this.alerta.mensajaExitoso(
               'Se ha confirmado la invitación exitosamente.'
             );

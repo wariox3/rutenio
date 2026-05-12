@@ -8,16 +8,16 @@
               @if (item.ordenable) {
                 <span
                   [title]="item.tooltip || ''"
-                  class="cursor-pointer select-none hover:text-blue-600 transition-colors"
+                  class="cursor-pointer select-none hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   (click)="toggleOrdenamiento(item.campoNombre)"
                 >
                   {{ item.encabezado }}
                   @if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'desc') {
-                    <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+                    <i class="ki-filled ki-arrow-down text-xs ms-1 text-blue-600 dark:text-blue-400"></i>
                   } @else if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'asc') {
-                    <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+                    <i class="ki-filled ki-arrow-up text-xs ms-1 text-blue-600 dark:text-blue-400"></i>
                   } @else {
-                    <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+                    <i class="ki-filled ki-arrow-down text-xs ms-1 text-gray-400 dark:text-gray-500 opacity-60"></i>
                   }
                 </span>
               } @else {
@@ -28,6 +28,7 @@
             </th>
             <th class="w-[60px]" *ngIf="!ocultarEditar"></th>
             <th class="w-[60px]"></th>
+            <th class="w-[60px]" *ngIf="accionesFila?.length"></th>
             <th class="w-[60px]">
               <input
                 #checkboxGlobal
@@ -41,7 +42,7 @@
         </thead>
         <tbody>
           @for (item of datos; track $index) {
-          <tr>
+          <tr [class.row-alerta]="resaltarFila ? resaltarFila(item) : false">
             @for (encabezado of encabezados; track $index) {
             <td>
               <app-tabla-campo
@@ -53,21 +54,57 @@
             <td *ngIf="!ocultarEditar">
               <button
                 (click)="editarItem(item.id)"
-                class="btn btn-sm btn-icon btn-clear btn-light"
-                href="#"
+                class="btn btn-sm btn-icon btn-icon-accion"
+                title="Editar"
               >
-                <i class="ki-filled ki-notepad-edit"> </i>
+                <i class="ki-filled ki-notepad-edit"></i>
               </button>
             </td>
             <td>
               <button
                 (click)="detalleItem(item.id)"
-                class="btn btn-sm btn-icon btn-clear btn-light"
-                href="#"
+                class="btn btn-sm btn-icon btn-icon-accion"
+                title="Ver detalle"
               >
-                <i class="ki-filled ki-eye"> </i>
+                <i class="ki-filled ki-eye"></i>
               </button>
             </td>
+            @if (accionesFila?.length) {
+              @if (accionesVisibles(item).length > 0) {
+                <td>
+                  <div class="menu menu-default p-0" data-menu="true">
+                    <div
+                      class="menu-item"
+                      data-menu-item-placement="bottom-end"
+                      data-menu-item-toggle="dropdown"
+                      data-menu-item-trigger="click"
+                    >
+                      <button class="btn btn-sm btn-icon btn-icon-accion menu-toggle" title="Más acciones">
+                        <i class="ki-filled ki-dots-vertical"></i>
+                      </button>
+                      <div class="menu-dropdown w-52 py-2">
+                        @for (accion of accionesVisibles(item); track $index) {
+                          <div class="menu-item" data-menu-dismiss="true">
+                            <button
+                              class="menu-link"
+                              [class.text-red-600]="accion.variante === 'danger'"
+                              (click)="accion.ejecutar(item)"
+                            >
+                              <span class="menu-icon">
+                                <i [ngClass]="accion.icono"></i>
+                              </span>
+                              <span class="menu-title">{{ accion.label }}</span>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              } @else {
+                <td></td>
+              }
+            }
             <td class="w-[60px]">
               <input
                 class="checkbox checkbox-sm"

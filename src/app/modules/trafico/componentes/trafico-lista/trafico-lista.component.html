@@ -54,7 +54,7 @@
         id="tour-trafico-tabla"
         class="table align-middle text-gray-700 font-medium text-sm w-full "
       >
-        <thead class="top-0 bg-white dark:bg-coal-300">
+        <thead class="top-0 bg-white dark:bg-gray-100 dark:bg-coal-300">
           <tr>
             <th
               class="cursor-pointer select-none hover:text-blue-600 transition-colors"
@@ -189,7 +189,7 @@
             <td>
               <div class="flex flex-col space-y-1">
                 <div
-                  class="progress-container bg-gray-200 rounded-full h-4 w-full relative overflow-hidden"
+                  class="progress-container bg-gray-200 dark:bg-gray-100 rounded-full h-4 w-full relative overflow-hidden"
                 >
                   <!-- Fondo difuminado -->
                   <div
@@ -433,7 +433,7 @@
         [center]="center"
         [zoom]="zoom"
         (mapInitialized)="onMapReady($event)"
-      >
+       [options]="{ styles: mapaTheme.styles() }">
         @for (markerPosition of customMarkers; track $index) {
         <map-marker
           [position]="markerPosition.position"
@@ -444,7 +444,7 @@
         ></map-marker>
         }
         <map-info-window>
-          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+          <section class="space-y-2 p-3 bg-white dark:bg-gray-100 rounded-lg shadow-sm">
             <p class="font-bold text-gray-800 text-lg">
               {{ visitaSeleccionada?.destinatario }}
             </p>
@@ -533,7 +533,7 @@
         [center]="center"
         [zoom]="zoom"
         (mapInitialized)="onMapReady($event)"
-      >
+       [options]="{ styles: mapaTheme.styles() }">
         @for (markerPosition of customMarkers; track $index) {
         <map-marker
           [position]="markerPosition.position"
@@ -543,7 +543,7 @@
         ></map-marker>
         }
         <map-info-window>
-          <section class="space-y-2 p-3 bg-white rounded-lg shadow-sm">
+          <section class="space-y-2 p-3 bg-white dark:bg-gray-100 rounded-lg shadow-sm">
             <div class="flex items-center text-gray-700">
               <i class="ki-filled ki-delivery text-blue-500 text-lg"></i>
               <span class="ml-2 font-medium">Placa:</span>
@@ -596,7 +596,7 @@
 <app-modal-standard title="" size="8xl" modalId="trafico-despacho-visita">
   <section modal-body>
     @if (getModalInstaceState('trafico-despacho-visita') | async) {
-    <div class="border-b border-gray-200">
+    <div class="border-b border-gray-200 dark:border-gray-200">
       <nav class="flex -mb-px pl-8">
         <button
           class="mr-8 py-4 px-1 border-b-2 font-medium text-sm"
@@ -676,7 +676,7 @@
 </app-modal-default>
 
 <div
-  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 text-gray-700 text-xs font-normal"
+  class="hidden rounded-xl shadow-default p-3 bg-light border border-gray-200 dark:border-gray-200 text-gray-700 text-xs font-normal"
   id="tooltip_orden_entrega"
 >
   Orden de entrega

@@ -1,17 +1,17 @@
 <app-admin-nav></app-admin-nav>
 
-<main class="md:ml-64 min-h-screen bg-gray-950 text-gray-200">
+<main class="md:ml-64 min-h-screen bg-coal-500 text-zinc-200">
   <div class="px-4 md:px-8 py-6 md:py-10 max-w-7xl mx-auto">
     <div class="flex items-center justify-between gap-2 mb-6">
       <div class="flex flex-col gap-1">
         <h1 class="text-xl md:text-2xl font-bold text-white">Contenedores</h1>
-        <span class="text-xs text-gray-400">
+        <span class="text-xs text-zinc-400">
           Vista global de todos los tenants del sistema.
         </span>
       </div>
       <button
         type="button"
-        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 border border-coal-100 transition-colors"
         (click)="cargar()"
         [disabled]="cargando()"
       >
@@ -21,22 +21,22 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Contenedores
         </div>
         <div class="text-2xl font-bold text-white mt-1">
           {{ contenedores().length }}
         </div>
       </div>
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Total usuarios
         </div>
         <div class="text-2xl font-bold text-white mt-1">{{ totalUsuarios }}</div>
       </div>
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Con WhatsApp
         </div>
         <div class="text-2xl font-bold text-white mt-1">
@@ -45,14 +45,14 @@
       </div>
     </div>
 
-    <div class="rounded-lg border border-gray-800 bg-gray-900 overflow-hidden">
-      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-gray-800">
+    <div class="rounded-lg border border-coal-200 bg-coal-400 overflow-hidden">
+      <div class="flex items-center justify-between gap-2 px-4 py-3 border-b border-coal-200">
         <h3 class="text-sm font-semibold text-white">Lista</h3>
         <div class="relative w-full max-w-xs">
-          <i class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-gray-500"></i>
+          <i class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-zinc-500"></i>
           <input
             type="text"
-            class="w-full pl-9 pr-3 py-1.5 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full pl-9 pr-3 py-1.5 rounded-md bg-coal-300 border border-coal-100 text-sm text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-blue-500"
             placeholder="Buscar por nombre o schema…"
             [(ngModel)]="busqueda"
           />
@@ -60,8 +60,8 @@
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-800/50">
-            <tr class="text-left text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
+          <thead class="bg-coal-300/50">
+            <tr class="text-left text-[11px] uppercase tracking-wide text-zinc-400 font-semibold">
               <th class="px-4 py-2.5">Nombre</th>
               <th class="px-4 py-2.5">Schema</th>
               <th class="px-4 py-2.5">Usuarios</th>
@@ -71,25 +71,25 @@
               <th class="px-4 py-2.5 text-right">Acción</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
+          <tbody class="divide-y divide-coal-300">
             @if (cargando()) {
               <tr>
-                <td colspan="7" class="px-4 py-8 text-center text-xs text-gray-500">
-                  <span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-gray-700 border-t-blue-500 mr-2"></span>
+                <td colspan="7" class="px-4 py-8 text-center text-xs text-zinc-500">
+                  <span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-coal-100 border-t-blue-500 mr-2"></span>
                   Cargando…
                 </td>
               </tr>
             } @else {
               @for (c of contenedoresFiltrados; track c.id) {
-                <tr class="hover:bg-gray-800/40 transition-colors">
+                <tr class="hover:bg-coal-300/40 transition-colors">
                   <td class="px-4 py-2.5 font-semibold text-white">
                     {{ c.nombre || c.schema_name }}
                   </td>
-                  <td class="px-4 py-2.5 text-gray-400">
+                  <td class="px-4 py-2.5 text-zinc-400">
                     <code class="text-xs">{{ c.schema_name }}</code>
                   </td>
-                  <td class="px-4 py-2.5 text-gray-300">{{ c.usuarios }}</td>
-                  <td class="px-4 py-2.5 text-xs text-gray-400">
+                  <td class="px-4 py-2.5 text-zinc-300">{{ c.usuarios }}</td>
+                  <td class="px-4 py-2.5 text-xs text-zinc-400">
                     {{ c.fecha | date: 'yyyy-MM-dd' }}
                   </td>
                   <td class="px-4 py-2.5">
@@ -100,7 +100,7 @@
                       {{ whatsappEstadoBadge(c).texto }}
                     </span>
                     @if (c.whatsapp_display) {
-                      <div class="text-[11px] text-gray-500 mt-0.5">
+                      <div class="text-[11px] text-zinc-500 mt-0.5">
                         {{ c.whatsapp_display }}
                       </div>
                     }
@@ -111,7 +111,7 @@
                         Activas
                       </span>
                     } @else {
-                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-gray-700 text-gray-400">
+                      <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-coal-200 text-zinc-400">
                         Inactivas
                       </span>
                     }
@@ -135,7 +135,7 @@
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="7" class="px-4 py-8 text-center text-xs text-gray-500">
+                  <td colspan="7" class="px-4 py-8 text-center text-xs text-zinc-500">
                     @if (busqueda) {
                       Sin resultados para "{{ busqueda }}"
                     } @else {

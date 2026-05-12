@@ -33,4 +33,9 @@ export default [
     loadComponent: () =>
       import('./components/reiniciar-clave/reiniciar-clave.component'),
   },
+  {
+    path: 'cambio-clave-obligatorio',
+    loadComponent: () =>
+      import('./components/cambio-clave-obligatorio/cambio-clave-obligatorio.component'),
+  },
 ] as Routes;

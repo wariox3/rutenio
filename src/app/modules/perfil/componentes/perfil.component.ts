@@ -1,7 +1,7 @@
 import { CommonModule, Location } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map, Observable, switchMap, tap } from 'rxjs';
+import { map, Observable, switchMap, take, tap } from 'rxjs';
 import { General } from '../../../common/clases/general';
 import { CargarImagenComponent } from '../../../common/components/cargar-imagen/cargar-imagen.component';
 import { ModalStandardComponent } from "../../../common/components/ui/modals/modal-standard/modal-standard.component";
@@ -11,8 +11,16 @@ import {
   obtenerUsuario,
   obtenerUsuarioId,
 } from '../../../redux/selectors/usuario.selector';
+import {
+  obtenerContenedorId,
+  obtenerContenedorNombre,
+  obtenerContenedorRol,
+  obtenerEsAdminContenedor,
+} from '../../../redux/selectors/contenedor.selector';
 import { InformacionUsuarioComponent } from "../../auth/components/informacion-usuario/informacion-usuario.component";
 import { AuthService } from '../../auth/services/auth.service';
+import { ContenedorService } from '../../contenedores/services/contenedor.service';
+import { ContenedorLista } from '../../contenedores/interfaces/contenedor.interface';
 
 @Component({
   selector: 'app-perfil',
@@ -20,12 +28,19 @@ import { AuthService } from '../../auth/services/auth.service';
   imports: [CommonModule, CargarImagenComponent, ModalStandardComponent, InformacionUsuarioComponent],
   templateUrl: './perfil.component.html',
 })
-export default class PerfilComponent extends General {
+export default class PerfilComponent extends General implements OnInit {
   private _store = inject(Store);
   private _authService = inject(AuthService);
   private _modalService = inject(ModalService);
   private _location = inject(Location);
+  private _contenedorService = inject(ContenedorService);
   public usuario$ = this._store.select(obtenerUsuario);
+  public esAdminContenedor$ = this._store.select(obtenerEsAdminContenedor);
+  public rolContenedor$ = this._store.select(obtenerContenedorRol);
+  public contenedorNombre$ = this._store.select(obtenerContenedorNombre);
+  public contenedorActivoId$ = this._store.select(obtenerContenedorId);
+  public membresias = signal<ContenedorLista[]>([]);
+  public cargandoMembresias = signal<boolean>(true);
 
   constructor() {
     super();
@@ -36,6 +51,37 @@ export default class PerfilComponent extends General {
   }
 
   ngOnInit(): void {
+    this._cargarMembresias();
+  }
+
+  private _cargarMembresias() {
+    this._store
+      .select(obtenerUsuarioId)
+      .pipe(take(1))
+      .subscribe((usuarioId) => {
+        if (!usuarioId) {
+          this.cargandoMembresias.set(false);
+          return;
+        }
+        this._contenedorService
+          .lista({ usuario_id: usuarioId, page: 1 })
+          .subscribe({
+            next: (resp: any) => {
+              this.membresias.set(resp?.results || []);
+              this.cargandoMembresias.set(false);
+            },
+            error: () => this.cargandoMembresias.set(false),
+          });
+      });
+  }
+
+  rolEtiqueta(rol: string): { texto: string; clase: string } {
+    if (rol === 'propietario') return { texto: 'Admin', clase: 'badge-success' };
+    return { texto: 'Usuario', clase: 'badge-light' };
+  }
+
+  esActivo(item: ContenedorLista, activoId: string | null): boolean {
+    return String(item.contenedor_id) === activoId;
   }
 
   getUserImageUrl() {

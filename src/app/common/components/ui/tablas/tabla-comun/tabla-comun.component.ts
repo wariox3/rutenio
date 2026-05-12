@@ -15,6 +15,19 @@ import {
 import { TablaCampoComponent } from '../tabla-campo/tabla-campo.component';
 import { General } from '../../../../clases/general';
 
+export interface AccionFila {
+  /** Clase del icono Metronic (ki-filled o ki-outline). */
+  icono: string;
+  /** Texto visible en el dropdown. */
+  label: string;
+  /** Predicate opcional. Si retorna false, la accion no aparece para ese item. */
+  mostrar?: (item: any) => boolean;
+  /** Callback al hacer click. */
+  ejecutar: (item: any) => void;
+  /** Estilo opcional (ej. 'danger' para acciones destructivas). */
+  variante?: 'default' | 'danger';
+}
+
 @Component({
   selector: 'app-tabla-comun',
   standalone: true,
@@ -29,6 +42,10 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
   @Input() datos: any[] = [];
   @Input() ocultarEditar: boolean = false;
   @Input() ordenamientoInicial: string = '';
+  /** Callback opcional para marcar filas con un highlight visual (border-left amber). */
+  @Input() resaltarFila?: (item: any) => boolean;
+  /** Acciones extra disponibles en un menu kebab por fila. */
+  @Input() accionesFila: AccionFila[] = [];
   @Output() emitirEditarItem: EventEmitter<number>;
   @Output() emitirDetalleItem: EventEmitter<number>;
   @Output() emitirItemsSeleccionados: EventEmitter<number[]>;
@@ -130,8 +147,23 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
     this._itemsAEliminar = [];
   }
 
+  /** Limpia la seleccion programaticamente desde el padre. */
+  public limpiarSeleccion(): void {
+    this._itemsAEliminar = [];
+    if (this.checkboxGlobal) {
+      this.checkboxGlobal.nativeElement.checked = false;
+    }
+    this.emitirItemsSeleccionados.emit(this._itemsAEliminar);
+    this.changeDetectorRef.detectChanges();
+  }
+
   estoyEnListaEliminar(id: number): boolean {
     return this._itemsAEliminar.indexOf(id) !== -1;
+  }
+
+  /** Devuelve solo las acciones que deben mostrarse para un item dado. */
+  accionesVisibles(item: any): AccionFila[] {
+    return (this.accionesFila || []).filter((a) => !a.mostrar || a.mostrar(item));
   }
 
   toggleOrdenamiento(campoNombre: string): void {

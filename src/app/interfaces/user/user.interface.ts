@@ -16,6 +16,9 @@ export interface Usuario {
   numero_identificacion: string;
   is_active: boolean;
   is_staff: boolean;
+  is_superuser?: boolean;
   socio_id: number | null;
   verificado: boolean;
+  debe_cambiar_clave?: boolean;
+  fecha_creacion?: string;
 }

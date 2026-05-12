@@ -96,6 +96,7 @@ export class SelectorContenedorComponent extends General implements OnInit {
             rol: item.rol,
             perfil_web: (item.perfil_web || null) as any,
             perfil_movil: (item.perfil_movil || null) as any,
+            permisos: (item as any).permisos || null,
             plan_id: respuesta.plan_id,
             plan_nombre: respuesta.plan_nombre,
             usuarios: respuesta.plan_limite_usuarios,

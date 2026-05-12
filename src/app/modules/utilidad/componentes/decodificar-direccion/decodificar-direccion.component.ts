@@ -5,6 +5,7 @@ import { GoogleMapsModule } from '@angular/google-maps';
 import { finalize } from 'rxjs/operators';
 import { UtilidadApiService } from '../../servicios/utilidad-api.service';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 import { General } from '../../../../common/clases/general';
 import { DecodificarDireccionResponse } from '../../interfaces/utilidad.interface';
 
@@ -19,6 +20,7 @@ import { DecodificarDireccionResponse } from '../../interfaces/utilidad.interfac
 export default class DecodificarDireccionComponent extends General {
   private readonly _utilidadApiService = inject(UtilidadApiService);
   private readonly _alertaService = inject(AlertaService);
+  public mapaTheme = inject(MapaThemeService);
 
   public estaCargando$ = signal<boolean>(false);
   public direccionControl = new FormControl('', [Validators.required]);

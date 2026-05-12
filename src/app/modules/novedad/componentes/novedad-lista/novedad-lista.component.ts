@@ -19,11 +19,12 @@ import { NovedadService } from '../../servicios/novedad.service';
 import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { NOVEDAD_FILTERS } from '../../mapeos/novedad-mapeo';
 import { ParametrosApi } from '../../../../core/types/api.type';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-novedad-lista',
   standalone: true,
-  imports: [TablaComunComponent, CommonModule, ButtonComponent, RouterLink, FiltroComponent],
+  imports: [TablaComunComponent, CommonModule, ButtonComponent, RouterLink, FiltroComponent, PermisoPorDirective],
   templateUrl: './novedad-lista.component.html',
   styleUrl: './novedad-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

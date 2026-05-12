@@ -1,15 +1,149 @@
-.fixed-header-table {
-  border-collapse: collapse;
-  width: 100%;
+/* Los wrappers padres no deben atrapar el overflow. KTDatatable en runtime
+   puede inyectar estilos al [data-datatable]; los neutralizamos. */
+:host .card-table,
+:host [data-datatable] {
+  overflow: visible !important;
 }
 
+.fixed-header-table {
+  /* Wrapper con scroll horizontal y vertical. Necesario porque Metronic
+     aplica .table { width: 100% } a la tabla interna, que de otro modo se
+     comprime indefinidamente ocultando las columnas de acciones.
+     Overrides obligatorios para batir el .scrollable de Metronic que pone
+     overflow:scroll + scrollbar transparente. */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  /* Smooth touch scroll para tablets. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  /* Scrollbar VISIBLE en ambos ejes — el de Metronic queda invisible. */
+  scrollbar-width: thin;
+  scrollbar-color: #94A3B8 transparent; /* slate-400 sobre transparente */
+}
+
+.fixed-header-table::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.fixed-header-table::-webkit-scrollbar-thumb {
+  background-color: #CBD5E1; /* slate-300 */
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.fixed-header-table::-webkit-scrollbar-thumb:hover {
+  background-color: #94A3B8; /* slate-400 */
+}
+
+:host-context(.dark) .fixed-header-table {
+  scrollbar-color: #475569 transparent; /* slate-600 */
+}
+
+:host-context(.dark) .fixed-header-table::-webkit-scrollbar-thumb {
+  background-color: #334155; /* slate-700 */
+}
+
+:host-context(.dark) .fixed-header-table::-webkit-scrollbar-thumb:hover {
+  background-color: #475569; /* slate-600 */
+}
+
+.fixed-header-table table {
+  border-collapse: collapse;
+  /* Anula el width:100% de Metronic. La tabla toma el ancho natural de su
+     contenido; cuando excede el wrapper, aparece scroll horizontal. */
+  width: max-content !important;
+  min-width: 100%;
+}
+
+/* Encabezados sticky con bg/color alineados a la paleta navy en dark. */
 .fixed-header-table thead th {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
+  background: #ffffff;
+  color: #4B5563; /* gray-600 */
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Celdas: respetan wrap normal pero con tope para que direcciones largas no
+   estiren la tabla a un ancho irreal. */
+.fixed-header-table tbody td {
+  max-width: 22rem;
+  padding: 0.5rem 0.75rem;
+  vertical-align: middle;
+}
+
+/* Celdas que contienen sólo el control (checkbox / botón icon) — sin tope. */
+.fixed-header-table tbody td:has(> .checkbox),
+.fixed-header-table tbody td:has(> .btn-icon),
+.fixed-header-table tbody td:has(> .menu) {
+  max-width: none;
+  white-space: nowrap;
+  width: 1%; /* truco: la celda toma sólo el ancho de su contenido */
+}
+
+:host-context(.dark) .fixed-header-table thead th {
+  background: #0F172A; /* coal-300 — alineado con la paleta navy */
+  color: #D1D5DB; /* gris claro para encabezados */
+}
+
+/* Iconos de acción en cada fila: forzamos contraste visible en ambos modos.
+   Reemplaza el patrón btn-clear+btn-light que dejaba los iconos casi invisibles
+   en dark mode (heredaban --tw-gray-600 sobre fondo navy). */
+.btn-icon-accion {
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #4B5563; /* gray-600 */
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.btn-icon-accion i {
+  color: inherit;
+}
+
+.btn-icon-accion:hover,
+.btn-icon-accion:focus {
+  background-color: #F3F4F6; /* gray-100 light */
+  color: #1F2937; /* gray-800 */
+}
+
+:host-context(.dark) .btn-icon-accion {
+  color: #CBD5E1; /* slate-300 — buena lectura sobre navy */
+}
+
+:host-context(.dark) .btn-icon-accion:hover,
+:host-context(.dark) .btn-icon-accion:focus {
+  background-color: #1A2236; /* gray.dark.100 */
+  color: #F8FAFC; /* slate-50 */
 }
 
 .tabla-responsiva {
   height: calc(100vh - 35rem);
   min-height: 25rem;
+}
+
+.row-alerta > td:first-child {
+  border-left: 4px solid #f59e0b;
+}
+
+.row-alerta {
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.row-alerta:hover {
+  background: rgba(245, 158, 11, 0.1);
+}
+
+:host-context(.dark) .row-alerta {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+:host-context(.dark) .row-alerta:hover {
+  background: rgba(245, 158, 11, 0.15);
 }

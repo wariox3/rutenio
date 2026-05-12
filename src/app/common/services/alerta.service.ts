@@ -16,27 +16,39 @@ export class AlertaService {
       customClass: {
         container: '!font-sans',
         popup:
-          '!rounded-2xl !shadow-2xl !shadow-gray-900/10 !border !border-gray-100 !bg-white !p-6 !max-w-md',
-        title: '!text-[17px] !font-semibold !text-gray-800 !tracking-tight !mt-3',
-        htmlContainer: '!text-[14px] !text-gray-600 !leading-relaxed !mt-2',
+          '!rounded-2xl !shadow-2xl !shadow-gray-900/10 !border !border-gray-100 dark:!border-gray-800 ' +
+          '!bg-white dark:!bg-gray-900 !p-6 !max-w-md',
+        title: '!text-[17px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !mt-3',
+        htmlContainer: '!text-[14px] !text-gray-600 dark:!text-gray-300 !leading-relaxed !mt-2',
         icon: '!mx-auto !my-2 !border-0 !w-14 !h-14',
         closeButton:
-          '!w-8 !h-8 !rounded-full !text-gray-400 hover:!text-gray-700 hover:!bg-gray-100 !transition focus:!shadow-none',
+          '!w-8 !h-8 !rounded-full !text-gray-400 dark:!text-gray-500 ' +
+          'hover:!text-gray-700 dark:hover:!text-gray-200 hover:!bg-gray-100 dark:hover:!bg-gray-800 ' +
+          '!transition focus:!shadow-none',
         input:
-          '!mt-3 !border !border-gray-200 !rounded-lg !px-3 !py-2 !text-sm focus:!outline-none focus:!ring-2 focus:!ring-blue-500/30 focus:!border-blue-500',
-        inputLabel: '!text-[13px] !text-gray-600 !mt-3 !mb-1',
-        validationMessage: '!bg-red-50 !text-red-700 !text-xs !rounded-lg !mt-3 !py-2 !px-3',
+          '!mt-3 !border !border-gray-200 dark:!border-gray-700 !rounded-lg !px-3 !py-2 !text-sm ' +
+          '!bg-white dark:!bg-gray-800 !text-gray-800 dark:!text-gray-100 ' +
+          'focus:!outline-none focus:!ring-2 focus:!ring-blue-500/30 focus:!border-blue-500',
+        inputLabel: '!text-[13px] !text-gray-600 dark:!text-gray-300 !mt-3 !mb-1',
+        validationMessage:
+          '!bg-red-50 dark:!bg-red-500/10 !text-red-700 dark:!text-red-300 ' +
+          '!text-xs !rounded-lg !mt-3 !py-2 !px-3',
         actions: '!mt-5 !flex !justify-end !gap-2 !w-full',
         confirmButton:
           '!px-4 !py-2 !rounded-lg !text-sm !font-medium !text-white !shadow-sm !transition ' +
           '!bg-blue-600 hover:!bg-blue-700 focus:!shadow-none focus:!ring-2 focus:!ring-blue-500/30 ' +
           'disabled:!opacity-50 disabled:!cursor-not-allowed',
         cancelButton:
-          '!px-4 !py-2 !rounded-lg !text-sm !font-medium !text-gray-700 !bg-white !border !border-gray-200 ' +
-          'hover:!bg-gray-50 !transition focus:!shadow-none focus:!ring-2 focus:!ring-gray-200',
+          '!px-4 !py-2 !rounded-lg !text-sm !font-medium ' +
+          '!text-gray-700 dark:!text-gray-200 !bg-white dark:!bg-gray-800 ' +
+          '!border !border-gray-200 dark:!border-gray-700 ' +
+          'hover:!bg-gray-50 dark:hover:!bg-gray-700 !transition ' +
+          'focus:!shadow-none focus:!ring-2 focus:!ring-gray-200 dark:focus:!ring-gray-700',
         denyButton:
           '!px-4 !py-2 !rounded-lg !text-sm !font-medium !text-white !bg-red-600 hover:!bg-red-700 !transition',
-        footer: '!mt-4 !pt-4 !border-t !border-gray-100 !text-gray-500 !text-xs',
+        footer:
+          '!mt-4 !pt-4 !border-t !border-gray-100 dark:!border-gray-800 ' +
+          '!text-gray-500 dark:!text-gray-400 !text-xs',
         timerProgressBar: '!bg-blue-500 !h-[3px]',
       },
       showClass: { popup: 'swal2-show-fade-scale' },
@@ -54,13 +66,16 @@ export class AlertaService {
       customClass: {
         container: '!font-sans',
         popup:
-          '!rounded-xl !shadow-xl !shadow-gray-900/10 !border !border-gray-100 !bg-white ' +
+          '!rounded-xl !shadow-xl !shadow-gray-900/10 ' +
+          '!border !border-gray-100 dark:!border-gray-800 ' +
+          '!bg-white dark:!bg-gray-900 ' +
           '!px-4 !py-3 !min-w-[320px] !max-w-md',
-        title: '!text-[13.5px] !font-semibold !text-gray-800 !tracking-tight !p-0 !m-0',
-        htmlContainer: '!text-[12.5px] !text-gray-600 !leading-snug !p-0 !mt-1 !mx-0',
+        title: '!text-[13.5px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !p-0 !m-0',
+        htmlContainer: '!text-[12.5px] !text-gray-600 dark:!text-gray-300 !leading-snug !p-0 !mt-1 !mx-0',
         icon: '!w-8 !h-8 !min-h-[2rem] !border-0 !mr-2 !my-0',
         closeButton:
-          '!w-6 !h-6 !text-gray-300 hover:!text-gray-600 !text-base focus:!shadow-none',
+          '!w-6 !h-6 !text-gray-300 dark:!text-gray-500 ' +
+          'hover:!text-gray-600 dark:hover:!text-gray-300 !text-base focus:!shadow-none',
         timerProgressBar: '!h-[2px]',
         confirmButton: '!hidden',
       },
@@ -73,15 +88,15 @@ export class AlertaService {
   private getIconClass(icon: SweetAlertIcon): { icon: string; progress: string } {
     switch (icon) {
       case 'success':
-        return { icon: '!text-green-600', progress: '!bg-green-500' };
+        return { icon: '!text-green-600 dark:!text-green-400', progress: '!bg-green-500' };
       case 'error':
-        return { icon: '!text-red-600', progress: '!bg-red-500' };
+        return { icon: '!text-red-600 dark:!text-red-400', progress: '!bg-red-500' };
       case 'warning':
-        return { icon: '!text-yellow-600', progress: '!bg-yellow-500' };
+        return { icon: '!text-yellow-600 dark:!text-yellow-400', progress: '!bg-yellow-500' };
       case 'info':
-        return { icon: '!text-blue-600', progress: '!bg-blue-500' };
+        return { icon: '!text-blue-600 dark:!text-blue-400', progress: '!bg-blue-500' };
       default:
-        return { icon: '!text-gray-600', progress: '!bg-gray-400' };
+        return { icon: '!text-gray-600 dark:!text-gray-300', progress: '!bg-gray-400' };
     }
   }
 

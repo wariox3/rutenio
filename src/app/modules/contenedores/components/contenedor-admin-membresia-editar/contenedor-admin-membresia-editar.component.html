@@ -1,0 +1,191 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-coal-500/80 backdrop-blur-sm p-4"
+  (click)="cerrar.emit()"
+>
+  <div
+    class="w-full max-w-3xl rounded-lg border border-coal-200 bg-coal-400 shadow-2xl flex flex-col max-h-[90vh]"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-center justify-between px-5 py-4 border-b border-coal-200">
+      <div>
+        <h3 class="text-base font-semibold text-white">Permisos en contenedor</h3>
+        <p class="text-xs text-zinc-400 mt-0.5">
+          {{ membresia.contenedor__nombre || membresia.contenedor__schema_name }}
+        </p>
+      </div>
+      <button
+        type="button"
+        class="text-zinc-500 hover:text-white transition-colors"
+        (click)="cerrar.emit()"
+      >
+        <i class="ki-filled ki-cross text-base"></i>
+      </button>
+    </div>
+
+    <div class="overflow-y-auto px-5 py-4 space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <label
+          class="flex items-start gap-2 p-3 rounded-md border cursor-pointer transition-colors"
+          [ngClass]="tieneAccesoWeb
+            ? 'border-blue-500 bg-blue-500/10'
+            : 'border-coal-100 hover:border-coal-100'"
+        >
+          <input type="checkbox" [(ngModel)]="tieneAccesoWeb" class="mt-1" />
+          <div class="flex flex-col gap-0.5">
+            <span class="text-xs font-semibold text-white">Acceso web (dashboard)</span>
+            <span class="text-[11px] text-zinc-400">
+              Si esta desactivado, los permisos por modulo no aplican.
+            </span>
+          </div>
+        </label>
+        <label
+          class="flex items-start gap-2 p-3 rounded-md border cursor-pointer transition-colors"
+          [ngClass]="tieneAccesoMovil
+            ? 'border-blue-500 bg-blue-500/10'
+            : 'border-coal-100 hover:border-coal-100'"
+        >
+          <input type="checkbox" [(ngModel)]="tieneAccesoMovil" class="mt-1" />
+          <div class="flex flex-col gap-0.5">
+            <span class="text-xs font-semibold text-white">Acceso movil (Berkelio)</span>
+            <span class="text-[11px] text-zinc-400">
+              App publicada para conductores y coordinadores.
+            </span>
+          </div>
+        </label>
+      </div>
+
+      @if (tieneAccesoMovil) {
+        <div class="rounded-md border border-coal-200 bg-coal-500/50 p-3">
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-2">
+            Perfil movil
+          </label>
+          <div class="grid grid-cols-2 gap-2">
+            <label
+              class="flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors"
+              [ngClass]="perfilMovil === 'conductor'
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-coal-100 hover:border-coal-100'"
+            >
+              <input type="radio" name="perfilMovil" value="conductor" [(ngModel)]="perfilMovil" />
+              <span class="text-xs text-white">Conductor</span>
+            </label>
+            <label
+              class="flex items-center gap-2 p-2 rounded border cursor-pointer transition-colors"
+              [ngClass]="perfilMovil === 'coordinador'
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-coal-100 hover:border-coal-100'"
+            >
+              <input type="radio" name="perfilMovil" value="coordinador" [(ngModel)]="perfilMovil" />
+              <span class="text-xs text-white">Coordinador</span>
+            </label>
+          </div>
+        </div>
+      }
+
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs uppercase tracking-wider text-zinc-500 font-semibold">
+            Permisos por modulo
+          </h4>
+          <div class="flex gap-1">
+            <button
+              type="button"
+              class="px-2 py-1 rounded text-[11px] font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
+              (click)="aplicarPlantilla('consulta')"
+            >
+              Plantilla consulta
+            </button>
+            <button
+              type="button"
+              class="px-2 py-1 rounded text-[11px] font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
+              (click)="aplicarPlantilla('operativo')"
+            >
+              Plantilla operativo
+            </button>
+            <button
+              type="button"
+              class="px-2 py-1 rounded text-[11px] font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
+              (click)="aplicarPlantilla('supervisor')"
+            >
+              Plantilla supervisor
+            </button>
+          </div>
+        </div>
+        <p class="text-[11px] text-zinc-400 mb-2">
+          Las plantillas son un punto de partida. Despues podes activar o desactivar
+          cualquier modulo manualmente para personalizar lo que el usuario tiene.
+        </p>
+        <div class="space-y-3">
+          @for (grupo of grupos; track grupo.titulo) {
+            <div class="rounded-md border border-coal-200 overflow-hidden">
+              <div class="px-3 py-2 bg-coal-300/70 border-b border-coal-200">
+                <div class="text-xs font-semibold text-zinc-200">{{ grupo.titulo }}</div>
+                <div class="text-[11px] text-zinc-400 mt-0.5">{{ grupo.descripcion }}</div>
+              </div>
+              <table class="w-full text-sm">
+                <thead class="bg-coal-300/30">
+                  <tr class="text-left text-[10px] uppercase tracking-wide text-zinc-500 font-semibold">
+                    <th class="px-3 py-1.5">Modulo</th>
+                    <th class="px-3 py-1.5 text-center w-20">Ver</th>
+                    <th class="px-3 py-1.5 text-center w-20">Editar</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-coal-300">
+                  @for (m of grupo.modulos; track m) {
+                    <tr class="hover:bg-coal-300/40">
+                      <td class="px-3 py-2 text-zinc-200 capitalize">{{ m }}</td>
+                      <td class="px-3 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          [checked]="permisoLocal[m].ver"
+                          (change)="toggle($any(m), 'ver')"
+                        />
+                      </td>
+                      <td class="px-3 py-2 text-center">
+                        <input
+                          type="checkbox"
+                          class="cursor-pointer"
+                          [checked]="permisoLocal[m].editar"
+                          (change)="toggle($any(m), 'editar')"
+                        />
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+
+      @if (error()) {
+        <div class="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+          {{ error() }}
+        </div>
+      }
+    </div>
+
+    <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-coal-200">
+      <button
+        type="button"
+        class="px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
+        (click)="cerrar.emit()"
+      >
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="px-3 py-1.5 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        [disabled]="guardando()"
+        (click)="guardar()"
+      >
+        @if (guardando()) {
+          Guardando…
+        } @else {
+          Guardar permisos
+        }
+      </button>
+    </div>
+  </div>
+</div>

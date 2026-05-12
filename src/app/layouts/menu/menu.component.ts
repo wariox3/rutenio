@@ -21,6 +21,7 @@ export class MenuComponent {
   @Input() contenedorNombre: string;
   @Input() rolContenedor: string = '';
   @Input() esSuperAdmin: boolean = false;
+  @Input() puedeAdmin: boolean = false;
   @Input({ required: true }) menuItems: MenuItems[];
   @Input() imagen: string;
 

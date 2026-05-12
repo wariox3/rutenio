@@ -39,6 +39,8 @@ import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { NuevoDesdeComplementoComponent } from '../nuevo-desde-complemento/nuevo-desde-complemento.component';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { HttpService } from '../../../../common/services/http.service';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-diseno-ruta-lista',
@@ -57,7 +59,8 @@ import { HttpService } from '../../../../common/services/http.service';
     VisitaAdicionarComponent,
     ModalStandardComponent,
     NuevoDesdeComplementoComponent,
-    PaginadorComponent
+    PaginadorComponent,
+    PermisoPorDirective,
   ],
   templateUrl: './diseno-ruta-lista.component.html',
   styleUrl: './diseno-ruta-lista.component.css',
@@ -75,6 +78,7 @@ export default class DisenoRutaListaComponent
   private _generalService = inject(GeneralService);
   private _httpService = inject(HttpService);
   private _modalService = inject(ModalService);
+  public mapaTheme = inject(MapaThemeService);
   private ultimoDespachoSeleccionadoId: number | null = null;
 
   public despachoSeleccionado: Despacho;
@@ -110,6 +114,9 @@ export default class DisenoRutaListaComponent
   public mostarModalAdicionarVisita$: BehaviorSubject<boolean>;
   public mostrarModalAdicionarVisitaPendiente$: BehaviorSubject<boolean>;
   public actualizandoLista = signal(false);
+  public cargandoDespachos = signal<boolean>(true);
+  public errorDespachos = signal<string | null>(null);
+  public errorVisitas = signal<string | null>(null);
   public parametrosConsultaVisitas: ParametrosApi = {
     limit: 50,
     ordering: 'orden',
@@ -179,12 +186,33 @@ export default class DisenoRutaListaComponent
   }
 
   consultarLista() {
+    this.cargandoDespachos.set(true);
+    this.errorDespachos.set(null);
+    this.changeDetectorRef.detectChanges();
     this._despachoApiService
       .lista(this.arrParametrosConsulta)
-      .subscribe((respuesta) => {
-        this.arrDespachos = respuesta.results;
-        this.changeDetectorRef.detectChanges();
+      .pipe(
+        finalize(() => {
+          this.cargandoDespachos.set(false);
+          this.changeDetectorRef.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (respuesta) => {
+          this.arrDespachos = respuesta.results;
+          this.changeDetectorRef.detectChanges();
+        },
+        error: (err) => {
+          this.errorDespachos.set(
+            err?.error?.detail || err?.error?.mensaje || err?.message || 'Error al cargar despachos'
+          );
+          this.changeDetectorRef.detectChanges();
+        },
       });
+  }
+
+  reintentarDespachos(): void {
+    this.consultarLista();
   }
 
   seleccionarDespacho(despacho: any) {
@@ -210,20 +238,37 @@ export default class DisenoRutaListaComponent
 
   private _consultarVisitas(parametrosConsulta: ParametrosApi) {
     this.actualizandoLista.set(true);
+    this.errorVisitas.set(null);
+    this.changeDetectorRef.detectChanges();
     this._generalApiService
       .consultaApi<RespuestaApi<Visita>>('ruteo/visita/', parametrosConsulta)
       .pipe(
         finalize(() => {
           this.actualizandoLista.set(false);
+          this.changeDetectorRef.detectChanges();
         })
       )
-      .subscribe((respuesta) => {
-        this.arrVisitasPorDespacho = respuesta.results;
-        this.totalRegistrosVisitas = respuesta.count;
-        this.initializeConnectedLists();
-        this.changeDetectorRef.detectChanges();
-        this.mostrarMapa();
+      .subscribe({
+        next: (respuesta) => {
+          this.arrVisitasPorDespacho = respuesta.results;
+          this.totalRegistrosVisitas = respuesta.count;
+          this.initializeConnectedLists();
+          this.changeDetectorRef.detectChanges();
+          this.mostrarMapa();
+        },
+        error: (err) => {
+          this.errorVisitas.set(
+            err?.error?.detail || err?.error?.mensaje || err?.message || 'Error al cargar visitas'
+          );
+          this.changeDetectorRef.detectChanges();
+        },
       });
+  }
+
+  reintentarVisitas(): void {
+    if (this.despachoSeleccionadoId()) {
+      this._consultarVisitas(this.parametrosConsultaVisitas);
+    }
   }
 
   addMarker(position: google.maps.LatLngLiteral) {
@@ -411,8 +456,24 @@ export default class DisenoRutaListaComponent
   }
 
   aprobarDespacho(id: number) {
-    this._despachoApiService.aprobar(id).subscribe((respuesta) => {
-      this.alerta.mensajaExitoso('Despacho aprobado con exito');
+    this._despachoApiService.aprobar(id).subscribe((respuesta: any) => {
+      // Mensaje principal segun resultado de notificaciones WhatsApp.
+      const notif = respuesta?.notificaciones;
+      if (notif?.enviado) {
+        const n = notif.destinatarios;
+        this.alerta.mensajaExitoso(
+          n > 0
+            ? `Despacho aprobado. Notificaciones WhatsApp en cola para ${n} destinatario(s).`
+            : 'Despacho aprobado. (Sin destinatarios con teléfono válido).',
+        );
+      } else if (notif && notif.razon !== 'ok') {
+        // No se enviaron — mostrar la razón al usuario.
+        this.alerta.mensajaExitoso(
+          `Despacho aprobado. WhatsApp no enviado: ${notif.mensaje || notif.razon}`,
+        );
+      } else {
+        this.alerta.mensajaExitoso('Despacho aprobado con exito');
+      }
       this.consultarLista();
       this._limpiarVisitasPorDespacho();
       this.router.navigate(['/trafico/lista']);
@@ -589,6 +650,20 @@ export default class DisenoRutaListaComponent
       page
     };
     this._consultarVisitas(this.parametrosConsultaVisitas);
+  }
+
+  /** Estado dominante del despacho para mostrar como badge:
+   *  anulado > terminado > aprobado > pendiente. */
+  estadoDominanteDespacho(d: Despacho | any): 'anulado' | 'terminado' | 'aprobado' | 'pendiente' {
+    if (d?.estado_anulado) return 'anulado';
+    if (d?.estado_terminado) return 'terminado';
+    if (d?.estado_aprobado) return 'aprobado';
+    return 'pendiente';
+  }
+
+  /** Solo se puede aprobar si está pendiente (no aprobado, no anulado, no terminado). */
+  puedeAprobarse(d: Despacho | any): boolean {
+    return !d?.estado_aprobado && !d?.estado_anulado && !d?.estado_terminado;
   }
 
 }

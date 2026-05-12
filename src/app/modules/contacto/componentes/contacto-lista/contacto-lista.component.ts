@@ -14,11 +14,12 @@ import { ParametrosApi } from '../../../../core/types/api.type';
 import { RespuestaContacto } from '../../../../interfaces/contacto/contacto.interface';
 import { ContactoService } from '../../servicios/contacto.service';
 import { GeneralService } from '../../../../common/services/general.service';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-contacto-lista',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, RouterLink, TablaComunComponent],
+  imports: [CommonModule, ButtonComponent, RouterLink, TablaComunComponent, PermisoPorDirective],
   templateUrl: './contacto-lista.component.html',
   styleUrl: './contacto-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,15 +15,20 @@
 
 /* Estilo del elemento que se arrastra */
 .cdk-drag-preview {
-  background-color: #dddddd; /* Azul sólido */
+  background-color: #f3f4f6; /* gray-100 */
   display: flex;
-  color: white;
+  color: #1f2937; /* gray-800 — legible sobre fondo claro */
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
-  opacity: 0.9;
+  opacity: 0.95;
   padding: 10px;
-  overflow: hidden; /* Previene overflow del contenido */
-  white-space: nowrap; /* Evita texto multilínea */
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+:host-context(.dark) .cdk-drag-preview {
+  background-color: #1f2937; /* gray-800 */
+  color: #f3f4f6; /* gray-100 */
 }
 
 /* Placeholder: espacio que deja el elemento arrastrado */
@@ -60,9 +65,10 @@
   background-color: rgba(40, 167, 69, 0.1); /* Fondo suave verde */
 }
 
-tr:hover {
-    background-color: rgba(0, 123, 255, 0.05); /* Fondo suave al pasar el mouse */
-  }
+/* Resalta visitas con cita programada con borde lateral morado. */
+.fila-cita > td:first-child {
+  border-left: 3px solid #8b5cf6;
+}
 
   .menu-dropdown {
     width: auto !important;  /* Ancho automático */

@@ -5,6 +5,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  HostListener,
   inject,
   OnInit,
   ViewChild,
@@ -12,16 +13,18 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { interval, startWith, Subject, switchMap, takeUntil } from 'rxjs';
+import { filter, interval, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 import { MensajeriaApiService } from '../../servicios/mensajeria-api.service';
 import { Conversacion } from '../../interfaces/conversacion.interface';
 import { Mensaje } from '../../interfaces/mensaje.interface';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { NuevaConversacionModalComponent } from '../nueva-conversacion-modal/nueva-conversacion-modal.component';
+import { EnviarPlantillaModalComponent } from '../enviar-plantilla-modal/enviar-plantilla-modal.component';
 
 @Component({
   selector: 'app-mensajeria-inbox',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, DatePipe],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe, NuevaConversacionModalComponent, EnviarPlantillaModalComponent],
   templateUrl: './inbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -46,8 +49,11 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   enviando = false;
   controlTexto = new FormControl('');
   controlBusqueda = new FormControl('');
+  modalNuevaAbierto = false;
+  modalEnviarPlantillaAbierto = false;
 
   readonly POLLING_MS = 5000;
+  pestanaVisible = !document.hidden;
 
   private readonly _coloresAvatar = [
     { bg: 'bg-green-100', text: 'text-green-700', ring: 'ring-green-200' },
@@ -60,6 +66,8 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     interval(this.POLLING_MS).pipe(
       startWith(0),
+      // Pausar polling cuando la pestana esta oculta (ahorro de bateria/red).
+      filter(() => this.pestanaVisible),
       switchMap(() => this._api.listarConversaciones({ estado: 'abierta' })),
       takeUntilDestroyed(this._destroyRef),
     ).subscribe({
@@ -77,6 +85,11 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
         this._cdr.detectChanges();
       },
     });
+  }
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange(): void {
+    this.pestanaVisible = !document.hidden;
   }
 
   ngAfterViewChecked(): void {
@@ -122,6 +135,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     this.cargandoMensajes = true;
     interval(this.POLLING_MS).pipe(
       startWith(0),
+      filter(() => this.pestanaVisible),
       switchMap(() => this._api.listarMensajes(conversacionId)),
       takeUntil(this._detenerMensajes$),
       takeUntilDestroyed(this._destroyRef),
@@ -144,6 +158,13 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   enviar(): void {
     const texto = (this.controlTexto.value || '').trim();
     if (!texto || !this.conversacionActiva || this.enviando) return;
+    if (this.ventana24hVencida) {
+      this._alerta.mensajeError(
+        'Ventana de 24h vencida',
+        'WhatsApp solo permite plantillas pre-aprobadas. Espera a que el cliente escriba.',
+      );
+      return;
+    }
 
     this.enviando = true;
     this._api.enviarMensaje(this.conversacionActiva.id, { tipo: 'texto', contenido: texto })
@@ -160,10 +181,36 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
         },
         error: (err) => {
           this.enviando = false;
-          this._alerta.mensajeError('Error al enviar', err?.error?.mensaje || err?.message || '');
+          // Caso especial: ventana 24h vencida (codigo backend).
+          if (err?.error?.codigo === 'ventana_24h_vencida') {
+            this._alerta.mensajeError(
+              'Ventana de 24h vencida',
+              err.error.detail || 'Solo se permiten plantillas fuera de la ventana de 24h.',
+            );
+          } else {
+            this._alerta.mensajeError(
+              'Error al enviar',
+              err?.error?.detail || err?.error?.mensaje || err?.message || 'Error desconocido',
+            );
+          }
           this._cdr.detectChanges();
         },
       });
+  }
+
+  /** Devuelve true si la ventana de 24h con el cliente esta vencida (basado en fecha_ventana_24h). */
+  get ventana24hVencida(): boolean {
+    const fecha = this.conversacionActiva?.fecha_ventana_24h;
+    if (!fecha) return true;
+    const ms24h = 24 * 60 * 60 * 1000;
+    return Date.now() - new Date(fecha).getTime() > ms24h;
+  }
+
+  /** Horas desde el ultimo mensaje del cliente — util para mostrar advertencia. */
+  get horasDesdeUltimoMensajeCliente(): number | null {
+    const fecha = this.conversacionActiva?.fecha_ventana_24h;
+    if (!fecha) return null;
+    return Math.round((Date.now() - new Date(fecha).getTime()) / 3600000);
   }
 
   cerrar(): void {
@@ -184,6 +231,71 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
 
   trackById(_: number, item: { id: number }): number {
     return item.id;
+  }
+
+  // ---- Nueva conversacion ----
+  abrirNueva(): void {
+    this.modalNuevaAbierto = true;
+  }
+
+  cerrarModalNueva(): void {
+    this.modalNuevaAbierto = false;
+  }
+
+  // ---- Enviar plantilla en conversacion existente ----
+  abrirEnvioPlantilla(): void {
+    if (!this.conversacionActiva) return;
+    this.modalEnviarPlantillaAbierto = true;
+  }
+
+  cerrarEnvioPlantilla(): void {
+    this.modalEnviarPlantillaAbierto = false;
+  }
+
+  /** Etiqueta legible del destinatario para el header del modal de envio. */
+  get destinatarioLabel(): string | null {
+    const c = this.conversacionActiva;
+    if (!c) return null;
+    return c.cliente_nombre?.trim() || c.cliente_telefono;
+  }
+
+  onPlantillaEnviada(_resp: { mensaje_id?: number; whatsapp_message_id?: string }): void {
+    // Refresca los mensajes en la próxima vuelta para que el operador vea el envío
+    // sin esperar el polling de 5s.
+    if (!this.conversacionActiva) return;
+    const idActual = this.conversacionActiva.id;
+    setTimeout(() => {
+      this._api.listarMensajes(idActual).subscribe((mensajes) => {
+        if (this.conversacionActiva?.id === idActual) {
+          this.mensajes = mensajes;
+          this._ultimoLenMensajes = mensajes.length;
+          this._scrollPendiente = true;
+          this._cdr.detectChanges();
+        }
+      });
+    }, 300);
+  }
+
+  onConversacionCreada(conversacionId: number): void {
+    this.modalNuevaAbierto = false;
+    // Refresca la lista de abiertas y selecciona la nueva. Si por algun motivo no
+    // aparece (filtro distinto), pedimos el detalle y la insertamos arriba.
+    this._api.listarConversaciones({ estado: 'abierta' }).subscribe({
+      next: (resp) => {
+        this.conversaciones = resp.results;
+        const conv = resp.results.find((c) => c.id === conversacionId);
+        if (conv) {
+          this.seleccionar(conv);
+        } else {
+          this._api.obtenerConversacion(conversacionId).subscribe((c) => {
+            this.conversaciones = [c, ...this.conversaciones];
+            this.seleccionar(c);
+            this._cdr.detectChanges();
+          });
+        }
+        this._cdr.detectChanges();
+      },
+    });
   }
 
   // ---- Helpers de presentación ----

@@ -3,18 +3,20 @@
     class="sidebar-header hidden lg:flex items-center relative justify-between px-3 lg:px-6 shrink-0"
     id="sidebar_header"
   >
-    <a href="/">
+    <a href="/" class="block max-w-full">
       <img
-        class="default-logo min-h-[22px] max-w-none"
-        src="assets/media/app/default-logo.jpg"
+        class="default-logo h-8 w-auto max-w-full object-contain"
+        src="assets/media/app/default-logo.png"
+        alt="Ruteo.co"
       />
       <img
-        class="small-logo min-h-[22px] max-w-none"
+        class="small-logo h-8 w-auto max-w-full object-contain"
         src="assets/media/app/mini-logo.jpg"
+        alt=""
       />
     </a>
     <button
-      class="btn btn-icon btn-icon-md size-[30px] rounded-lg border border-gray-200 dark:border-gray-700 bg-light dark:bg-coal-500 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 toggle absolute left-full top-2/4 -translate-x-2/4 -translate-y-2/4"
+      class="btn btn-icon btn-icon-md size-[30px] rounded-lg border border-gray-200 dark:border-gray-200 bg-light dark:bg-coal-500 text-gray-500 hover:text-gray-700 dark:hover:text-gray-800 toggle absolute left-full top-2/4 -translate-x-2/4 -translate-y-2/4"
       data-toggle="body"
       data-toggle-class="sidebar-collapse"
       id="sidebar_toggle"
@@ -58,7 +60,7 @@
             tabindex="0"
           >
             <span
-              class="menu-icon items-start w-[20px] text-gray-500 dark:text-gray-400"
+              class="menu-icon items-start w-[20px] text-gray-500"
             >
               <i
                 [class]="menu.iconoClase + ' text-lg '"
@@ -69,7 +71,7 @@
               routerLinkActive="text-primary font-semibold"
               class="menu-title text-sm font-semibold"
               [ngClass]="{
-                'text-gray-700 dark:text-gray-300': !isActive(menu.link)
+                'text-gray-700': !isActive(menu.link)
               }"
             >
               {{ menu.nombre }}
@@ -87,12 +89,12 @@
             (click)="toggleAccordion(menu.nombre)"
           >
             <span
-              class="menu-icon items-start text-gray-500 dark:text-gray-400 w-[20px]"
+              class="menu-icon items-start text-gray-500 w-[20px]"
             >
               <i [class]="menu.iconoClase + ' text-lg'"></i>
             </span>
             <span
-              class="menu-title text-sm text-gray-700 dark:text-gray-300 menu-item-active:text-primary menu-link-hover:!text-primary"
+              class="menu-title text-sm text-gray-700 menu-item-active:text-primary menu-link-hover:!text-primary"
             >
               {{ menu.nombre }}
             </span>
@@ -135,7 +137,7 @@
                   class="menu-title text-2sm font-medium menu-link-hover:!text-primary"
                   [ngClass]="{
                     'text-primary font-semibold': isActive(subMenu.link),
-                    'text-gray-700 dark:text-gray-300': !isActive(subMenu.link)
+                    'text-gray-700': !isActive(subMenu.link)
                   }"
                 >
                   {{ subMenu.nombre }}

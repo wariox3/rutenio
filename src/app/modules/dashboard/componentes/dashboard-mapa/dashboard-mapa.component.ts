@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, inject } from '@angular/core';
+import { MapaThemeService } from '../../../../common/services/mapa-theme.service';
 import { CommonModule } from '@angular/common';
 import { GoogleMapsModule } from '@angular/google-maps';
 import { MarcadorMapa } from '../../../../interfaces/dashboard/dashboard.interface';
@@ -13,6 +14,7 @@ import { MarcadorMapa } from '../../../../interfaces/dashboard/dashboard.interfa
 })
 export class DashboardMapaComponent implements OnChanges {
   @Input({ required: true }) marcadores!: MarcadorMapa[];
+  public mapaTheme = inject(MapaThemeService);
 
   centro: google.maps.LatLngLiteral = { lat: 4.6097, lng: -74.0817 };
   zoom = 12;

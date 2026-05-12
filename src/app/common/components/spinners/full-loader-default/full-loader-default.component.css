@@ -2,18 +2,19 @@
   width: 30px;
   height: 30px;
   border: 5px solid rgba(0, 0, 0, 0.2);
-  border-top: 5px solid #007bff; /* Cambia el color si es necesario */
+  border-top: 5px solid #007bff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
+:host-context(.dark) .spinner {
+  border: 5px solid rgba(255, 255, 255, 0.15);
+  border-top: 5px solid #3b82f6;
+}
+
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .backdrop {
@@ -22,11 +23,15 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.281);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   opacity: 1;
   transition: opacity 300ms ease;
+}
+
+:host-context(.dark) .backdrop {
+  background: rgba(0, 0, 0, 0.6);
 }

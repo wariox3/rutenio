@@ -1,48 +1,57 @@
 <app-admin-nav></app-admin-nav>
 
-<main class="md:ml-64 min-h-screen bg-gray-950 text-gray-200">
+<main class="md:ml-64 min-h-screen bg-coal-500 text-zinc-200">
   <div class="px-4 md:px-8 py-6 md:py-10 max-w-7xl mx-auto">
     <div class="flex items-center justify-between gap-2 mb-6">
       <div class="flex flex-col gap-1">
         <h1 class="text-xl md:text-2xl font-bold text-white">Usuarios</h1>
-        <span class="text-xs text-gray-400">
+        <span class="text-xs text-zinc-400">
           Vista global de todos los usuarios del sistema y sus contenedores.
         </span>
       </div>
-      <button
-        type="button"
-        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 border border-gray-700 transition-colors"
-        (click)="cargar()"
-        [disabled]="cargando()"
-      >
-        <i class="ki-filled ki-arrows-circle text-sm"></i>
-        Recargar
-      </button>
+      <div class="flex items-center gap-2">
+        <a
+          routerLink="/admin/usuarios/crear"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 transition-colors"
+        >
+          <i class="ki-filled ki-plus text-sm"></i>
+          Crear usuario
+        </a>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 border border-coal-100 transition-colors"
+          (click)="cargar()"
+          [disabled]="cargando()"
+        >
+          <i class="ki-filled ki-arrows-circle text-sm"></i>
+          Recargar
+        </button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Total usuarios
         </div>
-        <div class="text-2xl font-bold text-white mt-1">{{ usuarios().length }}</div>
+        <div class="text-2xl font-bold text-white mt-1">{{ estadisticas().total }}</div>
       </div>
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Activos
         </div>
-        <div class="text-2xl font-bold text-green-400 mt-1">{{ totalActivos }}</div>
+        <div class="text-2xl font-bold text-green-400 mt-1">{{ estadisticas().activos }}</div>
       </div>
-      <div class="rounded-lg border border-gray-800 bg-gray-900 p-4">
-        <div class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Super admins
         </div>
-        <div class="text-2xl font-bold text-blue-400 mt-1">{{ totalSuperAdmins }}</div>
+        <div class="text-2xl font-bold text-blue-400 mt-1">{{ estadisticas().super_admins }}</div>
       </div>
     </div>
 
-    <div class="rounded-lg border border-gray-800 bg-gray-900 overflow-hidden">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-b border-gray-800">
+    <div class="rounded-lg border border-coal-200 bg-coal-400 overflow-hidden">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 px-4 py-3 border-b border-coal-200">
         <div class="flex flex-wrap items-center gap-1.5">
           @for (f of [
             { v: 'todos', t: 'Todos' },
@@ -55,28 +64,29 @@
               class="px-2.5 py-1 rounded text-xs font-medium transition-colors"
               [ngClass]="{
                 'bg-blue-500 text-white': filtroEstado === f.v,
-                'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700': filtroEstado !== f.v
+                'bg-coal-300 text-zinc-400 hover:text-white hover:bg-coal-200': filtroEstado !== f.v
               }"
-              (click)="filtroEstado = $any(f.v)"
+              (click)="cambiarFiltroEstado($any(f.v))"
             >
               {{ f.t }}
             </button>
           }
         </div>
         <div class="relative w-full md:max-w-xs">
-          <i class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-gray-500"></i>
+          <i class="ki-outline ki-magnifier absolute top-1/2 left-3 -translate-y-1/2 text-base text-zinc-500"></i>
           <input
             type="text"
-            class="w-full pl-9 pr-3 py-1.5 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 placeholder:text-gray-500 focus:outline-none focus:border-blue-500"
+            class="w-full pl-9 pr-3 py-1.5 rounded-md bg-coal-300 border border-coal-100 text-sm text-zinc-200 placeholder:text-zinc-500 focus:outline-none focus:border-blue-500"
             placeholder="Buscar por correo, nombre…"
-            [(ngModel)]="busqueda"
+            [ngModel]="busqueda"
+            (ngModelChange)="onBusquedaChange($event)"
           />
         </div>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
-          <thead class="bg-gray-800/50">
-            <tr class="text-left text-[11px] uppercase tracking-wide text-gray-400 font-semibold">
+          <thead class="bg-coal-300/50">
+            <tr class="text-left text-[11px] uppercase tracking-wide text-zinc-400 font-semibold">
               <th class="px-4 py-2.5">Usuario</th>
               <th class="px-4 py-2.5">Roles</th>
               <th class="px-4 py-2.5">Admin de</th>
@@ -85,20 +95,20 @@
               <th class="px-4 py-2.5 text-right">Estado</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-gray-800">
+          <tbody class="divide-y divide-coal-300">
             @if (cargando()) {
               <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-xs text-gray-500">
-                  <span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-gray-700 border-t-blue-500 mr-2"></span>
+                <td colspan="6" class="px-4 py-8 text-center text-xs text-zinc-500">
+                  <span class="inline-block h-5 w-5 animate-spin rounded-full border-2 border-coal-100 border-t-blue-500 mr-2"></span>
                   Cargando…
                 </td>
               </tr>
             } @else {
-              @for (u of usuariosFiltrados; track u.id) {
-                <tr class="hover:bg-gray-800/40 transition-colors align-top">
+              @for (u of usuarios(); track u.id) {
+                <tr class="hover:bg-coal-300/40 transition-colors align-top">
                   <td class="px-4 py-2.5">
                     <div class="font-semibold text-white">{{ u.nombre }} {{ u.apellido }}</div>
-                    <div class="text-xs text-gray-400">{{ u.username }}</div>
+                    <div class="text-xs text-zinc-400">{{ u.username }}</div>
                   </td>
                   <td class="px-4 py-2.5">
                     <div class="flex flex-wrap gap-1">
@@ -113,7 +123,7 @@
                         </span>
                       }
                       @if (!u.is_superuser && !u.is_staff) {
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-gray-700 text-gray-300">
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-coal-200 text-zinc-300">
                           Regular
                         </span>
                       }
@@ -121,7 +131,7 @@
                   </td>
                   <td class="px-4 py-2.5">
                     @if (u.admin_de.length === 0) {
-                      <span class="text-xs text-gray-500">—</span>
+                      <span class="text-xs text-zinc-500">—</span>
                     } @else {
                       <div class="flex flex-wrap gap-1">
                         @for (c of u.admin_de; track c.schema_name) {
@@ -134,11 +144,11 @@
                   </td>
                   <td class="px-4 py-2.5">
                     @if (u.invitado_a.length === 0) {
-                      <span class="text-xs text-gray-500">—</span>
+                      <span class="text-xs text-zinc-500">—</span>
                     } @else {
                       <div class="flex flex-wrap gap-1">
                         @for (c of u.invitado_a; track c.schema_name) {
-                          <span class="group inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] bg-gray-800 text-gray-300 border border-gray-700">
+                          <span class="group inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10.5px] bg-coal-300 text-zinc-300 border border-coal-100">
                             {{ c.nombre || c.schema_name }}
                             <button
                               type="button"
@@ -153,11 +163,20 @@
                       </div>
                     }
                   </td>
-                  <td class="px-4 py-2.5 text-xs text-gray-400">
+                  <td class="px-4 py-2.5 text-xs text-zinc-400">
                     {{ u.fecha_creacion | date: 'yyyy-MM-dd' }}
                   </td>
                   <td class="px-4 py-2.5">
                     <div class="flex items-center justify-end gap-2">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
+                        title="Ver detalle"
+                        (click)="abrirDetalle(u.id)"
+                      >
+                        <i class="ki-filled ki-eye text-[10px]"></i>
+                        Detalle
+                      </button>
                       <button
                         type="button"
                         class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-blue-300 bg-blue-500/15 hover:bg-blue-500/25 transition-colors"
@@ -184,7 +203,7 @@
                 </tr>
               } @empty {
                 <tr>
-                  <td colspan="6" class="px-4 py-8 text-center text-xs text-gray-500">
+                  <td colspan="6" class="px-4 py-8 text-center text-xs text-zinc-500">
                     Sin resultados
                   </td>
                 </tr>
@@ -193,31 +212,45 @@
           </tbody>
         </table>
       </div>
+      @if (totalUsuarios() > porPagina) {
+        <div class="flex items-center justify-between px-4 py-3 border-t border-coal-200">
+          <div class="text-xs text-zinc-400">
+            Pagina {{ pagina() }} de {{ Math.ceil(totalUsuarios() / porPagina) }}
+            · {{ totalUsuarios() }} resultado(s)
+          </div>
+          <app-paginador
+            [currentPage]="pagina()"
+            [itemsPerPage]="porPagina"
+            [totalItems]="totalUsuarios()"
+            (pageChange)="onPageChange($event)"
+          ></app-paginador>
+        </div>
+      }
     </div>
   </div>
 </main>
 
 @if (modalAsignar()) {
   <div
-    class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950/80 backdrop-blur-sm p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-coal-500/80 backdrop-blur-sm p-4"
     (click)="cerrarModalAsignar()"
   >
     <div
-      class="w-full max-w-md rounded-lg border border-gray-800 bg-gray-900 shadow-2xl"
+      class="w-full max-w-md rounded-lg border border-coal-200 bg-coal-400 shadow-2xl"
       (click)="$event.stopPropagation()"
     >
-      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-800">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-coal-200">
         <h3 class="text-base font-semibold text-white">Asignar a contenedor</h3>
         <button
           type="button"
-          class="text-gray-500 hover:text-white transition-colors"
+          class="text-zinc-500 hover:text-white transition-colors"
           (click)="cerrarModalAsignar()"
         >
           <i class="ki-filled ki-cross text-base"></i>
         </button>
       </div>
       <div class="px-5 py-4 space-y-4">
-        <div class="text-xs text-gray-400">
+        <div class="text-xs text-zinc-400">
           Usuario:
           <span class="font-semibold text-white">
             {{ usuarioSeleccionado()?.username }}
@@ -225,11 +258,11 @@
         </div>
 
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">
             Contenedor
           </label>
           <select
-            class="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-200 focus:outline-none focus:border-blue-500"
+            class="w-full px-3 py-2 rounded-md bg-coal-300 border border-coal-100 text-sm text-zinc-200 focus:outline-none focus:border-blue-500"
             [(ngModel)]="contenedorElegido"
           >
             <option [ngValue]="null" disabled>Selecciona un contenedor…</option>
@@ -240,7 +273,7 @@
         </div>
 
         <div>
-          <label class="block text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+          <label class="block text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">
             Rol
           </label>
           <div class="grid grid-cols-2 gap-2">
@@ -248,7 +281,7 @@
               class="flex items-start gap-2 p-2.5 rounded-md border cursor-pointer transition-colors"
               [ngClass]="rolAsignar === 'usuario'
                 ? 'border-blue-500 bg-blue-500/10'
-                : 'border-gray-700 hover:border-gray-600'"
+                : 'border-coal-100 hover:border-coal-100'"
             >
               <input
                 type="radio"
@@ -259,7 +292,7 @@
               />
               <div class="flex flex-col gap-0.5">
                 <span class="text-xs font-semibold text-white">Usuario</span>
-                <span class="text-[11px] text-gray-400">
+                <span class="text-[11px] text-zinc-400">
                   Acceso operativo limitado.
                 </span>
               </div>
@@ -268,7 +301,7 @@
               class="flex items-start gap-2 p-2.5 rounded-md border cursor-pointer transition-colors"
               [ngClass]="rolAsignar === 'admin'
                 ? 'border-green-500 bg-green-500/10'
-                : 'border-gray-700 hover:border-gray-600'"
+                : 'border-coal-100 hover:border-coal-100'"
             >
               <input
                 type="radio"
@@ -279,7 +312,7 @@
               />
               <div class="flex flex-col gap-0.5">
                 <span class="text-xs font-semibold text-white">Admin</span>
-                <span class="text-[11px] text-gray-400">
+                <span class="text-[11px] text-zinc-400">
                   Reemplaza al admin actual.
                 </span>
               </div>
@@ -294,10 +327,10 @@
           </div>
         }
       </div>
-      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-800">
+      <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-coal-200">
         <button
           type="button"
-          class="px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 transition-colors"
+          class="px-3 py-1.5 rounded-md text-sm font-medium text-zinc-300 bg-coal-300 hover:bg-coal-200 transition-colors"
           (click)="cerrarModalAsignar()"
         >
           Cancelar

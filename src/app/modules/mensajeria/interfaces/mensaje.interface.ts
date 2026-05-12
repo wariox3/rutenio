@@ -44,3 +44,20 @@ export interface RespuestaEnvio {
   whatsapp_message_id?: string;
   mensaje?: string;
 }
+
+export interface IniciarConversacionPayload {
+  telefono: string;
+  nombre?: string;
+  plantilla_nombre: string;
+  plantilla_idioma?: string;
+  plantilla_variables?: string[];
+}
+
+export interface IniciarConversacionRespuesta {
+  ok: boolean;
+  conversacion_id?: number;
+  mensaje_id?: number;
+  whatsapp_message_id?: string;
+  creada?: boolean;
+  mensaje?: string;
+}

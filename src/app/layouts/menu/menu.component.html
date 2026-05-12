@@ -14,7 +14,7 @@
       />
     </div>
     <div
-      class="menu-dropdown menu-default light:border-gray-300 w-full max-w-[250px]"
+      class="menu-dropdown menu-default light:border-gray-300 dark:border-gray-600 w-full max-w-[250px]"
     >
       <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
         <div class="flex items-center gap-2">
@@ -65,6 +65,18 @@
       </div>
       @if (menuItems.length) {
       <div class="menu-separator"></div>
+      }
+      @if (puedeAdmin) {
+        <div class="menu-item">
+          <a class="menu-link" routerLink="/admin/contenedores">
+            <span class="menu-icon">
+              <i class="ki-filled ki-shield-tick text-primary"></i>
+            </span>
+            <span class="menu-title">Panel admin</span>
+            <span class="badge badge-xs badge-primary ms-auto">Staff</span>
+          </a>
+        </div>
+        <div class="menu-separator"></div>
       }
       <div class="flex flex-col">
         <div class="menu-item mb-0.5">
