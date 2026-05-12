@@ -13,11 +13,11 @@
                 >
                   {{ item.encabezado }}
                   @if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'desc') {
-                    <i class="ki-filled ki-arrow-down text-xs ms-1"></i>
+                    <i class="ki-filled ki-arrow-down text-xs ms-1 text-blue-600 dark:text-blue-400"></i>
                   } @else if (columnaOrdenada() === item.campoNombre && direccionOrden() === 'asc') {
-                    <i class="ki-filled ki-arrow-up text-xs ms-1"></i>
+                    <i class="ki-filled ki-arrow-up text-xs ms-1 text-blue-600 dark:text-blue-400"></i>
                   } @else {
-                    <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
+                    <i class="ki-filled ki-arrow-down text-xs ms-1 text-gray-400 dark:text-gray-500 opacity-60"></i>
                   }
                 </span>
               } @else {
@@ -54,19 +54,19 @@
             <td *ngIf="!ocultarEditar">
               <button
                 (click)="editarItem(item.id)"
-                class="btn btn-sm btn-icon btn-clear btn-light"
-                href="#"
+                class="btn btn-sm btn-icon btn-icon-accion"
+                title="Editar"
               >
-                <i class="ki-filled ki-notepad-edit"> </i>
+                <i class="ki-filled ki-notepad-edit"></i>
               </button>
             </td>
             <td>
               <button
                 (click)="detalleItem(item.id)"
-                class="btn btn-sm btn-icon btn-clear btn-light"
-                href="#"
+                class="btn btn-sm btn-icon btn-icon-accion"
+                title="Ver detalle"
               >
-                <i class="ki-filled ki-eye"> </i>
+                <i class="ki-filled ki-eye"></i>
               </button>
             </td>
             @if (accionesFila?.length) {
@@ -79,7 +79,7 @@
                       data-menu-item-toggle="dropdown"
                       data-menu-item-trigger="click"
                     >
-                      <button class="btn btn-sm btn-icon btn-clear btn-light menu-toggle" title="Más acciones">
+                      <button class="btn btn-sm btn-icon btn-icon-accion menu-toggle" title="Más acciones">
                         <i class="ki-filled ki-dots-vertical"></i>
                       </button>
                       <div class="menu-dropdown w-52 py-2">
