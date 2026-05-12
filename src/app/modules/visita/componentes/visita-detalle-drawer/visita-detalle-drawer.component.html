@@ -46,7 +46,7 @@
         </div>
       } @else if (visita) {
 
-        <!-- Estado dominante + estado decodificado -->
+        <!-- Estado + alertas. Lo primero que necesita ver el operador. -->
         <div class="flex flex-wrap items-center gap-2 mb-4">
           @switch (estadoDominante) {
             @case ('novedad') { <span class="badge badge-sm badge-warning">Novedad</span> }
@@ -62,80 +62,162 @@
           } @else if (!visita.estado_decodificado) {
             <span class="badge badge-sm badge-outline badge-danger">Sin decodificar</span>
           }
+          @if (visita.documento) {
+            <span class="text-[11px] text-gray-500 ms-auto tabular-nums">
+              Guía: <span class="font-medium text-gray-700">{{ visita.documento }}</span>
+            </span>
+          }
         </div>
 
-        <!-- Datos principales -->
-        <dl class="space-y-3 text-sm">
-          <div>
-            <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Documento / Guía</dt>
-            <dd class="text-gray-800 mt-0.5">{{ visita.documento || '—' }}</dd>
+        <!-- Bloque crítico: dirección + acciones rápidas (llamar / abrir mapa). -->
+        <div class="rounded-xl bg-gray-50 dark:bg-coal-300 px-3 py-3 mb-3">
+          <p class="text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">Dirección</p>
+          <p class="text-sm text-gray-800 break-words leading-snug">
+            {{ visita.destinatario_direccion || '—' }}
+          </p>
+          @if (visita.destinatario_direccion_complemento) {
+            <p class="text-xs text-gray-500 mt-0.5">{{ visita.destinatario_direccion_complemento }}</p>
+          }
+          <div class="flex flex-wrap items-center gap-2 mt-2">
+            @if (visita.destinatario_telefono) {
+              <a [href]="'tel:' + visita.destinatario_telefono"
+                 class="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                <i class="ki-outline ki-phone text-sm"></i>
+                {{ visita.destinatario_telefono }}
+              </a>
+            }
+            @if (visita.latitud && visita.longitud) {
+              <a [href]="'https://www.google.com/maps?q=' + visita.latitud + ',' + visita.longitud"
+                 target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                <i class="ki-outline ki-geolocation text-sm"></i>
+                Ver en mapa
+              </a>
+            }
           </div>
+        </div>
 
-          <div>
-            <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Dirección</dt>
-            <dd class="text-gray-800 mt-0.5 break-words">
-              {{ visita.destinatario_direccion || '—' }}
-              @if (visita.destinatario_direccion_complemento) {
-                <span class="text-gray-500 block text-xs mt-0.5">
-                  {{ visita.destinatario_direccion_complemento }}
-                </span>
+        <!-- Cita: solo aparece si existe. Crítico para coordinación. -->
+        @if (visita.cita_inicio || visita.cita_fin) {
+          <div class="rounded-lg border border-purple-200 dark:border-purple-500/30 bg-purple-50 dark:bg-purple-500/10 px-3 py-2 mb-3 flex items-center gap-2">
+            <i class="ki-outline ki-time text-purple-600 dark:text-purple-300"></i>
+            <p class="text-xs text-purple-800 dark:text-purple-200 tabular-nums">
+              <span class="font-semibold">Cita:</span>
+              {{ visita.cita_inicio | date:'dd/MM HH:mm' }} – {{ visita.cita_fin | date:'HH:mm' }}
+            </p>
+          </div>
+        }
+
+        <!-- Observación: si existe, destacar como nota ámbar. -->
+        @if (visita.observacion) {
+          <div class="rounded-lg border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10 px-3 py-2 mb-3">
+            <p class="text-[10px] uppercase tracking-wide text-amber-700 dark:text-amber-300 font-semibold mb-0.5">Observación</p>
+            <p class="text-xs text-amber-900 dark:text-amber-200 italic leading-snug">{{ visita.observacion }}</p>
+          </div>
+        }
+
+        <!-- Entrega: solo si entregado. Muestra recibió + fotos. -->
+        @if (visita.estado_entregado && (visita.recibe || visita.recibeCelular || visita.recibeNumeroIdentificacion || fotos.length)) {
+          <div class="rounded-xl border border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-500/5 px-3 py-3 mb-3">
+            <p class="text-[11px] uppercase tracking-wide text-green-700 dark:text-green-400 font-semibold mb-2">
+              <i class="ki-outline ki-verify text-sm me-1"></i>Entrega
+            </p>
+            @if (visita.recibe) {
+              <p class="text-sm text-gray-800">
+                {{ visita.recibe }}
+                @if (visita.recibeParentesco) {
+                  <span class="text-gray-500 text-xs">({{ visita.recibeParentesco }})</span>
+                }
+              </p>
+            }
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mt-0.5">
+              @if (visita.recibeNumeroIdentificacion) { <span class="tabular-nums">CC {{ visita.recibeNumeroIdentificacion }}</span> }
+              @if (visita.recibeCelular) {
+                <a [href]="'tel:' + visita.recibeCelular"
+                   class="inline-flex items-center gap-1 text-primary hover:underline tabular-nums">
+                  <i class="ki-outline ki-phone text-xs"></i>{{ visita.recibeCelular }}
+                </a>
               }
-            </dd>
+            </div>
+            @if (fotos.length > 0) {
+              <div class="grid grid-cols-3 gap-2 mt-3">
+                @for (foto of fotos; track $index) {
+                  <a [href]="foto" target="_blank" rel="noopener"
+                     class="block aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-200 bg-white dark:bg-coal-300 hover:opacity-90 transition">
+                    <img [src]="foto" alt="Evidencia entrega"
+                         class="w-full h-full object-cover"
+                         loading="lazy" />
+                  </a>
+                }
+              </div>
+            }
           </div>
+        }
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Teléfono</dt>
-              <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.destinatario_telefono || '—' }}</dd>
-            </div>
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Correo</dt>
-              <dd class="text-gray-800 mt-0.5 truncate">{{ visita.destinatario_correo || '—' }}</dd>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-3">
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Unidades</dt>
-              <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.unidades || 0 }}</dd>
-            </div>
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Peso</dt>
-              <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.peso || 0 }} kg</dd>
-            </div>
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Volumen</dt>
-              <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.volumen || 0 }}</dd>
-            </div>
-          </div>
-
-          @if (visita.cita_inicio || visita.cita_fin) {
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Cita</dt>
-              <dd class="text-gray-800 mt-0.5 text-xs">
-                {{ visita.cita_inicio | date:'dd/MM HH:mm' }} – {{ visita.cita_fin | date:'HH:mm' }}
-              </dd>
-            </div>
-          }
-
-          @if (visita.observacion) {
-            <div>
-              <dt class="text-[11px] uppercase tracking-wide text-gray-500 font-medium">Observación</dt>
-              <dd class="text-gray-800 mt-0.5 text-xs italic">{{ visita.observacion }}</dd>
-            </div>
-          }
-
-          @if (visita.recibe || visita.recibeCelular || visita.recibeNumeroIdentificacion) {
-            <div class="pt-3 border-t border-gray-100 dark:border-gray-200">
-              <p class="text-[11px] uppercase tracking-wide text-green-700 dark:text-green-400 font-semibold mb-2">Recibió</p>
-              <div class="space-y-1 text-xs">
-                @if (visita.recibe) { <p>{{ visita.recibe }} <span class="text-gray-500">({{ visita.recibeParentesco || '—' }})</span></p> }
-                @if (visita.recibeNumeroIdentificacion) { <p class="tabular-nums">Cédula: {{ visita.recibeNumeroIdentificacion }}</p> }
-                @if (visita.recibeCelular) { <p class="tabular-nums">Celular: {{ visita.recibeCelular }}</p> }
+        <!-- Más datos (operativos): colapsable para no saturar. -->
+        <details class="group rounded-lg border border-gray-200 dark:border-gray-200 overflow-hidden">
+          <summary class="flex items-center justify-between cursor-pointer px-3 py-2 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:hover:bg-coal-300 transition select-none">
+            <span>Más datos</span>
+            <i class="ki-outline ki-down text-sm transition-transform group-open:rotate-180"></i>
+          </summary>
+          <dl class="px-3 pb-3 pt-1 space-y-2 text-xs">
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Unidades</dt>
+                <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.unidades || 0 }}</dd>
+              </div>
+              <div>
+                <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Peso</dt>
+                <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.peso || 0 }} kg</dd>
+              </div>
+              <div>
+                <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Volumen</dt>
+                <dd class="text-gray-800 mt-0.5 tabular-nums">{{ visita.volumen || 0 }}</dd>
               </div>
             </div>
-          }
-        </dl>
+            @if (visita.franja_nombre || visita.franja_codigo || visita.despacho_id) {
+              <div class="grid grid-cols-2 gap-2">
+                @if (visita.franja_nombre || visita.franja_codigo) {
+                  <div>
+                    <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Franja</dt>
+                    <dd class="text-gray-800 mt-0.5 truncate">{{ visita.franja_nombre || visita.franja_codigo }}</dd>
+                  </div>
+                }
+                @if (visita.despacho_id) {
+                  <div>
+                    <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Despacho</dt>
+                    <dd class="text-gray-800 mt-0.5 tabular-nums">#{{ visita.despacho_id }}</dd>
+                  </div>
+                }
+              </div>
+            }
+            @if (visita.destinatario_correo) {
+              <div>
+                <dt class="text-[10px] uppercase tracking-wide text-gray-500 font-medium">Correo</dt>
+                <dd class="text-gray-800 mt-0.5 truncate">{{ visita.destinatario_correo }}</dd>
+              </div>
+            }
+          </dl>
+        </details>
+
+        <!-- Fotos sueltas (no entregado pero hay evidencia). -->
+        @if (!visita.estado_entregado && fotos.length > 0) {
+          <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-200">
+            <p class="text-[11px] uppercase tracking-wide text-gray-500 font-semibold mb-2">
+              Evidencia ({{ fotos.length }})
+            </p>
+            <div class="grid grid-cols-3 gap-2">
+              @for (foto of fotos; track $index) {
+                <a [href]="foto" target="_blank" rel="noopener"
+                   class="block aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-200 bg-gray-50 dark:bg-coal-300 hover:opacity-90 transition">
+                  <img [src]="foto" alt="Evidencia"
+                       class="w-full h-full object-cover"
+                       loading="lazy" />
+                </a>
+              }
+            </div>
+          </div>
+        }
       }
     </div>
 
@@ -149,10 +231,18 @@
       </button>
       <div class="flex items-center gap-2">
         <button type="button" (click)="onCerrar()" class="btn btn-sm btn-light">Cerrar</button>
-        <button type="button" (click)="irAEditar()" class="btn btn-sm btn-primary" [disabled]="!visita">
-          <i class="ki-outline ki-notepad-edit text-sm"></i>
-          Editar
-        </button>
+        @if (visita?.estado_entregado) {
+          <span class="inline-flex items-center gap-1 text-[11px] font-medium text-gray-500 dark:text-gray-600 px-2 py-1 rounded-md bg-gray-100 dark:bg-coal-300"
+                title="No se puede editar una visita entregada">
+            <i class="ki-outline ki-lock text-sm"></i>
+            Solo lectura
+          </span>
+        } @else {
+          <button type="button" (click)="irAEditar()" class="btn btn-sm btn-primary" [disabled]="!visita">
+            <i class="ki-outline ki-notepad-edit text-sm"></i>
+            Editar
+          </button>
+        }
       </div>
     </div>
   </aside>

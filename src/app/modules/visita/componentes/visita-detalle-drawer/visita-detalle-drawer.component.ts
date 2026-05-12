@@ -73,6 +73,19 @@ export class VisitaDetalleDrawerComponent implements OnChanges {
     return 'pendiente';
   }
 
+  /** URLs de fotos de evidencia. El backend puede exponerlas en distintos campos
+      según el endpoint; recolectamos todos los formatos conocidos y filtramos vacíos. */
+  get fotos(): string[] {
+    if (!this.visita) return [];
+    const candidatos: any[] = []
+      .concat(this.visita.imagenes ?? [])
+      .concat(this.visita.fotos ?? [])
+      .concat(this.visita.evidencias ?? []);
+    return candidatos
+      .map((f) => (typeof f === 'string' ? f : f?.url || f?.imagen || f?.archivo))
+      .filter((url): url is string => !!url);
+  }
+
   abrirPaginaCompleta(): void {
     if (!this.visitaId) return;
     this._router.navigateByUrl(`/movimiento/visita/detalle/${this.visitaId}`);
@@ -81,6 +94,7 @@ export class VisitaDetalleDrawerComponent implements OnChanges {
 
   irAEditar(): void {
     if (!this.visitaId) return;
+    if (this.visita?.estado_entregado) return;
     this._router.navigateByUrl(`/movimiento/visita/editar/${this.visitaId}`);
     this.cerrar.emit();
   }
