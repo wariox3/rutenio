@@ -207,6 +207,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
   public rotuloVisitaActual: Visita | null = null;
   public busquedaImprimir = '';
   public idsImprimirVarios = new Set<number>();
+  public idsRutearSeleccionadas = new Set<number>();
   public formatoImprimir: 'termica' | 'a4' = 'termica';
   private _rotuloBlobUrl: string | null = null;
   private _ultimosIdsImpresion: number[] | null = null;
@@ -519,9 +520,29 @@ export default class VisitaRutearComponent extends General implements OnInit {
   }
 
   rutear() {
+    this._ejecutarRutear(this.arrParametrosConsultaResumen);
+  }
+
+  /** Rutea únicamente las visitas marcadas con checkbox. Permite partir
+      una franja entre varios mensajeros: el usuario selecciona un subconjunto,
+      asigna un mensajero/vehículo, y luego repite con el resto. */
+  rutearSeleccionadas() {
+    const ids = Array.from(this.idsRutearSeleccionadas);
+    if (ids.length === 0) return;
+    const parametros = {
+      ...this.arrParametrosConsultaResumen,
+      filtros: [
+        ...(this.arrParametrosConsultaResumen?.filtros || []),
+        { propiedad: 'id', operador: 'in', valor: ids },
+      ],
+    };
+    this._ejecutarRutear(parametros, () => this.limpiarSeleccionRutear());
+  }
+
+  private _ejecutarRutear(parametros: any, alExito?: () => void) {
     this.mostarVistaCargando$.next(true);
     this._visitaApiService
-      .rutear(this.arrParametrosConsultaResumen)
+      .rutear(parametros)
       .pipe(
         finalize(() => {
           this.mostarVistaCargando$.next(false);
@@ -545,6 +566,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
             this.consultarLista();
           } else {
             this.alerta.mensajaExitoso(mensaje || 'Se ha ruteado correctamente');
+            alExito?.();
             this.consultarLista();
             this.router.navigate(['/diseno-ruta/lista']);
           }
@@ -556,6 +578,23 @@ export default class VisitaRutearComponent extends General implements OnInit {
           );
         },
       });
+  }
+
+  toggleSeleccionRutear(visita: Visita) {
+    if (this.idsRutearSeleccionadas.has(visita.id)) {
+      this.idsRutearSeleccionadas.delete(visita.id);
+    } else {
+      this.idsRutearSeleccionadas.add(visita.id);
+    }
+    this.idsRutearSeleccionadas = new Set(this.idsRutearSeleccionadas);
+  }
+
+  estaSeleccionadaRutear(id: number): boolean {
+    return this.idsRutearSeleccionadas.has(id);
+  }
+
+  limpiarSeleccionRutear() {
+    this.idsRutearSeleccionadas = new Set<number>();
   }
 
   addMarker(position: google.maps.LatLngLiteral, visita: any) {

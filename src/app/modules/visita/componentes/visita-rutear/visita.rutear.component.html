@@ -291,8 +291,43 @@
         </div>
       </section>
     </div>
-    <div class="card-table h-100 overflow-y-auto scrollable">
-      <table class="table w-full border-collapse compact-row">
+    @if (idsRutearSeleccionadas.size > 0) {
+      <div class="px-3 py-2 border-b border-blue-200 bg-blue-50 dark:bg-blue-500/10 dark:border-blue-500/30 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2 text-xs">
+          <i class="ki-filled ki-check-squared text-blue-600 dark:text-blue-400"></i>
+          <span class="font-semibold text-blue-800 dark:text-blue-300">
+            {{ idsRutearSeleccionadas.size }} seleccionada{{ idsRutearSeleccionadas.size === 1 ? '' : 's' }}
+          </span>
+          <span class="text-gray-500 hidden sm:inline">
+            · Rutear solo estas (partir franja entre mensajeros)
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            type="button"
+            class="btn btn-xs btn-light"
+            (click)="limpiarSeleccionRutear()"
+            title="Quitar selección"
+          >
+            Limpiar
+          </button>
+          <button
+            *appAdmin
+            type="button"
+            class="btn btn-xs btn-primary"
+            (click)="rutearSeleccionadas()"
+            [disabled]="habilitadoParaRutear()"
+            title="Rutear únicamente las visitas marcadas"
+          >
+            <i class="ki-filled ki-route text-sm"></i>
+            Rutear seleccionadas
+          </button>
+        </div>
+      </div>
+    }
+
+    <div class="card-table h-100 overflow-auto scrollable">
+      <table class="table w-full min-w-[44rem] border-collapse compact-row">
         <tbody>
           <tr
             *ngFor="let visita of arrVisitas; let i = index"
@@ -314,6 +349,14 @@
               <div class="flex flex-col space-y-0.5">
                 <div class="flex justify-between items-center">
                   <div class="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      class="checkbox checkbox-sm shrink-0"
+                      [checked]="estaSeleccionadaRutear(visita.id)"
+                      (click)="$event.stopPropagation()"
+                      (change)="toggleSeleccionRutear(visita)"
+                      [title]="estaSeleccionadaRutear(visita.id) ? 'Quitar de la selección' : 'Marcar para rutear sólo seleccionadas'"
+                    />
                     <span class="font-semibold text-gray-800 text-sm">
                       {{ visita.destinatario }}
                     </span>
