@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   EventEmitter,
   inject,
   Output,
@@ -51,6 +52,7 @@ export class VisitaImportarPorComplementoComponent extends General {
 
   public estaImportandoComplementos$: BehaviorSubject<boolean>;
   public complementos = signal<any[]>([]);
+  public filtrosAbiertos = signal<boolean>(false);
   private _visitaApiService = inject(VisitaApiService);
   private _complementoService = inject(ComplementoService);
   public numeroDeRegistrosAImportar: number = 1;
@@ -72,8 +74,21 @@ export class VisitaImportarPorComplementoComponent extends General {
       codigo_despacho: new FormControl(null),
       complemento: new FormControl(null, Validators.required),
     },
-    { validators: this.validarRango() }
+    { validators: [this.validarRango(), this.validarRangoFecha()] }
   );
+
+  // Signals derivados para el UI
+  private _formValueSignal = signal(this.formularioComplementos.value);
+  cantidadFiltrosActivos = computed(() => {
+    const v = this._formValueSignal();
+    // codigo_despacho NO se cuenta aqui: vive en la seccion 1 (Origen) como
+    // identificador principal del lote a importar, no como filtro.
+    const camposDeFiltro = [
+      v.desde, v.hasta, v.fecha_desde, v.fecha_hasta,
+      v.codigoContacto, v.codigoDestino, v.codigoZona,
+    ];
+    return camposDeFiltro.filter((x) => x !== null && x !== '' && x !== undefined).length;
+  });
 
   constructor() {
     super();
@@ -81,6 +96,11 @@ export class VisitaImportarPorComplementoComponent extends General {
     this.emitirCerrarModal = new EventEmitter();
     this.estaImportandoComplementos$ = new BehaviorSubject(false);
     this.getComplementos();
+    // Mantener el signal sincronizado con el form para que los computed
+    // (cantidadFiltrosActivos, textoBotonImportar) reaccionen.
+    this.formularioComplementos.valueChanges.subscribe((v) =>
+      this._formValueSignal.set(v)
+    );
   }
 
   getComplementos() {
@@ -94,8 +114,19 @@ export class VisitaImportarPorComplementoComponent extends General {
       const desde = formGroup.get('desde')?.value;
       const hasta = formGroup.get('hasta')?.value;
 
-      // Si "hasta" es menor que "desde", retorna el error
+      // Si "hasta" es menor que "desde", retorna el error. Solo aplica si
+      // ambos estan definidos.
+      if (desde == null || hasta == null) return null;
       return hasta < desde ? { rangoInvalido: true } : null;
+    };
+  }
+
+  validarRangoFecha(): ValidatorFn {
+    return (formGroup: AbstractControl): ValidationErrors | null => {
+      const desde = formGroup.get('fecha_desde')?.value;
+      const hasta = formGroup.get('fecha_hasta')?.value;
+      if (!desde || !hasta) return null;
+      return new Date(hasta) < new Date(desde) ? { rangoFechaInvalido: true } : null;
     };
   }
 
@@ -155,11 +186,16 @@ export class VisitaImportarPorComplementoComponent extends General {
   }
 
   reiniciarFormulario() {
+    // Preserva el complemento elegido para que el usuario pueda importar
+    // otra tanda con distintos filtros sin re-seleccionarlo.
+    const complementoActual = this.formularioComplementos.controls.complemento.value;
     this.formularioComplementos.reset({
       numeroRegistros: 100,
-      desde: '',
-      hasta: '',
+      desde: null,
+      hasta: null,
       pendienteDespacho: true,
+      novedad: false,
+      complemento: complementoActual,
     });
   }
 

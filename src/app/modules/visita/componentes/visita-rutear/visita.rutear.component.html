@@ -497,20 +497,50 @@
       ></app-paginador>
     </div>
   </div>
-  <div class="card h-[45rem]">
-    <div class="card-header">
-      <h3 class="card-title my-[8px]">Mapa</h3>
-      <div>
-        <button class="btn btn-primary" (click)="toggleMostrarFranjas()">
+  <div class="card h-[45rem] flex flex-col overflow-hidden">
+    <div class="card-header flex items-center justify-between gap-3 flex-wrap">
+      <div class="flex items-baseline gap-2">
+        <h3 class="card-title my-[8px]">Mapa</h3>
+        @if (markerPositions.length > 0) {
+          <span class="text-xs text-gray-400 dark:text-gray-500 tabular-nums">
+            {{ markerPositions.length }} visita{{ markerPositions.length === 1 ? '' : 's' }}
+          </span>
+        }
+      </div>
+      <div class="flex items-center gap-2">
+        @if (markerPositions.length > 0) {
+          <!-- Leyenda compacta de markers -->
+          <div class="hidden md:flex items-center gap-2 text-[11px] text-gray-600 dark:text-gray-400 pr-2 border-r border-gray-200 dark:border-gray-300">
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Normal
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span> Cita
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400"></span> Alerta
+            </span>
+            <span class="inline-flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span> Sin geo
+            </span>
+          </div>
+        }
+        <button
+          class="btn btn-sm btn-light inline-flex items-center gap-1"
+          (click)="toggleMostrarFranjas()"
+          [title]="(mostrarFranjas$ | async) ? 'Ocultar franjas' : 'Mostrar franjas'"
+        >
           @if (mostrarFranjas$ | async) {
-          <i class="ki-filled ki-eye-slash"></i>
-          Ocultar franjas } @else {
-          <i class="ki-filled ki-eye"></i>
-          Ver franjas }
+            <i class="ki-filled ki-eye-slash"></i>
+            <span class="hidden sm:inline">Ocultar franjas</span>
+          } @else {
+            <i class="ki-filled ki-eye"></i>
+            <span class="hidden sm:inline">Ver franjas</span>
+          }
         </button>
       </div>
     </div>
-    <div class="card-body h-full relative">
+    <div class="card-body h-full relative p-0 overflow-hidden flex-1">
       @if (markerPositions.length === 0) {
       <div
         class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-800/40 text-center px-6"
@@ -557,36 +587,74 @@
         </map-marker>
         }
         <map-info-window>
-          <section>
-            <p class="font-bold">{{ selectedVisita?.destinatario }}</p>
-            <div>
-              <i class="ki-filled ki-geolocation"></i>
-              <span class="ml-1">{{
-                selectedVisita?.destinatario_direccion
-              }}</span>
-            </div>
-            <div>
-              <span> # {{ selectedVisita?.numero }} </span>
-            </div>
-            <div class="mt-2 flex gap-2 items-center">
-              <div>
-                <i class="ki-filled ki-package"></i>
-                <span class="ml-1">{{ selectedVisita?.peso }}</span>
+          <section class="min-w-[240px] max-w-[300px] p-1 space-y-2">
+            <!-- Header: destinatario + badges -->
+            <div class="space-y-1">
+              <div class="flex items-start justify-between gap-2">
+                <p class="font-semibold text-gray-900 text-sm leading-snug">
+                  {{ selectedVisita?.destinatario }}
+                </p>
+                @if (selectedVisita?.numero) {
+                  <span class="shrink-0 inline-block bg-gray-100 text-gray-700 px-1.5 py-0.5 rounded text-[11px] font-medium tabular-nums">
+                    #{{ selectedVisita?.numero }}
+                  </span>
+                }
               </div>
-              <div>
-                <i class="ki-filled ki-time"></i>
-                <span class="ml-1"
-                  >{{ selectedVisita?.tiempo_servicio }}+{{
-                    selectedVisita?.tiempo_trayecto | redondear : 1
-                  }}
-                  min</span
-                >
+              <div class="flex flex-wrap gap-1">
+                @if (selectedVisita?.cita_inicio) {
+                  <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium">
+                    <i class="ki-filled ki-time"></i>
+                    Cita
+                  </span>
+                }
+                @if (selectedVisita?.estado_novedad) {
+                  <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium">
+                    <i class="ki-filled ki-information-3"></i>
+                    Novedad
+                  </span>
+                }
+                @if (selectedVisita?.estado_decodificado_alerta) {
+                  <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800 font-medium">
+                    <i class="ki-filled ki-warning"></i>
+                    Alerta geo
+                  </span>
+                }
+                @if (selectedVisita?.estado_decodificado === false) {
+                  <span class="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
+                    <i class="ki-filled ki-cross-circle"></i>
+                    Sin geo
+                  </span>
+                }
               </div>
             </div>
+
+            <!-- Direccion -->
+            <div class="flex items-start gap-1.5 text-[12px] text-gray-700">
+              <i class="ki-filled ki-geolocation text-gray-400 mt-0.5"></i>
+              <span class="leading-snug">{{ selectedVisita?.destinatario_direccion }}</span>
+            </div>
+
+            <!-- Stats -->
+            <div class="flex items-center gap-3 text-[11px] text-gray-600 pt-1 border-t border-gray-100">
+              <span class="inline-flex items-center gap-1" title="Peso">
+                <i class="ki-filled ki-package text-gray-400"></i>
+                {{ selectedVisita?.peso }} kg
+              </span>
+              <span class="inline-flex items-center gap-1" title="Unidades">
+                <i class="ki-filled ki-cube-2 text-gray-400"></i>
+                {{ selectedVisita?.unidades }}
+              </span>
+              <span class="inline-flex items-center gap-1" title="Tiempo (servicio + trayecto)">
+                <i class="ki-filled ki-timer text-gray-400"></i>
+                {{ selectedVisita?.tiempo_servicio }}+{{ selectedVisita?.tiempo_trayecto | redondear : 1 }} min
+              </span>
+            </div>
+
+            <!-- Ventana de cita -->
             @if (selectedVisita?.cita_inicio) {
-              <div class="mt-1 text-purple-600">
-                <i class="ki-filled ki-time text-purple-500"></i>
-                <span class="ml-1">Cita: {{ selectedVisita?.cita_inicio | date:'dd/MM HH:mm' }} - {{ selectedVisita?.cita_fin | date:'HH:mm' }}</span>
+              <div class="text-[11px] text-purple-700 bg-purple-50 dark:bg-purple-500/10 px-2 py-1.5 rounded">
+                <i class="ki-filled ki-time mr-1"></i>
+                {{ selectedVisita?.cita_inicio | date:'dd/MM HH:mm' }} – {{ selectedVisita?.cita_fin | date:'HH:mm' }}
               </div>
             }
           </section>
