@@ -7,7 +7,7 @@ export const mapeo: any = {
       {
         encabezado: 'Id',
         campoNombre: 'id',
-        campoTipo: 'IntegerField',
+        campoTipo: 'Id',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
@@ -138,7 +138,7 @@ export const mapeo: any = {
       {
         encabezado: 'Id',
         campoNombre: 'id',
-        campoTipo: 'IntegerField',
+        campoTipo: 'Id',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
@@ -225,7 +225,7 @@ export const mapeo: any = {
       {
         encabezado: 'Id',
         campoNombre: 'id',
-        campoTipo: 'IntegerField',
+        campoTipo: 'Id',
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,

@@ -6,7 +6,7 @@ export const guiaMapeo: any = {
       {
       nombre: 'id',
       campoNombre: 'id',
-      campoTipo: 'IntegerField',
+      campoTipo: 'Id',
       visibleTabla: true,
       visibleFiltro: true,
       ordenable: true,

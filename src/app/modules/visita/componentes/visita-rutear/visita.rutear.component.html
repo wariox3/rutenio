@@ -361,10 +361,15 @@
                       {{ visita.destinatario }}
                     </span>
                   </div>
-                  <span class="text-xs font-medium">
-                    Número: {{ visita.numero }} ·
-                    <span class="font-semibold text-sm text-gray-800">
-                      {{ visita.orden }}
+                  <span class="text-xs font-medium inline-flex items-center gap-2">
+                    <span class="text-[10px] text-gray-400 tabular-nums font-normal" title="ID interno">
+                      #{{ visita.id }}
+                    </span>
+                    <span>
+                      Número: {{ visita.numero }} ·
+                      <span class="font-semibold text-sm text-gray-800">
+                        {{ visita.orden }}
+                      </span>
                     </span>
                   </span>
                 </div>
@@ -390,7 +395,14 @@
                     @if (visita.cita_inicio) {
                       <i class="ki-filled ki-time text-purple-500 ml-1"></i>
                       <span class="text-purple-600">Cita: {{ visita.cita_inicio | date:'dd/MM HH:mm' }}-{{ visita.cita_fin | date:'HH:mm' }}</span>
-                      @if (visita.cita_tipo === 'obligatoria') {
+                      @if (esCitaObligatoriaVencida(visita)) {
+                        <span
+                          class="badge badge-xs badge-danger"
+                          title="Cita obligatoria vencida — el rutear la rechazará"
+                        >
+                          <i class="ki-filled ki-warning mr-0.5"></i>Vencida
+                        </span>
+                      } @else if (visita.cita_tipo === 'obligatoria') {
                         <span class="badge badge-xs badge-danger">Obligatoria</span>
                       } @else if (visita.cita_tipo === 'preferente') {
                         <span class="badge badge-xs badge-warning">Preferente</span>

@@ -92,9 +92,17 @@ export class DespachoTabVisitaComponent
     this.drawerAbierto.set(false);
   }
 
-  estadoVisita(v: Visita): 'entregada' | 'novedad' | 'alerta' | 'pendiente' {
+  esCitaObligatoriaVencida(v: any): boolean {
+    if (!v?.cita_fin) return false;
+    const tipo = v.cita_tipo || 'obligatoria';
+    if (tipo !== 'obligatoria') return false;
+    return new Date(v.cita_fin).getTime() < Date.now();
+  }
+
+  estadoVisita(v: Visita): 'entregada' | 'novedad' | 'cita-vencida' | 'alerta' | 'pendiente' {
     if (v.estado_entregado) return 'entregada';
     if (v.estado_novedad) return 'novedad';
+    if (this.esCitaObligatoriaVencida(v)) return 'cita-vencida';
     if (v.estado_decodificado_alerta || !v.estado_decodificado) return 'alerta';
     return 'pendiente';
   }

@@ -159,16 +159,19 @@
         class="border-t border-gray-100 dark:border-gray-300 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-coal-200/40"
         [class.bg-green-50]="estadoVisita(visita) === 'entregada'"
         [class.bg-orange-50]="estadoVisita(visita) === 'novedad'"
-        [class.bg-red-50]="estadoVisita(visita) === 'alerta'"
+        [class.bg-red-50]="estadoVisita(visita) === 'alerta' || estadoVisita(visita) === 'cita-vencida'"
         (click)="abrirDrawer(visita.id)"
       >
-        <!-- Identificadores: numero (grande) + documento (pequeño) -->
+        <!-- Identificadores: numero (grande) + documento (pequeño) + id interno -->
         <td class="px-3 py-2 align-top whitespace-nowrap">
           <div class="font-semibold text-gray-800 tabular-nums">
             {{ visita.numero || '—' }}
           </div>
           <div class="text-[11px] text-gray-500 truncate max-w-[8rem]" [title]="visita.documento">
             {{ visita.documento }}
+          </div>
+          <div class="text-[10px] text-gray-400 tabular-nums" title="ID interno">
+            #{{ visita.id }}
           </div>
         </td>
 
@@ -224,6 +227,14 @@
             @case ('novedad') {
               <span class="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium">
                 <i class="ki-filled ki-information-3"></i> Novedad
+              </span>
+            }
+            @case ('cita-vencida') {
+              <span
+                class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium"
+                title="Cita obligatoria vencida — rutear la rechazará"
+              >
+                <i class="ki-filled ki-warning"></i> Cita vencida
               </span>
             }
             @case ('alerta') {

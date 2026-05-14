@@ -593,6 +593,17 @@ export default class VisitaRutearComponent extends General implements OnInit {
     return this.idsRutearSeleccionadas.has(id);
   }
 
+  /**
+   * True si la visita tiene cita_obligatoria y su cita_fin ya pasó.
+   * Si está en este estado el backend la rechaza al rutear.
+   */
+  esCitaObligatoriaVencida(visita: any): boolean {
+    if (!visita?.cita_fin) return false;
+    const tipo = visita.cita_tipo || 'obligatoria';
+    if (tipo !== 'obligatoria') return false;
+    return new Date(visita.cita_fin).getTime() < Date.now();
+  }
+
   limpiarSeleccionRutear() {
     this.idsRutearSeleccionadas = new Set<number>();
   }
