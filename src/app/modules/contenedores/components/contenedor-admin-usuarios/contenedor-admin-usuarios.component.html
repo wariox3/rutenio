@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6">
       <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
         <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
           Total usuarios
@@ -48,6 +48,12 @@
         </div>
         <div class="text-2xl font-bold text-blue-400 mt-1">{{ estadisticas().super_admins }}</div>
       </div>
+      <div class="rounded-lg border border-coal-200 bg-coal-400 p-4">
+        <div class="text-[11px] uppercase tracking-wider text-zinc-500 font-semibold">
+          Pendientes de aprobar
+        </div>
+        <div class="text-2xl font-bold text-amber-400 mt-1">{{ estadisticas().pendientes }}</div>
+      </div>
     </div>
 
     <div class="rounded-lg border border-coal-200 bg-coal-400 overflow-hidden">
@@ -57,7 +63,8 @@
             { v: 'todos', t: 'Todos' },
             { v: 'activos', t: 'Activos' },
             { v: 'inactivos', t: 'Inactivos' },
-            { v: 'super_admin', t: 'Super admins' }
+            { v: 'super_admin', t: 'Super admins' },
+            { v: 'pendientes', t: 'Pendientes' }
           ]; track f.v) {
             <button
               type="button"
@@ -109,6 +116,11 @@
                   <td class="px-4 py-2.5">
                     <div class="font-semibold text-white">{{ u.nombre }} {{ u.apellido }}</div>
                     <div class="text-xs text-zinc-400">{{ u.username }}</div>
+                    @if (u.estado_registro === 'pendiente' && u.empresa_nombre) {
+                      <div class="text-[11px] text-amber-300/80 mt-0.5">
+                        Empresa declarada: {{ u.empresa_nombre }}
+                      </div>
+                    }
                   </td>
                   <td class="px-4 py-2.5">
                     <div class="flex flex-wrap gap-1">
@@ -125,6 +137,16 @@
                       @if (!u.is_superuser && !u.is_staff) {
                         <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-medium bg-coal-200 text-zinc-300">
                           Regular
+                        </span>
+                      }
+                      @if (u.estado_registro === 'pendiente') {
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-semibold bg-amber-500/20 text-amber-300">
+                          Pendiente
+                        </span>
+                      }
+                      @if (u.estado_registro === 'rechazado') {
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10.5px] font-semibold bg-red-500/20 text-red-300">
+                          Rechazado
                         </span>
                       }
                     </div>
@@ -186,6 +208,17 @@
                         <i class="ki-filled ki-plus text-[10px]"></i>
                         Asignar
                       </button>
+                      @if (u.estado_registro === 'pendiente') {
+                        <button
+                          type="button"
+                          class="inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] font-medium text-red-300 bg-red-500/15 hover:bg-red-500/25 transition-colors"
+                          title="Rechazar registro"
+                          (click)="rechazar(u)"
+                        >
+                          <i class="ki-filled ki-cross text-[10px]"></i>
+                          Rechazar
+                        </button>
+                      }
                       <button
                         type="button"
                         class="inline-flex items-center gap-1.5 px-2 py-1 rounded text-[11px] font-medium transition-colors"

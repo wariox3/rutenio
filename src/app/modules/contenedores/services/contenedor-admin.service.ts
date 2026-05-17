@@ -166,4 +166,13 @@ export class ContenedorAdminService {
       { headers: this.headers },
     );
   }
+
+  /** Rechaza un auto-registro pendiente: el conductor no obtiene acceso a la app. */
+  rechazarUsuario(usuarioId: number) {
+    return this.http.post<{ id: number; estado_registro: string }>(
+      `${environment.url_api}/contenedor/usuario/${usuarioId}/admin-rechazar/`,
+      {},
+      { headers: this.headers },
+    );
+  }
 }

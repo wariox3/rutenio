@@ -32,6 +32,9 @@ interface UsuarioGlobal {
   is_staff: boolean;
   is_superuser: boolean;
   verificado: boolean;
+  estado_registro?: string;
+  empresa_nombre?: string | null;
+  telefono?: string | null;
   fecha_creacion: string;
   admin_de: ContenedorRef[];
   invitado_a: ContenedorRef[];
@@ -52,10 +55,16 @@ interface RespuestaListado {
     total: number;
     activos: number;
     super_admins: number;
+    pendientes: number;
   };
 }
 
-type FiltroEstado = 'todos' | 'activos' | 'inactivos' | 'super_admin';
+type FiltroEstado =
+  | 'todos'
+  | 'activos'
+  | 'inactivos'
+  | 'super_admin'
+  | 'pendientes';
 
 @Component({
   selector: 'app-contenedor-admin-usuarios',
@@ -78,10 +87,16 @@ export default class ContenedorAdminUsuariosComponent implements OnInit, OnDestr
   cargando = signal<boolean>(true);
   usuarios = signal<UsuarioGlobal[]>([]);
   totalUsuarios = signal<number>(0);
-  estadisticas = signal<{ total: number; activos: number; super_admins: number }>({
+  estadisticas = signal<{
+    total: number;
+    activos: number;
+    super_admins: number;
+    pendientes: number;
+  }>({
     total: 0,
     activos: 0,
     super_admins: 0,
+    pendientes: 0,
   });
   pagina = signal<number>(1);
   porPagina = 25;
@@ -261,6 +276,30 @@ export default class ContenedorAdminUsuariosComponent implements OnInit, OnDestr
         error: (err) =>
           alert(
             'No se pudo cambiar el admin: ' +
+              (err?.error?.mensaje || 'Error inesperado'),
+          ),
+      });
+  }
+
+  rechazar(u: UsuarioGlobal) {
+    if (
+      !confirm(
+        `¿Rechazar el registro de ${u.username}?\n\nEl conductor no podrá acceder a la app.`,
+      )
+    ) {
+      return;
+    }
+    this.http
+      .post<{ id: number; estado_registro: string }>(
+        `${environment.url_api}/contenedor/usuario/${u.id}/admin-rechazar/`,
+        {},
+        { headers: this.headers },
+      )
+      .subscribe({
+        next: () => this.cargar(),
+        error: (err) =>
+          alert(
+            'No se pudo rechazar: ' +
               (err?.error?.mensaje || 'Error inesperado'),
           ),
       });
