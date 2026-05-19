@@ -168,6 +168,14 @@ export const mapeo: any = {
         ordenable: false,
       },
       {
+        encabezado: 'Conductor',
+        campoNombre: 'conductor_nombre',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
+      {
         encabezado: 'Peso',
         campoNombre: 'peso',
         campoTipo: 'IntegerField',

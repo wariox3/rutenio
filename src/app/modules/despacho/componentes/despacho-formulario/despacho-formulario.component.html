@@ -48,6 +48,21 @@
         </ng-container>
       </div>
     </div>
+    <div>
+      <div>
+        <app-label [required]="false">Conductor</app-label>
+        <ng-select
+          [items]="conductores()"
+          formControlName="conductor_id"
+          bindLabel="usuario__nombre"
+          bindValue="usuario"
+          notFoundText="Sin conductores"
+          placeholder="Selecciona un conductor"
+          class="select2Custom"
+        >
+        </ng-select>
+      </div>
+    </div>
     <div class="mb-5">
       <div>
         <app-label [required]="false">Código complemento</app-label>
@@ -106,6 +121,21 @@
                 El campo es requerido.
               </span>
             </ng-container>
+          </div>
+        </div>
+        <div>
+          <div>
+            <app-label [required]="false">Conductor</app-label>
+            <ng-select
+              [items]="conductores()"
+              formControlName="conductor_id"
+              bindLabel="usuario__nombre"
+              bindValue="usuario"
+              notFoundText="Sin conductores"
+              placeholder="Selecciona un conductor"
+              class="select2Custom"
+            >
+            </ng-select>
           </div>
         </div>
       </div>

@@ -30,6 +30,10 @@ import { RouterLink } from '@angular/router';
 import { FechasService } from '../../../../common/services/fechas.service';
 import { ParametrosApi } from '../../../../core/types/api.type';
 import { InputComponent } from "../../../../common/components/ui/form/input/input.component";
+import { take } from 'rxjs';
+import { ContenedorInvitacionLista } from '../../../contenedores/interfaces/usuarios-contenedores.interface';
+import { ContenedorService } from '../../../contenedores/services/contenedor.service';
+import { obtenerContenedorId } from '../../../../redux/selectors/contenedor.selector';
 
 @Component({
   selector: 'app-despacho-formulario',
@@ -50,8 +54,10 @@ import { InputComponent } from "../../../../common/components/ui/form/input/inpu
 export default class DespachoFormularioComponent extends General {
   private _generalService = inject(GeneralService);
   private _fechaService = inject(FechasService);
+  private _contenedorService = inject(ContenedorService);
 
   public vehiculos = signal<Vehiculo[]>([]);
+  public conductores = signal<ContenedorInvitacionLista[]>([]);
 
   @Input() isEditando: boolean;
   @Input() isModal: boolean;
@@ -80,11 +86,13 @@ export default class DespachoFormularioComponent extends General {
       Validators.minLength(3),
       Validators.maxLength(10),
     ]),
+    conductor_id: new FormControl<number | null>(null),
     estado_aprobado: new FormControl<boolean>(false),
     estado_terminado: new FormControl<boolean>(false),
   });
 
   ngOnInit(): void {
+    this._cargarConductores();
     if (this.isEditando) {
       this._initValoresFormulario();
       this.getVehiculoByPlaca(this.despachoForm.get('vehiculo__placa').value);
@@ -126,10 +134,28 @@ export default class DespachoFormularioComponent extends General {
       visitas_liberadas: this.despacho.visitas_liberadas,
       vehiculo: this.despacho.vehiculo,
       vehiculo__placa: this.despacho.vehiculo__placa,
+      conductor_id: this.despacho.conductor_id,
       estado_aprobado: this.despacho.estado_aprobado,
       estado_terminado: this.despacho.estado_terminado,
       codigo_complemento: this.despacho.codigo_complemento
     });
+  }
+
+  private _cargarConductores() {
+    this.store
+      .select(obtenerContenedorId)
+      .pipe(take(1))
+      .subscribe((id) => {
+        const contenedorId = Number(id);
+        if (!contenedorId) {
+          return;
+        }
+        this._contenedorService
+          .listaConductores(contenedorId)
+          .subscribe((respuesta) => {
+            this.conductores.set(respuesta.results);
+          });
+      });
   }
 
   onSubmit() {

@@ -122,6 +122,13 @@ export class ContenedorService {
     );
   }
 
+  /** Miembros del contenedor con acceso movil: candidatos a conductor de un despacho. */
+  listaConductores(contenedorId: number) {
+    return this.http.get<RespuestaApi<ContenedorInvitacionLista>>(
+      `${environment.url_api}/contenedor/usuariocontenedor/?contenedor_id=${contenedorId}&tiene_acceso_movil=true&page_size=300`
+    );
+  }
+
   cederAdmin(contenedorId: number, nuevoAdminId: number) {
     return this.http.post<{ mensaje: string }>(
       `${environment.url_api}/contenedor/usuariocontenedor/ceder-admin/`,
