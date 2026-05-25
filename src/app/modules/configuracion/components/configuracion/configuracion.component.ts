@@ -103,8 +103,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     rut_sincronizar_complemento: new FormControl(true),
     rut_rutear_franja: new FormControl(false),
     rut_direccion_origen: new FormControl(''),
-    rut_latitud: new FormControl(''),
-    rut_longitud: new FormControl(''),
+    rut_latitud: new FormControl<string | null>(null),
+    rut_longitud: new FormControl<string | null>(null),
     rut_decodificar_direcciones: new FormControl(true),
     rut_hora_inicio: new FormControl('07:00'),
     rut_estrategia_ruteo: new FormControl('balanceado'),
@@ -261,8 +261,19 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   submit() {
     if (this.guardando()) return;
     this.guardando.set(true);
+
+    // Ultima linea de defensa: el backend rechaza "" en DecimalField, asi
+    // que normalizamos lat/lon a null por si el form todavia los tiene
+    // como string vacio (cargas legacy o casos no cubiertos).
+    const raw = this.formularioConfiguracion.value as any;
+    const payload = {
+      ...raw,
+      rut_latitud: raw.rut_latitud === '' ? null : raw.rut_latitud,
+      rut_longitud: raw.rut_longitud === '' ? null : raw.rut_longitud,
+    };
+
     this._generalApiService
-      .guardarConfiguracion(this.formularioConfiguracion.value, 1)
+      .guardarConfiguracion(payload, 1)
       .pipe(
         tap((response) => {
           this.store.dispatch(
@@ -272,6 +283,9 @@ export default class ConfiguracionComponent extends General implements OnDestroy
           this.tieneCambiosSinGuardar.set(false);
         }),
         catchError((err) => {
+          // Loggea siempre el error completo para facilitar diagnostico en
+          // produccion. El usuario ve solo el toast amigable.
+          console.error('[configuracion.submit] error:', err);
           const status = err?.status ?? 0;
           let titulo = 'No se pudo guardar';
           let mensaje =
@@ -281,8 +295,16 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             mensaje =
               'Tu rol actual no permite modificar la configuración. Solicita acceso al administrador.';
           } else if (status === 0) {
-            titulo = 'Sin conexión';
-            mensaje = 'Revisa tu conexión a internet e intenta de nuevo.';
+            // status:0 puede ser red caida real (offline) o un error del
+            // backend bloqueado por CORS/proxy. Distinguimos con navigator.onLine.
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+              titulo = 'Sin conexión';
+              mensaje = 'Revisa tu conexión a internet e intenta de nuevo.';
+            } else {
+              titulo = 'No pudimos contactar al servidor';
+              mensaje =
+                'El servidor no respondió. Intenta de nuevo o contacta a soporte si persiste.';
+            }
           }
           this.alertaService.mensajeError(titulo, mensaje);
           return of(null);
@@ -295,12 +317,13 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   onAddressSelected(addressData: any) {
     // El ng-select de buscador-direcciones emite null cuando el usuario limpia
     // la seleccion (boton "x"). Sin este guard se cae con TypeError leyendo
-    // .address de null.
+    // .address de null. Lat/lon van como null (no "") para que el backend los
+    // acepte como NULL en DecimalField; "" rechazaria con 400.
     if (!addressData) {
       this.formularioConfiguracion.patchValue({
         rut_direccion_origen: '',
-        rut_latitud: '',
-        rut_longitud: '',
+        rut_latitud: null,
+        rut_longitud: null,
       });
       return;
     }
