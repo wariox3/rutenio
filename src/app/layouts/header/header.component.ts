@@ -9,7 +9,7 @@ import {
 import { filter, map, Observable } from 'rxjs';
 import { General } from '../../common/clases/general';
 import { MenuItems } from '../../interfaces/general/header/menu.interface';
-import { obtenerContenedorNombre, obtenerContenedorRol } from '../../redux/selectors/contenedor.selector';
+import { obtenerContenedorNombre, obtenerContenedorRol, obtenerPerfilWeb } from '../../redux/selectors/contenedor.selector';
 import { obtenerUsuario } from '../../redux/selectors/usuario.selector';
 import { MenuComponent } from '../menu/menu.component';
 import { SelectorContenedorComponent } from '../selector-contenedor/selector-contenedor.component';
@@ -35,6 +35,7 @@ export class HeaderComponent extends General implements OnInit {
   public usuario$ = this.store.select(obtenerUsuario);
   public contenedorNombre$: Observable<string>;
   public contenedorRol$: Observable<string>;
+  public perfilWeb$: Observable<string>;
   public esSuperAdmin$: Observable<boolean>;
   public puedeAdmin$: Observable<boolean>;
 
@@ -75,6 +76,9 @@ export class HeaderComponent extends General implements OnInit {
   ngOnInit(): void {
     this.contenedorNombre$ = this.store.select(obtenerContenedorNombre);
     this.contenedorRol$ = this.store.select(obtenerContenedorRol);
+    this.perfilWeb$ = this.store
+      .select(obtenerPerfilWeb)
+      .pipe(map((p: any) => p || ''));
     this.esSuperAdmin$ = this.usuario$.pipe(
       map((u: any) => !!u?.is_superuser)
     );

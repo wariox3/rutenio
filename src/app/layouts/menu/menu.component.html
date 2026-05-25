@@ -6,12 +6,17 @@
     data-menu-item-toggle="dropdown"
     data-menu-item-trigger="click|lg:click"
   >
-    <div class="menu-toggle btn btn-icon rounded-full">
+    <div class="menu-toggle btn rounded-full flex items-center gap-2 px-1 py-0.5">
       <img
         alt=""
         class="size-9 rounded-full border-2 shrink-0"
         [src]="imagen"
       />
+      @if (rolEtiqueta) {
+        <span class="badge badge-xs badge-outline hidden md:inline-flex" [ngClass]="rolEtiqueta.clase">
+          {{ rolEtiqueta.texto }}
+        </span>
+      }
     </div>
     <div
       class="menu-dropdown menu-default light:border-gray-300 dark:border-gray-600 w-full max-w-[250px]"

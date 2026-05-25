@@ -20,6 +20,7 @@ export class MenuComponent {
   @Input({ required: true }) nombre: string;
   @Input() contenedorNombre: string;
   @Input() rolContenedor: string = '';
+  @Input() perfilWeb: string = '';
   @Input() esSuperAdmin: boolean = false;
   @Input() puedeAdmin: boolean = false;
   @Input({ required: true }) menuItems: MenuItems[];
@@ -34,6 +35,15 @@ export class MenuComponent {
     }
     if (this.rolContenedor === 'propietario') {
       return { texto: 'Admin', clase: 'badge-success' };
+    }
+    // Perfil web define el rol operativo del usuario dentro del contenedor.
+    switch ((this.perfilWeb || '').toLowerCase()) {
+      case 'supervisor':
+        return { texto: 'Supervisor', clase: 'badge-warning' };
+      case 'operativo':
+        return { texto: 'Operativo', clase: 'badge-info' };
+      case 'consulta':
+        return { texto: 'Consulta', clase: 'badge-light' };
     }
     if (this.rolContenedor === 'usuario' || this.rolContenedor === 'invitado') {
       return { texto: 'Usuario', clase: 'badge-info' };

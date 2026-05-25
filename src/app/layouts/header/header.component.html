@@ -51,6 +51,7 @@
         [nombre]="(usuario$ | async)?.nombre"
         [contenedorNombre]="contenedorNombre$ | async"
         [rolContenedor]="(contenedorRol$ | async) || ''"
+        [perfilWeb]="(perfilWeb$ | async) || ''"
         [esSuperAdmin]="(esSuperAdmin$ | async) || false"
         [puedeAdmin]="(puedeAdmin$ | async) || false"
         [menuItems]="menuItems"
