@@ -15,7 +15,6 @@ import {
   configuracionActualizacionAction,
 } from '../../../../redux/actions/configuracion/configuracion.actions';
 import {
-  obtenerEmpresaId,
   obtenerEmpresaImagen,
 } from '../../../../redux/selectors/empresa.selectors';
 import {
@@ -426,7 +425,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     });
   }
 
-  eliminarLogo(event: boolean) {
+  eliminarLogo(_event: boolean) {
     this._empresaServices
       .eliminarLogoEmpresa(1)
       .pipe(
