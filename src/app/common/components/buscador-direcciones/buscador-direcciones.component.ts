@@ -19,6 +19,7 @@ import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { ConfiguracionApiService } from '../../../modules/configuracion/servicios/configuracion-api.service';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { LabelComponent } from "../ui/form/label/label.component";
+import { AlertaService } from '../../services/alerta.service';
 
 @Component({
   selector: 'app-buscador-direcciones',
@@ -36,6 +37,7 @@ export default class BuscadorDireccionesComponent
   @Input() direccionSeleccionada: string = '';
 
   private _configuracionService = inject(ConfiguracionApiService);
+  private _alertaService = inject(AlertaService);
 
   searchInput$ = new Subject<string>();
   loading = signal(false);
@@ -146,7 +148,20 @@ export default class BuscadorDireccionesComponent
         }
       },
       error: (error) => {
+        // 422 con codigo 'sin_coordenadas' = Google no devolvio geometry
+        // para ese place. Avisamos al usuario en lugar de fallar en
+        // silencio (antes solo console.error y el form quedaba a medias).
         console.error('Error al obtener detalles:', error);
+        const status = error?.status;
+        const mensaje =
+          error?.error?.mensaje ||
+          (status === 422
+            ? 'La dirección seleccionada no tiene coordenadas. Intenta con otra.'
+            : 'No se pudo obtener la información de la dirección. Intenta de nuevo.');
+        this._alertaService.mensajeError('Dirección no disponible', mensaje);
+        // Limpiamos la seleccion para que el usuario sepa que debe elegir otra.
+        this.selectedAddressModel = undefined;
+        this.addressSelected.emit(null);
       },
     });
   }
