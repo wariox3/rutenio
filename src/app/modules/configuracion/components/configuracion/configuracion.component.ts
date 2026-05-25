@@ -315,7 +315,23 @@ export default class ConfiguracionComponent extends General implements OnDestroy
           let titulo = 'No se pudo guardar';
           let mensaje =
             err?.error?.detail || err?.error?.mensaje || 'Intenta nuevamente.';
-          if (status === 403) {
+
+          // El exception handler global envuelve los 400 de DRF en
+          // {mensaje, codigo: 14, validaciones: {campo: [errores]}}. Si vienen
+          // validaciones especificas, las mostramos para que el usuario sepa
+          // exactamente que campo esta mal.
+          const validaciones = err?.error?.validaciones;
+          if (status === 400 && validaciones && typeof validaciones === 'object') {
+            const detalles = Object.entries(validaciones)
+              .map(([campo, errs]) => {
+                const errores = Array.isArray(errs) ? errs.join(', ') : String(errs);
+                return `<strong>${campo}</strong>: ${errores}`;
+              })
+              .join('<br/>');
+            if (detalles) {
+              mensaje = detalles;
+            }
+          } else if (status === 403) {
             titulo = 'Sin permiso';
             mensaje =
               'Tu rol actual no permite modificar la configuración. Solicita acceso al administrador.';
