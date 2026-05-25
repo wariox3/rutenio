@@ -19,10 +19,10 @@ import { AlertaSuspensionComponent } from "../../common/components/alerta-suspen
 import { ModalStandardComponent } from '../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../common/components/ui/modals/service/modal.service';
 import { TutorialComponent } from '../../common/components/tutorial/tutorial.component';
-import { Subject, filter, take, takeUntil, throttleTime } from 'rxjs';
+import { Subject, combineLatest, filter, take, takeUntil, throttleTime } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { obtenerConfiguracionDireccionOrigenVacia } from '../../redux/selectors/configuracion.selectors';
-import { obtenerContenedorId } from '../../redux/selectors/contenedor.selector';
+import { obtenerContenedorId, obtenerPermisoPor } from '../../redux/selectors/contenedor.selector';
 import { ContenedorActionActualizarPermisos } from '../../redux/actions/contenedor/contenedor.actions';
 import { ContenedorService } from '../../modules/contenedores/services/contenedor.service';
 import { TutorialService } from '../../common/components/tutorial/tutorial.service';
@@ -72,16 +72,22 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
       .subscribe(() => this._refrescarPermisos());
 
     // Modal "Configurar direccion": reactivo al state de configuracion.
-    this.store
-      .select(obtenerConfiguracionDireccionOrigenVacia)
+    // Solo se muestra a quienes pueden guardarla (propietario/admin o quien
+    // tenga permiso configuracion.editar). A operativo/consulta no se le
+    // empuja a un dead-end donde el boton Guardar esta oculto.
+    combineLatest([
+      this.store.select(obtenerConfiguracionDireccionOrigenVacia),
+      this.store.select(obtenerPermisoPor('configuracion', 'editar')),
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (estaVacia) => {
+        next: ([estaVacia, puedeEditar]) => {
           setTimeout(() => {
-            if (estaVacia && !this.tutorialService.tourActivo()) {
+            const debeMostrar = estaVacia && puedeEditar;
+            if (debeMostrar && !this.tutorialService.tourActivo()) {
               this.mostrarModalConfiguracion.set(true);
               this.modalService.open('modalConfiguracionDireccion');
-            } else if (estaVacia && this.tutorialService.tourActivo()) {
+            } else if (debeMostrar && this.tutorialService.tourActivo()) {
               this.mostrarModalConfiguracion.set(false);
             } else {
               this.mostrarModalConfiguracion.set(false);

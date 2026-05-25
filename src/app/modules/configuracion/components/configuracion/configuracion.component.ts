@@ -196,6 +196,17 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   onAddressSelected(addressData: any) {
+    // El ng-select de buscador-direcciones emite null cuando el usuario limpia
+    // la seleccion (boton "x"). Sin este guard se cae con TypeError leyendo
+    // .address de null.
+    if (!addressData) {
+      this.formularioConfiguracion.patchValue({
+        rut_direccion_origen: '',
+        rut_latitud: '',
+        rut_longitud: '',
+      });
+      return;
+    }
     this.formularioConfiguracion.patchValue({
       rut_direccion_origen: addressData.address,
       rut_latitud: addressData.latitude,
