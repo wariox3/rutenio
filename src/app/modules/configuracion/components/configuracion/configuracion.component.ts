@@ -6,7 +6,7 @@ import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
 import BuscadorDireccionesComponent from '../../../../common/components/buscador-direcciones/buscador-direcciones.component';
 import { CommonModule, Location } from '@angular/common';
-import { map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CargarImagenComponent } from '../../../../common/components/cargar-imagen/cargar-imagen.component';
 import {
   empresaActualizacionImangenAction,
@@ -202,6 +202,26 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             configuracionActualizacionAction({ configuracion: response })
           );
           this.alerta.mensajaExitoso('Configuración guardada correctamente');
+        }),
+        catchError((err) => {
+          // El backend devuelve 403 si el usuario perdio el permiso entre
+          // tanto, 4xx por validacion o 5xx por error inesperado. En cualquier
+          // caso sin alerta el usuario veria "no pasa nada" — mostramos un
+          // mensaje claro y dejamos los datos del formulario intactos.
+          const status = err?.status ?? 0;
+          let titulo = 'No se pudo guardar';
+          let mensaje =
+            err?.error?.detail || err?.error?.mensaje || 'Intenta nuevamente.';
+          if (status === 403) {
+            titulo = 'Sin permiso';
+            mensaje =
+              'Tu rol actual no permite modificar la configuración. Solicita acceso al administrador.';
+          } else if (status === 0) {
+            titulo = 'Sin conexión';
+            mensaje = 'Revisa tu conexión a internet e intenta de nuevo.';
+          }
+          this.alertaService.mensajeError(titulo, mensaje);
+          return of(null);
         })
       )
       .subscribe();
