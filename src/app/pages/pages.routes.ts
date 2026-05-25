@@ -64,8 +64,10 @@ export default [
     ],
   },
   {
+    // Facturacion vive bajo el panel administrativo: requiere admin_token
+    // (is_staff/is_superuser de la plataforma), no solo authGuard.
     path: 'facturacion',
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
     loadComponent: () =>
       import('./facturacion-layout/facturacion-layout.component'),
     children: [
