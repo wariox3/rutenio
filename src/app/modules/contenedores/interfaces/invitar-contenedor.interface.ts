@@ -10,16 +10,7 @@ export interface InvitarUsuario {
 }
 
 export interface RespuestaInvitacionUsuario {
-  verificacion: InvitacionUsuarioVerifiacion;
-}
-
-export interface InvitacionUsuarioVerifiacion {
-  id: number;
-  token: string;
-  estado_usado: boolean;
-  vence: string;
-  accion: string;
-  usuario_id: number;
-  contenedor_id: number;
-  usuario_invitado_username: string;
+  creados: number[];
+  ya_existian: number[];
+  mensaje: string;
 }

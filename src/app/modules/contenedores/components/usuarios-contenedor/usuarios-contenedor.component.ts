@@ -27,6 +27,25 @@ export default class UsuariosContenedorComponent implements OnInit, OnDestroy {
 
   public contenedor: ContenedorLista | null = null;
 
+  get usuariosActuales(): number {
+    return this.contenedor?.contenedor__usuarios ?? 0;
+  }
+
+  get limiteUsuarios(): number {
+    return this.contenedor?.contenedor__plan__usuarios_base ?? 0;
+  }
+
+  get estaEnLimite(): boolean {
+    return this.limiteUsuarios > 0 && this.usuariosActuales >= this.limiteUsuarios;
+  }
+
+  get estaCerca(): boolean {
+    // Aviso amarillo cuando queda solo 1 slot o el ratio supera 80%.
+    if (this.limiteUsuarios <= 0) return false;
+    const disponibles = this.limiteUsuarios - this.usuariosActuales;
+    return disponibles <= 1 || this.usuariosActuales / this.limiteUsuarios >= 0.8;
+  }
+
   ngOnInit(): void {
     this.store
       .select(obtenerContenedorState)

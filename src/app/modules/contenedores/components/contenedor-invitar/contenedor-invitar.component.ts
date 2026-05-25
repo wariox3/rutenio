@@ -151,18 +151,42 @@ export class ContenedorInvitarComponent extends General implements OnInit {
             perfilMovil: tieneAccesoMovil ? (f.perfilMovil.value as any) : undefined,
           })
         ),
-        tap(() => {
-          const mensaje = ids.length > 1
-            ? `Usuario asignado a ${ids.length} contenedores.`
-            : 'Se ha enviado un correo de invitación.';
-          this.alerta.mensajaExitoso(mensaje);
+        tap((respuesta) => {
+          // Backend devuelve { creados, ya_existian, mensaje }. Mostramos
+          // feedback diferenciado: si ya estaba en algun contenedor avisamos.
+          const creados = respuesta?.creados?.length || 0;
+          const yaExistian = respuesta?.ya_existian?.length || 0;
+          if (creados > 0 && yaExistian === 0) {
+            const msg = creados === 1
+              ? 'Se ha enviado un correo de invitación.'
+              : `Usuario asignado a ${creados} contenedores.`;
+            this.alerta.mensajaExitoso(msg);
+          } else if (creados > 0 && yaExistian > 0) {
+            this.alerta.mensajaExitoso(
+              `Usuario agregado a ${creados} contenedor(es). Ya pertenecía a otros ${yaExistian}.`,
+            );
+          } else if (yaExistian > 0) {
+            this._alertaService.mensajeError(
+              'Sin cambios',
+              'El usuario ya pertenece a este contenedor.',
+            );
+          } else {
+            this.alerta.mensajaExitoso('Asignación procesada.');
+          }
           this._limpiarFormulario();
         })
       )
       .subscribe({
         next: () => {
           this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
-        }
+        },
+        error: (err) => {
+          // 400 con codigo 24 => limite del plan alcanzado en uno o mas
+          // contenedores. El mensaje del backend ya es descriptivo.
+          const mensaje =
+            err?.error?.mensaje || 'No se pudo procesar la invitación.';
+          this._alertaService.mensajeError('Invitación bloqueada', mensaje);
+        },
       });
   }
 
