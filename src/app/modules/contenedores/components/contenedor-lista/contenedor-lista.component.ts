@@ -17,6 +17,7 @@ import {
   of,
   Subject,
   switchMap,
+  takeUntil,
   tap,
 } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -90,12 +91,13 @@ export default class ContenedorListaComponent
   public esAdmin = false;
 
   ngOnInit() {
-    this.store.select(obtenerUsuario).pipe(
-      tap((usuario) => {
+    this.store
+      .select(obtenerUsuario)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((usuario) => {
         this.esAdmin = usuario.is_staff;
         this.changeDetectorRef.detectChanges();
-      })
-    ).subscribe();
+      });
     this.consultarLista();
     this.initSearchContenedor();
     this.limpiarEmpresa();
@@ -103,7 +105,7 @@ export default class ContenedorListaComponent
 
   initSearchContenedor() {
     this.searchTerms
-      .pipe(debounceTime(500), distinctUntilChanged())
+      .pipe(debounceTime(500), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((term) => {
         this.searchTerm = term;
         this.consultarLista();
@@ -132,14 +134,20 @@ export default class ContenedorListaComponent
           this.arrContenedores = respuestaLista.results;
           this.changeDetectorRef.detectChanges();
         }),
-        catchError(({ error }) => {
+        catchError((err) => {
+          // El backend a veces responde { codigo, mensaje } y otras veces un
+          // error HTTP plano (timeout, CORS, 500 sin body). No asumir forma.
+          const body = err?.error ?? {};
+          const codigo = body.codigo ?? err?.status ?? '—';
+          const mensaje = body.mensaje ?? err?.message ?? 'Error inesperado';
           this.alerta.mensajeError(
             'Error consulta',
-            `Código: ${error.codigo} <br/> Mensaje: ${error.mensaje}`
+            `Código: ${codigo} <br/> Mensaje: ${mensaje}`,
           );
-          console.error(error);
+          console.error(err);
           return of(null);
-        })
+        }),
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -216,12 +224,36 @@ export default class ContenedorListaComponent
         catchError(() => {
           this.arrConectando[indexContenedor] = false;
           return of(null);
-        })
+        }),
+        takeUntil(this.destroy$),
       )
       .subscribe(() => {
         this.arrConectando[indexContenedor] = false;
         this.router.navigateByUrl('/dashboard');
       });
+  }
+
+  /**
+   * Mismo criterio que el badge del avatar: prioriza propietario, luego
+   * perfil_web (supervisor/operativo/consulta) y al final rol crudo. Asi
+   * la lista y el header muestran el mismo lenguaje al usuario.
+   */
+  getRolEtiqueta(c: ContenedorLista): { texto: string; clase: string } {
+    if (c.rol === 'propietario') {
+      return { texto: 'Admin', clase: 'badge-success' };
+    }
+    switch ((c.perfil_web || '').toLowerCase()) {
+      case 'supervisor':
+        return { texto: 'Supervisor', clase: 'badge-warning' };
+      case 'operativo':
+        return { texto: 'Operativo', clase: 'badge-info' };
+      case 'consulta':
+        return { texto: 'Consulta', clase: 'badge-light' };
+    }
+    if (c.rol === 'control') {
+      return { texto: 'Control', clase: 'badge-primary' };
+    }
+    return { texto: c.rol || 'Usuario', clase: 'badge-info' };
   }
 
   eliminarContenedor() {
