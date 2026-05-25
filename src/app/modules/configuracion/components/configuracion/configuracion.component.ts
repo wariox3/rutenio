@@ -6,7 +6,7 @@ import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
 import BuscadorDireccionesComponent from '../../../../common/components/buscador-direcciones/buscador-direcciones.component';
 import { CommonModule, Location } from '@angular/common';
-import { catchError, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { CargarImagenComponent } from '../../../../common/components/cargar-imagen/cargar-imagen.component';
 import {
   empresaActualizacionImangenAction,
@@ -153,6 +153,29 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   ngOnInit(): void {
+    // Si el store no tiene la configuracion cargada (caso al entrar via
+    // /admin/contenedores sin pasar por /contenedor/lista), la pedimos al
+    // backend y la guardamos en el store. Asi el form se hidrata con los
+    // valores reales del tenant en lugar de quedarse con defaults.
+    this.store
+      .select(obtenerConfiguracionInformacion)
+      .pipe(take(1))
+      .subscribe((c) => {
+        if (!c || !c.id || c.id === 0) {
+          this._generalApiService
+            .getConfiguracion(1)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (resp) => {
+                this.store.dispatch(
+                  configuracionActualizacionAction({ configuracion: resp }),
+                );
+              },
+              error: (err) => console.error('[configuracion] cargar inicial fallo', err),
+            });
+        }
+      });
+
     this.store
       .select(obtenerConfiguracionInformacion)
       .pipe(
@@ -285,21 +308,22 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     if (this.guardando()) return;
     this.guardando.set(true);
 
-    // Ultima linea de defensa: el backend rechaza "" en DecimalField, asi
-    // que normalizamos lat/lon a null por si el form todavia los tiene
-    // como string vacio (cargas legacy o casos no cubiertos).
+    // GenConfiguracion es singleton por tenant (PK = 1, empresa = 1). El
+    // serializer DRF marca ambos como required y no auto-completa. Si el
+    // store no se hidrato (caso comun al entrar via /admin/contenedores
+    // sin pasar por /contenedor/lista), el form arranca con id:0/empresa:0
+    // y el backend rebota: "id requerido" o "Invalid pk 0". Forzamos los
+    // valores singleton si vienen vacios.
     //
-    // Tambien sacamos `id` y `empresa` del payload: el id viene en la
-    // URL (/configuracion/1/) y empresa es una FK que no se cambia desde
-    // esta pantalla. Si el state del store no se hidrato antes (caso edge
-    // al entrar directo via URL), el form tendria empresa:0 y DRF lanzaria
-    // 400 "Invalid pk 0 - object does not exist".
+    // Tambien normalizamos lat/lon de "" a null por si el form todavia los
+    // tiene asi (cargas legacy o casos no cubiertos por el form init).
     const raw = this.formularioConfiguracion.value as any;
-    const { id: _id, empresa: _empresa, ...resto } = raw;
     const payload = {
-      ...resto,
-      rut_latitud: resto.rut_latitud === '' ? null : resto.rut_latitud,
-      rut_longitud: resto.rut_longitud === '' ? null : resto.rut_longitud,
+      ...raw,
+      id: raw.id && raw.id > 0 ? raw.id : 1,
+      empresa: raw.empresa && raw.empresa > 0 ? raw.empresa : 1,
+      rut_latitud: raw.rut_latitud === '' ? null : raw.rut_latitud,
+      rut_longitud: raw.rut_longitud === '' ? null : raw.rut_longitud,
     };
 
     this._generalApiService
