@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
@@ -24,6 +24,8 @@ import {
 import { EmpresaService } from '../../../empresa/servicios/empresa.service';
 import { AlertaService } from '../../../../common/services/alerta.service';
 import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
+import { FranjaService } from '../../../franja/servicios/franja.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-configuracion',
@@ -35,6 +37,7 @@ import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.d
     CommonModule,
     CargarImagenComponent,
     PermisoPorDirective,
+    RouterLink,
   ],
   templateUrl: './configuracion.component.html',
   styleUrl: './configuracion.component.css',
@@ -44,6 +47,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   private _location = inject(Location);
   private _empresaServices = inject(EmpresaService);
   private alertaService = inject(AlertaService);
+  private _franjaService = inject(FranjaService);
   private destroy$ = new Subject<void>();
   obtenerEmpresaImagen$ = this.store.select(obtenerEmpresaImagen);
   mostrarModalConfirmacion = false;
@@ -52,30 +56,44 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   private modalControl: FormControl | null = null;
   private ignorarCambios = false;
 
-  private switchDescripciones: Record<string, { titulo: string; descripcion: string }> = {
+  public guardando = signal<boolean>(false);
+  public tieneCambiosSinGuardar = signal<boolean>(false);
+  public avisoFranjasVacias = signal<boolean>(false);
+
+  /**
+   * Solo los switches con impacto operativo amplio piden confirmacion al
+   * usuario. Los demas (decodificar, geocerca) son seguros — toggle directo.
+   */
+  private switchDescripciones: Record<string, { titulo: string; descripcion: string; confirmar: boolean }> = {
     rut_sincronizar_complemento: {
-      titulo: 'Sincronizar complemento',
-      descripcion: 'Las entregas se sincronizarán automáticamente con el sistema complementario. Si se desactiva, los datos no se actualizarán en el sistema externo.',
+      titulo: 'Sincronizar con Reddoc',
+      descripcion: 'Las entregas se sincronizarán automáticamente con Reddoc. Si se desactiva, los datos no se actualizarán en el sistema externo.',
+      confirmar: true,
     },
     rut_rutear_franja: {
       titulo: 'Rutear por franjas',
-      descripcion: 'Las visitas se asignarán solo a vehículos cuyas franjas coincidan. Requiere que los vehículos tengan franjas asignadas. Visitas sin franja se asignarán a cualquier vehículo.',
+      descripcion: 'Las visitas se asignarán solo a vehículos cuyas franjas coincidan. Requiere franjas configuradas en vehículos y visitas.',
+      confirmar: true,
     },
     rut_decodificar_direcciones: {
       titulo: 'Decodificar direcciones',
-      descripcion: 'Al importar visitas, las direcciones se convertirán automáticamente a coordenadas (geocodificación). Si se desactiva, deberá ingresar latitud y longitud manualmente.',
+      descripcion: 'Al importar visitas, las direcciones se convertirán automáticamente a coordenadas.',
+      confirmar: false,
     },
     rut_whatsapp_habilitado: {
       titulo: 'Notificaciones WhatsApp',
-      descripcion: 'Se enviarán notificaciones WhatsApp a los destinatarios al aprobar despachos. Requiere tener configurada la integración con WhatsApp.',
+      descripcion: 'Se enviarán notificaciones WhatsApp a los destinatarios al aprobar despachos. Requiere tener configurada la conexión con WhatsApp.',
+      confirmar: true,
     },
     rut_alerta_parada_activa: {
       titulo: 'Alerta de parada prolongada',
-      descripcion: 'Se generará una alerta cuando un vehículo permanezca detenido más tiempo del permitido durante un despacho activo. La alerta aparecerá como pop-up en el módulo de Tráfico.',
+      descripcion: 'Se generará una alerta cuando un vehículo permanezca detenido más tiempo del permitido.',
+      confirmar: false,
     },
     rut_alerta_geocerca_activa: {
       titulo: 'Alerta de salida de geocerca',
-      descripcion: 'Se generará una alerta cuando un vehículo salga de la franja asignada a la visita en curso. La alerta aparecerá como pop-up en el módulo de Tráfico.',
+      descripcion: 'Se generará una alerta cuando un vehículo salga de la franja asignada a la visita en curso.',
+      confirmar: false,
     },
   };
 
@@ -104,6 +122,12 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   });
 
   goBack(): void {
+    if (this.tieneCambiosSinGuardar()) {
+      const ok = window.confirm(
+        '¿Salir sin guardar? Los cambios se perderán.',
+      );
+      if (!ok) return;
+    }
     this._location.back();
   }
 
@@ -153,24 +177,65 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_alertas_intervalo_segundos: configuracion.rut_alertas_intervalo_segundos ?? 30,
             });
             this.ignorarCambios = false;
+            this.tieneCambiosSinGuardar.set(false);
           }
         })
       )
       .subscribe();
 
-    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_decodificar_direcciones', 'rut_whatsapp_habilitado', 'rut_alerta_parada_activa', 'rut_alerta_geocerca_activa'] as const;
-    for (const key of switches) {
-      this.formularioConfiguracion.controls[key].valueChanges
+    // Switches con confirmacion: capturan el cambio y abren modal antes
+    // de aplicar. El usuario puede cancelar.
+    const switches = Object.entries(this.switchDescripciones);
+    for (const [key, info] of switches) {
+      const control = this.formularioConfiguracion.get(key) as FormControl;
+      if (!control) continue;
+      control.valueChanges
         .pipe(takeUntil(this.destroy$))
         .subscribe(() => {
           if (this.ignorarCambios) return;
-          const info = this.switchDescripciones[key];
-          this.modalTitulo = info.titulo;
-          this.modalDescripcion = info.descripcion;
-          this.modalControl = this.formularioConfiguracion.controls[key];
-          this.mostrarModalConfirmacion = true;
+          if (info.confirmar) {
+            this.modalTitulo = info.titulo;
+            this.modalDescripcion = info.descripcion;
+            this.modalControl = control;
+            this.mostrarModalConfirmacion = true;
+          }
         });
     }
+
+    // "Rutear por franjas": al activarlo, consulta franjas y avisa si no hay.
+    this.formularioConfiguracion.controls.rut_rutear_franja.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((activo) => {
+        if (this.ignorarCambios) return;
+        if (activo) {
+          this._verificarFranjas();
+        } else {
+          this.avisoFranjasVacias.set(false);
+        }
+      });
+
+    // Marca el form como sucio para mostrar el indicador "sin guardar".
+    this.formularioConfiguracion.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.ignorarCambios) return;
+        this.tieneCambiosSinGuardar.set(true);
+      });
+  }
+
+  private _verificarFranjas() {
+    this._franjaService
+      .consultarFranjas()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          const total =
+            res?.count ?? res?.cantidad_registros ?? (res?.results?.length ?? 0);
+          this.avisoFranjasVacias.set(total === 0);
+        },
+        // Si el endpoint falla, no rompemos el toggle — solo no mostramos aviso.
+        error: () => this.avisoFranjasVacias.set(false),
+      });
   }
 
   ngOnDestroy(): void {
@@ -194,6 +259,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   submit() {
+    if (this.guardando()) return;
+    this.guardando.set(true);
     this._generalApiService
       .guardarConfiguracion(this.formularioConfiguracion.value, 1)
       .pipe(
@@ -202,12 +269,9 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             configuracionActualizacionAction({ configuracion: response })
           );
           this.alerta.mensajaExitoso('Configuración guardada correctamente');
+          this.tieneCambiosSinGuardar.set(false);
         }),
         catchError((err) => {
-          // El backend devuelve 403 si el usuario perdio el permiso entre
-          // tanto, 4xx por validacion o 5xx por error inesperado. En cualquier
-          // caso sin alerta el usuario veria "no pasa nada" — mostramos un
-          // mensaje claro y dejamos los datos del formulario intactos.
           const status = err?.status ?? 0;
           let titulo = 'No se pudo guardar';
           let mensaje =
@@ -222,7 +286,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
           }
           this.alertaService.mensajeError(titulo, mensaje);
           return of(null);
-        })
+        }),
+        tap(() => this.guardando.set(false)),
       )
       .subscribe();
   }

@@ -1,208 +1,286 @@
-<button
-  (click)="goBack()"
-  class="btn btn-secondary mb-4 inline-flex items-center"
->
-  <i class="ki-duotone ki-left"></i>
-  Volver
-</button>
-<div class="card">
-  <div class="card-header">
-    <h1 class="card-title">Configuración</h1>
-  </div>
-  <div class="card-body p-6">
-    <form [formGroup]="formularioConfiguracion" class="space-y-6">
-      <div class="flex items-start justify-between mb-6">
-        <div class="relative w-[100px] lg:w-[160px] h-[100px] lg:h-[160px]">
-          <app-cargar-imagen
-            [recibirImagen]="getUserImageUrl() | async"
-            (dataFormulario)="recuperarBase64($event)"
-            (eliminarLogo)="eliminarLogo($event)"
-          ></app-cargar-imagen>
-        </div>
-        <button
-          *appPermisoPor="'configuracion.editar'"
-          id="tour-config-guardar"
-          (click)="submit()"
-          class="btn btn-primary px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-        >
-          Guardar
-        </button>
+<div class="pb-24">
+  <button
+    (click)="goBack()"
+    class="btn btn-secondary mb-4 inline-flex items-center"
+  >
+    <i class="ki-duotone ki-left"></i>
+    Volver
+  </button>
+
+  <div class="card">
+    <div class="card-header flex items-center justify-between gap-2 flex-wrap">
+      <div>
+        <h1 class="card-title">Configuración</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Parámetros operativos del contenedor</p>
       </div>
-      <div id="tour-config-direccion" class="space-y-4">
-        <app-buscador-direcciones
-          (addressSelected)="onAddressSelected($event)"
-          [direccionSeleccionada]="
-            formularioConfiguracion.get('rut_direccion_origen')?.value
-          "
-        ></app-buscador-direcciones>
-      </div>
-      <div class="space-y-4">
-        <div>
-          <label class="form-label font-normal text-gray-900">Hora de salida de vehículos</label>
-          <input
-            type="time"
-            class="input w-auto"
-            formControlName="rut_hora_inicio"
-          />
-          <p class="text-xs text-gray-500 mt-1">Hora estimada de salida de los vehículos. Se usa para calcular ventanas horarias de citas.</p>
-        </div>
-        <div>
-          <label class="form-label font-normal text-gray-900">Estrategia de ruteo</label>
-          <select class="select w-auto" formControlName="rut_estrategia_ruteo">
-            <option value="distancia">Ruta más corta</option>
-            <option value="balanceado">Balanceado</option>
-            <option value="tiempo">Menor tiempo</option>
-          </select>
-          <p class="text-xs text-gray-500 mt-1">
-            Ruta más corta: prioriza distancia, pasa por citas de camino.
-            Menor tiempo: evita esperas, llega justo a las citas.
-            Balanceado: equilibrio entre ambas.
-          </p>
-        </div>
-        <div>
-          <label class="form-label font-normal text-gray-900">Tipo de cita por defecto</label>
-          <select class="select w-auto" formControlName="rut_cita_tipo_defecto">
-            <option value="obligatoria">Obligatoria</option>
-            <option value="preferente">Preferente</option>
-          </select>
-          <p class="text-xs text-gray-500 mt-1">
-            Obligatoria: el ruteo no puede saltarse la ventana horaria.
-            Preferente: se respeta si es posible, pero puede ajustarse.
-          </p>
-        </div>
-      </div>
-      <div id="tour-config-opciones" class="space-y-4">
-        <app-switch
-          titulo="Sincronizar complemento"
-          [control]="
-            formularioConfiguracion.controls.rut_sincronizar_complemento
-          "
-          class="block"
-        ></app-switch>
+      @if (tieneCambiosSinGuardar()) {
+        <span class="badge badge-warning badge-outline">
+          <i class="ki-filled ki-information-3 me-1"></i>
+          Cambios sin guardar
+        </span>
+      }
+    </div>
 
-        <div
-          *ngIf="formularioConfiguracion.controls.rut_sincronizar_complemento.value"
-          class="pl-2 border-l-2 border-gray-200 dark:border-gray-200"
-        >
-          <label class="form-label font-normal text-gray-900">Límite de entregas por complemento</label>
-          <input
-            type="number"
-            min="1"
-            class="input w-auto"
-            formControlName="rut_limite_complemento"
-          />
-          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde complemento.</p>
-        </div>
+    <div class="card-body p-6">
+      <form [formGroup]="formularioConfiguracion" class="space-y-8">
 
-        <div>
-          <label class="form-label font-normal text-gray-900">Límite de registros por importación</label>
-          <input
-            type="number"
-            min="1"
-            class="input w-auto"
-            formControlName="rut_limite_importacion"
-          />
-          <p class="text-xs text-gray-500 mt-1">Cantidad máxima de filas permitidas al importar visitas desde archivo Excel.</p>
-        </div>
-
-        <div>
-          <label class="form-label font-normal text-gray-900">Intervalo de alertas (segundos)</label>
-          <input
-            type="number"
-            min="5"
-            class="input w-auto"
-            formControlName="rut_alertas_intervalo_segundos"
-          />
-          <p class="text-xs text-gray-500 mt-1">Frecuencia con la que el módulo de Tráfico consulta nuevas alertas.</p>
-        </div>
-
-        <app-switch
-          titulo="Rutear por franjas"
-          [control]="formularioConfiguracion.controls.rut_rutear_franja"
-          class="block"
-        ></app-switch>
-
-        <app-switch
-          titulo="Decodificar direcciones"
-          [control]="formularioConfiguracion.controls.rut_decodificar_direcciones"
-          class="block"
-        ></app-switch>
-
-        <app-switch
-          titulo="Notificaciones WhatsApp"
-          [control]="formularioConfiguracion.controls.rut_whatsapp_habilitado"
-          class="block"
-        ></app-switch>
-
-        <div
-          *ngIf="formularioConfiguracion.controls.rut_whatsapp_habilitado.value"
-          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-200"
-        >
-          <div>
-            <label class="form-label font-normal text-gray-900">Plantilla de despacho</label>
-            <input
-              type="text"
-              class="input w-full"
-              formControlName="rut_whatsapp_plantilla_despacho"
-              placeholder="nombre_plantilla_meta"
-            />
-            <p class="text-xs text-gray-500 mt-1">Nombre exacto de la plantilla aprobada en Meta para notificar despachos. Si se deja vacío, se usa el valor por defecto del servidor.</p>
+        <!-- ================== Identidad / Logo ================== -->
+        <section>
+          <h2 class="text-base font-semibold text-gray-900 mb-3">Identidad</h2>
+          <div class="relative w-[100px] lg:w-[160px] h-[100px] lg:h-[160px]">
+            <app-cargar-imagen
+              [recibirImagen]="getUserImageUrl() | async"
+              (dataFormulario)="recuperarBase64($event)"
+              (eliminarLogo)="eliminarLogo($event)"
+            ></app-cargar-imagen>
           </div>
-          <div>
-            <label class="form-label font-normal text-gray-900">Idioma de la plantilla</label>
-            <input
-              type="text"
-              class="input w-auto"
-              formControlName="rut_whatsapp_plantilla_idioma"
-              placeholder="es"
-            />
-            <p class="text-xs text-gray-500 mt-1">Código de idioma (es, en_US, etc.) registrado en la plantilla de Meta.</p>
-          </div>
-        </div>
+        </section>
 
-        <app-switch
-          titulo="Alerta de parada prolongada"
-          [control]="formularioConfiguracion.controls.rut_alerta_parada_activa"
-          class="block"
-        ></app-switch>
+        <!-- ================== Ruteo ================== -->
+        <section>
+          <h2 class="text-base font-semibold text-gray-900 mb-3">Ruteo</h2>
+          <div class="space-y-4">
+            <div id="tour-config-direccion">
+              <label class="form-label font-normal text-gray-900">Dirección de origen</label>
+              <app-buscador-direcciones
+                (addressSelected)="onAddressSelected($event)"
+                [direccionSeleccionada]="
+                  formularioConfiguracion.get('rut_direccion_origen')?.value
+                "
+              ></app-buscador-direcciones>
+              <p class="text-xs text-gray-500 mt-1">Punto de partida de los vehículos. Se usa para calcular las rutas.</p>
+            </div>
 
-        <div
-          *ngIf="formularioConfiguracion.controls.rut_alerta_parada_activa.value"
-          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-200"
-        >
-          <div>
-            <label class="form-label font-normal text-gray-900">Minutos detenido para alertar</label>
-            <input
-              type="number"
-              min="1"
-              class="input w-auto"
-              formControlName="rut_alerta_parada_minutos"
-            />
-            <p class="text-xs text-gray-500 mt-1">Tiempo mínimo sin movimiento para generar la alerta.</p>
-          </div>
-          <div>
-            <label class="form-label font-normal text-gray-900">Radio (metros)</label>
-            <input
-              type="number"
-              min="10"
-              class="input w-auto"
-              formControlName="rut_alerta_parada_radio_metros"
-            />
-            <p class="text-xs text-gray-500 mt-1">Distancia máxima dentro de la cual se considera detenido.</p>
-          </div>
-        </div>
+            <div>
+              <label class="form-label font-normal text-gray-900">Hora de salida de vehículos</label>
+              <input
+                type="time"
+                class="input w-auto"
+                formControlName="rut_hora_inicio"
+              />
+              <p class="text-xs text-gray-500 mt-1">Hora estimada de salida. Se usa para calcular ventanas horarias de citas.</p>
+            </div>
 
-        <app-switch
-          titulo="Alerta de salida de geocerca"
-          [control]="formularioConfiguracion.controls.rut_alerta_geocerca_activa"
-          class="block"
-        ></app-switch>
-      </div>
-    </form>
+            <div>
+              <label class="form-label font-normal text-gray-900">Estrategia de ruteo</label>
+              <select class="select w-auto" formControlName="rut_estrategia_ruteo">
+                <option value="distancia">Ruta más corta</option>
+                <option value="balanceado">Balanceado</option>
+                <option value="tiempo">Menor tiempo</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-1">
+                Ruta más corta: prioriza distancia. Menor tiempo: evita esperas. Balanceado: equilibrio.
+              </p>
+            </div>
+
+            <div>
+              <label class="form-label font-normal text-gray-900">Tipo de cita por defecto</label>
+              <select class="select w-auto" formControlName="rut_cita_tipo_defecto">
+                <option value="obligatoria">Obligatoria</option>
+                <option value="preferente">Preferente</option>
+              </select>
+              <p class="text-xs text-gray-500 mt-1">
+                Obligatoria: el ruteo no puede saltarse la ventana. Preferente: se respeta si es posible.
+              </p>
+            </div>
+
+            <app-switch
+              titulo="Rutear por franjas"
+              [control]="formularioConfiguracion.controls.rut_rutear_franja"
+              class="block"
+            ></app-switch>
+            @if (formularioConfiguracion.controls.rut_rutear_franja.value && avisoFranjasVacias()) {
+              <div class="pl-2 border-l-2 border-amber-300 bg-amber-50 px-3 py-2 rounded">
+                <p class="text-xs text-amber-800">
+                  <i class="ki-filled ki-information-3"></i>
+                  No hay franjas configuradas en este contenedor. El ruteo por franjas requiere franjas creadas.
+                  <a routerLink="/administracion/franja/lista" class="underline font-semibold ms-1">Configurarlas ahora</a>
+                </p>
+              </div>
+            }
+
+            <app-switch
+              titulo="Decodificar direcciones"
+              [control]="formularioConfiguracion.controls.rut_decodificar_direcciones"
+              class="block"
+            ></app-switch>
+          </div>
+        </section>
+
+        <!-- ================== Sincronización ================== -->
+        <section>
+          <h2 class="text-base font-semibold text-gray-900 mb-3">Sincronización con Reddoc</h2>
+          <div class="space-y-4">
+            <app-switch
+              titulo="Sincronizar con Reddoc"
+              [control]="
+                formularioConfiguracion.controls.rut_sincronizar_complemento
+              "
+              class="block"
+            ></app-switch>
+
+            @if (formularioConfiguracion.controls.rut_sincronizar_complemento.value) {
+              <div class="pl-2 border-l-2 border-gray-200 dark:border-gray-200">
+                <label class="form-label font-normal text-gray-900">Límite de entregas por sincronización</label>
+                <input
+                  type="number"
+                  min="1"
+                  class="input w-auto"
+                  formControlName="rut_limite_complemento"
+                />
+                <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde Reddoc.</p>
+              </div>
+            }
+
+            <div>
+              <label class="form-label font-normal text-gray-900">Límite de registros por importación</label>
+              <input
+                type="number"
+                min="1"
+                class="input w-auto"
+                formControlName="rut_limite_importacion"
+              />
+              <p class="text-xs text-gray-500 mt-1">Filas máximas al importar visitas desde Excel.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================== Notificaciones ================== -->
+        <section>
+          <h2 class="text-base font-semibold text-gray-900 mb-3">Notificaciones</h2>
+          <div class="space-y-4">
+            <app-switch
+              titulo="Notificaciones WhatsApp"
+              [control]="formularioConfiguracion.controls.rut_whatsapp_habilitado"
+              class="block"
+            ></app-switch>
+
+            @if (formularioConfiguracion.controls.rut_whatsapp_habilitado.value) {
+              <div class="pl-2 border-l-2 border-gray-200 dark:border-gray-200 space-y-3">
+                <div class="bg-blue-50 border border-blue-200 rounded px-3 py-2">
+                  <p class="text-xs text-blue-800">
+                    <i class="ki-filled ki-information-3"></i>
+                    Las notificaciones requieren tener conectado un número de WhatsApp Business.
+                    <a routerLink="/configuracion/whatsapp" class="underline font-semibold ms-1">Configurar conexión</a>
+                  </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="form-label font-normal text-gray-900">Plantilla de despacho</label>
+                    <input
+                      type="text"
+                      class="input w-full"
+                      formControlName="rut_whatsapp_plantilla_despacho"
+                      placeholder="nombre_plantilla_meta"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Nombre exacto de la plantilla aprobada en Meta. Si se deja vacío, se usa el valor por defecto del servidor.</p>
+                  </div>
+                  <div>
+                    <label class="form-label font-normal text-gray-900">Idioma de la plantilla</label>
+                    <input
+                      type="text"
+                      class="input w-auto"
+                      formControlName="rut_whatsapp_plantilla_idioma"
+                      placeholder="es"
+                    />
+                    <p class="text-xs text-gray-500 mt-1">Código de idioma (es, en_US, etc.) registrado en Meta.</p>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- ================== Alertas ================== -->
+        <section id="tour-config-opciones">
+          <h2 class="text-base font-semibold text-gray-900 mb-3">Alertas de Tráfico</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="form-label font-normal text-gray-900">Intervalo de alertas (segundos)</label>
+              <input
+                type="number"
+                min="5"
+                class="input w-auto"
+                formControlName="rut_alertas_intervalo_segundos"
+              />
+              <p class="text-xs text-gray-500 mt-1">Frecuencia con la que el módulo de Tráfico consulta nuevas alertas.</p>
+            </div>
+
+            <app-switch
+              titulo="Alerta de parada prolongada"
+              [control]="formularioConfiguracion.controls.rut_alerta_parada_activa"
+              class="block"
+            ></app-switch>
+
+            @if (formularioConfiguracion.controls.rut_alerta_parada_activa.value) {
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-200">
+                <div>
+                  <label class="form-label font-normal text-gray-900">Minutos detenido para alertar</label>
+                  <input
+                    type="number"
+                    min="1"
+                    class="input w-auto"
+                    formControlName="rut_alerta_parada_minutos"
+                  />
+                  <p class="text-xs text-gray-500 mt-1">Tiempo mínimo sin movimiento para generar la alerta.</p>
+                </div>
+                <div>
+                  <label class="form-label font-normal text-gray-900">Radio (metros)</label>
+                  <input
+                    type="number"
+                    min="10"
+                    class="input w-auto"
+                    formControlName="rut_alerta_parada_radio_metros"
+                  />
+                  <p class="text-xs text-gray-500 mt-1">Distancia máxima dentro de la cual se considera detenido.</p>
+                </div>
+              </div>
+            }
+
+            <app-switch
+              titulo="Alerta de salida de geocerca"
+              [control]="formularioConfiguracion.controls.rut_alerta_geocerca_activa"
+              class="block"
+            ></app-switch>
+          </div>
+        </section>
+      </form>
+    </div>
   </div>
 </div>
 
-<!-- Modal de confirmación al cambiar switch -->
+<!-- Barra de guardado sticky en el footer -->
+<div
+  *appPermisoPor="'configuracion.editar'"
+  class="fixed bottom-0 left-0 right-0 lg:left-[var(--tw-sidebar-width,260px)] bg-white border-t border-gray-200 px-4 py-3 z-30 shadow-lg"
+>
+  <div class="flex items-center justify-end gap-3">
+    @if (tieneCambiosSinGuardar()) {
+      <span class="text-xs text-amber-700 hidden sm:inline">
+        <i class="ki-filled ki-information-3"></i>
+        Tienes cambios sin guardar
+      </span>
+    }
+    <button
+      id="tour-config-guardar"
+      (click)="submit()"
+      [disabled]="guardando()"
+      class="btn btn-primary px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      @if (guardando()) {
+        <span class="inline-flex items-center gap-2">
+          <span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+          Guardando…
+        </span>
+      } @else {
+        <span>Guardar</span>
+      }
+    </button>
+  </div>
+</div>
+
+<!-- Modal de confirmación al cambiar switch crítico -->
 <div *ngIf="mostrarModalConfirmacion" class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="fixed inset-0 bg-black/50" (click)="cerrarConfirmacion()"></div>
   <div class="relative bg-white dark:bg-gray-100 rounded-lg shadow-xl w-full max-w-md mx-4 z-10">
