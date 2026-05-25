@@ -148,16 +148,14 @@ export default class BuscadorDireccionesComponent
         }
       },
       error: (error) => {
-        // 422 con codigo 'sin_coordenadas' = Google no devolvio geometry
-        // para ese place. Avisamos al usuario en lugar de fallar en
-        // silencio (antes solo console.error y el form quedaba a medias).
+        // El backend traduce el status de Google (ZERO_RESULTS,
+        // OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR)
+        // a un mensaje claro y lo devuelve en error.mensaje. Si esta ausente,
+        // mostramos uno generico.
         console.error('Error al obtener detalles:', error);
-        const status = error?.status;
         const mensaje =
           error?.error?.mensaje ||
-          (status === 422
-            ? 'La dirección seleccionada no tiene coordenadas. Intenta con otra.'
-            : 'No se pudo obtener la información de la dirección. Intenta de nuevo.');
+          'No se pudo obtener la información de la dirección. Intenta de nuevo.';
         this._alertaService.mensajeError('Dirección no disponible', mensaje);
         // Limpiamos la seleccion para que el usuario sepa que debe elegir otra.
         this.selectedAddressModel = undefined;
