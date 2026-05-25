@@ -55,6 +55,13 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   modalDescripcion = '';
   private modalControl: FormControl | null = null;
   private ignorarCambios = false;
+  /**
+   * Snapshot del form tal como vino del backend (o tal como se guardo por
+   * ultima vez). Lo usamos para comparar el value actual y decidir si
+   * mostrar "Cambios sin guardar" — asi seleccionar la misma direccion u
+   * otros cambios que terminan equivalentes no marcan el form como sucio.
+   */
+  private _baselineGuardado: any = null;
 
   public guardando = signal<boolean>(false);
   public tieneCambiosSinGuardar = signal<boolean>(false);
@@ -177,6 +184,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_alertas_intervalo_segundos: configuracion.rut_alertas_intervalo_segundos ?? 30,
             });
             this.ignorarCambios = false;
+            this._baselineGuardado = this._snapshotForm();
             this.tieneCambiosSinGuardar.set(false);
           }
         })
@@ -214,13 +222,28 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         }
       });
 
-    // Marca el form como sucio para mostrar el indicador "sin guardar".
+    // Marca el form como sucio solo si el value actual difiere del
+    // baseline guardado. Asi seleccionar la misma direccion (o cualquier
+    // cambio que termine en el mismo estado) no muestra "Cambios sin
+    // guardar" innecesariamente.
     this.formularioConfiguracion.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         if (this.ignorarCambios) return;
-        this.tieneCambiosSinGuardar.set(true);
+        this.tieneCambiosSinGuardar.set(this._formDifiereDelBaseline());
       });
+  }
+
+  private _snapshotForm(): any {
+    return JSON.parse(JSON.stringify(this.formularioConfiguracion.value));
+  }
+
+  private _formDifiereDelBaseline(): boolean {
+    if (!this._baselineGuardado) return true;
+    return (
+      JSON.stringify(this.formularioConfiguracion.value) !==
+      JSON.stringify(this._baselineGuardado)
+    );
   }
 
   private _verificarFranjas() {
@@ -280,6 +303,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             configuracionActualizacionAction({ configuracion: response })
           );
           this.alerta.mensajaExitoso('Configuración guardada correctamente');
+          // Despues del save exitoso, el form actual ES el baseline.
+          this._baselineGuardado = this._snapshotForm();
           this.tieneCambiosSinGuardar.set(false);
         }),
         catchError((err) => {
@@ -327,11 +352,15 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       });
       return;
     }
-    this.formularioConfiguracion.patchValue({
+    // Solo patcheamos lat/lon si la API de detalle realmente las trajo —
+    // a veces no vienen (response incompleto, place sin coordenadas). En
+    // ese caso conservamos lo que ya tenia el form para no perderlas.
+    const patch: Record<string, any> = {
       rut_direccion_origen: addressData.address,
-      rut_latitud: addressData.latitude,
-      rut_longitud: addressData.longitude,
-    });
+    };
+    if (addressData.latitude != null) patch['rut_latitud'] = addressData.latitude;
+    if (addressData.longitude != null) patch['rut_longitud'] = addressData.longitude;
+    this.formularioConfiguracion.patchValue(patch);
   }
 
   recuperarBase64(event: any) {
