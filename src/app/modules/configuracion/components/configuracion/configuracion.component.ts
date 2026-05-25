@@ -288,11 +288,18 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     // Ultima linea de defensa: el backend rechaza "" en DecimalField, asi
     // que normalizamos lat/lon a null por si el form todavia los tiene
     // como string vacio (cargas legacy o casos no cubiertos).
+    //
+    // Tambien sacamos `id` y `empresa` del payload: el id viene en la
+    // URL (/configuracion/1/) y empresa es una FK que no se cambia desde
+    // esta pantalla. Si el state del store no se hidrato antes (caso edge
+    // al entrar directo via URL), el form tendria empresa:0 y DRF lanzaria
+    // 400 "Invalid pk 0 - object does not exist".
     const raw = this.formularioConfiguracion.value as any;
+    const { id: _id, empresa: _empresa, ...resto } = raw;
     const payload = {
-      ...raw,
-      rut_latitud: raw.rut_latitud === '' ? null : raw.rut_latitud,
-      rut_longitud: raw.rut_longitud === '' ? null : raw.rut_longitud,
+      ...resto,
+      rut_latitud: resto.rut_latitud === '' ? null : resto.rut_latitud,
+      rut_longitud: resto.rut_longitud === '' ? null : resto.rut_longitud,
     };
 
     this._generalApiService
