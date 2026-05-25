@@ -49,6 +49,7 @@
       <app-selector-contenedor></app-selector-contenedor>
       <app-menu
         [nombre]="(usuario$ | async)?.nombre"
+        [correo]="(usuario$ | async)?.correo || ''"
         [contenedorNombre]="contenedorNombre$ | async"
         [rolContenedor]="(contenedorRol$ | async) || ''"
         [perfilWeb]="(perfilWeb$ | async) || ''"

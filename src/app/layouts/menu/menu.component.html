@@ -19,58 +19,60 @@
       }
     </div>
     <div
-      class="menu-dropdown menu-default light:border-gray-300 dark:border-gray-600 w-full max-w-[250px]"
+      class="menu-dropdown menu-default light:border-gray-300 dark:border-gray-600 w-full max-w-[280px]"
     >
-      <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
-        <div class="flex items-center gap-2">
+      <!-- Cabecera: identidad del usuario y contenedor activo -->
+      <div class="flex items-center justify-between px-5 py-3 gap-2">
+        <div class="flex items-center gap-2.5 min-w-0">
           <img
             alt=""
-            class="size-9 rounded-full border-2"
+            class="size-10 rounded-full border-2 shrink-0"
             [src]="imagen"
           />
-          <div class="flex flex-col gap-1.5">
-            <span class="text-sm text-gray-800 font-semibold leading-none">
+          <div class="flex flex-col gap-0.5 min-w-0">
+            <span class="text-sm text-gray-900 font-semibold leading-tight truncate">
               {{ nombre }}
             </span>
-            <span
-              class="text-xs text-gray-600 font-medium leading-none"
-            >
-              {{ contenedorNombre }}
-          </span>
+            @if (correo) {
+              <span class="text-xs text-gray-500 leading-tight truncate">
+                {{ correo }}
+              </span>
+            }
+            @if (contenedorNombre) {
+              <span class="text-xs text-gray-600 font-medium leading-tight truncate flex items-center gap-1 mt-0.5">
+                <i class="ki-filled ki-abstract-26 text-xs"></i>
+                {{ contenedorNombre }}
+              </span>
+            }
           </div>
         </div>
         @if (rolEtiqueta) {
-          <span class="badge badge-xs badge-outline" [ngClass]="rolEtiqueta.clase">
+          <span class="badge badge-xs badge-outline shrink-0" [ngClass]="rolEtiqueta.clase">
             {{ rolEtiqueta.texto }}
           </span>
-        } @else {
-          <span class="badge badge-xs badge-primary badge-outline"> Pro </span>
         }
       </div>
+
       <div class="menu-separator"></div>
-      <div class="flex flex-col">
-        <div class="menu-item">
-          <!-- <a class="menu-link" href="{{ url_reddoc_cuenta }}/perfil" target="_blank">
-            <span class="menu-icon">
-              <i class="ki-filled ki-user"></i>
-            </span>
-            <span class="menu-title"> Gestionar cuenta </span>
-          </a> -->
-        </div>
-        @for (item of menuItems; track $index) {
-        <div class="menu-item">
-          <button class="menu-link" [routerLink]="item.link">
-            <span class="menu-icon">
-              <i class="ki-filled" [ngClass]="item.icono"></i>
-            </span>
-            <span class="menu-title"> {{ item.titulo }} </span>
-          </button>
-        </div>
-        }
-      </div>
+
+      <!-- Navegacion principal -->
       @if (menuItems.length) {
-      <div class="menu-separator"></div>
+        <div class="flex flex-col">
+          @for (item of menuItems; track $index) {
+            <div class="menu-item">
+              <button class="menu-link" [routerLink]="item.link">
+                <span class="menu-icon">
+                  <i class="ki-filled" [ngClass]="item.icono"></i>
+                </span>
+                <span class="menu-title"> {{ item.titulo }} </span>
+              </button>
+            </div>
+          }
+        </div>
+        <div class="menu-separator"></div>
       }
+
+      <!-- Acciones administrativas (solo staff/superuser) -->
       @if (puedeAdmin) {
         <div class="menu-item">
           <a class="menu-link" routerLink="/admin/contenedores">
@@ -83,14 +85,16 @@
         </div>
         <div class="menu-separator"></div>
       }
+
+      <!-- Preferencias y sesion -->
       <div class="flex flex-col">
-        <div class="menu-item mb-0.5">
-          <div class="menu-link">
+        <label class="menu-item mb-0.5 cursor-pointer">
+          <span class="menu-link">
             <span class="menu-icon">
               <i class="ki-filled ki-moon"></i>
             </span>
             <span class="menu-title">Modo oscuro</span>
-            <label class="switch switch-sm">
+            <span class="switch switch-sm ms-auto">
               <input
                 data-theme-state="dark"
                 data-theme-toggle="true"
@@ -98,9 +102,9 @@
                 type="checkbox"
                 value="1"
               />
-            </label>
-          </div>
-        </div>
+            </span>
+          </span>
+        </label>
         <div class="menu-item px-4 py-1.5">
           <button
             class="btn btn-sm btn-light justify-center"

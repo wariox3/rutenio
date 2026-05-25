@@ -18,6 +18,7 @@ import { environment } from '../../../environments/environment';
 })
 export class MenuComponent {
   @Input({ required: true }) nombre: string;
+  @Input() correo: string = '';
   @Input() contenedorNombre: string;
   @Input() rolContenedor: string = '';
   @Input() perfilWeb: string = '';
