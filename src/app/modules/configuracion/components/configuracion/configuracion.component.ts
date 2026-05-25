@@ -61,6 +61,10 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       titulo: 'Rutear por franjas',
       descripcion: 'Las visitas se asignarán solo a vehículos cuyas franjas coincidan. Requiere que los vehículos tengan franjas asignadas. Visitas sin franja se asignarán a cualquier vehículo.',
     },
+    rut_decodificar_direcciones: {
+      titulo: 'Decodificar direcciones',
+      descripcion: 'Al importar visitas, las direcciones se convertirán automáticamente a coordenadas (geocodificación). Si se desactiva, deberá ingresar latitud y longitud manualmente.',
+    },
     rut_whatsapp_habilitado: {
       titulo: 'Notificaciones WhatsApp',
       descripcion: 'Se enviarán notificaciones WhatsApp a los destinatarios al aprobar despachos. Requiere tener configurada la integración con WhatsApp.',
@@ -83,9 +87,13 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     rut_direccion_origen: new FormControl(''),
     rut_latitud: new FormControl(''),
     rut_longitud: new FormControl(''),
+    rut_decodificar_direcciones: new FormControl(true),
     rut_hora_inicio: new FormControl('07:00'),
     rut_estrategia_ruteo: new FormControl('balanceado'),
+    rut_cita_tipo_defecto: new FormControl('obligatoria'),
     rut_whatsapp_habilitado: new FormControl(false),
+    rut_whatsapp_plantilla_despacho: new FormControl<string | null>(null),
+    rut_whatsapp_plantilla_idioma: new FormControl('es'),
     rut_alerta_parada_activa: new FormControl(false),
     rut_alerta_parada_minutos: new FormControl(15),
     rut_alerta_parada_radio_metros: new FormControl(80),
@@ -129,9 +137,13 @@ export default class ConfiguracionComponent extends General implements OnDestroy
               rut_direccion_origen: configuracion.rut_direccion_origen,
               rut_latitud: configuracion.rut_latitud,
               rut_longitud: configuracion.rut_longitud,
+              rut_decodificar_direcciones: configuracion.rut_decodificar_direcciones ?? true,
               rut_hora_inicio: configuracion.rut_hora_inicio || '07:00',
               rut_estrategia_ruteo: configuracion.rut_estrategia_ruteo || 'balanceado',
+              rut_cita_tipo_defecto: configuracion.rut_cita_tipo_defecto || 'obligatoria',
               rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
+              rut_whatsapp_plantilla_despacho: configuracion.rut_whatsapp_plantilla_despacho ?? null,
+              rut_whatsapp_plantilla_idioma: configuracion.rut_whatsapp_plantilla_idioma || 'es',
               rut_alerta_parada_activa: configuracion.rut_alerta_parada_activa,
               rut_alerta_parada_minutos: configuracion.rut_alerta_parada_minutos ?? 15,
               rut_alerta_parada_radio_metros: configuracion.rut_alerta_parada_radio_metros ?? 80,
@@ -146,7 +158,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       )
       .subscribe();
 
-    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_whatsapp_habilitado', 'rut_alerta_parada_activa', 'rut_alerta_geocerca_activa'] as const;
+    const switches = ['rut_sincronizar_complemento', 'rut_rutear_franja', 'rut_decodificar_direcciones', 'rut_whatsapp_habilitado', 'rut_alerta_parada_activa', 'rut_alerta_geocerca_activa'] as const;
     for (const key of switches) {
       this.formularioConfiguracion.controls[key].valueChanges
         .pipe(takeUntil(this.destroy$))

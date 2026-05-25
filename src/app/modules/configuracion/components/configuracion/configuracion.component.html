@@ -59,6 +59,17 @@
             Balanceado: equilibrio entre ambas.
           </p>
         </div>
+        <div>
+          <label class="form-label font-normal text-gray-900">Tipo de cita por defecto</label>
+          <select class="select w-auto" formControlName="rut_cita_tipo_defecto">
+            <option value="obligatoria">Obligatoria</option>
+            <option value="preferente">Preferente</option>
+          </select>
+          <p class="text-xs text-gray-500 mt-1">
+            Obligatoria: el ruteo no puede saltarse la ventana horaria.
+            Preferente: se respeta si es posible, pero puede ajustarse.
+          </p>
+        </div>
       </div>
       <div id="tour-config-opciones" class="space-y-4">
         <app-switch
@@ -69,7 +80,10 @@
           class="block"
         ></app-switch>
 
-        <div>
+        <div
+          *ngIf="formularioConfiguracion.controls.rut_sincronizar_complemento.value"
+          class="pl-2 border-l-2 border-gray-200 dark:border-gray-200"
+        >
           <label class="form-label font-normal text-gray-900">Límite de entregas por complemento</label>
           <input
             type="number"
@@ -109,10 +123,42 @@
         ></app-switch>
 
         <app-switch
+          titulo="Decodificar direcciones"
+          [control]="formularioConfiguracion.controls.rut_decodificar_direcciones"
+          class="block"
+        ></app-switch>
+
+        <app-switch
           titulo="Notificaciones WhatsApp"
           [control]="formularioConfiguracion.controls.rut_whatsapp_habilitado"
           class="block"
         ></app-switch>
+
+        <div
+          *ngIf="formularioConfiguracion.controls.rut_whatsapp_habilitado.value"
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2 border-l-2 border-gray-200 dark:border-gray-200"
+        >
+          <div>
+            <label class="form-label font-normal text-gray-900">Plantilla de despacho</label>
+            <input
+              type="text"
+              class="input w-full"
+              formControlName="rut_whatsapp_plantilla_despacho"
+              placeholder="nombre_plantilla_meta"
+            />
+            <p class="text-xs text-gray-500 mt-1">Nombre exacto de la plantilla aprobada en Meta para notificar despachos. Si se deja vacío, se usa el valor por defecto del servidor.</p>
+          </div>
+          <div>
+            <label class="form-label font-normal text-gray-900">Idioma de la plantilla</label>
+            <input
+              type="text"
+              class="input w-auto"
+              formControlName="rut_whatsapp_plantilla_idioma"
+              placeholder="es"
+            />
+            <p class="text-xs text-gray-500 mt-1">Código de idioma (es, en_US, etc.) registrado en la plantilla de Meta.</p>
+          </div>
+        </div>
 
         <app-switch
           titulo="Alerta de parada prolongada"
