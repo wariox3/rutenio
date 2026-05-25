@@ -214,6 +214,21 @@ export default [
     ],
   },
   {
+    // Gestion de miembros del contenedor activo: invitar, perfiles,
+    // permisos, ceder admin. El gating por 'usuario.editar' lo hace el
+    // sidebar (item oculto) y el backend (puede_editar_modulo).
+    path: 'usuarios',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () => import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('../modules/contenedores/components/usuarios-contenedor/usuarios-contenedor.component'),
+      },
+    ],
+  },
+  {
     path: 'proceso',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

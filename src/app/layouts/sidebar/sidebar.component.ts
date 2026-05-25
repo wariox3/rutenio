@@ -117,6 +117,11 @@ export class SidebarComponent extends General implements OnInit {
           link: '/administracion/franja/lista',
           modulo: 'franja',
         },
+        {
+          nombre: 'Usuarios',
+          link: '/usuarios',
+          modulo: 'usuario',
+        },
       ],
     },
     {
