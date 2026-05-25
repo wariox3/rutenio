@@ -18,6 +18,9 @@ import { environment } from '../../../environments/environment';
 })
 export class MenuComponent {
   @Input({ required: true }) nombre: string;
+  @Input() apellido: string = '';
+  @Input() nombreCorto: string = '';
+  @Input() username: string = '';
   @Input() correo: string = '';
   @Input() contenedorNombre: string;
   @Input() rolContenedor: string = '';
@@ -29,6 +32,24 @@ export class MenuComponent {
 
   private _authService = inject(AuthService);
   public url_reddoc_cuenta = environment.url_reddoc_cuenta;
+
+  /**
+   * Devuelve el mejor identificador disponible para mostrar como nombre
+   * del usuario. Algunos endpoints/legacy users no devuelven `nombre`
+   * (cuenta nueva sin perfil completado, registro movil, etc.); ahi
+   * caemos a nombre_corto, despues a la parte local del correo y por
+   * ultimo al username para no dejar el dropdown vacio.
+   */
+  get nombreVisible(): string {
+    const nombreCompleto = [this.nombre, this.apellido]
+      .filter((s) => !!s && s.trim().length > 0)
+      .join(' ')
+      .trim();
+    if (nombreCompleto) return nombreCompleto;
+    if (this.nombreCorto?.trim()) return this.nombreCorto.trim();
+    if (this.correo?.includes('@')) return this.correo.split('@')[0];
+    return this.username || 'Usuario';
+  }
 
   get rolEtiqueta(): { texto: string; clase: string } | null {
     if (this.esSuperAdmin) {

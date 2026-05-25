@@ -48,7 +48,10 @@
     <div class="flex items-center gap-2 lg:gap-3.5">
       <app-selector-contenedor></app-selector-contenedor>
       <app-menu
-        [nombre]="(usuario$ | async)?.nombre"
+        [nombre]="(usuario$ | async)?.nombre || ''"
+        [apellido]="(usuario$ | async)?.apellido || ''"
+        [nombreCorto]="(usuario$ | async)?.nombre_corto || ''"
+        [username]="(usuario$ | async)?.username || ''"
         [correo]="(usuario$ | async)?.correo || ''"
         [contenedorNombre]="contenedorNombre$ | async"
         [rolContenedor]="(contenedorRol$ | async) || ''"
