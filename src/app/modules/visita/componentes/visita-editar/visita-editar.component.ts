@@ -69,11 +69,34 @@ export default class VisitaEditarComponent extends General implements OnInit, On
           this.alerta.mensajaExitoso('Se ha actualizado la visita exitosamente.');
           this.router.navigate(['/movimiento/visita/lista']);
         },
-        error: (error) => {
-          this.alerta.mensajeError(
-            'Error al actualizar la visita',
-            'Error'
-          );
+        error: (err) => {
+          console.error('[visita.actualizar] error:', err);
+          const status = err?.status ?? 0;
+          let titulo = 'Error al actualizar la visita';
+          let mensaje =
+            err?.error?.detail || err?.error?.mensaje || 'Intenta nuevamente.';
+          const validaciones = err?.error?.validaciones;
+          if (status === 400 && validaciones && typeof validaciones === 'object') {
+            const detalles = Object.entries(validaciones)
+              .map(([campo, errs]) => {
+                const errores = Array.isArray(errs) ? errs.join(', ') : String(errs);
+                return `<strong>${campo}</strong>: ${errores}`;
+              })
+              .join('<br/>');
+            if (detalles) mensaje = detalles;
+          } else if (status === 403) {
+            titulo = 'Sin permiso';
+            mensaje = 'Tu rol no permite editar visitas.';
+          } else if (status === 0) {
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+              titulo = 'Sin conexión';
+              mensaje = 'Revisa tu conexión a internet.';
+            } else {
+              titulo = 'No pudimos contactar al servidor';
+              mensaje = 'Intenta de nuevo o contacta a soporte.';
+            }
+          }
+          this.alerta.mensajeError(titulo, mensaje);
         },
       });
   }
