@@ -6,7 +6,7 @@ import { GeneralApiService } from '../../../../core';
 import { General } from '../../../../common/clases/general';
 import BuscadorDireccionesComponent from '../../../../common/components/buscador-direcciones/buscador-direcciones.component';
 import { CommonModule, Location } from '@angular/common';
-import { catchError, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { CargarImagenComponent } from '../../../../common/components/cargar-imagen/cargar-imagen.component';
 import {
   empresaActualizacionImangenAction,
@@ -103,9 +103,21 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     },
   };
 
+  /**
+   * Flag para no re-hidratar el form despues del primer load exitoso.
+   * Sin esto, el patchValue post-submit (disparado por el dispatch al
+   * store) sobreescribiria los cambios que el usuario pudiera estar
+   * haciendo entre tanto. El baseline se sigue actualizando manualmente
+   * en el tap del submit.
+   */
+  private _yaHidratado = false;
+
   formularioConfiguracion = new FormGroup({
-    id: new FormControl(0),
-    empresa: new FormControl(0),
+    // id y empresa siempre son 1 dentro del tenant (singleton). El form
+    // los arranca asi para que si por algun motivo no llega a hidratar
+    // del store, el payload ya tenga los valores correctos.
+    id: new FormControl(1),
+    empresa: new FormControl(1),
     rut_sincronizar_complemento: new FormControl(true),
     rut_rutear_franja: new FormControl(false),
     rut_direccion_origen: new FormControl(''),
@@ -152,66 +164,26 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   ngOnInit(): void {
-    // Si el store no tiene la configuracion cargada (caso al entrar via
-    // /admin/contenedores sin pasar por /contenedor/lista), la pedimos al
-    // backend y la guardamos en el store. Asi el form se hidrata con los
-    // valores reales del tenant en lugar de quedarse con defaults.
+    // Hidratacion del form a partir del store. Si el store esta vacio
+    // (caso al entrar via /admin/contenedores sin pasar por
+    // /contenedor/lista), pedimos la configuracion al backend y la
+    // dispatchamos. Una vez hidratado, _yaHidratado bloquea futuros
+    // patchValue para no sobreescribir cambios del usuario (el baseline
+    // post-submit se actualiza manualmente en el tap del submit).
     this.store
       .select(obtenerConfiguracionInformacion)
-      .pipe(take(1))
-      .subscribe((c) => {
-        if (!c || !c.id || c.id === 0) {
-          this._generalApiService
-            .getConfiguracion(1)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-              next: (resp) => {
-                this.store.dispatch(
-                  configuracionActualizacionAction({ configuracion: resp }),
-                );
-              },
-              error: (err) => console.error('[configuracion] cargar inicial fallo', err),
-            });
-        }
-      });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((configuracion) => {
+        if (this._yaHidratado) return;
 
-    this.store
-      .select(obtenerConfiguracionInformacion)
-      .pipe(
-        takeUntil(this.destroy$),
-        tap((configuracion) => {
-          if (configuracion.id > 0) {
-            this.ignorarCambios = true;
-            this.formularioConfiguracion.patchValue({
-              id: configuracion.id,
-              empresa: configuracion.empresa,
-              rut_sincronizar_complemento: configuracion.rut_sincronizar_complemento,
-              rut_rutear_franja: configuracion.rut_rutear_franja,
-              rut_direccion_origen: configuracion.rut_direccion_origen,
-              rut_latitud: configuracion.rut_latitud,
-              rut_longitud: configuracion.rut_longitud,
-              rut_decodificar_direcciones: configuracion.rut_decodificar_direcciones ?? true,
-              rut_hora_inicio: configuracion.rut_hora_inicio || '07:00',
-              rut_estrategia_ruteo: configuracion.rut_estrategia_ruteo || 'balanceado',
-              rut_cita_tipo_defecto: configuracion.rut_cita_tipo_defecto || 'obligatoria',
-              rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
-              rut_whatsapp_plantilla_despacho: configuracion.rut_whatsapp_plantilla_despacho ?? null,
-              rut_whatsapp_plantilla_idioma: configuracion.rut_whatsapp_plantilla_idioma || 'es',
-              rut_alerta_parada_activa: configuracion.rut_alerta_parada_activa,
-              rut_alerta_parada_minutos: configuracion.rut_alerta_parada_minutos ?? 15,
-              rut_alerta_parada_radio_metros: configuracion.rut_alerta_parada_radio_metros ?? 80,
-              rut_alerta_geocerca_activa: configuracion.rut_alerta_geocerca_activa,
-              rut_limite_complemento: configuracion.rut_limite_complemento ?? 1000,
-              rut_limite_importacion: configuracion.rut_limite_importacion ?? 500,
-              rut_alertas_intervalo_segundos: configuracion.rut_alertas_intervalo_segundos ?? 30,
-            });
-            this.ignorarCambios = false;
-            this._baselineGuardado = this._snapshotForm();
-            this.tieneCambiosSinGuardar.set(false);
-          }
-        })
-      )
-      .subscribe();
+        if (!configuracion || !configuracion.id || configuracion.id === 0) {
+          this._cargarConfiguracionDesdeBackend();
+          return;
+        }
+
+        this._hidratarForm(configuracion);
+        this._yaHidratado = true;
+      });
 
     // Switches con confirmacion: capturan el cambio y abren modal antes
     // de aplicar. El usuario puede cancelar.
@@ -254,6 +226,51 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         if (this.ignorarCambios) return;
         this.tieneCambiosSinGuardar.set(this._formDifiereDelBaseline());
       });
+  }
+
+  private _cargarConfiguracionDesdeBackend(): void {
+    this._generalApiService
+      .getConfiguracion(1)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (resp) => {
+          this.store.dispatch(
+            configuracionActualizacionAction({ configuracion: resp }),
+          );
+        },
+        error: (err) =>
+          console.error('[configuracion] cargar inicial fallo', err),
+      });
+  }
+
+  private _hidratarForm(configuracion: any): void {
+    this.ignorarCambios = true;
+    this.formularioConfiguracion.patchValue({
+      id: configuracion.id,
+      empresa: configuracion.empresa,
+      rut_sincronizar_complemento: configuracion.rut_sincronizar_complemento,
+      rut_rutear_franja: configuracion.rut_rutear_franja,
+      rut_direccion_origen: configuracion.rut_direccion_origen,
+      rut_latitud: configuracion.rut_latitud,
+      rut_longitud: configuracion.rut_longitud,
+      rut_decodificar_direcciones: configuracion.rut_decodificar_direcciones ?? true,
+      rut_hora_inicio: configuracion.rut_hora_inicio || '07:00',
+      rut_estrategia_ruteo: configuracion.rut_estrategia_ruteo || 'balanceado',
+      rut_cita_tipo_defecto: configuracion.rut_cita_tipo_defecto || 'obligatoria',
+      rut_whatsapp_habilitado: configuracion.rut_whatsapp_habilitado,
+      rut_whatsapp_plantilla_despacho: configuracion.rut_whatsapp_plantilla_despacho ?? null,
+      rut_whatsapp_plantilla_idioma: configuracion.rut_whatsapp_plantilla_idioma || 'es',
+      rut_alerta_parada_activa: configuracion.rut_alerta_parada_activa,
+      rut_alerta_parada_minutos: configuracion.rut_alerta_parada_minutos ?? 15,
+      rut_alerta_parada_radio_metros: configuracion.rut_alerta_parada_radio_metros ?? 80,
+      rut_alerta_geocerca_activa: configuracion.rut_alerta_geocerca_activa,
+      rut_limite_complemento: configuracion.rut_limite_complemento ?? 1000,
+      rut_limite_importacion: configuracion.rut_limite_importacion ?? 500,
+      rut_alertas_intervalo_segundos: configuracion.rut_alertas_intervalo_segundos ?? 30,
+    });
+    this.ignorarCambios = false;
+    this._baselineGuardado = this._snapshotForm();
+    this.tieneCambiosSinGuardar.set(false);
   }
 
   private _snapshotForm(): any {
@@ -307,15 +324,11 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     if (this.guardando()) return;
     this.guardando.set(true);
 
-    // GenConfiguracion es singleton por tenant (PK = 1, empresa = 1). El
-    // serializer DRF marca ambos como required y no auto-completa. Si el
-    // store no se hidrato (caso comun al entrar via /admin/contenedores
-    // sin pasar por /contenedor/lista), el form arranca con id:0/empresa:0
-    // y el backend rebota: "id requerido" o "Invalid pk 0". Forzamos los
-    // valores singleton si vienen vacios.
-    //
-    // Tambien normalizamos lat/lon de "" a null por si el form todavia los
-    // tiene asi (cargas legacy o casos no cubiertos por el form init).
+    // GenConfiguracion es singleton por tenant (PK = 1, empresa = 1) — el
+    // form ya arranca asi. Aqui solo normalizamos lat/lon de "" a null
+    // por si el form todavia los tiene asi (cargas legacy) y reforzamos
+    // los IDs en 1 como cinturon-y-tirantes ante cualquier mutacion del
+    // form que los pusiera a 0.
     const raw = this.formularioConfiguracion.value as any;
     const payload = {
       ...raw,
