@@ -17,6 +17,7 @@ interface ContenedorAdmin {
   whatsapp_phone_number_id?: string | null;
   whatsapp_display?: string | null;
   whatsapp_estado?: string | null;
+  whatsapp_error_mensaje?: string | null;
 }
 
 interface NumeroMeta {
@@ -164,6 +165,7 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
           c.whatsapp_phone_number_id = resp.conexion?.phone_number_id;
           c.whatsapp_display = resp.conexion?.display_phone_number;
           c.whatsapp_estado = resp.conexion?.estado;
+          c.whatsapp_error_mensaje = resp.conexion?.error_mensaje ?? null;
           this.procesandoId = null;
           this.cerrarModal();
           this._cdr.markForCheck();
@@ -209,6 +211,7 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
           c.whatsapp_phone_number_id = null;
           c.whatsapp_display = null;
           c.whatsapp_estado = null;
+          c.whatsapp_error_mensaje = null;
           this.procesandoId = null;
           this._cdr.markForCheck();
         },

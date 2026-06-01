@@ -166,7 +166,8 @@
                       <div class="text-[12.5px] font-medium text-gray-800 truncate">{{ c.whatsapp_display }}</div>
                       <div class="text-[10.5px] text-gray-400 dark:text-gray-500 truncate">
                         <span *ngIf="c.whatsapp_estado === 'activo'" class="text-green-600 dark:text-green-400 font-medium">● conectado</span>
-                        <span *ngIf="c.whatsapp_estado === 'error'" class="text-red-600 dark:text-red-400 font-medium">● error</span>
+                        <span *ngIf="c.whatsapp_estado === 'error'" class="text-red-600 dark:text-red-400 font-medium"
+                              [title]="c.whatsapp_error_mensaje || ''">● error</span>
                         <span *ngIf="c.whatsapp_estado === 'pendiente'" class="text-yellow-600 dark:text-yellow-400 font-medium">● pendiente</span>
                       </div>
                     </div>
