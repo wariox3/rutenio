@@ -267,6 +267,11 @@ export default [
         path: 'despacho',
         loadChildren: () => import('../modules/despacho/despacho.routes'),
       },
+      {
+        path: 'reporte-mensajero',
+        loadChildren: () =>
+          import('../modules/reporte-mensajero/reporte-mensajero.routes'),
+      },
     ]
   },
   {
