@@ -11,9 +11,14 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { getCookie } from 'typescript-cookie';
+import { catchError, forkJoin, of, switchMap } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
 import { ContenedorActionInit } from '../../../../redux/actions/contenedor/contenedor.actions';
+import { empresaActionInit } from '../../../../redux/actions/empresa/empresa.actions';
+import { configuracionActionInit } from '../../../../redux/actions/configuracion/configuracion.actions';
+import { EmpresaService } from '../../../empresa/servicios/empresa.service';
+import { GeneralApiService } from '../../../../core/api/general-api.service';
 
 interface ContenedorGlobal {
   id: number;
@@ -39,6 +44,8 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
   private http = inject(HttpClient);
   private store = inject(Store);
   private router = inject(Router);
+  private _empresaService = inject(EmpresaService);
+  private _generalApiService = inject(GeneralApiService);
 
   cargando = signal<boolean>(true);
   contenedores = signal<ContenedorGlobal[]>([]);
@@ -96,8 +103,8 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
     // Pedir el detalle del contenedor desde el endpoint público (auth normal del user)
     this.http
       .get<any>(`${environment.url_api}/contenedor/contenedor/${c.id}/`)
-      .subscribe({
-        next: (resp) => {
+      .pipe(
+        switchMap((resp) => {
           this.store.dispatch(
             ContenedorActionInit({
               contenedor: {
@@ -121,6 +128,25 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
               } as any,
             })
           );
+          // Hidratar empresa y configuracion del contenedor en el store. Sin
+          // esto, la direccion de origen queda vacia y el modal "Configurar
+          // direccion" salta en falso al entrar desde el panel admin.
+          return forkJoin({
+            empresa: this._empresaService.detalle().pipe(catchError(() => of(null))),
+            configuracion: this._generalApiService
+              .getConfiguracion(1)
+              .pipe(catchError(() => of(null))),
+          });
+        })
+      )
+      .subscribe({
+        next: ({ empresa, configuracion }) => {
+          if (empresa) {
+            this.store.dispatch(empresaActionInit({ empresa }));
+          }
+          if (configuracion) {
+            this.store.dispatch(configuracionActionInit({ configuracion }));
+          }
           this.accediendoId.set(null);
           this.router.navigate(['/dashboard']);
         },
