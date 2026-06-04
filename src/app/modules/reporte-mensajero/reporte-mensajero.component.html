@@ -31,6 +31,14 @@
     </div>
   </div>
 
+  <!-- Aviso de truncado por limite -->
+  @if (truncado()) {
+    <div class="flex items-center gap-2 mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+      <i class="ki-filled ki-information-2 text-base"></i>
+      <span>El rango tiene más despachos de los que se pueden traer en una sola consulta (5000). Reduce el rango de fechas para ver el total completo.</span>
+    </div>
+  }
+
   <!-- Detalle diario -->
   <div class="card shadow-sm mb-6">
     <div class="card-header px-5 py-4">

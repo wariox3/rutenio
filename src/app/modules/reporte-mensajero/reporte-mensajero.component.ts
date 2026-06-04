@@ -23,15 +23,24 @@ export default class ReporteMensajeroComponent implements OnInit {
   fechaHasta = '';
   cargando = signal(false);
   consultado = signal(false);
+  truncado = signal(false);
   filas = signal<FilaReporteMensajero[]>([]);
   totalesPorMensajero = signal<TotalMensajero[]>([]);
 
   ngOnInit(): void {
     const hoy = new Date();
-    this.fechaHasta = hoy.toISOString().substring(0, 10);
-    const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    this.fechaDesde = primerDia.toISOString().substring(0, 10);
+    this.fechaHasta = this.aFechaLocal(hoy);
+    this.fechaDesde = this.aFechaLocal(
+      new Date(hoy.getFullYear(), hoy.getMonth(), 1)
+    );
     this.consultar();
+  }
+
+  private aFechaLocal(d: Date): string {
+    const anio = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
   }
 
   consultar(): void {
@@ -39,14 +48,19 @@ export default class ReporteMensajeroComponent implements OnInit {
     this.cargando.set(true);
     this._despachoApiService
       .lista({
-        fecha_desde: this.fechaDesde,
-        fecha_hasta: this.fechaHasta,
+        // El backend (DRF) filtra el rango con fecha__gte / fecha__lte,
+        // igual que el dashboard. Se excluyen los despachos anulados.
+        fecha__gte: this.fechaDesde,
+        fecha__lte: this.fechaHasta,
+        estado_anulado: 'False',
         limit: 5000,
         ordering: '-fecha',
       })
       .subscribe({
         next: (respuesta) => {
-          this.procesar(respuesta.results ?? []);
+          const resultados = respuesta.results ?? [];
+          this.truncado.set((respuesta.count ?? 0) > resultados.length);
+          this.procesar(resultados);
           this.consultado.set(true);
           this.cargando.set(false);
         },
