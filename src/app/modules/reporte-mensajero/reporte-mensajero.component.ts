@@ -8,6 +8,7 @@ import { Despacho } from '../../interfaces/despacho/despacho.interface';
 import {
   FilaReporteMensajero,
   TotalMensajero,
+  TotalPlaca,
 } from './interfaces/reporte-mensajero.interface';
 
 @Component({
@@ -26,6 +27,7 @@ export default class ReporteMensajeroComponent implements OnInit {
   truncado = signal(false);
   filas = signal<FilaReporteMensajero[]>([]);
   totalesPorMensajero = signal<TotalMensajero[]>([]);
+  totalesPorPlaca = signal<TotalPlaca[]>([]);
 
   ngOnInit(): void {
     const hoy = new Date();
@@ -78,17 +80,19 @@ export default class ReporteMensajeroComponent implements OnInit {
       return dia >= this.fechaDesde && dia <= this.fechaHasta;
     });
 
-    // Agrupa por mensajero + dia.
+    // Agrupa por mensajero + placa + dia.
     const porDia = new Map<string, FilaReporteMensajero>();
     for (const d of enRango) {
       const dia = (d.fecha || '').substring(0, 10);
       const nombre = d.conductor_nombre || 'Sin asignar';
-      const clave = `${d.conductor_id ?? 'null'}|${dia}`;
+      const placa = d.vehiculo__placa || 'Sin placa';
+      const clave = `${d.conductor_id ?? 'null'}|${placa}|${dia}`;
       let fila = porDia.get(clave);
       if (!fila) {
         fila = {
           conductorId: d.conductor_id,
           conductorNombre: nombre,
+          placa,
           fecha: dia,
           despachos: 0,
           asignadas: 0,
@@ -112,11 +116,13 @@ export default class ReporteMensajeroComponent implements OnInit {
       .sort(
         (a, b) =>
           b.fecha.localeCompare(a.fecha) ||
-          a.conductorNombre.localeCompare(b.conductorNombre)
+          a.conductorNombre.localeCompare(b.conductorNombre) ||
+          a.placa.localeCompare(b.placa)
       );
 
-    // Agregado por mensajero (todos sus dias).
+    // Agregado por mensajero (todos sus dias). dias = dias distintos.
     const porMensajero = new Map<string, TotalMensajero>();
+    const diasMensajero = new Map<string, Set<string>>();
     for (const f of filasCalculadas) {
       const clave = `${f.conductorId ?? 'null'}`;
       let total = porMensajero.get(clave);
@@ -132,23 +138,60 @@ export default class ReporteMensajeroComponent implements OnInit {
           cumplimiento: 0,
         };
         porMensajero.set(clave, total);
+        diasMensajero.set(clave, new Set());
       }
-      total.dias += 1;
+      diasMensajero.get(clave)!.add(f.fecha);
       total.despachos += f.despachos;
       total.asignadas += f.asignadas;
       total.entregadas += f.entregadas;
       total.novedades += f.novedades;
     }
 
-    const totalesCalculados = Array.from(porMensajero.values())
-      .map((t) => ({
+    const totalesCalculados = Array.from(porMensajero.entries())
+      .map(([clave, t]) => ({
         ...t,
+        dias: diasMensajero.get(clave)!.size,
         cumplimiento: this.calcularCumplimiento(t.entregadas, t.asignadas),
       }))
       .sort((a, b) => a.conductorNombre.localeCompare(b.conductorNombre));
 
+    // Agregado por placa (todos sus dias). dias = dias distintos.
+    const porPlaca = new Map<string, TotalPlaca>();
+    const diasPlaca = new Map<string, Set<string>>();
+    for (const f of filasCalculadas) {
+      const clave = f.placa;
+      let total = porPlaca.get(clave);
+      if (!total) {
+        total = {
+          placa: f.placa,
+          dias: 0,
+          despachos: 0,
+          asignadas: 0,
+          entregadas: 0,
+          novedades: 0,
+          cumplimiento: 0,
+        };
+        porPlaca.set(clave, total);
+        diasPlaca.set(clave, new Set());
+      }
+      diasPlaca.get(clave)!.add(f.fecha);
+      total.despachos += f.despachos;
+      total.asignadas += f.asignadas;
+      total.entregadas += f.entregadas;
+      total.novedades += f.novedades;
+    }
+
+    const totalesPlacaCalculados = Array.from(porPlaca.entries())
+      .map(([clave, t]) => ({
+        ...t,
+        dias: diasPlaca.get(clave)!.size,
+        cumplimiento: this.calcularCumplimiento(t.entregadas, t.asignadas),
+      }))
+      .sort((a, b) => a.placa.localeCompare(b.placa));
+
     this.filas.set(filasCalculadas);
     this.totalesPorMensajero.set(totalesCalculados);
+    this.totalesPorPlaca.set(totalesPlacaCalculados);
   }
 
   private calcularCumplimiento(entregadas: number, total: number): number {
@@ -162,6 +205,7 @@ export default class ReporteMensajeroComponent implements OnInit {
 
     const detalle = filas.map((f) => ({
       Mensajero: f.conductorNombre,
+      Placa: f.placa,
       Fecha: f.fecha,
       Despachos: f.despachos,
       Asignadas: f.asignadas,
@@ -180,6 +224,16 @@ export default class ReporteMensajeroComponent implements OnInit {
       '% Cumplimiento': t.cumplimiento,
     }));
 
+    const totalesPlaca = this.totalesPorPlaca().map((t) => ({
+      Placa: t.placa,
+      'Días': t.dias,
+      Despachos: t.despachos,
+      Asignadas: t.asignadas,
+      Entregadas: t.entregadas,
+      Novedades: t.novedades,
+      '% Cumplimiento': t.cumplimiento,
+    }));
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(
       workbook,
@@ -190,6 +244,11 @@ export default class ReporteMensajeroComponent implements OnInit {
       workbook,
       XLSX.utils.json_to_sheet(totales),
       'Totales por mensajero'
+    );
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(totalesPlaca),
+      'Totales por placa'
     );
 
     const excelBuffer: any = XLSX.write(workbook, {
