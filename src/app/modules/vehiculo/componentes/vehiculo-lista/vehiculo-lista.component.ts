@@ -3,15 +3,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnDestroy,
   OnInit,
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { finalize, Observable } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { finalize, Observable, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { General } from '../../../../common/clases/general';
 import { FileUploadComponent } from '../../../../common/components/file-upload/file-upload.component';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { ModalStandardComponent } from '../../../../common/components/ui/modals/modal-standard/modal-standard.component';
 import { ModalService } from '../../../../common/components/ui/modals/service/modal.service';
 import { TablaComunComponent } from '../../../../common/components/ui/tablas/tabla-comun/tabla-comun.component';
@@ -20,7 +22,6 @@ import { GeneralApiService } from '../../../../core';
 import { EstadoPaginacion, ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
-import { VEHICULO_LISTA_FILTERS } from '../../mapeos/vehiculos-lista-mapeo';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
 import { ImportarComponent } from "../../../../common/components/importar/importar.component";
@@ -36,7 +37,7 @@ import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.d
     TablaComunComponent,
     ModalStandardComponent,
     FileUploadComponent,
-    FiltroComponent,
+    FormsModule,
     PaginadorComponent,
     ImportarComponent,
     PermisoPorDirective,
@@ -45,7 +46,7 @@ import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.d
   styleUrl: './vehiculo-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class VehiculoListaComponent extends General implements OnInit {
+export default class VehiculoListaComponent extends General implements OnInit, OnDestroy {
   arrParametrosConsulta: ParametrosConsulta = {
     filtros: [],
     limite: 50,
@@ -61,10 +62,14 @@ export default class VehiculoListaComponent extends General implements OnInit {
   private _listaItemsEliminar: number[] = [];
   private _filtrosActivos = signal<ParametrosApi>({});
 
+  public busquedaPlaca = '';
+  public estadoFiltro: 'todos' | 'activo' | 'inactivo' = 'todos';
+  private _busquedaPlaca$ = new Subject<string>();
+  private _destroy$ = new Subject<void>();
+
   private vehiculoService = inject(VehiculoService);
   private _modalService = inject(ModalService);
   private _generalApiService = inject(GeneralApiService);
-  public VEHICULO_LISTA_FILTERS = VEHICULO_LISTA_FILTERS;
   public estadoPaginacion = signal<EstadoPaginacion>({
     paginaActual: 1,
     itemsPorPagina: 30,
@@ -72,11 +77,20 @@ export default class VehiculoListaComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
+    this._busquedaPlaca$
+      .pipe(debounceTime(350), distinctUntilChanged(), takeUntil(this._destroy$))
+      .subscribe(() => this.aplicarBusqueda());
+
     this.consultarLista();
 
     this.encabezados = mapeo.Vehiculo.datos
       .filter((dato) => dato.visibleTabla === true)
       .map((dato) => dato.nombre);
+  }
+
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 
   consultarLista() {
@@ -170,9 +184,40 @@ export default class VehiculoListaComponent extends General implements OnInit {
     this.alerta.mensajeError('Error al importar vehículos', event.error);
   }
 
-  filterChange(filters: Record<string, any>) {
-    this._filtrosActivos.set(filters);
-    this.estadoPaginacion.update(estado => ({
+  onBusquedaPlacaChange(valor: string) {
+    this.busquedaPlaca = valor;
+    this._busquedaPlaca$.next((valor || '').trim());
+  }
+
+  onEstadoChange(estado: 'todos' | 'activo' | 'inactivo') {
+    this.estadoFiltro = estado;
+    this.aplicarBusqueda();
+  }
+
+  limpiarBusqueda() {
+    this.busquedaPlaca = '';
+    this.estadoFiltro = 'todos';
+    this.aplicarBusqueda();
+  }
+
+  get hayBusquedaActiva(): boolean {
+    return this.busquedaPlaca.trim() !== '' || this.estadoFiltro !== 'todos';
+  }
+
+  private aplicarBusqueda() {
+    const filtros: ParametrosApi = {};
+    const placa = this.busquedaPlaca.trim();
+    if (placa) {
+      filtros['placa__icontains'] = placa;
+    }
+    if (this.estadoFiltro === 'activo') {
+      filtros['estado_activo'] = 'True';
+    } else if (this.estadoFiltro === 'inactivo') {
+      filtros['estado_activo'] = 'False';
+    }
+
+    this._filtrosActivos.set(filtros);
+    this.estadoPaginacion.update((estado) => ({
       ...estado,
       paginaActual: 1,
     }));

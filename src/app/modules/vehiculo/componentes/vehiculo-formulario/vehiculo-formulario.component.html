@@ -29,6 +29,9 @@
               [control]="formularioVehiculo.controls.placa"
               [maxLength]="6"
             ></app-input>
+            <p class="text-xs text-gray-500 mt-1">
+              Identifica el vehículo en todo el sistema. Máximo 6 caracteres. Ej: ABC123.
+            </p>
           </div>
         </div>
 
@@ -41,6 +44,9 @@
           [value]="'id'"
           (selectionChange)="seleccionarEntidadMultiSelect($event)"
         ></app-multi-select>
+          <p class="text-xs text-gray-500 mt-1">
+            Franjas horarias en las que el vehículo puede operar. Puedes elegir varias; al rutear solo se le asignan visitas dentro de esas franjas.
+          </p>
         </div>
       </div>
 
@@ -55,16 +61,22 @@
               [soloNumeros]="true"
               type="number"
               ></app-input>
+            <p class="text-xs text-gray-500 mt-1">
+              Peso máximo que carga el vehículo, en kilogramos. Se usa para no asignarle más visitas de las que puede transportar.
+            </p>
           </div>
         </div>
         <div>
           <app-label [required]="true">Tiempo (min)</app-label>
-          <app-input 
-            [fieldName]="'El tiempo'" 
-            [control]="formularioVehiculo.controls.tiempo" 
+          <app-input
+            [fieldName]="'El tiempo'"
+            [control]="formularioVehiculo.controls.tiempo"
             placeholder="480"
             [soloNumeros]="true"
             type="number"></app-input>
+          <p class="text-xs text-gray-500 mt-1">
+            Minutos disponibles de la jornada para hacer rutas. Limita cuánto trabajo se le puede asignar. Ej: 480 = 8 horas.
+          </p>
         </div>
       </div>
 
@@ -76,6 +88,9 @@
             [control]="formularioVehiculo.controls.usuario_app"
             [maxLength]="6"
           ></app-input>
+          <p class="text-xs text-gray-500 mt-1">
+            Usuario con el que el conductor inicia sesión en la app móvil para ver y entregar la ruta de este vehículo.
+          </p>
         </div>
       </div>
 
@@ -86,6 +101,9 @@
             [control]="formularioVehiculo.controls.estado_activo"
           ></app-switch>
         </div>
+        <p class="text-xs text-gray-500 mt-1">
+          Si está apagado, el vehículo no se tiene en cuenta al planear rutas (útil para vehículos en mantenimiento o fuera de servicio).
+        </p>
       </div>
     </form>
   </div>

@@ -1,63 +1,101 @@
-<div class="flex items-center mb-4">
-  <div class="btn-group gap-1">
+<div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+  <button
+    class="btn btn-secondary flex items-center"
+    [routerLink]="['/administracion/vehiculo/lista']"
+  >
+    <i class="ki-filled ki-arrow-left mr-1"></i>
+    Atrás
+  </button>
+  @if (vehiculo(); as v) {
     <button
-      class="btn btn-secondary flex items-center"
-      [routerLink]="['/administracion/vehiculo/lista']"
+      *appPermisoPor="'vehiculo.editar'"
+      class="btn btn-primary flex items-center"
+      [routerLink]="['/administracion/vehiculo/editar', v.id]"
     >
-      <i class="ki-filled ki-arrow-left mr-1"></i>
-      Atrás
+      <i class="ki-filled ki-pencil mr-1"></i>
+      Editar
     </button>
-  </div>
+  }
 </div>
 
-<div class="card">
-  <div class="card-table">
-    <div class="card-header">
-      <h3 class="card-title">Detalle vehículo - {{ vehiculo()?.placa }}</h3>
+@if (vehiculo(); as v) {
+  <div class="card">
+    <div class="card-header flex items-center justify-between gap-3 flex-wrap py-5">
+      <div class="flex items-center gap-3">
+        <div class="flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary shrink-0">
+          <i class="ki-filled ki-truck text-2xl"></i>
+        </div>
+        <div>
+          <div class="text-xl font-bold text-gray-900">{{ v.placa }}</div>
+          <div class="text-xs text-gray-500">Vehículo #{{ v.id }}</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span
+          class="badge"
+          [ngClass]="v.estado_activo ? 'badge-success' : 'badge-danger'"
+        >
+          <i class="ki-filled text-[10px] mr-1" [ngClass]="v.estado_activo ? 'ki-check-circle' : 'ki-cross-circle'"></i>
+          {{ v.estado_activo ? 'Activo' : 'Inactivo' }}
+        </span>
+        <span
+          class="badge"
+          [ngClass]="v.estado_asignado ? 'badge-warning' : 'badge-light'"
+        >
+          {{ v.estado_asignado ? 'Asignado a un despacho' : 'Disponible' }}
+        </span>
+      </div>
     </div>
+
     <div class="card-body">
-      <div class="overflow-x-auto">
-        <table class="table-auto border border-gray-300 text-sm w-full">
-          <tbody>
-            <tr class="border-b border-gray-300">
-              <td
-                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-              >
-                Placa
-              </td>
-              <td class="px-4 py-3 border-r border-gray-300">
-                {{ vehiculo()?.placa }}
-              </td>
-              <td
-                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-              >
-                Capacidad
-              </td>
-              <td class="px-4 py-3">{{ vehiculo()?.capacidad }}</td>
-            </tr>
-            <tr class="border-b border-gray-300">
-              <td
-                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-              >
-                Franjas
-              </td>
-              <td class="px-4 py-3 border-r border-gray-300">
-                @for(franja of vehiculo()?.franjas; track $index){
-                  <span class="badge badge-primary badge-outline badge-sm mr-1">{{ franja.nombre }}</span>
-                }
-              </td>
-              <td
-                class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 bg-gray-100"
-              >
-                Tiempo
-              </td>
-              <td class="px-4 py-3">
-                {{ vehiculo()?.tiempo }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div class="border border-gray-200 dark:border-gray-300 rounded-lg p-4">
+          <div class="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider mb-1">
+            <i class="ki-filled ki-package text-sm"></i> Capacidad
+          </div>
+          <div class="text-lg font-bold text-gray-900">
+            {{ v.capacidad | number }} <span class="text-sm font-normal text-gray-500">kg</span>
+          </div>
+        </div>
+
+        <div class="border border-gray-200 dark:border-gray-300 rounded-lg p-4">
+          <div class="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider mb-1">
+            <i class="ki-filled ki-time text-sm"></i> Tiempo de jornada
+          </div>
+          <div class="text-lg font-bold text-gray-900">
+            {{ v.tiempo | number }} <span class="text-sm font-normal text-gray-500">min</span>
+            <span class="text-sm font-normal text-gray-400">({{ (v.tiempo || 0) / 60 | number:'1.0-1' }} h)</span>
+          </div>
+        </div>
+
+        <div class="border border-gray-200 dark:border-gray-300 rounded-lg p-4">
+          <div class="flex items-center gap-1.5 text-xs text-gray-500 uppercase tracking-wider mb-1">
+            <i class="ki-filled ki-user text-sm"></i> Usuario app
+          </div>
+          <div class="text-lg font-bold text-gray-900">
+            {{ v.usuario_app || '—' }}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-xs text-gray-500 uppercase tracking-wider mb-2">Franjas horarias</div>
+        @if (v.franjas && v.franjas.length > 0) {
+          <div class="flex flex-wrap gap-1.5">
+            @for (franja of v.franjas; track $index) {
+              <span class="badge badge-primary badge-outline">{{ franja.nombre }}</span>
+            }
+          </div>
+        } @else {
+          <span class="text-sm text-gray-400">Sin franjas asignadas</span>
+        }
       </div>
     </div>
   </div>
-</div>
+} @else {
+  <div class="card">
+    <div class="card-body flex items-center justify-center py-16">
+      <span class="animate-spin inline-block w-7 h-7 border-3 border-primary border-t-transparent rounded-full"></span>
+    </div>
+  </div>
+}

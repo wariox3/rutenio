@@ -5,13 +5,15 @@ import { VehiculoService } from '../../servicios/vehiculo.service';
 import { switchMap, tap } from 'rxjs';
 import { General } from '../../../../common/clases/general';
 import { ListaVehiculo } from '../../../../interfaces/vehiculo/vehiculo.interface';
+import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
 
 @Component({
   selector: 'app-vehiculo-detalle',
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink
+    RouterLink,
+    PermisoPorDirective
   ],
   templateUrl: './vehiculo-detalle.component.html',
   styleUrl: './vehiculo-detalle.component.css',
