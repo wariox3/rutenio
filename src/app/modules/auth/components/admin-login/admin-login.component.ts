@@ -9,12 +9,15 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { BehaviorSubject, catchError, finalize, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
 import { environment } from '../../../../../environments/environment';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { InputEmailComponent } from '../../../../common/components/ui/form/input-email/input-email.component';
 import { InputPasswordComponent } from '../../../../common/components/ui/form/input-password/input-password.component';
 import { setCookie } from 'typescript-cookie';
 import { noRequiereToken } from '../../../../common/interceptors/token.interceptor';
+import { TokenService } from '../../services/token.service';
+import { usuarioIniciar } from '../../../../redux/actions/auth/usuario.actions';
 
 @Component({
   selector: 'app-admin-login',
@@ -32,6 +35,8 @@ import { noRequiereToken } from '../../../../common/interceptors/token.intercept
 export default class AdminLoginComponent {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private tokenService = inject(TokenService);
+  private store = inject(Store);
   public isLoading$ = new BehaviorSubject<boolean>(false);
   public errorMensaje: string | null = null;
 
@@ -63,6 +68,8 @@ export default class AdminLoginComponent {
           const expira = new Date(
             new Date().getTime() + environment.sessionLifeTime * 60 * 60 * 1000
           );
+          this.tokenService.guardar(resultado.token, expira);
+          this.store.dispatch(usuarioIniciar({ usuario: resultado.user }));
           setCookie('admin_token', resultado.token, {
             expires: expira,
             path: '/',
