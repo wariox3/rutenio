@@ -96,7 +96,7 @@ export class SidebarComponent extends General implements OnInit {
         {
           nombre: 'Reporte mensajero',
           link: '/movimiento/reporte-mensajero',
-          modulo: 'despacho',
+          modulo: 'reporte',
         },
       ],
     },

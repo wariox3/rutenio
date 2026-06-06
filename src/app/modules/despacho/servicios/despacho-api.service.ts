@@ -23,6 +23,10 @@ export class DespachoApiService {
     return this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/despacho/', parametros);
   }
 
+  reporteMensajero(parametros: any) {
+    return this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/reporte/mensajero/', parametros);
+  }
+
   guardar(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/`, data);
   }

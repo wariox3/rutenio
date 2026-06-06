@@ -36,6 +36,7 @@ export const MODULOS_OPERATIVOS = [
   'flota',
   'novedad',
   'contacto',
+  'reporte',
 ] as const;
 
 export const MODULOS_ADMINISTRATIVOS = [

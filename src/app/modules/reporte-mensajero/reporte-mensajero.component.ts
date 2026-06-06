@@ -49,14 +49,9 @@ export default class ReporteMensajeroComponent implements OnInit {
     if (!this.fechaDesde || !this.fechaHasta) return;
     this.cargando.set(true);
     this._despachoApiService
-      .lista({
-        // El backend (DRF) filtra el rango con fecha__gte / fecha__lte,
-        // igual que el dashboard. Se excluyen los despachos anulados.
-        fecha__gte: this.fechaDesde,
-        fecha__lte: this.fechaHasta,
-        estado_anulado: 'False',
-        limit: 5000,
-        ordering: '-fecha',
+      .reporteMensajero({
+        fecha_desde: this.fechaDesde,
+        fecha_hasta: this.fechaHasta,
       })
       .subscribe({
         next: (respuesta) => {
