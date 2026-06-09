@@ -47,14 +47,19 @@ export class FilterTransformerService {
 
     filters.forEach(filter => {
       if (!this.isValidFilter(filter)) {
-        return; // Saltar filtros inválidos
+        return;
       }
 
-      const operador = this.transformOperator(filter.operator);
-      // const transformedValue = this.transformValue(filter.value, filter.field);
+      let propiedad = filter.field;
+      let operador = this.transformOperator(filter.operator);
+      const indiceLookup = filter.field.lastIndexOf('__');
+      if (indiceLookup !== -1) {
+        propiedad = filter.field.substring(0, indiceLookup);
+        operador = filter.field.substring(indiceLookup + 2);
+      }
 
       apiParams.push({
-        propiedad: filter.field,
+        propiedad: propiedad,
         valor1: filter.value,
         operador: operador
       });

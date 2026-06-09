@@ -435,10 +435,7 @@ export default class VisitaRutearComponent extends General implements OnInit {
 
     this.porcentajeCapacidad = porcentaje;
 
-    if (this.pesoTotal === 0) {
-      this.barraCapacidad = 0;
-      this.errorCapacidad = true;
-    } else if (porcentaje > 100) {
+    if (porcentaje > 100) {
       this.barraCapacidad = 100;
       this.errorCapacidad = true;
     } else {
@@ -453,14 +450,10 @@ export default class VisitaRutearComponent extends General implements OnInit {
       total = (this.servicio() / this.tiempoTotal()) * 100;
     }
 
-    // Redondear a 2 decimales para evitar problemas de UI
     this.porcentajeTiempo = Math.round(total * 100) / 100;
 
     if (this.porcentajeTiempo > 100) {
       this.barraTiempo = 100;
-      this.errorTiempo = true;
-    } else if (this.porcentajeTiempo === 0) {
-      this.barraTiempo = 0;
       this.errorTiempo = true;
     } else {
       this.barraTiempo = this.porcentajeTiempo;
