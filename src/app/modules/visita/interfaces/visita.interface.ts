@@ -39,3 +39,16 @@ export interface Visita {
     recibeNumeroIdentificacion: string;
   };
 }
+
+export interface EntregaComplementoFallida {
+  id: number;
+  numero: number;
+  mensaje: string;
+}
+
+export interface EntregaComplementoRespuesta {
+  mensaje: string;
+  procesadas: number;
+  fallidas: EntregaComplementoFallida[];
+  sin_procesar?: number;
+}

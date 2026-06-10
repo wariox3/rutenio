@@ -24,7 +24,9 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
             auth.logout();
             break;
           case 500:
-            errorMensaje = "Se produjo un error interno en el servidor.";
+            errorMensaje =
+              error.error?.mensaje ||
+              "Se produjo un error interno en el servidor.";
             errorCodigo = "500";
             break;
           default:

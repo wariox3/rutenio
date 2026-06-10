@@ -6,6 +6,7 @@ import {
   VisitaResumen,
 } from '../../../interfaces/visita/rutear.interface';
 import { ParametrosApi, ParametrosApiPost } from '../../../core/types/api.type';
+import { EntregaComplementoRespuesta } from '../interfaces/visita.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -196,7 +197,7 @@ export class VisitaApiService {
   }
 
   enviarEntregaComplemento() {
-    return this._httpService.post<{ mensaje: string }>(
+    return this._httpService.post<EntregaComplementoRespuesta>(
       `ruteo/visita/entrega-complemento/`,
       {}
     );

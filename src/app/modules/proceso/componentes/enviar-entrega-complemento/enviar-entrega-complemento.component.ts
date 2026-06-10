@@ -7,6 +7,7 @@ import {
 import { finalize } from 'rxjs';
 import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
 import { AlertaService } from '../../../../common/services/alerta.service';
+import { EntregaComplementoRespuesta } from '../../../visita/interfaces/visita.interface';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 
 @Component({
@@ -22,11 +23,11 @@ export default class EnviarEntregaComplementoComponent {
   private readonly _alertaService = inject(AlertaService);
 
   public estaCargando$ = signal<boolean>(false);
-
-  constructor() {}
+  public resultado$ = signal<EntregaComplementoRespuesta | null>(null);
 
   enviarEntregaComplemento() {
     this.estaCargando$.set(true);
+    this.resultado$.set(null);
     this._visitaApiService
       .enviarEntregaComplemento()
       .pipe(
@@ -34,8 +35,18 @@ export default class EnviarEntregaComplementoComponent {
           this.estaCargando$.set(false);
         })
       )
-      .subscribe((res) => {
-        this._alertaService.mensajaExitoso(res.mensaje);
+      .subscribe({
+        next: (res) => {
+          const resultado = { ...res, fallidas: res.fallidas ?? [] };
+          this.resultado$.set(resultado);
+          if (resultado.fallidas.length === 0) {
+            this._alertaService.mensajaExitoso(
+              resultado.mensaje,
+              'Sincronización completa'
+            );
+          }
+        },
+        error: () => {},
       });
   }
 }

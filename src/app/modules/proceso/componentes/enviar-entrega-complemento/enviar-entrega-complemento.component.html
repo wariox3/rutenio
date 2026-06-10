@@ -1,14 +1,62 @@
 <div class="card min-w-full">
-    <div class="card-header">
-      <h3 class="card-title">Enviar entrega complemento</h3>
+  <div class="card-header">
+    <h3 class="card-title">Enviar entrega complemento</h3>
+  </div>
+  <div class="card-body flex flex-col gap-4">
+    <p class="text-sm text-gray-600">
+      Reenvía a Complemento las entregas confirmadas que aún no se han
+      sincronizado. El proceso descarga las evidencias de cada visita, por lo
+      que puede tardar varios segundos.
+    </p>
+    <div>
+      <app-button
+        [texto]="'Sincronizar'"
+        [textoCargando]="'Sincronizando...'"
+        [estaCargando]="estaCargando$()"
+        [clases]="'btn btn-primary'"
+        (click)="enviarEntregaComplemento()"
+      ></app-button>
     </div>
-    <div class="card-body">
-        <app-button
-            [texto]="'Sincronizar'"
-            [textoCargando]="'Sincronizando...'"
-            [estaCargando]="estaCargando$()"
-            [clases]="'btn btn-primary'"
-            (click)="enviarEntregaComplemento()"
-        ></app-button>
-    </div>
+    @if (resultado$(); as resultado) {
+      @if (resultado.fallidas.length === 0) {
+        <div
+          class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+        >
+          {{ resultado.mensaje }}
+        </div>
+      } @else {
+        <div
+          class="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800"
+        >
+          <span class="font-semibold">Sincronización con errores:</span>
+          {{ resultado.procesadas }} sincronizadas,
+          {{ resultado.fallidas.length }} con error.
+          @if (resultado.sin_procesar) {
+            Quedan {{ resultado.sin_procesar }} pendientes; vuelva a
+            sincronizar para continuar.
+          }
+        </div>
+        <div class="card-table scrollable-x-auto">
+          <table
+            class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"
+          >
+            <thead>
+              <tr>
+                <th class="px-2 py-1 text-left">Guía</th>
+                <th class="px-2 py-1 text-left">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (fallida of resultado.fallidas; track fallida.id) {
+                <tr>
+                  <td class="px-2 py-1">{{ fallida.numero }}</td>
+                  <td class="px-2 py-1">{{ fallida.mensaje }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </div>
 </div>
