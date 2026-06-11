@@ -112,14 +112,25 @@
             <thead class="sticky top-0 bg-white">
               <tr>
                 <th class="px-2 py-1 text-left">Guía</th>
-                <th class="px-2 py-1 text-left">Error</th>
+                <th class="px-2 py-1 text-left">Motivo</th>
+                <th class="px-2 py-1 text-left">Qué hacer</th>
               </tr>
             </thead>
             <tbody>
               @for (fallida of resultado.fallidas; track fallida.id) {
-                <tr>
-                  <td class="px-2 py-1">{{ fallida.numero }}</td>
-                  <td class="px-2 py-1">{{ fallida.mensaje }}</td>
+                <tr class="align-top">
+                  <td class="px-2 py-2 whitespace-nowrap">
+                    {{ fallida.numero }}
+                  </td>
+                  <td class="px-2 py-2">
+                    {{ fallida.motivo }}
+                    @if (fallida.motivo !== fallida.mensaje) {
+                      <div class="mt-1 text-xs text-gray-400">
+                        {{ fallida.mensaje }}
+                      </div>
+                    }
+                  </td>
+                  <td class="px-2 py-2">{{ fallida.accion }}</td>
                 </tr>
               }
             </tbody>

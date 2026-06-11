@@ -15,11 +15,47 @@ import {
 } from '../../../visita/interfaces/visita.interface';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 
+interface FallidaPresentada extends EntregaComplementoFallida {
+  motivo: string;
+  accion: string;
+}
+
 interface ResultadoSincronizacion {
   procesadas: number;
-  fallidas: EntregaComplementoFallida[];
+  fallidas: FallidaPresentada[];
   sin_procesar: number;
 }
+
+const RECHAZOS_CONOCIDOS: {
+  patron: RegExp;
+  motivo: string;
+  accion: string;
+}[] = [
+  {
+    patron: /no esta despachada/i,
+    motivo:
+      'La guía no está despachada en Complemento. Su sistema solo acepta entregas de guías despachadas; el dato enviado por ruteo está completo.',
+    accion:
+      'Confirme el despacho (planilla) de la guía en Complemento y luego use "Reintentar descartadas".',
+  },
+  {
+    patron: /guia no existe/i,
+    motivo: 'La guía no existe en Complemento.',
+    accion:
+      'Verifique el número de guía en Complemento; pudo ser anulada o creada con otro número.',
+  },
+  {
+    patron: /no tiene fecha de entrega/i,
+    motivo: 'La visita quedó registrada en ruteo sin fecha de entrega.',
+    accion: 'Revise la visita en ruteo y corrija la fecha de entrega.',
+  },
+  {
+    patron: /error con la clase|conexion/i,
+    motivo: 'No hubo comunicación con Complemento.',
+    accion:
+      'Verifique que Complemento esté en línea y vuelva a sincronizar; estos casos no descartan la guía.',
+  },
+];
 
 @Component({
   selector: 'app-enviar-entrega-complemento',
@@ -72,7 +108,7 @@ export default class EnviarEntregaComplementoComponent implements OnInit {
     this.progreso$.set({ sincronizadas: 0, total });
     let procesadas = 0;
     let sinProcesar = 0;
-    const fallidas = new Map<number, EntregaComplementoFallida>();
+    const fallidas = new Map<number, FallidaPresentada>();
     this._visitaApiService
       .enviarEntregaComplemento(reiniciarDescartadas)
       .pipe(
@@ -92,7 +128,7 @@ export default class EnviarEntregaComplementoComponent implements OnInit {
           procesadas += res.procesadas;
           sinProcesar = res.sin_procesar ?? 0;
           (res.fallidas ?? []).forEach((fallida) =>
-            fallidas.set(fallida.id, fallida)
+            fallidas.set(fallida.id, this._presentarFallida(fallida))
           );
           this.progreso$.update((progreso) =>
             progreso ? { ...progreso, sincronizadas: procesadas } : progreso
@@ -114,5 +150,20 @@ export default class EnviarEntregaComplementoComponent implements OnInit {
         },
         error: () => {},
       });
+  }
+
+  private _presentarFallida(
+    fallida: EntregaComplementoFallida
+  ): FallidaPresentada {
+    const rechazo = RECHAZOS_CONOCIDOS.find((conocido) =>
+      conocido.patron.test(fallida.mensaje)
+    );
+    return {
+      ...fallida,
+      motivo: rechazo?.motivo ?? fallida.mensaje,
+      accion:
+        rechazo?.accion ??
+        'Reintente la sincronización; si persiste, contacte a soporte con el detalle del error.',
+    };
   }
 }
