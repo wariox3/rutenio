@@ -9,7 +9,7 @@
       en lotes hasta terminar.
     </p>
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="rounded-lg border border-gray-200 p-4">
         <div class="text-2xl font-semibold text-gray-800">
           {{ resumen$()?.pendientes ?? '—' }}
@@ -21,14 +21,8 @@
           {{ resumen$()?.descartadas ?? '—' }}
         </div>
         <div class="mt-1 text-xs text-gray-500">
-          Descartadas tras varios intentos
+          Descartadas tras 5 intentos
         </div>
-      </div>
-      <div class="rounded-lg border border-gray-200 p-4">
-        <div class="text-2xl font-semibold text-gray-800">
-          {{ resumen$()?.lote ?? '—' }}
-        </div>
-        <div class="mt-1 text-xs text-gray-500">Visitas por lote</div>
       </div>
     </div>
 
@@ -60,8 +54,8 @@
           class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700"
         >
           <span>
-            {{ resumen.descartadas }} guías fueron descartadas tras varios
-            rechazos de Complemento (ej. guía sin despachar). Corríjalas allá
+            {{ resumen.descartadas }} guías fueron descartadas tras 5 rechazos
+            de Complemento (ej. guía sin despachar). Corríjalas en Complemento
             y reinténtelas.
           </span>
           <app-button
@@ -122,13 +116,8 @@
                   <td class="px-2 py-2 whitespace-nowrap">
                     {{ fallida.numero }}
                   </td>
-                  <td class="px-2 py-2">
+                  <td class="px-2 py-2" [title]="fallida.mensaje">
                     {{ fallida.motivo }}
-                    @if (fallida.motivo !== fallida.mensaje) {
-                      <div class="mt-1 text-xs text-gray-400">
-                        {{ fallida.mensaje }}
-                      </div>
-                    }
                   </td>
                   <td class="px-2 py-2">{{ fallida.accion }}</td>
                 </tr>

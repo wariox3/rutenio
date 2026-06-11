@@ -33,10 +33,9 @@ const RECHAZOS_CONOCIDOS: {
 }[] = [
   {
     patron: /no esta despachada/i,
-    motivo:
-      'La guía no está despachada en Complemento. Su sistema solo acepta entregas de guías despachadas; el dato enviado por ruteo está completo.',
+    motivo: 'La guía aún no está despachada en Complemento.',
     accion:
-      'Confirme el despacho (planilla) de la guía en Complemento y luego use "Reintentar descartadas".',
+      'Despache la guía (confirme su planilla) en Complemento; se reintentará automáticamente en la próxima sincronización.',
   },
   {
     patron: /guia no existe/i,
