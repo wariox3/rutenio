@@ -53,3 +53,9 @@ export interface EntregaComplementoRespuesta {
   sin_procesar?: number;
   descartadas?: number;
 }
+
+export interface EntregaComplementoResumen {
+  pendientes: number;
+  descartadas: number;
+  lote: number;
+}

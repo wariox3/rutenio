@@ -6,7 +6,10 @@ import {
   VisitaResumen,
 } from '../../../interfaces/visita/rutear.interface';
 import { ParametrosApi, ParametrosApiPost } from '../../../core/types/api.type';
-import { EntregaComplementoRespuesta } from '../interfaces/visita.interface';
+import {
+  EntregaComplementoRespuesta,
+  EntregaComplementoResumen,
+} from '../interfaces/visita.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -193,6 +196,12 @@ export class VisitaApiService {
     return this._httpService.post<{ mensaje: string }>(
       `ruteo/visita/seleccionar-direccion-alternativa/`,
       parametros
+    );
+  }
+
+  obtenerResumenEntregaComplemento() {
+    return this._httpService.getDetalle<EntregaComplementoResumen>(
+      `ruteo/visita/entrega-complemento/resumen/`
     );
   }
 

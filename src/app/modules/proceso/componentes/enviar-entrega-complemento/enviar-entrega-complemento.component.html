@@ -2,27 +2,100 @@
   <div class="card-header">
     <h3 class="card-title">Enviar entrega complemento</h3>
   </div>
-  <div class="card-body flex flex-col gap-4">
+  <div class="card-body flex flex-col gap-5">
     <p class="text-sm text-gray-600">
       Reenvía a Complemento las entregas confirmadas que aún no se han
-      sincronizado. El proceso descarga las evidencias de cada visita, por lo
-      que puede tardar varios segundos.
+      sincronizado. El proceso descarga las evidencias de cada visita y avanza
+      en lotes hasta terminar.
     </p>
-    <div>
-      <app-button
-        [texto]="'Sincronizar'"
-        [textoCargando]="'Sincronizando...'"
-        [estaCargando]="estaCargando$()"
-        [clases]="'btn btn-primary'"
-        (click)="enviarEntregaComplemento()"
-      ></app-button>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-2xl font-semibold text-gray-800">
+          {{ resumen$()?.pendientes ?? '—' }}
+        </div>
+        <div class="mt-1 text-xs text-gray-500">Pendientes por sincronizar</div>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-2xl font-semibold text-gray-800">
+          {{ resumen$()?.descartadas ?? '—' }}
+        </div>
+        <div class="mt-1 text-xs text-gray-500">
+          Descartadas tras varios intentos
+        </div>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <div class="text-2xl font-semibold text-gray-800">
+          {{ resumen$()?.lote ?? '—' }}
+        </div>
+        <div class="mt-1 text-xs text-gray-500">Visitas por lote</div>
+      </div>
     </div>
+
+    @if (resumen$(); as resumen) {
+      @if (resumen.pendientes === 0 && resumen.descartadas === 0) {
+        <div
+          class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
+        >
+          Todo sincronizado. No hay entregas pendientes por enviar a
+          Complemento.
+        </div>
+      } @else {
+        <div class="flex items-center gap-4">
+          <app-button
+            [texto]="'Sincronizar ' + resumen.pendientes + ' pendientes'"
+            [textoCargando]="'Sincronizando...'"
+            [estaCargando]="estaCargando$()"
+            [estaDeshabilitado]="resumen.pendientes === 0"
+            [clases]="'btn btn-primary'"
+            (click)="sincronizar()"
+          ></app-button>
+          <span class="text-xs text-gray-500">
+            Se procesa en lotes de {{ resumen.lote }} hasta terminar.
+          </span>
+        </div>
+      }
+      @if (resumen.descartadas > 0 && !estaCargando$()) {
+        <div
+          class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700"
+        >
+          <span>
+            {{ resumen.descartadas }} guías fueron descartadas tras varios
+            rechazos de Complemento (ej. guía sin despachar). Corríjalas allá
+            y reinténtelas.
+          </span>
+          <app-button
+            [texto]="'Reintentar descartadas'"
+            [textoCargando]="'Sincronizando...'"
+            [estaCargando]="estaCargando$()"
+            [clases]="'btn btn-secondary whitespace-nowrap'"
+            (click)="sincronizar(true)"
+          ></app-button>
+        </div>
+      }
+    }
+
+    @if (progreso$(); as progreso) {
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between text-xs text-gray-600">
+          <span>Sincronizando entregas...</span>
+          <span>{{ progreso.sincronizadas }} de {{ progreso.total }}</span>
+        </div>
+        <div class="h-2 w-full rounded-full bg-gray-200">
+          <div
+            class="h-2 rounded-full bg-blue-600 transition-all duration-500"
+            [style.width.%]="porcentajeProgreso$()"
+          ></div>
+        </div>
+      </div>
+    }
+
     @if (resultado$(); as resultado) {
       @if (resultado.fallidas.length === 0) {
         <div
           class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
         >
-          {{ resultado.mensaje }}
+          {{ resultado.procesadas }} entregas sincronizadas con Complemento.
         </div>
       } @else {
         <div
@@ -30,32 +103,8 @@
         >
           <span class="font-semibold">Sincronización con errores:</span>
           {{ resultado.procesadas }} sincronizadas,
-          {{ resultado.fallidas.length }} con error.
-          @if (resultado.sin_procesar) {
-            Quedan {{ resultado.sin_procesar }} pendientes; vuelva a
-            sincronizar para continuar.
-          }
+          {{ resultado.fallidas.length }} rechazadas por Complemento.
         </div>
-      }
-      @if (resultado.descartadas) {
-        <div
-          class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700"
-        >
-          <span>
-            {{ resultado.descartadas }} guías descartadas tras varios intentos
-            rechazados por Complemento. Corríjalas allá (ej. despachar la
-            guía) y reinténtelas.
-          </span>
-          <app-button
-            [texto]="'Reintentar descartadas'"
-            [textoCargando]="'Sincronizando...'"
-            [estaCargando]="estaCargando$()"
-            [clases]="'btn btn-secondary whitespace-nowrap'"
-            (click)="enviarEntregaComplemento(true)"
-          ></app-button>
-        </div>
-      }
-      @if (resultado.fallidas.length > 0) {
         <div class="card-table scrollable-x-auto">
           <table
             class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"
