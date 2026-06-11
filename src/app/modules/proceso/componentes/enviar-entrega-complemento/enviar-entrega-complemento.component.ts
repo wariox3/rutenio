@@ -25,11 +25,11 @@ export default class EnviarEntregaComplementoComponent {
   public estaCargando$ = signal<boolean>(false);
   public resultado$ = signal<EntregaComplementoRespuesta | null>(null);
 
-  enviarEntregaComplemento() {
+  enviarEntregaComplemento(reiniciarDescartadas = false) {
     this.estaCargando$.set(true);
     this.resultado$.set(null);
     this._visitaApiService
-      .enviarEntregaComplemento()
+      .enviarEntregaComplemento(reiniciarDescartadas)
       .pipe(
         finalize(() => {
           this.estaCargando$.set(false);

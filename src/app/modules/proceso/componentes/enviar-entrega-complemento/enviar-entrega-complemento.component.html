@@ -36,6 +36,26 @@
             sincronizar para continuar.
           }
         </div>
+      }
+      @if (resultado.descartadas) {
+        <div
+          class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700"
+        >
+          <span>
+            {{ resultado.descartadas }} guías descartadas tras varios intentos
+            rechazados por Complemento. Corríjalas allá (ej. despachar la
+            guía) y reinténtelas.
+          </span>
+          <app-button
+            [texto]="'Reintentar descartadas'"
+            [textoCargando]="'Sincronizando...'"
+            [estaCargando]="estaCargando$()"
+            [clases]="'btn btn-secondary whitespace-nowrap'"
+            (click)="enviarEntregaComplemento(true)"
+          ></app-button>
+        </div>
+      }
+      @if (resultado.fallidas.length > 0) {
         <div class="card-table scrollable-x-auto">
           <table
             class="table align-middle text-gray-700 font-medium text-sm border-collapse w-full"

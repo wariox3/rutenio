@@ -196,10 +196,10 @@ export class VisitaApiService {
     );
   }
 
-  enviarEntregaComplemento() {
+  enviarEntregaComplemento(reiniciarDescartadas = false) {
     return this._httpService.post<EntregaComplementoRespuesta>(
       `ruteo/visita/entrega-complemento/`,
-      {}
+      reiniciarDescartadas ? { reiniciar_descartadas: true } : {}
     );
   }
 

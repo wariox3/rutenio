@@ -51,4 +51,5 @@ export interface EntregaComplementoRespuesta {
   procesadas: number;
   fallidas: EntregaComplementoFallida[];
   sin_procesar?: number;
+  descartadas?: number;
 }
