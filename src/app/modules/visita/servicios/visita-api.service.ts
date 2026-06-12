@@ -7,9 +7,9 @@ import {
 } from '../../../interfaces/visita/rutear.interface';
 import { ParametrosApi, ParametrosApiPost } from '../../../core/types/api.type';
 import {
-  EntregaComplementoRespuesta,
-  EntregaComplementoResumen,
-} from '../interfaces/visita.interface';
+  SincronizacionRespuesta,
+  SincronizacionResumen,
+} from '../../proceso/interfaces/sincronizacion-complemento.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -200,13 +200,13 @@ export class VisitaApiService {
   }
 
   obtenerResumenEntregaComplemento() {
-    return this._httpService.getDetalle<EntregaComplementoResumen>(
+    return this._httpService.getDetalle<SincronizacionResumen>(
       `ruteo/visita/entrega-complemento/resumen/`
     );
   }
 
   enviarEntregaComplemento(reiniciarDescartadas = false) {
-    return this._httpService.post<EntregaComplementoRespuesta>(
+    return this._httpService.post<SincronizacionRespuesta>(
       `ruteo/visita/entrega-complemento/`,
       reiniciarDescartadas ? { reiniciar_descartadas: true } : {}
     );

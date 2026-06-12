@@ -1,34 +1,26 @@
-import { Component, inject, signal } from '@angular/core';
-import { ButtonComponent } from '../../../../common/components/ui/button/button.component';
-import { AlertaService } from '../../../../common/services/alerta.service';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
-import { finalize } from 'rxjs';
+import { SincronizacionComplementoComponent } from '../sincronizacion-complemento/sincronizacion-complemento.component';
+import { SincronizacionComplementoConfig } from '../../interfaces/sincronizacion-complemento.interface';
 
 @Component({
   selector: 'app-enviar-novedad-complemento',
   standalone: true,
-  imports: [ButtonComponent],
-  templateUrl: './enviar-novedad-complemento.component.html',
-  styleUrl: './enviar-novedad-complemento.component.scss',
+  imports: [SincronizacionComplementoComponent],
+  template: '<app-sincronizacion-complemento [config]="config" />',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class EnviarNovedadComplementoComponent {
   private readonly _novedadApiService = inject(NovedadService);
-  private readonly _alertaService = inject(AlertaService);
-  public estaCargando$ = signal<boolean>(false);
 
-  constructor() {}
-
-  enviarNovedadComplemento() {
-    this.estaCargando$.set(true);
-    this._novedadApiService
-       .enviarNovedadComplemento()
-      .pipe(
-        finalize(() => {
-          this.estaCargando$.set(false);
-        })
-      )
-      .subscribe((res) => {
-        this._alertaService.mensajaExitoso(res.mensaje);
-      });
-  }
+  config: SincronizacionComplementoConfig = {
+    titulo: 'Enviar novedad complemento',
+    descripcion:
+      'Reenvía a Complemento las novedades registradas que aún no se han sincronizado. El proceso descarga las evidencias de cada novedad y avanza en lotes hasta terminar.',
+    unidad: 'novedades',
+    obtenerResumen: () =>
+      this._novedadApiService.obtenerResumenNovedadComplemento(),
+    sincronizar: (reiniciarDescartadas) =>
+      this._novedadApiService.enviarNovedadComplemento(reiniciarDescartadas),
+  };
 }

@@ -6,6 +6,10 @@ import { RespuestaAutocompletar } from '../../../interfaces/general/autocompleta
 import { Subject } from 'rxjs';
 import { GeneralApiService } from '../../../core';
 import { RespuestaApi } from '../../../core/types/api.type';
+import {
+  SincronizacionRespuesta,
+  SincronizacionResumen,
+} from '../../proceso/interfaces/sincronizacion-complemento.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -61,10 +65,16 @@ export class NovedadService {
     return this._httpService.post<any[]>(`ruteo/novedad/solucionar/`, data);
   }
 
-  enviarNovedadComplemento() {
-    return this._httpService.post<{ mensaje: string }>(
+  obtenerResumenNovedadComplemento() {
+    return this._httpService.getDetalle<SincronizacionResumen>(
+      `ruteo/novedad/nuevo_complemento/resumen/`
+    );
+  }
+
+  enviarNovedadComplemento(reiniciarDescartadas = false) {
+    return this._httpService.post<SincronizacionRespuesta>(
       `ruteo/novedad/nuevo_complemento/`,
-      {}
+      reiniciarDescartadas ? { reiniciar_descartadas: true } : {}
     );
   }
 

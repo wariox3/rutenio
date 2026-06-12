@@ -1,13 +1,9 @@
 <div class="card min-w-full">
   <div class="card-header">
-    <h3 class="card-title">Enviar entrega complemento</h3>
+    <h3 class="card-title">{{ config.titulo }}</h3>
   </div>
   <div class="card-body flex flex-col gap-5">
-    <p class="text-sm text-gray-600">
-      Reenvía a Complemento las entregas confirmadas que aún no se han
-      sincronizado. El proceso descarga las evidencias de cada visita y avanza
-      en lotes hasta terminar.
-    </p>
+    <p class="text-sm text-gray-600">{{ config.descripcion }}</p>
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div class="rounded-lg border border-gray-200 p-4">
@@ -31,8 +27,8 @@
         <div
           class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
         >
-          Todo sincronizado. No hay entregas pendientes por enviar a
-          Complemento.
+          Todo sincronizado. No hay {{ config.unidad }} pendientes por enviar
+          a Complemento.
         </div>
       } @else {
         <div class="flex items-center gap-4">
@@ -54,9 +50,9 @@
           class="flex items-center justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700"
         >
           <span>
-            {{ resumen.descartadas }} guías fueron descartadas tras 5 rechazos
-            de Complemento (ej. guía sin despachar). Corríjalas en Complemento
-            y reinténtelas.
+            {{ resumen.descartadas }} {{ config.unidad }} fueron descartadas
+            tras 5 rechazos de Complemento (ej. guía sin despachar).
+            Corríjalas en Complemento y reinténtelas.
           </span>
           <app-button
             [texto]="'Reintentar descartadas'"
@@ -72,7 +68,7 @@
     @if (progreso$(); as progreso) {
       <div class="flex flex-col gap-2">
         <div class="flex justify-between text-xs text-gray-600">
-          <span>Sincronizando entregas...</span>
+          <span>Sincronizando {{ config.unidad }}...</span>
           <span>{{ progreso.sincronizadas }} de {{ progreso.total }}</span>
         </div>
         <div class="h-2 w-full rounded-full bg-gray-200">
@@ -89,7 +85,8 @@
         <div
           class="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
         >
-          {{ resultado.procesadas }} entregas sincronizadas con Complemento.
+          {{ resultado.procesadas }} {{ config.unidad }} sincronizadas con
+          Complemento.
         </div>
       } @else {
         <div
