@@ -72,8 +72,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
    */
   private switchDescripciones: Record<string, { titulo: string; descripcion: string; confirmar: boolean }> = {
     rut_sincronizar_complemento: {
-      titulo: 'Sincronizar con Reddoc',
-      descripcion: 'Las entregas se sincronizarán automáticamente con Reddoc. Si se desactiva, los datos no se actualizarán en el sistema externo.',
+      titulo: 'Sincronizar con Complemento',
+      descripcion: 'Las entregas se sincronizarán automáticamente con Complemento. Si se desactiva, los datos no se actualizarán en el sistema externo.',
       confirmar: true,
     },
     rut_rutear_franja: {
