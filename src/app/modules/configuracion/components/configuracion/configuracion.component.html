@@ -113,18 +113,16 @@
               class="block"
             ></app-switch>
 
-            @if (formularioConfiguracion.controls.rut_sincronizar_complemento.value) {
-              <div class="pl-2 border-l-2 border-gray-200 dark:border-gray-200">
-                <label class="form-label font-normal text-gray-900">Límite de entregas por sincronización</label>
-                <input
-                  type="number"
-                  min="1"
-                  class="input w-auto"
-                  formControlName="rut_limite_complemento"
-                />
-                <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde Complemento.</p>
-              </div>
-            }
+            <div class="pl-2 border-l-2 border-gray-200 dark:border-gray-200">
+              <label class="form-label font-normal text-gray-900">Límite de entregas por sincronización</label>
+              <input
+                type="number"
+                min="1"
+                class="input w-auto"
+                formControlName="rut_limite_complemento"
+              />
+              <p class="text-xs text-gray-500 mt-1">Cantidad máxima de entregas al crear un diseño de ruta desde Complemento.</p>
+            </div>
 
             <div>
               <label class="form-label font-normal text-gray-900">Límite de registros por importación</label>
