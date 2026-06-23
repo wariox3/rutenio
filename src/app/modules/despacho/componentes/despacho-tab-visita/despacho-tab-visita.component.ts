@@ -101,32 +101,75 @@ export class DespachoTabVisitaComponent
     return new Date(v.cita_fin).getTime() < Date.now();
   }
 
-  estadoVisita(v: Visita): 'entregada' | 'novedad' | 'cita-vencida' | 'alerta' | 'pendiente' {
+  // --- Modelo de estado en DOS dimensiones independientes ------------------
+  // El badge viejo mezclaba "¿se entregó?" con "¿la dirección está bien?", así
+  // que una visita pendiente con dirección ambigua se veía solo como "Alerta"
+  // y el operador no sabía si faltaba entregarla o corregir el dato.
+
+  // 1) ENTREGA — lo único que decide si la visita bloquea el cierre.
+  estadoEntrega(v: Visita): 'entregada' | 'novedad' | 'pendiente' {
     if (v.estado_entregado) return 'entregada';
     if (v.estado_novedad) return 'novedad';
-    if (this.esCitaObligatoriaVencida(v)) return 'cita-vencida';
-    if (v.estado_decodificado_alerta || !v.estado_decodificado) return 'alerta';
     return 'pendiente';
   }
 
-  // El estado 'alerta' agrupa dos motivos distintos; los separamos para que el
-  // operador vea de qué se trata (antes solo decía "Alerta" sin explicar).
-  alertaInfo(v: Visita): { label: string; detalle: string } {
-    if (!v.estado_decodificado) {
+  // 2) DIRECCION — calidad del geocodificado, contexto secundario.
+  problemaDireccion(
+    v: Visita
+  ): { tipo: 'sin-ubicar' | 'ambigua'; label: string; detalle: string } | null {
+    if (v.estado_decodificado === false || v.estado_decodificado == null) {
       return {
-        label: 'Sin geolocalizar',
+        tipo: 'sin-ubicar',
+        label: 'Sin ubicar',
         detalle:
-          'La dirección no se pudo ubicar en el mapa (sin coordenadas). Corregí la dirección para poder rutearla.',
+          'La dirección no se pudo ubicar en el mapa (sin coordenadas). Corregila para poder rutear esta visita.',
       };
     }
-    const n = v.resultados?.length;
-    return {
-      label: 'Dirección ambigua',
-      detalle: n
-        ? `La dirección coincidió con ${n} ubicaciones posibles. Verificá cuál es la correcta antes de rutear.`
-        : 'La dirección es ambigua (varias ubicaciones posibles). Verificá cuál es la correcta antes de rutear.',
-    };
+    if (v.estado_decodificado_alerta) {
+      const n = v.resultados?.length;
+      return {
+        tipo: 'ambigua',
+        label: 'Dirección ambigua',
+        detalle: n
+          ? `La dirección coincidió con ${n} ubicaciones posibles. Verificá cuál es la correcta antes de rutear.`
+          : 'La dirección coincidió con varias ubicaciones posibles. Verificá cuál es la correcta antes de rutear.',
+      };
+    }
+    return null;
   }
+
+  // --- Filtro por estado (en cliente, instantáneo) -------------------------
+  filtroEstado = signal<
+    'todas' | 'pendiente' | 'entregada' | 'novedad' | 'direccion'
+  >('todas');
+
+  alternarFiltro(
+    f: 'todas' | 'pendiente' | 'entregada' | 'novedad' | 'direccion'
+  ): void {
+    this.filtroEstado.set(this.filtroEstado() === f ? 'todas' : f);
+  }
+
+  visitasFiltradas = computed<Visita[]>(() => {
+    const f = this.filtroEstado();
+    const list = this.visitas();
+    switch (f) {
+      case 'pendiente':
+        return list.filter((v) => this.estadoEntrega(v) === 'pendiente');
+      case 'entregada':
+        return list.filter((v) => !!v.estado_entregado);
+      case 'novedad':
+        return list.filter((v) => !!v.estado_novedad && !v.estado_entregado);
+      case 'direccion':
+        return list.filter((v) => !!this.problemaDireccion(v));
+      default:
+        return list;
+    }
+  });
+
+  // Visitas con problema de dirección (para el chip-filtro secundario).
+  conProblemaDireccion = computed(
+    () => this.visitas().filter((v) => !!this.problemaDireccion(v)).length
+  );
 
   // Solo las que bloquean el cierre del despacho (ni entregadas ni con novedad)
   // se pueden liberar; el backend 'liberar' permite hacerlo aun con el despacho
