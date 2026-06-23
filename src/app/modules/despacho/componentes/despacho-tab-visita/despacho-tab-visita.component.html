@@ -238,9 +238,15 @@
               </span>
             }
             @case ('alerta') {
-              <span class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium">
-                <i class="ki-filled ki-warning"></i> Alerta
+              <span
+                class="text-xs px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-medium"
+                [title]="alertaInfo(visita).detalle"
+              >
+                <i class="ki-filled ki-warning"></i> {{ alertaInfo(visita).label }}
               </span>
+              <p class="text-[10px] text-red-600/80 mt-0.5 max-w-[12rem] leading-tight">
+                {{ alertaInfo(visita).detalle }}
+              </p>
             }
             @default {
               <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-medium">

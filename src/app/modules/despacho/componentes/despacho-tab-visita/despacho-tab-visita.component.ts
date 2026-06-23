@@ -109,6 +109,25 @@ export class DespachoTabVisitaComponent
     return 'pendiente';
   }
 
+  // El estado 'alerta' agrupa dos motivos distintos; los separamos para que el
+  // operador vea de qué se trata (antes solo decía "Alerta" sin explicar).
+  alertaInfo(v: Visita): { label: string; detalle: string } {
+    if (!v.estado_decodificado) {
+      return {
+        label: 'Sin geolocalizar',
+        detalle:
+          'La dirección no se pudo ubicar en el mapa (sin coordenadas). Corregí la dirección para poder rutearla.',
+      };
+    }
+    const n = v.resultados?.length;
+    return {
+      label: 'Dirección ambigua',
+      detalle: n
+        ? `La dirección coincidió con ${n} ubicaciones posibles. Verificá cuál es la correcta antes de rutear.`
+        : 'La dirección es ambigua (varias ubicaciones posibles). Verificá cuál es la correcta antes de rutear.',
+    };
+  }
+
   // Solo las que bloquean el cierre del despacho (ni entregadas ni con novedad)
   // se pueden liberar; el backend 'liberar' permite hacerlo aun con el despacho
   // aprobado, que es el estado normal en trafico.
