@@ -16,6 +16,7 @@ import { ValidarBooleanoPipe } from '../../../../common/pipes/validar_booleano';
 import { GeneralApiService } from '../../../../core';
 import { Visita } from '../../../visita/interfaces/visita.interface';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { ParametrosApi, RespuestaApi } from '../../../../core/types/api.type';
 import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
 import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
@@ -45,6 +46,7 @@ export class DespachoTabVisitaComponent
   @Input() despachoId: number;
   private _destroy$ = new Subject<void>();
   private visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
   private _generalService = inject(GeneralService);
   private _generalApiService = inject(GeneralApiService);
   public currentPage = signal(1);
@@ -105,6 +107,37 @@ export class DespachoTabVisitaComponent
     if (this.esCitaObligatoriaVencida(v)) return 'cita-vencida';
     if (v.estado_decodificado_alerta || !v.estado_decodificado) return 'alerta';
     return 'pendiente';
+  }
+
+  // Solo las que bloquean el cierre del despacho (ni entregadas ni con novedad)
+  // se pueden liberar; el backend 'liberar' permite hacerlo aun con el despacho
+  // aprobado, que es el estado normal en trafico.
+  puedeLiberar(v: Visita): boolean {
+    return !v.estado_entregado && !v.estado_novedad;
+  }
+
+  liberarVisita(visita: Visita, event: Event): void {
+    event.stopPropagation();
+    const ref = `${visita.numero || visita.id} ${visita.destinatario ?? ''}`.trim();
+    this.alerta
+      .confirmar({
+        titulo: '¿Liberar esta visita?',
+        texto: `Se quitará "${ref}" del despacho para poder cerrarlo. La visita quedará disponible para reasignar.`,
+        textoBotonCofirmacion: 'Sí, liberar',
+      })
+      .then((respuesta) => {
+        if (!respuesta.isConfirmed) return;
+        this._visitaApiService
+          .liberar(visita.id.toString())
+          .pipe(takeUntil(this._destroy$))
+          .subscribe({
+            next: (resp) => {
+              this.alerta.mensajaExitoso(resp?.mensaje || 'Se liberó la visita');
+              this.consultarVisitaPorDespacho();
+              this.visitaService.notificarActualizacionLista();
+            },
+          });
+      });
   }
 
   private baseParametrosConsulta: ParametrosApi = {

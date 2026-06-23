@@ -264,16 +264,28 @@
           }
         </td>
 
-        <!-- Acción: ojo (redundante con click en fila pero discoverable) -->
-        <td class="px-2 py-1 text-center">
-          <button
-            type="button"
-            class="btn btn-sm btn-icon btn-clear btn-light p-1"
-            title="Ver detalle"
-            (click)="$event.stopPropagation(); abrirDrawer(visita.id)"
-          >
-            <i class="ki-filled ki-eye"></i>
-          </button>
+        <!-- Acciones: liberar (solo bloqueantes) + ver detalle -->
+        <td class="px-2 py-1">
+          <div class="flex items-center justify-center gap-1">
+            @if (puedeLiberar(visita)) {
+              <button
+                type="button"
+                class="btn btn-sm btn-icon btn-clear btn-light p-1 text-red-600 hover:text-red-700"
+                title="Liberar del despacho"
+                (click)="liberarVisita(visita, $event)"
+              >
+                <i class="ki-filled ki-exit-up"></i>
+              </button>
+            }
+            <button
+              type="button"
+              class="btn btn-sm btn-icon btn-clear btn-light p-1"
+              title="Ver detalle"
+              (click)="$event.stopPropagation(); abrirDrawer(visita.id)"
+            >
+              <i class="ki-filled ki-eye"></i>
+            </button>
+          </div>
         </td>
       </tr>
       }
