@@ -165,6 +165,22 @@
               <span class="menu-title">Orden de entrega</span>
             </button>
           </div>
+          <div class="menu-item">
+            <button class="menu-link" (click)="imprimirRotulos('termica')">
+              <span class="menu-icon">
+                <i class="ki-filled ki-printer"></i>
+              </span>
+              <span class="menu-title">Rótulos (térmica)</span>
+            </button>
+          </div>
+          <div class="menu-item">
+            <button class="menu-link" (click)="imprimirRotulos('a4')">
+              <span class="menu-icon">
+                <i class="ki-filled ki-printer"></i>
+              </span>
+              <span class="menu-title">Rótulos (A4)</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -264,6 +280,45 @@
 <div class="overflow-auto max-h-[640px] border border-gray-200 dark:border-gray-600 rounded">
   <table class="table text-sm w-full">
     <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-100">
+      <!-- Resumen de avance: visible siempre, incluso al hacer scroll.
+           Solo se muestra cuando la página cargada contiene TODAS las visitas
+           del despacho; con paginación o filtros del servidor los computeds
+           serían parciales y el porcentaje mentiría. -->
+      @if (visitas().length === cantidadRegistros) {
+      <tr>
+        <th
+          colspan="8"
+          class="px-3 py-2 bg-white dark:bg-gray-100 border-b border-gray-200 normal-case"
+        >
+          <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm font-normal">
+            <span class="inline-flex items-center gap-1 text-green-700">
+              <i class="ki-filled ki-check-circle"></i>
+              Completadas:
+              <strong class="tabular-nums">{{ entregadas() }}</strong>
+              <span class="text-gray-400">de {{ totalVisitas() }}</span>
+            </span>
+            <span
+              class="inline-flex items-center gap-1"
+              [class.text-amber-700]="pendientes() > 0"
+              [class.text-gray-500]="pendientes() === 0"
+            >
+              <i class="ki-filled ki-time"></i>
+              Faltan: <strong class="tabular-nums">{{ pendientes() }}</strong>
+            </span>
+            @if (conNovedad() > 0) {
+            <span class="inline-flex items-center gap-1 text-orange-700">
+              <i class="ki-filled ki-information-3"></i>
+              Con novedad:
+              <strong class="tabular-nums">{{ conNovedad() }}</strong>
+            </span>
+            }
+            <span class="ml-auto text-xs text-gray-500 tabular-nums">
+              {{ pctEntregadas() }}% completado
+            </span>
+          </div>
+        </th>
+      </tr>
+      }
       <tr>
         <th class="px-3 py-2 font-semibold text-gray-600 text-left">#</th>
         <th class="px-3 py-2 font-semibold text-gray-600 text-left">Destinatario</th>

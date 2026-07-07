@@ -27,6 +27,7 @@ import { InputComponent } from '../../../../common/components/ui/form/input/inpu
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { ComplementoService } from '../../../complementos/servicios/complemento.service';
+import { FranjaService } from '../../../franja/servicios/franja.service';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
@@ -52,9 +53,11 @@ export class VisitaImportarPorComplementoComponent extends General {
 
   public estaImportandoComplementos$: BehaviorSubject<boolean>;
   public complementos = signal<any[]>([]);
+  public zonasDisponibles = signal<any[]>([]);
   public filtrosAbiertos = signal<boolean>(false);
   private _visitaApiService = inject(VisitaApiService);
   private _complementoService = inject(ComplementoService);
+  private _franjaService = inject(FranjaService);
   public numeroDeRegistrosAImportar: number = 1;
   public formularioComplementos = new FormGroup(
     {
@@ -70,7 +73,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       novedad: new FormControl(false),
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
-      codigoZona: new FormControl(null),
+      zonas: new FormControl<number[]>([]),
       codigo_despacho: new FormControl(null),
       complemento: new FormControl(null, Validators.required),
     },
@@ -85,9 +88,10 @@ export class VisitaImportarPorComplementoComponent extends General {
     // identificador principal del lote a importar, no como filtro.
     const camposDeFiltro = [
       v.desde, v.hasta, v.fecha_desde, v.fecha_hasta,
-      v.codigoContacto, v.codigoDestino, v.codigoZona,
+      v.codigoContacto, v.codigoDestino,
     ];
-    return camposDeFiltro.filter((x) => x !== null && x !== '' && x !== undefined).length;
+    const activos = camposDeFiltro.filter((x) => x !== null && x !== '' && x !== undefined).length;
+    return activos + (v.zonas?.length ? 1 : 0);
   });
 
   constructor() {
@@ -96,6 +100,7 @@ export class VisitaImportarPorComplementoComponent extends General {
     this.emitirCerrarModal = new EventEmitter();
     this.estaImportandoComplementos$ = new BehaviorSubject(false);
     this.getComplementos();
+    this.getZonas();
     // Mantener el signal sincronizado con el form para que los computed
     // (cantidadFiltrosActivos, textoBotonImportar) reaccionen.
     this.formularioComplementos.valueChanges.subscribe((v) =>
@@ -106,6 +111,14 @@ export class VisitaImportarPorComplementoComponent extends General {
   getComplementos() {
     this._complementoService.complementosInstalados().subscribe((response) => {
       this.complementos.set(response.results);
+    });
+  }
+
+  getZonas() {
+    this._franjaService.consultarFranjasTodas().subscribe((response: any) => {
+      // Sin paginación el backend responde un array plano; se tolera también
+      // la forma paginada {results} por si el endpoint cambia.
+      this.zonasDisponibles.set(Array.isArray(response) ? response : response?.results ?? []);
     });
   }
 
@@ -146,7 +159,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       this.formularioComplementos.get('numeroRegistros')?.value;
     const codigo_contacto = this.formularioComplementos.get('codigoContacto')?.value;
     const codigo_destino = this.formularioComplementos.get('codigoDestino')?.value;
-    const codigo_zona = this.formularioComplementos.get('codigoZona')?.value;
+    const zonas = this.formularioComplementos.get('zonas')?.value;
     const complemento = this.formularioComplementos.get('complemento')?.value;
     const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
     const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
@@ -162,7 +175,7 @@ export class VisitaImportarPorComplementoComponent extends General {
         complemento,
         codigo_contacto,
         codigo_destino,
-        codigo_zona,
+        franjas: zonas?.length ? zonas : null,
         fecha_desde,
         fecha_hasta,
         codigo_despacho
@@ -195,6 +208,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       hasta: null,
       pendienteDespacho: true,
       novedad: false,
+      zonas: [],
       complemento: complementoActual,
     });
   }

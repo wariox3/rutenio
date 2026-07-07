@@ -52,6 +52,7 @@ import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despa
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaService } from '../../../visita/servicios/visita.service';
+import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
@@ -117,6 +118,7 @@ export default class TraficoListaComponent
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
   private _visitaService = inject(VisitaService);
+  private _visitaApiService = inject(VisitaApiService);
   private _filterTransformerService = inject(FilterTransformerService);
   private _filtroBaseService = inject(FiltroBaseService);
   public mapaTheme = inject(MapaThemeService);
@@ -430,6 +432,47 @@ export default class TraficoListaComponent
     this._httpService.descargarArchivo('ruteo/despacho/plano-semantica/', {
       id,
     });
+  }
+
+  confirmarRecalcularRuta(id: number) {
+    this.alerta
+      .confirmar({
+        titulo: '¿Recalcular la ruta?',
+        texto:
+          'Se recalculará el orden de entrega de todas las visitas del despacho.',
+        textoBotonCofirmacion: 'Si, recalcular',
+      })
+      .then((respuesta) => {
+        if (respuesta.isConfirmed) {
+          this.recalcularRuta(id);
+        }
+      });
+  }
+
+  recalcularRuta(id: number) {
+    this.actualizandoLista.set(true);
+    this._visitaApiService
+      .ordenarPorDespacho(id)
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.actualizandoLista.set(false))
+      )
+      .subscribe({
+        next: (respuesta) => {
+          // El backend informa si alguna visita no se pudo reordenar
+          // (p. ej. cita obligatoria vencida) y conserva su orden anterior.
+          this.alerta.mensajaExitoso(
+            respuesta?.mensaje || 'Se recalculó el orden de las entregas'
+          );
+          this.consultarLista();
+          // Refresca el tab de visitas si el modal de detalle está abierto.
+          this._visitaService.notificarActualizacionLista();
+        },
+      });
+  }
+
+  imprimirRotulos(id: number) {
+    this._visitaService.imprimirRotulosDespacho(id, 'termica');
   }
 
   confirmarTerminarDespacho(id: number) {

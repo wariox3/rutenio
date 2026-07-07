@@ -301,4 +301,8 @@ export class DespachoTabVisitaComponent
       despacho_id: this.despachoId,
     })
   }
+
+  imprimirRotulos(formato: 'termica' | 'a4') {
+    this.visitaService.imprimirRotulosDespacho(this.despachoId, formato);
+  }
 }

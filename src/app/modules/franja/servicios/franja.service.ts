@@ -63,6 +63,12 @@ export class FranjaService {
     return this._httpService.getDetalle<RespuestaApi<any>>(`ruteo/franja/`);
   }
 
+  // Con ?lista=true el backend desactiva la paginación y responde un array
+  // plano con TODAS las franjas (la lista normal pagina a 30).
+  consultarFranjasTodas() {
+    return this._httpService.getDetalle<any[]>(`ruteo/franja/?lista=true`);
+  }
+
   importarArchivoKML(archivoEnBase64: string) {
     return this._httpService.post('ruteo/franja/importar/', {
       base64: archivoEnBase64,

@@ -288,6 +288,28 @@
                       </div>
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
+                          (click)="confirmarRecalcularRuta(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-arrows-loop"></i>
+                          </span>
+                          <span class="menu-title">Recalcular ruta</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="imprimirRotulos(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-printer"></i>
+                          </span>
+                          <span class="menu-title">Imprimir rótulos</span>
+                        </button>
+                      </div>
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
                           class="menu-link"
                           data-modal-toggle="#visita-liberar-modal"
                           (click)="abrirModalLiberar(despacho.id)"

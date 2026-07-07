@@ -149,14 +149,23 @@
           </p>
         </div>
 
-        <!-- Codigo zona -->
+        <!-- Zonas (franjas de ruteo) -->
         <div>
-          <app-label>Código de zona</app-label>
-          <app-input
-            [fieldName]="'Código zona'"
-            [control]="formularioComplementos.controls.codigoZona"
-            placeholder="Código zona"
-          ></app-input>
+          <app-label>Zonas</app-label>
+          <ng-select
+            [items]="zonasDisponibles()"
+            formControlName="zonas"
+            bindLabel="nombre"
+            bindValue="id"
+            [multiple]="true"
+            notFoundText="No hay zonas creadas"
+            placeholder="Todas las zonas"
+            class="select2Custom"
+          ></ng-select>
+          <p class="text-[11px] text-gray-500 mt-1">
+            Solo se importan las guías cuya dirección caiga dentro de las zonas
+            seleccionadas; las demás quedan pendientes en el complemento.
+          </p>
         </div>
       </div>
     }

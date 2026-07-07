@@ -174,37 +174,63 @@ export class HttpService extends Subdomino {
         observe: 'response',
         responseType: 'blob' as 'json',
       })
-      .subscribe((response) => {
-        if (response !== null) {
-          const headers = response.headers as HttpHeaders;
+      .subscribe({
+        next: (response) => {
+          if (response !== null) {
+            const headers = response.headers as HttpHeaders;
 
-          let nombreArchivo = headers
-            .get('Content-Disposition')!
-            .split(';')[1]
-            .trim()
-            .split('=')[1];
-          nombreArchivo = decodeURI(nombreArchivo.replace(/"/g, ''));
+            // Content-Disposition puede faltar (proxy que no expone el
+            // header): usar un nombre por defecto en vez de fallar dejando
+            // el mensaje de espera abierto.
+            const contentDisposition = headers.get('Content-Disposition');
+            let nombreArchivo = 'documento.pdf';
+            if (contentDisposition) {
+              const parte = contentDisposition.split(';')[1]?.trim().split('=')[1];
+              if (parte) {
+                nombreArchivo = decodeURI(parte.replace(/"/g, ''));
+              }
+            }
+            const data: any = response.body;
 
-          if (!nombreArchivo) {
-            console.log('fileName error');
-            return;
-          }
-          const data: any = response.body;
-
-          if (data !== null) {
-            const blob = new Blob([data], {
-              type: data?.type,
-            });
-            const objectUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('style', 'display:none');
-            a.setAttribute('href', objectUrl);
-            a.setAttribute('download', nombreArchivo);
-            a.click();
-            URL.revokeObjectURL(objectUrl);
+            if (data !== null) {
+              const blob = new Blob([data], {
+                type: data?.type,
+              });
+              const objectUrl = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.setAttribute('style', 'display:none');
+              a.setAttribute('href', objectUrl);
+              a.setAttribute('download', nombreArchivo);
+              a.click();
+              URL.revokeObjectURL(objectUrl);
+            }
             setTimeout(() => this.alertaService.cerrarMensajes(), 1000);
           }
-        }
+        },
+        error: (err) => {
+          // Con responseType blob el cuerpo del error llega como Blob y el
+          // interceptor no puede leer el JSON: se parsea aquí para mostrar
+          // el mensaje real del backend en vez de un toast vacío.
+          const mostrar = (mensaje: string) => {
+            this.alertaService.cerrarMensajes();
+            this.alertaService.mensajeError('Error', mensaje);
+          };
+          const cuerpo = err instanceof Blob ? err : err?.error;
+          if (cuerpo instanceof Blob) {
+            cuerpo
+              .text()
+              .then((texto) => {
+                let mensaje = 'No fue posible generar el archivo';
+                try {
+                  mensaje = JSON.parse(texto)?.mensaje || mensaje;
+                } catch {}
+                mostrar(mensaje);
+              })
+              .catch(() => mostrar('No fue posible generar el archivo'));
+          } else {
+            mostrar(cuerpo?.mensaje || 'No fue posible generar el archivo');
+          }
+        },
       });
   }
 }
