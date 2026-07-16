@@ -73,7 +73,9 @@ export class VisitaImportarPorComplementoComponent extends General {
       novedad: new FormControl(false),
       codigoContacto: new FormControl(null),
       codigoDestino: new FormControl(null),
-      zonas: new FormControl<number[]>([]),
+      // Zona de Semantica: filtra en el origen (elegir una zona trae todas sus
+      // guias). Reemplaza al viejo filtro por franjas (zona de ruteo local).
+      zona_destino: new FormControl<string | null>(null),
       codigo_despacho: new FormControl(null),
       complemento: new FormControl(null, Validators.required),
     },
@@ -91,7 +93,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       v.codigoContacto, v.codigoDestino,
     ];
     const activos = camposDeFiltro.filter((x) => x !== null && x !== '' && x !== undefined).length;
-    return activos + (v.zonas?.length ? 1 : 0);
+    return activos + (v.zona_destino ? 1 : 0);
   });
 
   constructor() {
@@ -159,7 +161,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       this.formularioComplementos.get('numeroRegistros')?.value;
     const codigo_contacto = this.formularioComplementos.get('codigoContacto')?.value;
     const codigo_destino = this.formularioComplementos.get('codigoDestino')?.value;
-    const zonas = this.formularioComplementos.get('zonas')?.value;
+    const zona_destino = this.formularioComplementos.get('zona_destino')?.value;
     const complemento = this.formularioComplementos.get('complemento')?.value;
     const fecha_desde = this.formularioComplementos.get('fecha_desde')?.value;
     const fecha_hasta = this.formularioComplementos.get('fecha_hasta')?.value;
@@ -175,7 +177,7 @@ export class VisitaImportarPorComplementoComponent extends General {
         complemento,
         codigo_contacto,
         codigo_destino,
-        franjas: zonas?.length ? zonas : null,
+        zona_destino: zona_destino || null,
         fecha_desde,
         fecha_hasta,
         codigo_despacho
@@ -208,7 +210,7 @@ export class VisitaImportarPorComplementoComponent extends General {
       hasta: null,
       pendienteDespacho: true,
       novedad: false,
-      zonas: [],
+      zona_destino: null,
       complemento: complementoActual,
     });
   }

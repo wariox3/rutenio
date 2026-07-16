@@ -149,22 +149,17 @@
           </p>
         </div>
 
-        <!-- Zonas (franjas de ruteo) -->
+        <!-- Zona de Semántica (filtra en el ORIGEN, no por franjas de ruteo) -->
         <div>
-          <app-label>Zonas</app-label>
-          <ng-select
-            [items]="zonasDisponibles()"
-            formControlName="zonas"
-            bindLabel="nombre"
-            bindValue="id"
-            [multiple]="true"
-            notFoundText="No hay zonas creadas"
-            placeholder="Todas las zonas"
-            class="select2Custom"
-          ></ng-select>
+          <app-label>Zona (sistema origen)</app-label>
+          <app-input
+            [control]="formularioComplementos.controls.zona_destino"
+            placeholder="Código o nombre de la zona en Semántica"
+          ></app-input>
           <p class="text-[11px] text-gray-500 mt-1">
-            Solo se importan las guías cuya dirección caiga dentro de las zonas
-            seleccionadas; las demás quedan pendientes en el complemento.
+            Trae solo las guías de esa zona del <strong>sistema origen</strong>
+            (Semántica); el filtro se aplica en el origen, no por las franjas de
+            ruteo.
           </p>
         </div>
       </div>

@@ -164,7 +164,7 @@ export class VisitaApiService {
     complemento: number;
     codigo_contacto: number;
     codigo_destino: number;
-    franjas: number[] | null;
+    zona_destino: string | null;
     fecha_desde: Date;
     fecha_hasta: Date;
     codigo_despacho: number;
@@ -178,7 +178,7 @@ export class VisitaApiService {
       complemento: parametros.complemento,
       codigo_contacto: parametros.codigo_contacto,
       codigo_destino: parametros.codigo_destino,
-      franjas: parametros.franjas,
+      zona_destino: parametros.zona_destino,
       fecha_desde: parametros.fecha_desde,
       fecha_hasta: parametros.fecha_hasta,
       codigo_despacho: parametros.codigo_despacho
