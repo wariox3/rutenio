@@ -36,12 +36,18 @@
       </div>
 
       <div>
-        <app-label>Código del despacho origen</app-label>
+        <app-label [required]="true">Código del despacho origen</app-label>
         <app-input
           [type]="'number'"
           [control]="formularioComplementos.controls.codigo_despacho"
           placeholder="Ej: 12345"
         ></app-input>
+        <span
+          *ngIf="formularioComplementos.controls.codigo_despacho.invalid && formularioComplementos.controls.codigo_despacho.touched"
+          class="text-danger text-xs block mt-1"
+        >
+          El código del despacho origen es obligatorio.
+        </span>
         <p class="text-[11px] text-gray-500 mt-1">
           <i class="ki-filled ki-information-2 text-blue-500 mr-0.5"></i>
           Para <strong>Semántica</strong> este campo es lo que define qué
@@ -180,6 +186,18 @@
           [soloNumeros]="true"
           [control]="formularioComplementos.controls.numeroRegistros"
         ></app-input>
+        <span
+          *ngIf="formularioComplementos.controls.numeroRegistros.hasError('max') && formularioComplementos.controls.numeroRegistros.touched"
+          class="text-danger text-xs block mt-1"
+        >
+          El máximo por tanda es 500.
+        </span>
+        <span
+          *ngIf="(formularioComplementos.controls.numeroRegistros.hasError('min') || formularioComplementos.controls.numeroRegistros.hasError('required')) && formularioComplementos.controls.numeroRegistros.touched"
+          class="text-danger text-xs block mt-1"
+        >
+          Ingresa una cantidad entre 1 y 500.
+        </span>
         <p class="text-[11px] text-gray-500 mt-1">
           Máximo de visitas que se traerán en esta importación. Recomendado: hasta 500 por tanda.
         </p>

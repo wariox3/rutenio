@@ -27,7 +27,6 @@ import { InputComponent } from '../../../../common/components/ui/form/input/inpu
 import { LabelComponent } from '../../../../common/components/ui/form/label/label.component';
 import { SwitchComponent } from '../../../../common/components/ui/form/switch/switch.component';
 import { ComplementoService } from '../../../complementos/servicios/complemento.service';
-import { FranjaService } from '../../../franja/servicios/franja.service';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 
 @Component({
@@ -53,17 +52,14 @@ export class VisitaImportarPorComplementoComponent extends General {
 
   public estaImportandoComplementos$: BehaviorSubject<boolean>;
   public complementos = signal<any[]>([]);
-  public zonasDisponibles = signal<any[]>([]);
   public filtrosAbiertos = signal<boolean>(false);
   private _visitaApiService = inject(VisitaApiService);
   private _complementoService = inject(ComplementoService);
-  private _franjaService = inject(FranjaService);
-  public numeroDeRegistrosAImportar: number = 1;
   public formularioComplementos = new FormGroup(
     {
       numeroRegistros: new FormControl(
         100,
-        Validators.compose([Validators.required])
+        Validators.compose([Validators.required, Validators.min(1), Validators.max(500)])
       ),
       desde: new FormControl(null),
       hasta: new FormControl(null),
@@ -76,7 +72,9 @@ export class VisitaImportarPorComplementoComponent extends General {
       // Zona de Semantica: filtra en el origen (elegir una zona trae todas sus
       // guias). Reemplaza al viejo filtro por franjas (zona de ruteo local).
       zona_destino: new FormControl<string | null>(null),
-      codigo_despacho: new FormControl(null),
+      // Requerido: para Semantica es el ID que define QUE lote traer; sin el, el
+      // import trae 0 o falla. Es el identificador principal, no un filtro.
+      codigo_despacho: new FormControl(null, Validators.required),
       complemento: new FormControl(null, Validators.required),
     },
     { validators: [this.validarRango(), this.validarRangoFecha()] }
@@ -102,7 +100,6 @@ export class VisitaImportarPorComplementoComponent extends General {
     this.emitirCerrarModal = new EventEmitter();
     this.estaImportandoComplementos$ = new BehaviorSubject(false);
     this.getComplementos();
-    this.getZonas();
     // Mantener el signal sincronizado con el form para que los computed
     // (cantidadFiltrosActivos, textoBotonImportar) reaccionen.
     this.formularioComplementos.valueChanges.subscribe((v) =>
@@ -113,14 +110,6 @@ export class VisitaImportarPorComplementoComponent extends General {
   getComplementos() {
     this._complementoService.complementosInstalados().subscribe((response) => {
       this.complementos.set(response.results);
-    });
-  }
-
-  getZonas() {
-    this._franjaService.consultarFranjasTodas().subscribe((response: any) => {
-      // Sin paginación el backend responde un array plano; se tolera también
-      // la forma paginada {results} por si el endpoint cambia.
-      this.zonasDisponibles.set(Array.isArray(response) ? response : response?.results ?? []);
     });
   }
 
@@ -143,10 +132,6 @@ export class VisitaImportarPorComplementoComponent extends General {
       if (!desde || !hasta) return null;
       return new Date(hasta) < new Date(desde) ? { rangoFechaInvalido: true } : null;
     };
-  }
-
-  transformarAPositivoMayorCero(numero: number) {
-    return numero > 0 ? numero : 1;
   }
 
   importarComplemento() {
@@ -183,20 +168,44 @@ export class VisitaImportarPorComplementoComponent extends General {
         codigo_despacho
       })
       .pipe(
-        finalize(() => {
-          this.estaImportandoComplementos$.next(false);
-          this.modalDismiss();
-          this.numeroDeRegistrosAImportar = 1;
-          this.reiniciarFormulario();
-        })
+        // finalize SOLO apaga el loading. NO cerramos ni reseteamos aca: si el
+        // import falla, el modal debe quedar ABIERTO con los datos para
+        // reintentar sin re-llenar todo.
+        finalize(() => this.estaImportandoComplementos$.next(false))
       )
-      .subscribe((respuesta: { mensaje: string }) => {
-        this.emitirConsultarLista.emit();
-        this.alerta.mensajaExitoso(
-          respuesta?.mensaje || 'Se han importado las visitas con éxito',
-          'Importado con éxito.'
-        );
-        this.changeDetectorRef.detectChanges();
+      .subscribe({
+        next: (respuesta: {
+          mensaje?: string;
+          descartadas?: number;
+          sin_ubicar?: number;
+          errores_guia?: number;
+        }) => {
+          this.emitirConsultarLista.emit();
+          const parcial =
+            (respuesta?.descartadas || 0) +
+              (respuesta?.sin_ubicar || 0) +
+              (respuesta?.errores_guia || 0) > 0;
+          if (parcial) {
+            this.alerta.mensajeInformativo(
+              'Importación parcial',
+              respuesta?.mensaje || 'Se importaron algunas guías; otras se omitieron.'
+            );
+          } else {
+            this.alerta.mensajaExitoso(
+              respuesta?.mensaje || 'Se han importado las visitas con éxito',
+              'Importado con éxito.'
+            );
+          }
+          // Solo en EXITO cerramos el modal y limpiamos el formulario.
+          this.modalDismiss();
+          this.reiniciarFormulario();
+          this.changeDetectorRef.detectChanges();
+        },
+        error: () => {
+          // El interceptor global ya mostro el toast de error. Dejamos el modal
+          // ABIERTO con los datos para que el usuario corrija y reintente.
+          this.changeDetectorRef.detectChanges();
+        },
       });
   }
 
