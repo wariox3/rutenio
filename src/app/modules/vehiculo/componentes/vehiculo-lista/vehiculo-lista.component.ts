@@ -152,11 +152,11 @@ export default class VehiculoListaComponent extends General implements OnInit, O
           next: () => {
             this.alerta.mensajaExitoso('Se han eliminado los registros');
           },
-          error: (error) => {
-            this.alerta.mensajeError(
-              'Error al eliminar',
-              'No se han eliminado algunos de los registros'
-            );
+          error: () => {
+            // El interceptor global (http-error.interceptor) ya muestra el
+            // motivo exacto — p.ej. "No se puede eliminar porque está en uso
+            // en: rutas, flotas". No duplicamos con un toast generico aca; el
+            // finalize() de arriba ya refresca la lista al estado real.
           },
         });
     }
