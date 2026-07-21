@@ -42,7 +42,12 @@ export class NuevoDesdeComplementoComponent {
 
   public cargando = signal(false);
   public formularioNuevoComplemento = new FormGroup({
-    despacho_id: new FormControl('', [Validators.required]),
+    // Solo digitos: se estaba escribiendo la placa del vehiculo en este campo y
+    // Semantica respondia un error interno ininteligible.
+    despacho_id: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^\d+$/),
+    ]),
   });
 
   nuevoComplemento() {

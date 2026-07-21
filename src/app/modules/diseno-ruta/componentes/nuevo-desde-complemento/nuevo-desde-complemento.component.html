@@ -2,9 +2,11 @@
   <div class="grid grid-cols-1 gap-4 mb-5">
     <div>
       <div>
-        <app-label [required]="true">Despacho</app-label>
+        <app-label [required]="true">Número de despacho</app-label>
         <app-input
-          [fieldName]="'El despacho'"
+          [fieldName]="'El número de despacho'"
+          [soloNumeros]="true"
+          [placeholder]="'Ej: 12345'"
           [control]="formularioNuevoComplemento.controls.despacho_id"
         ></app-input>
       </div>
