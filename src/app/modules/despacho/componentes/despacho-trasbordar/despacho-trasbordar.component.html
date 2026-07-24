@@ -2,6 +2,8 @@
     <input
       #trasbordoInput
       type="text"
+      inputmode="numeric"
+      appSoloNumeros
       [(ngModel)]="codigoTrasbordo"
       (keyup.enter)="trasbordar()"
       placeholder="Ingrese código del despacho"
