@@ -174,6 +174,9 @@ export class AlertaService {
       customClass: {
         ...bc.customClass,
         icon: `${bc.customClass.icon} ${ic.icon}`,
+        // El spinner de showLoading() vive en el area de acciones; la config
+        // base la deja en justify-end, por eso quedaba a la derecha. Se centra.
+        actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
       },
     }),
     Swal.showLoading());
