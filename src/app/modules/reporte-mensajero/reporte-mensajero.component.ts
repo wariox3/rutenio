@@ -6,7 +6,6 @@ import * as XLSX from 'xlsx';
 import { DespachoApiService } from '../despacho/servicios/despacho-api.service';
 import { Despacho } from '../../interfaces/despacho/despacho.interface';
 import {
-  EntregaZona,
   FilaReporteMensajero,
   ResumenZona,
   TotalMensajero,
@@ -36,7 +35,6 @@ export default class ReporteMensajeroComponent implements OnInit {
   consultadoZona = signal(false);
   truncadoZona = signal(false);
   resumenZona = signal<ResumenZona[]>([]);
-  relacionZona = signal<EntregaZona[]>([]);
 
   ngOnInit(): void {
     const hoy = new Date();
@@ -222,7 +220,6 @@ export default class ReporteMensajeroComponent implements OnInit {
               (a.zona_nombre || 'Sin zona').localeCompare(b.zona_nombre || 'Sin zona')
           );
           this.resumenZona.set(resumen);
-          this.relacionZona.set(r.relacion ?? []);
           this.truncadoZona.set(!!r.truncado);
           this.consultadoZona.set(true);
           this.cargandoZona.set(false);
@@ -234,57 +231,13 @@ export default class ReporteMensajeroComponent implements OnInit {
   }
 
   descargarExcelZona(): void {
-    const resumen = this.resumenZona();
-    if (!resumen.length) return;
-
-    const hojaResumen = resumen.map((r) => ({
-      Mensajero: r.conductor_nombre || 'Sin asignar',
-      Placa: r.placa || 'Sin placa',
-      Zona: r.zona_nombre || 'Sin zona',
-      'Código zona': r.zona_codigo || '',
-      Asignadas: r.asignadas,
-      Entregadas: r.entregadas,
-      Novedades: r.novedades,
-    }));
-
-    const hojaRelacion = this.relacionZona().map((e) => ({
-      Fecha: (e.fecha || '').substring(0, 10),
-      'Fecha entrega': (e.fecha_entrega || '').substring(0, 10),
-      Mensajero: e.conductor_nombre || 'Sin asignar',
-      Placa: e.placa || '',
-      Despacho: e.despacho_id,
-      'Guía': e.numero,
-      Documento: e.documento || '',
-      Destinatario: e.destinatario || '',
-      'Dirección': e.destinatario_direccion || '',
-      Zona: e.zona_nombre || 'Sin zona',
-      'Código zona': e.zona_codigo || '',
-      Estado: e.estado,
-    }));
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(hojaResumen),
-      'Resumen por zona'
-    );
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(hojaRelacion),
-      'Relación'
-    );
-
-    const excelBuffer: any = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
+    if (!this.fechaDesde || !this.fechaHasta) return;
+    // El Excel se genera en el backend con la plantilla corporativa (logo,
+    // encabezado, totales, estilos). El navegador solo dispara la descarga.
+    this._despachoApiService.descargarEntregasZonaExcel({
+      fecha_desde: this.fechaDesde,
+      fecha_hasta: this.fechaHasta,
     });
-    const data: Blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(
-      data,
-      `entregas_por_zona_${this.fechaDesde}_${this.fechaHasta}.xlsx`
-    );
   }
 
   descargarExcel(): void {

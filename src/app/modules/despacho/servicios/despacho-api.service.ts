@@ -32,6 +32,11 @@ export class DespachoApiService {
     return this._generalApiService.consultaApi<ReporteEntregasZonaRespuesta>('ruteo/reporte/mensajero/entregas/', parametros);
   }
 
+  descargarEntregasZonaExcel(parametros: { fecha_desde: string; fecha_hasta: string }) {
+    const query = new URLSearchParams({ ...parametros, excel: '1' }).toString();
+    this._httpService.descargarArchivoPorGet(`ruteo/reporte/mensajero/entregas/?${query}`);
+  }
+
   guardar(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/`, data);
   }
