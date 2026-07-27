@@ -4,6 +4,7 @@ import { HttpService } from '../../../common/services/http.service';
 import { Despacho, DespachoDetalle } from '../../../interfaces/despacho/despacho.interface';
 import { GeneralService } from '../../../common/services/general.service';
 import { GeneralApiService } from '../../../core';
+import { ReporteEntregasZonaRespuesta } from '../../reporte-mensajero/interfaces/reporte-mensajero.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,10 @@ export class DespachoApiService {
 
   reporteMensajero(parametros: any) {
     return this._generalApiService.consultaApi<RespuestaApi<Despacho>>('ruteo/reporte/mensajero/', parametros);
+  }
+
+  reporteMensajeroEntregas(parametros: any) {
+    return this._generalApiService.consultaApi<ReporteEntregasZonaRespuesta>('ruteo/reporte/mensajero/entregas/', parametros);
   }
 
   guardar(data: any) {

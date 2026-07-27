@@ -93,6 +93,15 @@ export class SidebarComponent extends General implements OnInit {
           link: '/movimiento/novedad/lista',
           modulo: 'novedad',
         },
+      ],
+    },
+    {
+      nombre: 'Informes',
+      link: '',
+      iconoClase: 'ki-filled ki-chart-line',
+      activo: false,
+      tipoAcordion: true,
+      children: [
         {
           nombre: 'Reporte mensajero',
           link: '/movimiento/reporte-mensajero',

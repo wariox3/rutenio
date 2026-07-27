@@ -6,7 +6,9 @@ import * as XLSX from 'xlsx';
 import { DespachoApiService } from '../despacho/servicios/despacho-api.service';
 import { Despacho } from '../../interfaces/despacho/despacho.interface';
 import {
+  EntregaZona,
   FilaReporteMensajero,
+  ResumenZona,
   TotalMensajero,
   TotalPlaca,
 } from './interfaces/reporte-mensajero.interface';
@@ -28,6 +30,13 @@ export default class ReporteMensajeroComponent implements OnInit {
   filas = signal<FilaReporteMensajero[]>([]);
   totalesPorMensajero = signal<TotalMensajero[]>([]);
   totalesPorPlaca = signal<TotalPlaca[]>([]);
+
+  // Entregas por zona (factor de pago). Se consulta aparte del reporte de conteos.
+  cargandoZona = signal(false);
+  consultadoZona = signal(false);
+  truncadoZona = signal(false);
+  resumenZona = signal<ResumenZona[]>([]);
+  relacionZona = signal<EntregaZona[]>([]);
 
   ngOnInit(): void {
     const hoy = new Date();
@@ -192,6 +201,88 @@ export default class ReporteMensajeroComponent implements OnInit {
   private calcularCumplimiento(entregadas: number, total: number): number {
     if (total === 0) return 0;
     return Math.round((entregadas / total) * 1000) / 10;
+  }
+
+  consultarZona(): void {
+    if (!this.fechaDesde || !this.fechaHasta) return;
+    this.cargandoZona.set(true);
+    this._despachoApiService
+      .reporteMensajeroEntregas({
+        fecha_desde: this.fechaDesde,
+        fecha_hasta: this.fechaHasta,
+      })
+      .subscribe({
+        next: (r) => {
+          const resumen = [...(r.resumen ?? [])].sort(
+            (a, b) =>
+              (a.conductor_nombre || 'Sin asignar').localeCompare(
+                b.conductor_nombre || 'Sin asignar'
+              ) ||
+              (a.zona_nombre || 'Sin zona').localeCompare(b.zona_nombre || 'Sin zona')
+          );
+          this.resumenZona.set(resumen);
+          this.relacionZona.set(r.relacion ?? []);
+          this.truncadoZona.set(!!r.truncado);
+          this.consultadoZona.set(true);
+          this.cargandoZona.set(false);
+        },
+        error: () => {
+          this.cargandoZona.set(false);
+        },
+      });
+  }
+
+  descargarExcelZona(): void {
+    const resumen = this.resumenZona();
+    if (!resumen.length) return;
+
+    const hojaResumen = resumen.map((r) => ({
+      Mensajero: r.conductor_nombre || 'Sin asignar',
+      Zona: r.zona_nombre || 'Sin zona',
+      'Código zona': r.zona_codigo || '',
+      Asignadas: r.asignadas,
+      Entregadas: r.entregadas,
+      Novedades: r.novedades,
+    }));
+
+    const hojaRelacion = this.relacionZona().map((e) => ({
+      Fecha: (e.fecha || '').substring(0, 10),
+      'Fecha entrega': (e.fecha_entrega || '').substring(0, 10),
+      Mensajero: e.conductor_nombre || 'Sin asignar',
+      Placa: e.placa || '',
+      Despacho: e.despacho_id,
+      'Guía': e.numero,
+      Documento: e.documento || '',
+      Destinatario: e.destinatario || '',
+      'Dirección': e.destinatario_direccion || '',
+      Zona: e.zona_nombre || 'Sin zona',
+      'Código zona': e.zona_codigo || '',
+      Estado: e.estado,
+    }));
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(hojaResumen),
+      'Resumen por zona'
+    );
+    XLSX.utils.book_append_sheet(
+      workbook,
+      XLSX.utils.json_to_sheet(hojaRelacion),
+      'Relación'
+    );
+
+    const excelBuffer: any = XLSX.write(workbook, {
+      bookType: 'xlsx',
+      type: 'array',
+    });
+    const data: Blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(
+      data,
+      `entregas_por_zona_${this.fechaDesde}_${this.fechaHasta}.xlsx`
+    );
   }
 
   descargarExcel(): void {
