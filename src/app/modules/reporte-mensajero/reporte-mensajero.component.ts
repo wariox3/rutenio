@@ -218,6 +218,7 @@ export default class ReporteMensajeroComponent implements OnInit {
               (a.conductor_nombre || 'Sin asignar').localeCompare(
                 b.conductor_nombre || 'Sin asignar'
               ) ||
+              (a.placa || '').localeCompare(b.placa || '') ||
               (a.zona_nombre || 'Sin zona').localeCompare(b.zona_nombre || 'Sin zona')
           );
           this.resumenZona.set(resumen);
@@ -238,6 +239,7 @@ export default class ReporteMensajeroComponent implements OnInit {
 
     const hojaResumen = resumen.map((r) => ({
       Mensajero: r.conductor_nombre || 'Sin asignar',
+      Placa: r.placa || 'Sin placa',
       Zona: r.zona_nombre || 'Sin zona',
       'Código zona': r.zona_codigo || '',
       Asignadas: r.asignadas,

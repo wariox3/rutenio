@@ -248,6 +248,7 @@
             <thead class="sticky top-0 z-10 bg-gray-50 dark:bg-gray-950">
               <tr class="bg-gray-50 dark:bg-gray-950/40 border-b border-gray-200 dark:border-gray-200">
                 <th class="text-left px-5 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Mensajero</th>
+                <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Placa</th>
                 <th class="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Zona</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Asignadas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entregadas</th>
@@ -258,6 +259,7 @@
               @for (fila of resumenZona(); track $index) {
                 <tr class="border-t border-gray-100 dark:border-gray-200 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-colors">
                   <td class="px-5 py-3 font-semibold text-gray-900">{{ fila.conductor_nombre || 'Sin asignar' }}</td>
+                  <td class="px-4 py-3 text-gray-600">{{ fila.placa || 'Sin placa' }}</td>
                   <td class="px-4 py-3 text-gray-600">
                     @if (fila.zona_nombre) {
                       {{ fila.zona_nombre }}

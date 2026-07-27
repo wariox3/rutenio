@@ -55,6 +55,7 @@ export interface EntregaZona {
 export interface ResumenZona {
   conductor_id: number | null;
   conductor_nombre: string | null;
+  placa: string | null;
   zona_id: number | null;
   zona_codigo: string | null;
   zona_nombre: string | null;
