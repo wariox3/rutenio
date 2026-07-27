@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { saveAs } from 'file-saver';
-import * as XLSX from 'xlsx';
 import { DespachoApiService } from '../despacho/servicios/despacho-api.service';
 import { Despacho } from '../../interfaces/despacho/despacho.interface';
 import {
@@ -241,64 +239,12 @@ export default class ReporteMensajeroComponent implements OnInit {
   }
 
   descargarExcel(): void {
-    const filas = this.filas();
-    if (!filas.length) return;
-
-    const detalle = filas.map((f) => ({
-      Mensajero: f.conductorNombre,
-      Placa: f.placa,
-      Fecha: f.fecha,
-      Despachos: f.despachos,
-      Asignadas: f.asignadas,
-      Entregadas: f.entregadas,
-      Novedades: f.novedades,
-      '% Cumplimiento': f.cumplimiento,
-    }));
-
-    const totales = this.totalesPorMensajero().map((t) => ({
-      Mensajero: t.conductorNombre,
-      'Días': t.dias,
-      Despachos: t.despachos,
-      Asignadas: t.asignadas,
-      Entregadas: t.entregadas,
-      Novedades: t.novedades,
-      '% Cumplimiento': t.cumplimiento,
-    }));
-
-    const totalesPlaca = this.totalesPorPlaca().map((t) => ({
-      Placa: t.placa,
-      'Días': t.dias,
-      Despachos: t.despachos,
-      Asignadas: t.asignadas,
-      Entregadas: t.entregadas,
-      Novedades: t.novedades,
-      '% Cumplimiento': t.cumplimiento,
-    }));
-
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(detalle),
-      'Detalle diario'
-    );
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(totales),
-      'Totales por mensajero'
-    );
-    XLSX.utils.book_append_sheet(
-      workbook,
-      XLSX.utils.json_to_sheet(totalesPlaca),
-      'Totales por placa'
-    );
-
-    const excelBuffer: any = XLSX.write(workbook, {
-      bookType: 'xlsx',
-      type: 'array',
+    if (!this.fechaDesde || !this.fechaHasta) return;
+    // El Excel se genera en el backend con la plantilla corporativa (encabezado,
+    // totales, estilos). El navegador solo dispara la descarga.
+    this._despachoApiService.descargarReporteMensajeroExcel({
+      fecha_desde: this.fechaDesde,
+      fecha_hasta: this.fechaHasta,
     });
-    const data: Blob = new Blob([excelBuffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(data, `reporte_mensajero_${this.fechaDesde}_${this.fechaHasta}.xlsx`);
   }
 }

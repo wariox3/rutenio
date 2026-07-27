@@ -37,6 +37,11 @@ export class DespachoApiService {
     this._httpService.descargarArchivoPorGet(`ruteo/reporte/mensajero/entregas/?${query}`);
   }
 
+  descargarReporteMensajeroExcel(parametros: { fecha_desde: string; fecha_hasta: string }) {
+    const query = new URLSearchParams({ ...parametros, excel: '1' }).toString();
+    this._httpService.descargarArchivoPorGet(`ruteo/reporte/mensajero/?${query}`);
+  }
+
   guardar(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/`, data);
   }
