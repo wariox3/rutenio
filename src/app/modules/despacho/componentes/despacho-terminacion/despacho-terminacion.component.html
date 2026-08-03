@@ -1,0 +1,79 @@
+<section class="p-1">
+  <!-- Encabezado del viaje -->
+  <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mb-4">
+    <div><span class="text-gray-500">Viaje:</span> <span class="font-semibold text-gray-900">#{{ datos.despacho_id }}</span></div>
+    <div><span class="text-gray-500">Placa:</span> <span class="font-semibold text-gray-900">{{ datos.placa || 'N/A' }}</span></div>
+    <div><span class="text-gray-500">Conductor:</span> <span class="font-semibold text-gray-900">{{ datos.conductor_nombre || 'N/A' }}</span></div>
+    <div><span class="text-gray-500">Fecha:</span> <span class="font-semibold text-gray-900">{{ (datos.fecha_viaje | date: 'yyyy-MM-dd') || 'N/A' }}</span></div>
+  </div>
+
+  <!-- Resumen -->
+  <div class="grid grid-cols-4 gap-2 mb-4">
+    <div class="rounded-lg border border-gray-200 p-3 text-center">
+      <div class="text-xl font-bold text-gray-900">{{ datos.total_guias }}</div>
+      <div class="text-[11px] text-gray-500 uppercase tracking-wide">Total guías</div>
+    </div>
+    <div class="rounded-lg border border-green-200 bg-green-50 p-3 text-center">
+      <div class="text-xl font-bold text-green-700">{{ datos.entregadas }}</div>
+      <div class="text-[11px] text-gray-500 uppercase tracking-wide">Entregadas</div>
+    </div>
+    <div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-center">
+      <div class="text-xl font-bold text-amber-700">{{ datos.con_novedad }}</div>
+      <div class="text-[11px] text-gray-500 uppercase tracking-wide">Con novedad</div>
+    </div>
+    <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 text-center">
+      <div class="text-xl font-bold text-blue-700">{{ datos.porcentaje }}%</div>
+      <div class="text-[11px] text-gray-500 uppercase tracking-wide">Cumplimiento</div>
+    </div>
+  </div>
+
+  <!-- Detalle de guías con novedad -->
+  <div class="mb-4">
+    <h4 class="text-sm font-semibold text-gray-800 mb-2">Guías con novedad</h4>
+    @if (datos.detalle_novedades.length === 0) {
+      <p class="text-sm text-gray-400 italic">Sin guías con novedad</p>
+    } @else {
+      <div class="overflow-auto max-h-[40vh] border border-gray-100 rounded-lg">
+        <table class="table table-auto w-full text-sm">
+          <thead class="sticky top-0 z-10 bg-gray-50">
+            <tr class="border-b border-gray-200">
+              <th class="text-left px-3 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Guía</th>
+              <th class="text-left px-3 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Destinatario</th>
+              <th class="text-left px-3 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Tipo de novedad</th>
+              <th class="text-left px-3 py-2 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (n of datos.detalle_novedades; track $index) {
+              <tr class="border-t border-gray-100">
+                <td class="px-3 py-2 text-gray-600">{{ n.numero ?? 's/n' }}</td>
+                <td class="px-3 py-2 text-gray-600">{{ n.destinatario }}</td>
+                <td class="px-3 py-2">
+                  <span class="inline-flex px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-50 text-amber-700">{{ n.tipo_novedad || '—' }}</span>
+                </td>
+                <td class="px-3 py-2 text-gray-500">{{ n.descripcion }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Aviso -->
+  <div class="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+    <i class="ki-filled ki-information-2 text-base"></i>
+    <span>Al confirmar, el viaje se cerrará definitivamente (no se puede revertir) y se guardará el documento.</span>
+  </div>
+
+  <!-- Acciones -->
+  <div class="flex justify-end gap-2">
+    <button (click)="cancelar.emit()" [disabled]="cargando" class="btn btn-sm btn-light">Volver</button>
+    <button (click)="confirmar.emit()" [disabled]="cargando" class="btn btn-sm btn-primary gap-1.5">
+      @if (cargando) {
+        <span class="animate-spin inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full"></span>
+      }
+      Confirmar terminación
+    </button>
+  </div>
+</section>

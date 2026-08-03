@@ -49,6 +49,8 @@ import DespachoFormularioComponent from '../../../despacho/componentes/despacho-
 import { DespachoTabUbicacionComponent } from '../../../despacho/componentes/despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../../../despacho/componentes/despacho-tab-visita/despacho-tab-visita.component';
 import { DespachoTrasbordarComponent } from '../../../despacho/componentes/despacho-trasbordar/despacho-trasbordar.component';
+import { DespachoTerminacionComponent } from '../../../despacho/componentes/despacho-terminacion/despacho-terminacion.component';
+import { TerminacionPreview } from '../../../../interfaces/despacho/terminacion.interface';
 import { DespachoApiService } from '../../../despacho/servicios/despacho-api.service';
 import { NovedadService } from '../../../novedad/servicios/novedad.service';
 import { VisitaService } from '../../../visita/servicios/visita.service';
@@ -97,6 +99,7 @@ const MAX_WAYPOINTS = 23;
     VisitaAdicionarPendienteComponent,
     ModalStandardComponent,
     DespachoTrasbordarComponent,
+    DespachoTerminacionComponent,
     PaginadorComponent,
     FiltroComponent,
   ],
@@ -135,6 +138,9 @@ export default class TraficoListaComponent
   public toggleModalLiberar = signal(false);
   public toggleModalUbicacion = signal(false);
   public toggleModalTrasbordarTrafico = signal(false);
+  public toggleModalTerminacion = signal(false);
+  public datosTerminacion = signal<TerminacionPreview | null>(null);
+  public terminando = signal(false);
   public actualizandoLista = signal<boolean>(false);
   public currentPage = signal(1);
   public cantidadRegistros: number = 0;
@@ -475,17 +481,20 @@ export default class TraficoListaComponent
     this._visitaService.imprimirRotulosDespacho(id, 'termica');
   }
 
-  confirmarTerminarDespacho(id: number) {
-    this.alerta
-      .confirmar({
-        titulo: '¿Estás seguro?',
-        texto: 'Esta operación no se puede revertir',
-        textoBotonCofirmacion: 'Si, terminar',
-      })
-      .then((respuesta) => {
-        if (respuesta.isConfirmed) {
-          this.terminarDespacho(id);
-        }
+  // Paso 1 de TERMINAR: pide la vista previa (valida sin cerrar) y abre el
+  // modal con el Documento de Terminación. Si hay pendientes, el backend
+  // responde 400 y el interceptor muestra el motivo (igual que antes).
+  iniciarTerminacion(id: number) {
+    this.despachoIdActual = id;
+    this._despachoApiService
+      .terminarPreview(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (datos) => {
+          this.datosTerminacion.set(datos);
+          this.toggleModalTerminacion.set(true);
+          this.openModal('terminacion-viaje-modal');
+        },
       });
   }
 
@@ -502,17 +511,33 @@ export default class TraficoListaComponent
       });
   }
 
-  terminarDespacho(id: number) {
+  // Paso 2 de TERMINAR: confirma el cierre. Ejecuta la lógica actual de terminar
+  // (que además guarda el snapshot), refresca y descarga el documento.
+  confirmarTerminacion() {
+    const id = this.despachoIdActual;
+    if (id == null) return;
+    this.terminando.set(true);
     this._despachoApiService
       .terminar(id)
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        finalize(() => this.terminando.set(false))
+      )
       .subscribe({
         next: (respuesta) => {
+          this.cerrarModalTerminacion();
           this.alerta.mensajaExitoso(respuesta.mensaje);
           this.consultarLista();
           this.limpiarInformacionAdicional();
+          this._despachoApiService.descargarTerminacionPdf(id);
         },
       });
+  }
+
+  cerrarModalTerminacion() {
+    this.toggleModalTerminacion.set(false);
+    this.datosTerminacion.set(null);
+    this.dismissModal('#terminacion-viaje-modal');
   }
 
   abrirModalDetalleVisita(despacho_id: number) {

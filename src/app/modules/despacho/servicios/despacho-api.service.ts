@@ -5,6 +5,7 @@ import { Despacho, DespachoDetalle } from '../../../interfaces/despacho/despacho
 import { GeneralService } from '../../../common/services/general.service';
 import { GeneralApiService } from '../../../core';
 import { ReporteEntregasZonaRespuesta } from '../../reporte-mensajero/interfaces/reporte-mensajero.interface';
+import { TerminacionPreview } from '../../../interfaces/despacho/terminacion.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -70,6 +71,19 @@ export class DespachoApiService {
         id,
       }
     );
+  }
+
+  // Vista previa del Documento de Terminacion (no cierra el viaje).
+  terminarPreview(id: number) {
+    return this._httpService.post<TerminacionPreview>(
+      `ruteo/despacho/terminar-preview/`,
+      { id }
+    );
+  }
+
+  // Descarga el PDF del Documento de Terminacion (desde el snapshot).
+  descargarTerminacionPdf(id: number) {
+    this._generalService.imprimir('ruteo/despacho/terminacion-pdf/', { id });
   }
 
   importar(data: any) {

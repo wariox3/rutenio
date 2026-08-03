@@ -264,7 +264,7 @@
                     <div class="menu-dropdown w-48 py-2">
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                          (click)="confirmarTerminarDespacho(despacho.id)"
+                          (click)="iniciarTerminacion(despacho.id)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
@@ -738,6 +738,24 @@
       [despachoId]="despachoIdActual"
       (cerrarModal)="cerrarModalTrasbordar('#trasbordar-despacho-trafico')"
     ></app-despacho-trasbordar>
+  </section>
+  }
+</app-modal-default>
+
+<app-modal-default
+  size="large"
+  [id]="'terminacion-viaje-modal'"
+  [titulo]="'Terminación de viaje #' + despachoIdActual"
+  (emitirModalCerrado)="cerrarModalTerminacion()"
+>
+  @if (toggleModalTerminacion() && datosTerminacion()) {
+  <section modal-body>
+    <app-despacho-terminacion
+      [datos]="datosTerminacion()!"
+      [cargando]="terminando()"
+      (confirmar)="confirmarTerminacion()"
+      (cancelar)="cerrarModalTerminacion()"
+    ></app-despacho-terminacion>
   </section>
   }
 </app-modal-default>
