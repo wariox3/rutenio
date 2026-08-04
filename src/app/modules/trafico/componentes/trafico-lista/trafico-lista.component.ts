@@ -138,7 +138,6 @@ export default class TraficoListaComponent
   public toggleModalLiberar = signal(false);
   public toggleModalUbicacion = signal(false);
   public toggleModalTrasbordarTrafico = signal(false);
-  public toggleModalTerminacion = signal(false);
   public datosTerminacion = signal<TerminacionPreview | null>(null);
   public terminando = signal(false);
   public actualizandoLista = signal<boolean>(false);
@@ -492,7 +491,6 @@ export default class TraficoListaComponent
       .subscribe({
         next: (datos) => {
           this.datosTerminacion.set(datos);
-          this.toggleModalTerminacion.set(true);
           this.openModal('terminacion-viaje-modal');
         },
       });
@@ -535,9 +533,8 @@ export default class TraficoListaComponent
   }
 
   cerrarModalTerminacion() {
-    this.toggleModalTerminacion.set(false);
+    this.closeModal('terminacion-viaje-modal');
     this.datosTerminacion.set(null);
-    this.dismissModal('#terminacion-viaje-modal');
   }
 
   abrirModalDetalleVisita(despacho_id: number) {
