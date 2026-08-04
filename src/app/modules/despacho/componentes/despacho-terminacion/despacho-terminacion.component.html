@@ -1,6 +1,8 @@
 <section class="p-1">
   <!-- Encabezado del viaje -->
   <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mb-4">
+    <div><span class="text-gray-500">Agencia:</span> <span class="font-semibold text-gray-900">{{ datos.agencia || 'N/A' }}</span></div>
+    <div><span class="text-gray-500">OE:</span> <span class="font-semibold text-gray-900">{{ datos.consecutivo || 'N/A' }}</span></div>
     <div><span class="text-gray-500">Viaje:</span> <span class="font-semibold text-gray-900">#{{ datos.despacho_id }}</span></div>
     <div><span class="text-gray-500">Placa:</span> <span class="font-semibold text-gray-900">{{ datos.placa || 'N/A' }}</span></div>
     <div><span class="text-gray-500">Conductor:</span> <span class="font-semibold text-gray-900">{{ datos.conductor_nombre || 'N/A' }}</span></div>

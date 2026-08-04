@@ -9,6 +9,8 @@ export interface TerminacionNovedad {
 // Consolidado del viaje que devuelve terminar-preview (y que se congela al cerrar).
 export interface TerminacionPreview {
   despacho_id: number;
+  consecutivo: number | null; // nº de Orden de Entrega (OE)
+  agencia: string | null; // contenedor
   placa: string | null;
   conductor_id: number | null;
   conductor_nombre: string | null;
