@@ -197,6 +197,7 @@
     <div *ngIf="activeTab === 'visitas'" class="overflow-x-auto">
       <app-despacho-tab-visita
         [despachoId]="despachoId"
+        [estadoTerminado]="despacho().estado_terminado"
       ></app-despacho-tab-visita>
     </div>
 

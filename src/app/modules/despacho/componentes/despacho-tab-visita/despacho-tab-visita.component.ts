@@ -44,6 +44,7 @@ export class DespachoTabVisitaComponent
   implements OnInit, OnDestroy
 {
   @Input() despachoId: number;
+  @Input() estadoTerminado = false;
   private _destroy$ = new Subject<void>();
   private visitaService = inject(VisitaService);
   private _visitaApiService = inject(VisitaApiService);
@@ -300,6 +301,12 @@ export class DespachoTabVisitaComponent
     this._generalService.imprimir('ruteo/despacho/imprimir-orden-entrega/', {
       despacho_id: this.despachoId,
     })
+  }
+
+  descargarTerminacion() {
+    this._generalService.imprimir('ruteo/despacho/terminacion-pdf/', {
+      despacho_id: this.despachoId,
+    });
   }
 
   imprimirRotulos(formato: 'termica' | 'a4') {
