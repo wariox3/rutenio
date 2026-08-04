@@ -742,20 +742,15 @@
   }
 </app-modal-default>
 
-<app-modal-default
-  size="large"
-  [id]="'terminacion-viaje-modal'"
-  [titulo]="'Terminación de viaje #' + despachoIdActual"
-  (emitirModalCerrado)="cerrarModalTerminacion()"
->
-  @if (toggleModalTerminacion() && datosTerminacion()) {
+<app-modal-standard modalId="terminacion-viaje-modal" title="Terminación de viaje" size="2xl">
   <section modal-body>
+    @if ((getModalInstaceState('terminacion-viaje-modal') | async) && datosTerminacion()) {
     <app-despacho-terminacion
       [datos]="datosTerminacion()!"
       [cargando]="terminando()"
       (confirmar)="confirmarTerminacion()"
       (cancelar)="cerrarModalTerminacion()"
     ></app-despacho-terminacion>
+    }
   </section>
-  }
-</app-modal-default>
+</app-modal-standard>
