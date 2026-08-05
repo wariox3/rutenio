@@ -86,6 +86,14 @@ export class DespachoApiService {
     this._generalService.imprimir('ruteo/despacho/terminacion-pdf/', { id });
   }
 
+  // Arranca el agente de WhatsApp para el conductor del despacho (chequeo de novedades).
+  iniciarAgente(id: number) {
+    return this._httpService.post<{ ok: boolean; mensaje: string; telefono?: string }>(
+      `ruteo/despacho/iniciar-agente/`,
+      { id }
+    );
+  }
+
   importar(data: any) {
     return this._httpService.post<any[]>(`ruteo/despacho/importar/`, data);
   }

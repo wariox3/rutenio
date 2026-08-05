@@ -496,6 +496,20 @@ export default class TraficoListaComponent
       });
   }
 
+  // Arranca el agente de WhatsApp: le escribe al conductor para reportar novedades.
+  // Si el despacho no tiene conductor/teléfono/conexión, el backend responde 400 y
+  // el interceptor muestra el motivo.
+  iniciarAgente(id: number) {
+    this._despachoApiService
+      .iniciarAgente(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respuesta) => {
+          this.alerta.mensajaExitoso(respuesta.mensaje);
+        },
+      });
+  }
+
   regenerarIndicadorEntregas(id: number) {
     this._despachoApiService
       .regenerarIndicadorEntregas(id)
