@@ -206,6 +206,34 @@ export class AlertaService {
     });
   }
 
+  // Pide un texto al usuario (input). Devuelve el valor (trim) o null si cancela.
+  async pedirTexto(
+    title: string,
+    opciones: { html?: string; placeholder?: string; valorInicial?: string; confirmButtonText?: string } = {}
+  ): Promise<string | null> {
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass('question');
+    const r = await Swal.fire({
+      ...bc,
+      title,
+      html: opciones.html,
+      icon: 'question',
+      input: 'text',
+      inputValue: opciones.valorInicial ?? '',
+      inputPlaceholder: opciones.placeholder ?? '',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: opciones.confirmButtonText ?? 'Enviar',
+      customClass: {
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+      },
+    });
+    return r.isConfirmed ? String(r.value ?? '').trim() : null;
+  }
+
   async mensajeEliminarEmpresa(
     empresaNombre: string | null,
     title: string,

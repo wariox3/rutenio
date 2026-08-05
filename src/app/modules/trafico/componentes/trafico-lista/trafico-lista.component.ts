@@ -497,11 +497,17 @@ export default class TraficoListaComponent
   }
 
   // Arranca el agente de WhatsApp: le escribe al conductor para reportar novedades.
-  // Si el despacho no tiene conductor/teléfono/conexión, el backend responde 400 y
-  // el interceptor muestra el motivo.
-  iniciarAgente(id: number) {
+  // Como los despachos van por placa (sin conductor fijo), el despachador indica el
+  // número; si lo deja vacío, el backend cae al conductor asignado (si hay). El 400
+  // (sin número/conexión) lo muestra el interceptor.
+  async iniciarAgente(id: number) {
+    const telefono = await this.alerta.pedirTexto('Consultar al conductor', {
+      html: '¿A qué número de WhatsApp le escribimos?<br><small>Dejalo vacío para usar el conductor del despacho.</small>',
+      placeholder: 'Ej: 3001234567',
+    });
+    if (telefono === null) return; // canceló
     this._despachoApiService
-      .iniciarAgente(id)
+      .iniciarAgente(id, telefono || undefined)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respuesta) => {
