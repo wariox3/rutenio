@@ -15,6 +15,7 @@ export interface Despacho {
   vehiculo__capacidad: number;
   conductor_id: number | null;
   conductor_nombre: string | null;
+  conductor_telefono: string | null;
   estado_aprobado: boolean;
   tiempo: number;
   tiempo_trayecto: number;
@@ -45,6 +46,7 @@ export interface DespachoDetalle {
   vehiculo__placa: string;
   conductor_id: number | null;
   conductor_nombre: string | null;
+  conductor_telefono: string | null;
   entrega_id: number;
   estado_aprobado: boolean;
   estado_terminado: boolean;
@@ -68,6 +70,7 @@ export const despachoDetalleEmpty: DespachoDetalle = {
   vehiculo__placa: '',
   conductor_id: null,
   conductor_nombre: null,
+  conductor_telefono: null,
   entrega_id: 0,
   estado_aprobado: false,
   estado_terminado: false,

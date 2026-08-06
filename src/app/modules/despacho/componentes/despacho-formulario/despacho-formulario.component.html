@@ -63,6 +63,20 @@
         </ng-select>
       </div>
     </div>
+    <div>
+      <div>
+        <app-label [required]="false">Teléfono del conductor</app-label>
+        <app-input
+          [control]="despachoForm.controls.conductor_telefono"
+          placeholder="Ej. 3001234567"
+          [maxLength]="30"
+        ></app-input>
+        <span class="text-xs text-gray-500 block mt-1">
+          Si lo cargás, solo ese número podrá gestionar el viaje por WhatsApp
+          (LOGY). Si lo dejás vacío, cualquiera con la placa puede.
+        </span>
+      </div>
+    </div>
     <div class="mb-5">
       <div>
         <app-label [required]="false">Código complemento</app-label>
@@ -136,6 +150,20 @@
               class="select2Custom"
             >
             </ng-select>
+          </div>
+        </div>
+        <div>
+          <div>
+            <app-label [required]="false">Teléfono del conductor</app-label>
+            <app-input
+              [control]="despachoForm.controls.conductor_telefono"
+              placeholder="Ej. 3001234567"
+              [maxLength]="30"
+            ></app-input>
+            <span class="text-xs text-gray-500 block mt-1">
+              Si lo cargás, solo ese número podrá gestionar el viaje por WhatsApp
+              (LOGY). Si lo dejás vacío, cualquiera con la placa puede.
+            </span>
           </div>
         </div>
       </div>
