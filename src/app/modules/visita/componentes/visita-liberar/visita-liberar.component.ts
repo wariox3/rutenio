@@ -37,13 +37,20 @@ export class VisitaLiberarComponent extends General implements AfterViewInit {
   liberar(): void {
     if (!this.selectedOption || !this.inputValue.trim()) return;
     
-    const valorActual = this.inputValue
+    const valorActual = this.inputValue.trim()
     this.inputValue = '';
-    
-    const liberar$ = this.searchByDocument 
-      ? this._visitaApiService.consultarDocumento({ despacho_id: this.despachoId, numero: Number(valorActual) }).pipe(
-          switchMap(response => response?.id 
-            ? this._visitaApiService.liberar(String(response.id)) 
+
+    // Un id de visita siempre es numérico. Si el valor NO es numérico (p. ej. un
+    // código escaneado como 'CSV35'), solo puede ser un número de guía -> lo
+    // resolvemos por número aunque el modo sea 'id'. Así el escaneo funciona y no
+    // queda bloqueado. El backend filtra `numero` (CharField, acepta alfanumérico).
+    const esNumerico = /^\d+$/.test(valorActual);
+    const resolverPorNumero = this.searchByDocument || !esNumerico;
+
+    const liberar$ = resolverPorNumero
+      ? this._visitaApiService.consultarDocumento({ despacho_id: this.despachoId, numero: valorActual }).pipe(
+          switchMap(response => response?.id
+            ? this._visitaApiService.liberar(String(response.id))
             : of(null)
           )
         )

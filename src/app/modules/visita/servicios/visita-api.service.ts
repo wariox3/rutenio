@@ -19,7 +19,7 @@ export class VisitaApiService {
 
   consultarDocumento(payload: {
     despacho_id?: number;
-    numero: number;
+    numero: string | number; // el número de guía puede ser alfanumérico (ej. 'CSV35')
     estado_despacho?: boolean;
   }) {
     return this._httpService.post<{ id: number }>(
