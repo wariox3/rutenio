@@ -144,6 +144,14 @@
                     Número identificación:
                     {{ visita().datos_entrega?.recibeNumeroIdentificacion }}
                   </li>
+                  @if (visita().estado_entregado) {
+                    <li>Vehículo: {{ visita().vehiculo_placa }}</li>
+                    <li>Conductor: {{ visita().conductor_nombre }}</li>
+                    <li>
+                      Fecha entrega:
+                      {{ visita().fecha_entrega | date : "yyyy-MM-dd HH:mm" }}
+                    </li>
+                  }
                 </ul>
               </td>
             </tr>

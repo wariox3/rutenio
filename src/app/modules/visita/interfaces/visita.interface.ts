@@ -38,4 +38,8 @@ export interface Visita {
     recibeParentesco: string;
     recibeNumeroIdentificacion: string;
   };
+  // Contexto de la entrega (los agrega el retrieve del backend).
+  fecha_entrega?: string | null;
+  vehiculo_placa?: string | null;
+  conductor_nombre?: string | null;
 }
