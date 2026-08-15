@@ -48,6 +48,12 @@ export class HttpService extends Subdomino {
     return this.http.patch<T>(url, data);
   }
 
+  // Trae un archivo como Blob para mostrarlo inline (sin disparar descarga ni alertas).
+  public obtenerBlob(endpoint: string, data: any): Observable<Blob> {
+    const url = `${this.urlSubDominio}/${endpoint}`;
+    return this.http.post(url, data, { responseType: 'blob' });
+  }
+
   public descargarArchivo(endpoint: string, data: any): void {
     const url = `${this.urlSubDominio}/${endpoint}`;
     this.alertaService.mensajaEspera('Cargando');

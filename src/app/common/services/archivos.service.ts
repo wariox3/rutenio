@@ -16,4 +16,9 @@ export class ArchivosService {
     );
   }
 
+  // Contenido del archivo como Blob (para <img> inline, no descarga).
+  obtenerArchivoBlob(id: number) {
+    return this._httpService.obtenerBlob('general/archivo/descargar/', { id });
+  }
+
 }

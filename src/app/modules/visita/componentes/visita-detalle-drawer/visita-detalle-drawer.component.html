@@ -116,29 +116,50 @@
           </div>
         }
 
-        <!-- Entrega: solo si entregado. Muestra recibió + fotos. -->
-        @if (visita.estado_entregado && (visita.recibe || visita.recibeCelular || visita.recibeNumeroIdentificacion || fotos.length)) {
+        <!-- Entrega: solo si entregado. Muestra recibió + quién la llevó + fotos + firma. -->
+        @if (visita.estado_entregado) {
           <div class="rounded-xl border border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-500/5 px-3 py-3 mb-3">
             <p class="text-[11px] uppercase tracking-wide text-green-700 dark:text-green-400 font-semibold mb-2">
               <i class="ki-outline ki-verify text-sm me-1"></i>Entrega
+              @if (visita.fecha_entrega) {
+                <span class="normal-case tracking-normal font-normal text-gray-500 ms-1 tabular-nums">
+                  {{ visita.fecha_entrega | date:'dd/MM/yyyy HH:mm' }}
+                </span>
+              }
             </p>
-            @if (visita.recibe) {
+            @if (recibe) {
               <p class="text-sm text-gray-800">
-                {{ visita.recibe }}
-                @if (visita.recibeParentesco) {
-                  <span class="text-gray-500 text-xs">({{ visita.recibeParentesco }})</span>
+                {{ recibe }}
+                @if (recibeParentesco) {
+                  <span class="text-gray-500 text-xs">({{ recibeParentesco }})</span>
                 }
               </p>
             }
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mt-0.5">
-              @if (visita.recibeNumeroIdentificacion) { <span class="tabular-nums">CC {{ visita.recibeNumeroIdentificacion }}</span> }
-              @if (visita.recibeCelular) {
-                <a [href]="'tel:' + visita.recibeCelular"
+              @if (recibeNumeroIdentificacion) { <span class="tabular-nums">CC {{ recibeNumeroIdentificacion }}</span> }
+              @if (recibeCelular) {
+                <a [href]="'tel:' + recibeCelular"
                    class="inline-flex items-center gap-1 text-primary hover:underline tabular-nums">
-                  <i class="ki-outline ki-phone text-xs"></i>{{ visita.recibeCelular }}
+                  <i class="ki-outline ki-phone text-xs"></i>{{ recibeCelular }}
                 </a>
               }
             </div>
+            @if (visita.vehiculo_placa || visita.conductor_nombre) {
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mt-2 pt-2 border-t border-green-100 dark:border-green-500/20">
+                @if (visita.vehiculo_placa) {
+                  <span class="inline-flex items-center gap-1">
+                    <i class="ki-outline ki-delivery text-sm"></i>
+                    Vehículo <span class="font-semibold text-gray-800 tabular-nums">{{ visita.vehiculo_placa }}</span>
+                  </span>
+                }
+                @if (visita.conductor_nombre) {
+                  <span class="inline-flex items-center gap-1">
+                    <i class="ki-outline ki-user text-sm"></i>
+                    {{ visita.conductor_nombre }}
+                  </span>
+                }
+              </div>
+            }
             @if (fotos.length > 0) {
               <div class="grid grid-cols-3 gap-2 mt-3">
                 @for (foto of fotos; track $index) {
@@ -146,6 +167,19 @@
                      class="block aspect-square overflow-hidden rounded-lg border border-gray-200 dark:border-gray-200 bg-white dark:bg-coal-300 hover:opacity-90 transition">
                     <img [src]="foto" alt="Evidencia entrega"
                          class="w-full h-full object-cover"
+                         loading="lazy" />
+                  </a>
+                }
+              </div>
+            }
+            @if (evidenciaFirmas.length > 0) {
+              <p class="text-[10px] uppercase tracking-wide text-gray-500 font-medium mt-3 mb-1">Firma</p>
+              <div class="grid grid-cols-2 gap-2">
+                @for (firma of evidenciaFirmas; track $index) {
+                  <a [href]="firma" target="_blank" rel="noopener"
+                     class="block overflow-hidden rounded-lg border border-gray-200 dark:border-gray-200 bg-white hover:opacity-90 transition">
+                    <img [src]="firma" alt="Firma de recibido"
+                         class="w-full h-24 object-contain"
                          loading="lazy" />
                   </a>
                 }
