@@ -10,6 +10,7 @@ export interface Conversacion {
   asignada_a__nombre: string | null;
   ultimo_mensaje_fecha: string | null;
   no_leidos: number;
+  requiere_apoyo: boolean;
   fecha_ventana_24h: string | null;
   fecha: string;
   fecha_actualizacion: string;

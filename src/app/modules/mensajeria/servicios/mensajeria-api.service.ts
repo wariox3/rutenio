@@ -67,6 +67,11 @@ export class MensajeriaApiService {
     return this._http.post<Conversacion>(`mensajeria/conversacion/${conversacionId}/reabrir/`, {});
   }
 
+  /** Marca la conversación como atendida: apaga "requiere apoyo" (handoff de LOGY). */
+  resolverApoyo(conversacionId: number): Observable<Conversacion> {
+    return this._http.post<Conversacion>(`mensajeria/conversacion/${conversacionId}/resolver-apoyo/`, {});
+  }
+
   // === Plantillas + iniciar conversacion nueva ===
   listarPlantillas(): Observable<PlantillaWhatsapp[]> {
     return this._http.getDetalle<PlantillaWhatsapp[]>('mensajeria/conversacion/plantillas/');

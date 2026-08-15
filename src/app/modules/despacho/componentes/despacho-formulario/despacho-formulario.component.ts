@@ -87,6 +87,9 @@ export default class DespachoFormularioComponent extends General {
       Validators.maxLength(10),
     ]),
     conductor_id: new FormControl<number | null>(null),
+    conductor_telefono: new FormControl<string | null>(null, [
+      Validators.maxLength(30),
+    ]),
     estado_aprobado: new FormControl<boolean>(false),
     estado_terminado: new FormControl<boolean>(false),
   });
@@ -135,6 +138,7 @@ export default class DespachoFormularioComponent extends General {
       vehiculo: this.despacho.vehiculo,
       vehiculo__placa: this.despacho.vehiculo__placa,
       conductor_id: this.despacho.conductor_id,
+      conductor_telefono: this.despacho.conductor_telefono,
       estado_aprobado: this.despacho.estado_aprobado,
       estado_terminado: this.despacho.estado_terminado,
       codigo_complemento: this.despacho.codigo_complemento

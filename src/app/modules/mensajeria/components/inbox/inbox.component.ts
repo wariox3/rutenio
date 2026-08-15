@@ -49,6 +49,7 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   enviando = false;
   controlTexto = new FormControl('');
   controlBusqueda = new FormControl('');
+  soloApoyo = false;   // filtro: mostrar solo las que LOGY pasó a un asesor
   modalNuevaAbierto = false;
   modalEnviarPlantillaAbierto = false;
 
@@ -101,12 +102,36 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
   }
 
   get conversacionesFiltradas(): Conversacion[] {
+    let lista = this.conversaciones;
+    if (this.soloApoyo) lista = lista.filter(c => c.requiere_apoyo);
     const q = (this.controlBusqueda.value || '').trim().toLowerCase();
-    if (!q) return this.conversaciones;
-    return this.conversaciones.filter(c =>
+    if (!q) return lista;
+    return lista.filter(c =>
       (c.cliente_nombre || '').toLowerCase().includes(q) ||
       c.cliente_telefono.includes(q)
     );
+  }
+
+  /** Cuántas conversaciones abiertas pidieron un asesor (para el badge del filtro). */
+  get requiereApoyoCount(): number {
+    return this.conversaciones.filter(c => c.requiere_apoyo).length;
+  }
+
+  toggleSoloApoyo(): void {
+    this.soloApoyo = !this.soloApoyo;
+    this._cdr.detectChanges();
+  }
+
+  /** El asesor marca la conversación como atendida: apaga "requiere apoyo". */
+  resolverApoyo(): void {
+    const conv = this.conversacionActiva;
+    if (!conv || !conv.requiere_apoyo) return;
+    this._api.resolverApoyo(conv.id).subscribe((c) => {
+      this.conversacionActiva = c;
+      const i = this.conversaciones.findIndex(x => x.id === c.id);
+      if (i >= 0) this.conversaciones[i] = c;
+      this._cdr.detectChanges();
+    });
   }
 
   seleccionar(conv: Conversacion): void {
