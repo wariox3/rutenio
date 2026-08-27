@@ -186,8 +186,12 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     const arr = this.form.controls.variables;
     while (arr.length) arr.removeAt(0);
     if (plantilla) {
-      plantilla.variables.forEach(() => {
-        arr.push(new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }));
+      plantilla.variables.forEach((_, i) => {
+        // Prellenar con el ejemplo (si lo hay): el botón queda habilitado de una
+        // y el usuario edita si quiere. Antes arrancaba vacío y confundía (el
+        // ejemplo se veía como placeholder → parecía lleno estando vacío).
+        const ejemplo = plantilla.meta.variables[i]?.ejemplo ?? '';
+        arr.push(new FormControl<string>(ejemplo, { nonNullable: true, validators: [Validators.required] }));
       });
     }
     this._cdr.detectChanges();

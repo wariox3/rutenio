@@ -347,18 +347,16 @@
           </span>
         </div>
 
-        <div *ngIf="conv.estado === 'abierta'" class="flex items-center gap-2">
+        <!-- Dentro de la ventana de 24h: composer normal (texto libre + plantilla). -->
+        <div *ngIf="conv.estado === 'abierta' && !ventana24hVencida" class="flex items-center gap-2">
           <button type="button"
                   (click)="abrirEnvioPlantilla()"
-                  [class]="ventana24hVencida
-                    ? 'shrink-0 px-3 py-2 bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 rounded-full text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-500/30 transition flex items-center gap-1.5'
-                    : 'shrink-0 p-2 text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-100 rounded-full transition'"
+                  class="shrink-0 p-2 text-gray-400 dark:text-gray-500 hover:text-green-600 dark:hover:text-green-400 hover:bg-gray-100 dark:hover:bg-gray-100 rounded-full transition"
                   title="Enviar plantilla">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
               <rect x="4" y="3" width="16" height="18" rx="2"/>
               <path d="M8 8h8M8 12h8M8 16h5"/>
             </svg>
-            <span *ngIf="ventana24hVencida">Plantilla</span>
           </button>
 
           <div class="flex-1 relative">
@@ -385,6 +383,18 @@
             </svg>
           </button>
         </div>
+
+        <!-- Fuera de la ventana de 24h: solo se permiten plantillas → un único CTA
+             claro, sin caja de texto (escribir libre daría error de todos modos). -->
+        <button *ngIf="conv.estado === 'abierta' && ventana24hVencida"
+                type="button" (click)="abrirEnvioPlantilla()"
+                class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-full text-sm font-semibold shadow-sm shadow-green-600/30 hover:bg-green-700 active:scale-[.98] transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+            <rect x="4" y="3" width="16" height="18" rx="2"/>
+            <path d="M8 8h8M8 12h8M8 16h5"/>
+          </svg>
+          Enviar plantilla
+        </button>
       </div>
     </ng-container>
   </section>
