@@ -347,17 +347,17 @@
           <label class="block text-[11px] uppercase tracking-wider text-zinc-500 font-semibold mb-1.5">
             Contenedor
           </label>
-          <select
-            class="w-full px-3 py-2 rounded-md bg-coal-300 border border-coal-100 text-sm text-zinc-200 focus:outline-none focus:border-blue-500"
+          <ng-select
+            class="select2Custom"
+            [items]="contenedoresAsignables()"
+            bindLabel="nombre"
+            bindValue="schema_name"
             [(ngModel)]="schemaElegido"
+            placeholder="Busca un contenedor…"
+            notFoundText="Sin contenedores"
+            [clearable]="false"
           >
-            <option [ngValue]="null" disabled>Selecciona un contenedor…</option>
-            @for (c of contenedoresDisponibles(); track c.id) {
-              @if (esContenedorDisponible(c)) {
-                <option [ngValue]="c.schema_name">{{ c.nombre || c.schema_name }}</option>
-              }
-            }
-          </select>
+          </ng-select>
           <p class="text-[11px] text-zinc-500 mt-1">
             Solo aparecen contenedores donde el usuario aún no es miembro.
           </p>
