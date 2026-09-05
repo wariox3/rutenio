@@ -64,11 +64,11 @@ export default class ContenedorAdminUsuarioCrearComponent {
         if (this.modo() === 'invitacion' && res?.invitacion_enviada === false) {
           const token = res?.token_verificacion;
           const url = token
-            ? `${window.location.origin}/auth/verificacion/${token}`
+            ? `${window.location.origin}/auth/clave/cambiar/${token}`
             : '';
           alert(
             'El usuario se creo pero el correo de invitacion no pudo enviarse.' +
-              (url ? `\n\nLink de verificacion para compartir manualmente:\n${url}` : ''),
+              (url ? `\n\nLink para que cree su clave (compartir manualmente):\n${url}` : ''),
           );
         }
         if (id) {

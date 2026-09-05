@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { getCookie } from 'typescript-cookie';
 import { environment } from '../../../../../environments/environment';
@@ -72,6 +73,7 @@ type FiltroEstado =
   imports: [
     CommonModule,
     FormsModule,
+    NgSelectModule,
     DatePipe,
     RouterLink,
     AdminNavComponent,
@@ -215,7 +217,11 @@ export default class ContenedorAdminUsuariosComponent implements OnInit, OnDestr
           `${environment.url_api}/contenedor/contenedor/admin-lista/`,
           { headers: this.headers },
         )
-        .subscribe((lista) => this.contenedoresDisponibles.set(lista || []));
+        .subscribe((lista) =>
+          this.contenedoresDisponibles.set(
+            (lista || []).map((c) => ({ ...c, nombre: c.nombre || c.schema_name })),
+          ),
+        );
     }
   }
 

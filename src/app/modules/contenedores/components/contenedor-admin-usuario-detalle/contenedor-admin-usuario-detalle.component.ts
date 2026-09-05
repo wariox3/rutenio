@@ -2,12 +2,14 @@ import { CommonModule, DatePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { AdminNavComponent } from '../../../../common/components/admin-nav/admin-nav.component';
 import { ContenedorAdminService } from '../../services/contenedor-admin.service';
 import { ContenedorAdminMembresiaEditarComponent } from '../contenedor-admin-membresia-editar/contenedor-admin-membresia-editar.component';
@@ -33,6 +35,7 @@ interface MembresiaDetalle {
     DatePipe,
     FormsModule,
     ReactiveFormsModule,
+    NgSelectModule,
     RouterLink,
     AdminNavComponent,
     ContenedorAdminMembresiaEditarComponent,
@@ -206,6 +209,13 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
   rolAsignar: 'admin' | 'usuario' = 'usuario';
   asignando = signal<boolean>(false);
   errorAsignar = signal<string | null>(null);
+
+  /** Contenedores donde el usuario aun no es miembro, con etiqueta lista para el buscador. */
+  contenedoresAsignables = computed(() =>
+    this.contenedoresDisponibles()
+      .filter((c) => this.esContenedorDisponible(c))
+      .map((c) => ({ ...c, nombre: c.nombre || c.schema_name })),
+  );
 
   abrirModalAsignar() {
     this.schemaElegido = null;
