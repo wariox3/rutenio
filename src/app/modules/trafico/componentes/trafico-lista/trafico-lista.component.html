@@ -195,13 +195,8 @@
                   <div
                     class="absolute h-4 rounded-full w-full"
                     [ngClass]="{
-                      'bg-red-500/20':
-                        (despacho.estado === 'retrazado' ||
-                          despacho.visitas_entregadas === 0) &&
-                        despacho.estado !== 'tiempo',
-                      'bg-green-500/20':
-                        despacho.estado !== 'retrazado' &&
-                        despacho.visitas_entregadas >= 0
+                      'bg-red-500/20': despacho.estado === 'retrazado',
+                      'bg-green-500/20': despacho.estado !== 'retrazado'
                     }"
                   ></div>
 
@@ -244,6 +239,9 @@
                     despacho.visitas
                   }}
                   | Novedades: {{ despacho.visitas_novedad }}
+                  @if (despacho.visitas_liberadas > 0) {
+                    | Liberadas: {{ despacho.visitas_liberadas }}
+                  }
                 </div>
               </div>
             </td>
@@ -578,8 +576,8 @@
             <div class="flex items-center">
               <i class="ki-filled ki-watch text-blue-500 text-lg"></i>
               <span class="ml-2 font-medium">Estado:</span>
-              <span class="ml-1 font-semibold capitalize">{{
-                despachoSeleccionado?.estado
+              <span class="ml-1 font-semibold">{{
+                etiquetaEstado(despachoSeleccionado?.estado)
               }}</span>
             </div>
 

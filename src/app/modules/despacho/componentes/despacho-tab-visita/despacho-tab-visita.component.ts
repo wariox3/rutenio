@@ -85,6 +85,19 @@ export class DespachoTabVisitaComponent
       ? Math.round((this.conNovedad() / this.totalVisitas()) * 100)
       : 0
   );
+  // Anchos de la barra SIN redondear: si se redondea cada segmento por separado
+  // (p.ej. 1/1/1 -> 33% + 33%), no suman 100 y el hueco no coincide con
+  // "Pendientes". El texto sigue mostrando los % redondeados.
+  anchoEntregadas = computed(() =>
+    this.totalVisitas() > 0
+      ? (this.entregadas() / this.totalVisitas()) * 100
+      : 0
+  );
+  anchoNovedad = computed(() =>
+    this.totalVisitas() > 0
+      ? (this.conNovedad() / this.totalVisitas()) * 100
+      : 0
+  );
 
   abrirDrawer(id: number): void {
     this.drawerVisitaId.set(id);
@@ -203,8 +216,13 @@ export class DespachoTabVisitaComponent
       });
   }
 
+  // Trae TODAS las visitas del despacho en una pagina: los KPIs (Total,
+  // Entregadas, Pendientes) y el banner se calculan sobre la lista cargada, asi
+  // que con paginacion parcial mentian. Un despacho no supera este limite en la
+  // practica. El paginador usa el mismo tamano (ver [itemsPerPage] en la vista).
+  static readonly LIMITE_VISITAS = 1000;
   private baseParametrosConsulta: ParametrosApi = {
-    limit: 100,
+    limit: DespachoTabVisitaComponent.LIMITE_VISITAS,
     ordering: 'orden',
     serializador: 'trafico',
   };

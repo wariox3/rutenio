@@ -73,8 +73,8 @@
   class="mt-3 h-2 rounded-full overflow-hidden bg-gray-100 flex"
   title="Avance del despacho"
 >
-  <div class="bg-green-500" [style.width.%]="pctEntregadas()"></div>
-  <div class="bg-orange-400" [style.width.%]="pctNovedad()"></div>
+  <div class="bg-green-500" [style.width.%]="anchoEntregadas()"></div>
+  <div class="bg-orange-400" [style.width.%]="anchoNovedad()"></div>
 </div>
 
 <!-- Banner accionable: qué falta para cerrar -->
@@ -138,6 +138,7 @@
     [totalPages]="totalPages()"
     (pageChange)="onPageChange($event)"
     [totalItems]="cantidadRegistros"
+    [itemsPerPage]="1000"
   ></app-paginador>
 
   <div class="menu menu-default p-0" data-menu="true">

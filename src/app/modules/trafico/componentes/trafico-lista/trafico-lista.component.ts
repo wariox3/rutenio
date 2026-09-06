@@ -632,10 +632,11 @@ export default class TraficoListaComponent
     entregadas: number,
     totales: number
   ): string {
-    if (estado === 'tiempo') return 'bg-green-500';
-    return estado === 'retrazado' || entregadas === 0
-      ? 'bg-red-500'
-      : 'bg-green-500';
+    // La barra representa el PROGRESO de entrega, no el horario. El retraso se
+    // indica aparte (etiqueta de estado). Antes se pintaba roja por 'retrazado'
+    // aunque el % fuera alto -> el color contradecia el numero. Ahora: verde si
+    // hay avance, roja solo si no se ha entregado nada.
+    return entregadas > 0 ? 'bg-green-500' : 'bg-red-500';
   }
 
   obtenerAnchoProgreso(entregadas: number, totales: number): string {
@@ -646,7 +647,16 @@ export default class TraficoListaComponent
   obtenerPorcentajeVisual(entregadas: number, totales: number): string {
     if (totales === 0) return '0';
     const porcentaje = (entregadas / totales) * 100;
-    return Math.round(porcentaje).toString();
+    // Topado a 100: con contadores en deriva podia mostrar "120%" mientras la
+    // barra quedaba al 100% -> texto y barra se contradecian.
+    return Math.min(Math.round(porcentaje), 100).toString();
+  }
+
+  /** Etiqueta legible del estado (el valor interno es 'tiempo'/'retrazado'). */
+  etiquetaEstado(estado: string | undefined | null): string {
+    if (estado === 'retrazado') return 'Retrasado';
+    if (estado === 'tiempo') return 'A tiempo';
+    return estado || '';
   }
 
   openInfoWindow(marker: MapMarker, index: number) {
