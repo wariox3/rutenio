@@ -60,7 +60,10 @@ export class NuevoDesdeComplementoComponent {
         })
       )
       .subscribe((respuesta) => {
-        this._alerta.mensajaExitoso(respuesta.mensaje);
+        // Mismo modal de resumen que los otros imports (título propio: se creó
+        // un despacho). El error (vehículo, despacho ya existe, etc.) lo maneja
+        // el interceptor con el mensaje del backend.
+        this._alerta.resultadoImportacion(respuesta, { tituloExito: 'Despacho creado' });
         this.complementoCargado.emit();
       });
   }

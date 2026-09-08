@@ -43,7 +43,11 @@ export class VisitaApiService {
   }
 
   importarPorExcel(data: any) {
-    return this._httpService.post<any[]>(`ruteo/visita/importar-excel/`, data);
+    return this._httpService.post<{
+      mensaje?: string;
+      cantidad?: number;
+      duplicadas?: number;
+    }>(`ruteo/visita/importar-excel/`, data);
   }
 
   actualizar(id: number, data: any) {

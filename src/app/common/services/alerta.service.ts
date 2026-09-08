@@ -56,32 +56,28 @@ export class AlertaService {
     };
   }
 
-  /** Estilos para toasts en esquina inferior derecha. */
-  private getToastConfig() {
-    return {
-      toast: true,
-      position: 'bottom-end' as const,
-      buttonsStyling: false,
+  /**
+   * Modal centrado genérico (éxito / error / info / advertencia). Toda la app
+   * usa este mismo formato: título + mensaje + botón "Entendido", con el icono
+   * y color según la severidad. Reemplaza a los toasts (decisión de UX: todas
+   * las alertas son modales centrados que piden acuse, no avisos fugaces).
+   */
+  private modalCentrado(title: string, html: string, icon: SweetAlertIcon) {
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass(icon);
+    return Swal.fire({
+      ...bc,
+      title,
+      html,
+      icon,
       showCloseButton: true,
+      confirmButtonText: 'Entendido',
       customClass: {
-        container: '!font-sans',
-        popup:
-          '!rounded-xl !shadow-xl !shadow-gray-900/10 ' +
-          '!border !border-gray-100 dark:!border-gray-800 ' +
-          '!bg-white dark:!bg-gray-900 ' +
-          '!px-4 !py-3 !min-w-[320px] !max-w-md',
-        title: '!text-[13.5px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !p-0 !m-0',
-        htmlContainer: '!text-[12.5px] !text-gray-600 dark:!text-gray-300 !leading-snug !p-0 !mt-1 !mx-0',
-        icon: '!w-8 !h-8 !min-h-[2rem] !border-0 !mr-2 !my-0',
-        closeButton:
-          '!w-6 !h-6 !text-gray-300 dark:!text-gray-500 ' +
-          'hover:!text-gray-600 dark:hover:!text-gray-300 !text-base focus:!shadow-none',
-        timerProgressBar: '!h-[2px]',
-        confirmButton: '!hidden',
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+        actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
       },
-      showClass: { popup: 'swal2-show-slide-in-right' },
-      hideClass: { popup: 'swal2-hide-slide-out-right' },
-    };
+    });
   }
 
   /** Retorna clases tailwind y color de progressbar según el tipo. */
@@ -103,60 +99,15 @@ export class AlertaService {
   // ========== Mensajes ==========
 
   mensajeInformativo(title: string, text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('info');
-    Swal.fire({
-      ...tc,
-      title,
-      html: text,
-      icon: 'info',
-      timer: 20000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return this.modalCentrado(title, text, 'info');
   }
 
   mensajeError(title: string, text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('error');
-    Swal.fire({
-      ...tc,
-      title,
-      html: text,
-      icon: 'error',
-      timer: 20000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return this.modalCentrado(title, text, 'error');
   }
 
   async mensajaExitoso(text: string, titulo = 'Guardado con éxito') {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('success');
-    return await Swal.fire({
-      ...tc,
-      title: titulo,
-      html: text,
-      icon: 'success',
-      timer: 4000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return await this.modalCentrado(titulo, text, 'success');
   }
 
   async mensajaEspera(
@@ -282,6 +233,93 @@ export class AlertaService {
     return mensaje;
   }
 
+  /**
+   * Resumen visual de una importación (Excel / complemento / nuevo desde
+   * complemento). Recibe los conteos que devuelve el backend y muestra un
+   * desglose con el diseño de Ruteo. Solo lista las filas con valor > 0.
+   * - success: entraron guías y sin problemas.
+   * - warning: entraron pero hubo sin-geocodificar / fuera de zona / inválidas.
+   * - info: no entró ninguna guía nueva (p. ej. todas ya estaban).
+   * Las clases de color son las mismas que ya emite getIconClass(), así que
+   * están garantizadas en el build (sin riesgo de purge de Tailwind); el
+   * layout va por estilos inline para no depender de clases dinámicas.
+   */
+  async resultadoImportacion(
+    resumen: {
+      cantidad?: number;
+      duplicadas?: number;
+      descartadas?: number;
+      sin_ubicar?: number;
+      errores_guia?: number;
+    },
+    opciones: { tituloExito?: string } = {}
+  ) {
+    const cantidad = resumen.cantidad ?? 0;
+    const duplicadas = resumen.duplicadas ?? 0;
+    const descartadas = resumen.descartadas ?? 0;
+    const sinUbicar = resumen.sin_ubicar ?? 0;
+    const errores = resumen.errores_guia ?? 0;
+
+    const hayProblemas = descartadas > 0 || sinUbicar > 0 || errores > 0;
+    const icon: SweetAlertIcon = cantidad > 0 ? (hayProblemas ? 'warning' : 'success') : 'info';
+
+    const filas = [
+      { label: 'Importadas', valor: cantidad, dot: '!bg-green-500', texto: '!text-green-600 dark:!text-green-400' },
+      { label: 'Ya estaban en Ruteo', valor: duplicadas, dot: '!bg-gray-400', texto: '!text-gray-500 dark:!text-gray-400' },
+      { label: 'Sin geocodificar (revisar dirección)', valor: sinUbicar, dot: '!bg-yellow-500', texto: '!text-yellow-600 dark:!text-yellow-400' },
+      { label: 'Fuera de las zonas seleccionadas', valor: descartadas, dot: '!bg-blue-500', texto: '!text-blue-600 dark:!text-blue-400' },
+      { label: 'Con datos inválidos', valor: errores, dot: '!bg-red-500', texto: '!text-red-600 dark:!text-red-400' },
+    ].filter((f) => f.valor > 0);
+
+    const filaEstilo =
+      'display:flex;align-items:center;justify-content:space-between;' +
+      'border:1px solid rgba(128,128,128,.18);border-radius:.5rem;padding:.45rem .7rem;';
+    const filasHtml = filas
+      .map(
+        (f) => `
+      <div style="${filaEstilo}">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span class="${f.dot}" style="display:inline-block;width:.5rem;height:.5rem;border-radius:9999px"></span>${f.label}
+        </span>
+        <span class="${f.texto}" style="font-weight:600">${f.valor}</span>
+      </div>`
+      )
+      .join('');
+
+    const encabezado =
+      cantidad > 0
+        ? `<div style="text-align:center">
+             <div class="!text-gray-800 dark:!text-gray-100" style="font-size:1.9rem;font-weight:700;line-height:1.1">${cantidad}</div>
+             <div class="!text-gray-500 dark:!text-gray-400" style="font-size:.8rem">${cantidad === 1 ? 'guía importada' : 'guías importadas'}</div>
+           </div>`
+        : `<div class="!text-gray-600 dark:!text-gray-300" style="text-align:center;font-size:.85rem">No se importó ninguna guía nueva.</div>`;
+
+    const html =
+      `${encabezado}<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem;text-align:left;font-size:.8rem">${filasHtml}</div>`;
+
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass(icon);
+    const titulo =
+      cantidad > 0
+        ? hayProblemas
+          ? 'Importación con avisos'
+          : opciones.tituloExito ?? 'Importación completa'
+        : opciones.tituloExito ?? 'Importación finalizada';
+
+    return await Swal.fire({
+      ...bc,
+      title: titulo,
+      html,
+      icon,
+      confirmButtonText: 'Entendido',
+      customClass: {
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+        actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
+      },
+    });
+  }
+
   cerrarMensajes() {
     return Swal.close();
   }
@@ -291,25 +329,8 @@ export class AlertaService {
   }
 
   async mensajaContactoLandinpage(text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('success');
-    return await Swal.fire({
-      ...tc,
-      position: 'center',
-      html: text,
-      icon: 'success',
-      timer: 5000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    }).then(() => {
-      window.location.href = '/';
-    });
+    await this.modalCentrado('¡Gracias por escribirnos!', text, 'success');
+    window.location.href = '/';
   }
 
   async alertaTrafico(titulo: string, html: string) {
