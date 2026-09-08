@@ -155,12 +155,16 @@ export class DespachoApiService {
   }
 
   nuevoComplemento(despacho_id: string) {
-    return this._httpService.post<{ mensaje: string }>(
-      `ruteo/despacho/nuevo-complemento/`,
-      {
-        despacho_id,
-      }
-    );
+    return this._httpService.post<{
+      mensaje: string;
+      cantidad?: number;
+      duplicadas?: number;
+      sin_ubicar?: number;
+      errores_guia?: number;
+      descartadas?: number;
+    }>(`ruteo/despacho/nuevo-complemento/`, {
+      despacho_id,
+    });
   }
 
   descargarPlanoSemantica(id: number) {

@@ -176,26 +176,16 @@ export class VisitaImportarPorComplementoComponent extends General {
       .subscribe({
         next: (respuesta: {
           mensaje?: string;
+          cantidad?: number;
+          duplicadas?: number;
           descartadas?: number;
           sin_ubicar?: number;
           errores_guia?: number;
         }) => {
           this.emitirConsultarLista.emit();
-          const parcial =
-            (respuesta?.descartadas || 0) +
-              (respuesta?.sin_ubicar || 0) +
-              (respuesta?.errores_guia || 0) > 0;
-          if (parcial) {
-            this.alerta.mensajeInformativo(
-              'Importación parcial',
-              respuesta?.mensaje || 'Se importaron algunas guías; otras se omitieron.'
-            );
-          } else {
-            this.alerta.mensajaExitoso(
-              respuesta?.mensaje || 'Se han importado las visitas con éxito',
-              'Importado con éxito.'
-            );
-          }
+          // Modal de resumen con el desglose (importadas / ya estaban /
+          // sin geocodificar / fuera de zona / inválidas), diseño de Ruteo.
+          this.alerta.resultadoImportacion(respuesta);
           // Solo en EXITO cerramos el modal y limpiamos el formulario.
           this.modalDismiss();
           this.reiniciarFormulario();

@@ -81,7 +81,9 @@ export default class VisitaImportarPorExcelComponent extends General {
           })
         )
         .subscribe((response) => {
-          this.alerta.mensajaExitoso('Se han cargado las guias con éxito');
+          // Modal de resumen con el desglose real (importadas / duplicadas),
+          // igual que los imports por complemento.
+          this.alerta.resultadoImportacion(response ?? {});
         });
     } else {
       this.alerta.mensajeError('No se ha seleccionado ningún archivo', 'Error');

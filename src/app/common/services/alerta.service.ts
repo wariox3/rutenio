@@ -282,6 +282,93 @@ export class AlertaService {
     return mensaje;
   }
 
+  /**
+   * Resumen visual de una importación (Excel / complemento / nuevo desde
+   * complemento). Recibe los conteos que devuelve el backend y muestra un
+   * desglose con el diseño de Ruteo. Solo lista las filas con valor > 0.
+   * - success: entraron guías y sin problemas.
+   * - warning: entraron pero hubo sin-geocodificar / fuera de zona / inválidas.
+   * - info: no entró ninguna guía nueva (p. ej. todas ya estaban).
+   * Las clases de color son las mismas que ya emite getIconClass(), así que
+   * están garantizadas en el build (sin riesgo de purge de Tailwind); el
+   * layout va por estilos inline para no depender de clases dinámicas.
+   */
+  async resultadoImportacion(
+    resumen: {
+      cantidad?: number;
+      duplicadas?: number;
+      descartadas?: number;
+      sin_ubicar?: number;
+      errores_guia?: number;
+    },
+    opciones: { tituloExito?: string } = {}
+  ) {
+    const cantidad = resumen.cantidad ?? 0;
+    const duplicadas = resumen.duplicadas ?? 0;
+    const descartadas = resumen.descartadas ?? 0;
+    const sinUbicar = resumen.sin_ubicar ?? 0;
+    const errores = resumen.errores_guia ?? 0;
+
+    const hayProblemas = descartadas > 0 || sinUbicar > 0 || errores > 0;
+    const icon: SweetAlertIcon = cantidad > 0 ? (hayProblemas ? 'warning' : 'success') : 'info';
+
+    const filas = [
+      { label: 'Importadas', valor: cantidad, dot: '!bg-green-500', texto: '!text-green-600 dark:!text-green-400' },
+      { label: 'Ya estaban en Ruteo', valor: duplicadas, dot: '!bg-gray-400', texto: '!text-gray-500 dark:!text-gray-400' },
+      { label: 'Sin geocodificar (revisar dirección)', valor: sinUbicar, dot: '!bg-yellow-500', texto: '!text-yellow-600 dark:!text-yellow-400' },
+      { label: 'Fuera de las zonas seleccionadas', valor: descartadas, dot: '!bg-blue-500', texto: '!text-blue-600 dark:!text-blue-400' },
+      { label: 'Con datos inválidos', valor: errores, dot: '!bg-red-500', texto: '!text-red-600 dark:!text-red-400' },
+    ].filter((f) => f.valor > 0);
+
+    const filaEstilo =
+      'display:flex;align-items:center;justify-content:space-between;' +
+      'border:1px solid rgba(128,128,128,.18);border-radius:.5rem;padding:.45rem .7rem;';
+    const filasHtml = filas
+      .map(
+        (f) => `
+      <div style="${filaEstilo}">
+        <span style="display:flex;align-items:center;gap:.5rem">
+          <span class="${f.dot}" style="display:inline-block;width:.5rem;height:.5rem;border-radius:9999px"></span>${f.label}
+        </span>
+        <span class="${f.texto}" style="font-weight:600">${f.valor}</span>
+      </div>`
+      )
+      .join('');
+
+    const encabezado =
+      cantidad > 0
+        ? `<div style="text-align:center">
+             <div class="!text-gray-800 dark:!text-gray-100" style="font-size:1.9rem;font-weight:700;line-height:1.1">${cantidad}</div>
+             <div class="!text-gray-500 dark:!text-gray-400" style="font-size:.8rem">${cantidad === 1 ? 'guía importada' : 'guías importadas'}</div>
+           </div>`
+        : `<div class="!text-gray-600 dark:!text-gray-300" style="text-align:center;font-size:.85rem">No se importó ninguna guía nueva.</div>`;
+
+    const html =
+      `${encabezado}<div style="display:flex;flex-direction:column;gap:.5rem;margin-top:1rem;text-align:left;font-size:.8rem">${filasHtml}</div>`;
+
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass(icon);
+    const titulo =
+      cantidad > 0
+        ? hayProblemas
+          ? 'Importación con avisos'
+          : opciones.tituloExito ?? 'Importación completa'
+        : opciones.tituloExito ?? 'Importación finalizada';
+
+    return await Swal.fire({
+      ...bc,
+      title: titulo,
+      html,
+      icon,
+      confirmButtonText: 'Entendido',
+      customClass: {
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+        actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
+      },
+    });
+  }
+
   cerrarMensajes() {
     return Swal.close();
   }
