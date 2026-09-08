@@ -222,7 +222,10 @@ export class DespachoTabVisitaComponent
   // practica. El paginador usa el mismo tamano (ver [itemsPerPage] en la vista).
   static readonly LIMITE_VISITAS = 1000;
   private baseParametrosConsulta: ParametrosApi = {
-    limit: DespachoTabVisitaComponent.LIMITE_VISITAS,
+    // page_size (NO limit): el endpoint usa PageNumberPagination, que ignora
+    // ?limit. Con page_size trae todas las visitas del despacho en una página y
+    // los KPIs/banner del modal se calculan sobre el set completo.
+    page_size: DespachoTabVisitaComponent.LIMITE_VISITAS,
     ordering: 'orden',
     serializador: 'trafico',
   };
