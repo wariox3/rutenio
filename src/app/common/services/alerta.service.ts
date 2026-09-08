@@ -56,32 +56,28 @@ export class AlertaService {
     };
   }
 
-  /** Estilos para toasts en esquina inferior derecha. */
-  private getToastConfig() {
-    return {
-      toast: true,
-      position: 'bottom-end' as const,
-      buttonsStyling: false,
+  /**
+   * Modal centrado genérico (éxito / error / info / advertencia). Toda la app
+   * usa este mismo formato: título + mensaje + botón "Entendido", con el icono
+   * y color según la severidad. Reemplaza a los toasts (decisión de UX: todas
+   * las alertas son modales centrados que piden acuse, no avisos fugaces).
+   */
+  private modalCentrado(title: string, html: string, icon: SweetAlertIcon) {
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass(icon);
+    return Swal.fire({
+      ...bc,
+      title,
+      html,
+      icon,
       showCloseButton: true,
+      confirmButtonText: 'Entendido',
       customClass: {
-        container: '!font-sans',
-        popup:
-          '!rounded-xl !shadow-xl !shadow-gray-900/10 ' +
-          '!border !border-gray-100 dark:!border-gray-800 ' +
-          '!bg-white dark:!bg-gray-900 ' +
-          '!px-4 !py-3 !min-w-[320px] !max-w-md',
-        title: '!text-[13.5px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !p-0 !m-0',
-        htmlContainer: '!text-[12.5px] !text-gray-600 dark:!text-gray-300 !leading-snug !p-0 !mt-1 !mx-0',
-        icon: '!w-8 !h-8 !min-h-[2rem] !border-0 !mr-2 !my-0',
-        closeButton:
-          '!w-6 !h-6 !text-gray-300 dark:!text-gray-500 ' +
-          'hover:!text-gray-600 dark:hover:!text-gray-300 !text-base focus:!shadow-none',
-        timerProgressBar: '!h-[2px]',
-        confirmButton: '!hidden',
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+        actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
       },
-      showClass: { popup: 'swal2-show-slide-in-right' },
-      hideClass: { popup: 'swal2-hide-slide-out-right' },
-    };
+    });
   }
 
   /** Retorna clases tailwind y color de progressbar según el tipo. */
@@ -103,60 +99,15 @@ export class AlertaService {
   // ========== Mensajes ==========
 
   mensajeInformativo(title: string, text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('info');
-    Swal.fire({
-      ...tc,
-      title,
-      html: text,
-      icon: 'info',
-      timer: 20000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return this.modalCentrado(title, text, 'info');
   }
 
   mensajeError(title: string, text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('error');
-    Swal.fire({
-      ...tc,
-      title,
-      html: text,
-      icon: 'error',
-      timer: 20000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return this.modalCentrado(title, text, 'error');
   }
 
   async mensajaExitoso(text: string, titulo = 'Guardado con éxito') {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('success');
-    return await Swal.fire({
-      ...tc,
-      title: titulo,
-      html: text,
-      icon: 'success',
-      timer: 4000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    });
+    return await this.modalCentrado(titulo, text, 'success');
   }
 
   async mensajaEspera(
@@ -378,25 +329,8 @@ export class AlertaService {
   }
 
   async mensajaContactoLandinpage(text: string) {
-    const tc = this.getToastConfig();
-    const ic = this.getIconClass('success');
-    return await Swal.fire({
-      ...tc,
-      position: 'center',
-      html: text,
-      icon: 'success',
-      timer: 5000,
-      timerProgressBar: true,
-      showConfirmButton: false,
-      allowOutsideClick: false,
-      customClass: {
-        ...tc.customClass,
-        icon: `${tc.customClass.icon} ${ic.icon}`,
-        timerProgressBar: `${tc.customClass.timerProgressBar} ${ic.progress}`,
-      },
-    }).then(() => {
-      window.location.href = '/';
-    });
+    await this.modalCentrado('¡Gracias por escribirnos!', text, 'success');
+    window.location.href = '/';
   }
 
   async alertaTrafico(titulo: string, html: string) {
