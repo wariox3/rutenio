@@ -20,7 +20,12 @@ export class AlertaService {
           '!bg-white dark:!bg-gray-900 !p-6 !max-w-md',
         title: '!text-[17px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !mt-3',
         htmlContainer: '!text-[14px] !text-gray-600 dark:!text-gray-300 !leading-relaxed !mt-2',
-        icon: '!mx-auto !my-2 !border-0 !w-14 !h-14',
+        // OJO: NO pisar el tamano ni el borde del icono. SweetAlert2 dibuja el
+        // check/X/! con lineas absolutas calibradas al icono nativo (80px) y su
+        // anillo; forzar w/h o quitar el borde descoloca la figura (la "X" del
+        // error se veia como un "techo" rojo roto). Solo se centra y se escala
+        // parejo con transform (scale preserva la geometria interna).
+        icon: '!mx-auto !mt-1 !mb-3 !scale-90',
         closeButton:
           '!w-8 !h-8 !rounded-full !text-gray-400 dark:!text-gray-500 ' +
           'hover:!text-gray-700 dark:hover:!text-gray-200 hover:!bg-gray-100 dark:hover:!bg-gray-800 ' +
