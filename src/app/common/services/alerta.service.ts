@@ -190,6 +190,37 @@ export class AlertaService {
     return r.isConfirmed ? String(r.value ?? '').trim() : null;
   }
 
+  // Pide elegir una opción de una lista (input select). `opciones` es un mapa
+  // { valor: etiqueta }. Devuelve el valor elegido, o null si cancela.
+  async pedirSeleccion(
+    title: string,
+    opciones: Record<string, string>,
+    cfg: { html?: string; valorInicial?: string; confirmButtonText?: string; placeholder?: string } = {}
+  ): Promise<string | null> {
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass('question');
+    const r = await Swal.fire({
+      ...bc,
+      title,
+      html: cfg.html,
+      icon: 'question',
+      input: 'select',
+      inputOptions: opciones,
+      inputValue: cfg.valorInicial ?? '',
+      inputPlaceholder: cfg.placeholder ?? 'Elegí una opción',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: cfg.confirmButtonText ?? 'Aceptar',
+      customClass: {
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+      },
+    });
+    return r.isConfirmed ? String(r.value ?? '') : null;
+  }
+
   async mensajeEliminarEmpresa(
     empresaNombre: string | null,
     title: string,

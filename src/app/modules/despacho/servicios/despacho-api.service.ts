@@ -172,4 +172,22 @@ export class DespachoApiService {
       id,
     });
   }
+
+  // Conductores del contenedor (usuarios con acceso móvil y perfil conductor),
+  // para el selector "Asignar conductor" en Tráfico.
+  conductores() {
+    return this._httpService.get<{ id: number; nombre: string }>(
+      `ruteo/despacho/conductores/`
+    );
+  }
+
+  // Asigna (conductor_id) o desasigna (null) el conductor de un despacho. El
+  // backend propaga a VerEntrega.usuario_id → la orden aparece/desaparece en
+  // "Mis Órdenes" del conductor con solo refrescar (sin cargar por código).
+  asignarConductor(despacho_id: number, conductor_id: number | null) {
+    return this._httpService.post<{ mensaje: string }>(
+      `ruteo/despacho/asignar-conductor/`,
+      { despacho_id, conductor_id }
+    );
+  }
 }

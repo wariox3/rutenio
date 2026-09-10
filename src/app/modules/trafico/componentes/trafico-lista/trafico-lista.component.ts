@@ -516,6 +516,40 @@ export default class TraficoListaComponent
       });
   }
 
+  // Asigna (o quita) el conductor de un despacho. El backend propaga a la orden
+  // del móvil (VerEntrega.usuario_id) → le aparece al conductor en "Mis Órdenes"
+  // con solo actualizar la pantalla, sin cargar por código.
+  asignarConductorDespacho(id: number) {
+    this._despachoApiService
+      .conductores()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async (conductores) => {
+          const opciones: Record<string, string> = { '0': '— Sin asignar —' };
+          for (const c of conductores ?? []) opciones[String(c.id)] = c.nombre;
+          const elegido = await this.alerta.pedirSeleccion(
+            'Asignar conductor',
+            opciones,
+            {
+              html: 'El conductor verá esta orden en su app al actualizar la pantalla.',
+              confirmButtonText: 'Asignar',
+            }
+          );
+          if (elegido === null) return; // canceló
+          const conductorId = elegido === '0' ? null : Number(elegido);
+          this._despachoApiService
+            .asignarConductor(id, conductorId)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (resp) => {
+                this.alerta.mensajaExitoso(resp.mensaje);
+                this.consultarLista();
+              },
+            });
+        },
+      });
+  }
+
   regenerarIndicadorEntregas(id: number) {
     this._despachoApiService
       .regenerarIndicadorEntregas(id)
