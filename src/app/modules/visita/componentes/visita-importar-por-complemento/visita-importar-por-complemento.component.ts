@@ -135,12 +135,21 @@ export class VisitaImportarPorComplementoComponent extends General {
   }
 
   importarComplemento() {
+    const pendienteDespacho =
+      !!this.formularioComplementos.get('pendienteDespacho')?.value;
+    this._ejecutarImport(pendienteDespacho);
+  }
+
+  // Ejecuta el import con el filtro "solo pendientes" indicado. Se separa del
+  // handler para poder REINTENTAR sin ese filtro ("importar de todas maneras")
+  // cuando el primer intento no trae nada porque las guias ya estan despachadas
+  // en el origen. El modal queda abierto entre intentos (no se resetea nada
+  // hasta el resumen final).
+  private _ejecutarImport(pendienteDespacho: boolean) {
     this.estaImportandoComplementos$.next(true);
 
     const desde = this.formularioComplementos.get('desde')?.value;
     const hasta = this.formularioComplementos.get('hasta')?.value;
-    const pendienteDespacho =
-      this.formularioComplementos.get('pendienteDespacho')?.value;
     const novedad = this.formularioComplementos.get('novedad')?.value;
     const numeroRegistros =
       this.formularioComplementos.get('numeroRegistros')?.value;
@@ -174,7 +183,7 @@ export class VisitaImportarPorComplementoComponent extends General {
         finalize(() => this.estaImportandoComplementos$.next(false))
       )
       .subscribe({
-        next: (respuesta: {
+        next: async (respuesta: {
           mensaje?: string;
           cantidad?: number;
           duplicadas?: number;
@@ -183,10 +192,39 @@ export class VisitaImportarPorComplementoComponent extends General {
           errores_guia?: number;
         }) => {
           this.emitirConsultarLista.emit();
+
+          const cantidad = respuesta.cantidad ?? 0;
+          const duplicadas = respuesta.duplicadas ?? 0;
+
+          // "Importar de todas maneras": si con el filtro de SOLO PENDIENTES no
+          // entro ninguna guia Y no fue porque ya estaban en Ruteo (duplicadas),
+          // lo mas probable es que el origen ya las tenga DESPACHADAS y el filtro
+          // las excluya. En vez de dejar un "0" seco (y obligar al usuario a
+          // saber que hay que apagar un toggle), se avisa y se ofrece traerlas
+          // igual: reintento SIN el filtro. Solo aplica si el filtro estaba ON.
+          if (cantidad === 0 && duplicadas === 0 && pendienteDespacho) {
+            const r = await this.alerta.confirmar({
+              titulo: 'No se encontraron guias pendientes',
+              texto:
+                `El despacho ${codigo_despacho} no devolvio guias pendientes. ` +
+                'Puede que ya esten despachadas en el origen. ' +
+                '¿Traerlas de todas maneras?',
+              textoBotonCofirmacion: 'Importar de todas maneras',
+              colorConfirmar: 'blue',
+            });
+            if (r.isConfirmed) {
+              // Reintenta SIN el filtro; el modal sigue abierto. No vuelve a
+              // preguntar (pendienteDespacho es false en la 2da vuelta).
+              this._ejecutarImport(false);
+              return;
+            }
+            // Si cancela, sigue el flujo normal: ve el resumen (0) y se cierra.
+          }
+
           // Modal de resumen con el desglose (importadas / ya estaban /
           // sin geocodificar / fuera de zona / inválidas), diseño de Ruteo.
           this.alerta.resultadoImportacion(respuesta);
-          // Solo en EXITO cerramos el modal y limpiamos el formulario.
+          // Solo en EXITO (o tras decidir) cerramos el modal y limpiamos.
           this.modalDismiss();
           this.reiniciarFormulario();
           this.changeDetectorRef.detectChanges();
