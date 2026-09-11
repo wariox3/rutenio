@@ -164,6 +164,7 @@
               <i class="ki-filled ki-arrow-down text-xs ms-1 opacity-30"></i>
               }
             </th>
+            <th>Conductor</th>
             <th style="text-align: center">Progreso</th>
             <th></th>
           </tr>
@@ -185,6 +186,22 @@
             </td>
             <td>
               {{ despacho.fecha_ubicacion | formatFecha : "Y-m-d H:i (24h)" }}
+            </td>
+            <td>
+              @if (despacho.conductor_id) {
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-400"
+                  [title]="despacho.conductor_nombre || ''"
+                >
+                  {{ despacho.conductor_nombre || "Asignada" }}
+                </span>
+              } @else {
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
+                >
+                  Sin asignar
+                </span>
+              }
             </td>
             <td>
               <div class="flex flex-col space-y-1">
