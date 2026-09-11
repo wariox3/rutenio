@@ -15,6 +15,8 @@ import {
 } from '@angular/google-maps';
 import {
   filter,
+  debounceTime,
+  distinctUntilChanged,
   finalize,
   interval,
   Observable,
@@ -117,6 +119,8 @@ export default class TraficoListaComponent
   private _modalService = inject(ModalService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
+  /// Buscador rápido de Tráfico (texto libre): se debouncea antes de consultar.
+  private _buscar$ = new Subject<string>();
   private _httpService = inject(HttpService);
   private _traficoService = inject(TraficoService);
   private novedadService = inject(NovedadService);
@@ -217,6 +221,32 @@ export default class TraficoListaComponent
     this.filtroKey.set('trafico_lista_filtro');
     this.consultarLista();
     this._iniciarPollingAlertas();
+    // Buscador rápido: debounce + dedup para no consultar en cada tecla.
+    this._buscar$
+      .pipe(
+        debounceTime(350),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((term) => this._aplicarBusquedaRapida(term));
+  }
+
+  /// Recibe cada tecla del buscador rápido (el debounce lo hace la suscripción).
+  onBuscar(term: string): void {
+    this._buscar$.next(term);
+  }
+
+  /// Aplica la búsqueda (reemplaza los filtros, como filterChange). Vacío = limpia.
+  private _aplicarBusquedaRapida(term: string): void {
+    this.currentPage.set(1);
+    const { ordering } = this.arrFiltros;
+    const t = (term ?? '').trim();
+    this.arrFiltros = {
+      page: 1,
+      ...(ordering ? { ordering } : {}),
+      ...(t ? { buscar: t } : {}),
+    };
+    this._cargarDespachos({}, false);
   }
 
   private _iniciarPollingAlertas(): void {

@@ -3,6 +3,17 @@
     <h3 class="card-title">Filtros</h3>
   </div>
   <div class="card-body">
+    <!-- Buscador rápido: texto libre por OE / complemento / placa (server-side,
+         debounced). Complementa el filtro estructurado de abajo. -->
+    <div class="relative mb-4 max-w-md">
+      <i class="ki-filled ki-magnifier absolute start-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input
+        type="text"
+        class="input ps-9"
+        placeholder="Buscar orden por OE, complemento o placa…"
+        (input)="onBuscar($any($event.target).value)"
+      />
+    </div>
     <app-filtro
       (filtersApply)="filterChange($event)"
       [availableFields]="TRAFICO_LISTA_FILTERS"
