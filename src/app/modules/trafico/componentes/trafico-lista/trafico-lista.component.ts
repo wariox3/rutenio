@@ -129,6 +129,9 @@ export default class TraficoListaComponent
 
   public visitaSeleccionada: Visita;
   public despachoSeleccionado: Despacho;
+  // Despacho mostrado en el modal del "ojo" (resumen + tabs). Aparte de
+  // despachoSeleccionado (que usa el modal de editar) para no pisar su semántica.
+  public detalleDespacho = signal<Despacho | null>(null);
   public novedades = signal<string[]>([]);
   public mostarModalDetalleVisita = signal(false);
   public toggleModal = signal(false);
@@ -602,6 +605,11 @@ export default class TraficoListaComponent
 
   abrirModalDetalleVisita(despacho_id: number) {
     this.despachoIdActual = despacho_id;
+    // Resumen del despacho (asignación, estado, progreso) para el encabezado del
+    // modal: se toma de la fila ya cargada, sin pegarle de nuevo al server.
+    this.detalleDespacho.set(
+      this.arrDespachos.find((d) => d.id === despacho_id) ?? null
+    );
     this.openModal('trafico-despacho-visita');
     this.changeDetectorRef.detectChanges();
   }
