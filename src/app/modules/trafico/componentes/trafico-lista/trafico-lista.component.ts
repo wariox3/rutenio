@@ -526,7 +526,7 @@ export default class TraficoListaComponent
       .subscribe({
         next: async (conductores) => {
           const items = [
-            { valor: '0', etiqueta: '— Sin asignar —' },
+            { valor: '0', etiqueta: 'Sin asignar', avatar: '–', detalle: 'Quitar el conductor de esta orden' },
             ...(conductores ?? []).map((c) => ({
               valor: String(c.id),
               etiqueta: c.nombre,

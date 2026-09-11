@@ -227,33 +227,73 @@ export class AlertaService {
   // Devuelve el valor elegido, o null si cancela.
   async pedirSeleccionBuscable(
     title: string,
-    items: { valor: string; etiqueta: string; detalle?: string }[],
-    cfg: { html?: string; confirmButtonText?: string; placeholder?: string } = {}
+    items: {
+      valor: string;
+      etiqueta: string;
+      detalle?: string;
+      /** Glifo del avatar; si no viene se calculan iniciales de la etiqueta. */
+      avatar?: string;
+    }[],
+    cfg: {
+      html?: string;
+      confirmButtonText?: string;
+      placeholder?: string;
+      /** valor a preseleccionar (p.ej. el conductor ya asignado). */
+      valorInicial?: string;
+    } = {}
   ): Promise<string | null> {
     const bc = this.getBaseConfig();
     const ic = this.getIconClass('question');
-    let seleccion: string | null = null;
+    let seleccion: string | null = cfg.valorInicial ?? null;
     const esc = (s: string) => this.escaparHtml(s);
 
+    // Iniciales para el avatar: primeras letras de las 2 primeras palabras.
+    const iniciales = (s: string) => {
+      const p = s.trim().split(/\s+/).filter((w) => /[\wÀ-ÿ]/.test(w));
+      if (!p.length) return '·';
+      return (p[0][0] + (p[1]?.[0] ?? '')).toUpperCase();
+    };
+    // Hue estable a partir del texto: mismo conductor, mismo color de avatar.
+    const hue = (s: string) => {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360;
+      return h;
+    };
+
     const filas = items
-      .map(
-        (it) => `
+      .map((it) => {
+        const av = it.avatar ?? iniciales(it.etiqueta);
+        const h = hue(it.etiqueta);
+        return `
       <button type="button" data-valor="${esc(it.valor)}"
         data-buscar="${esc((it.etiqueta + ' ' + (it.detalle ?? '')).toLowerCase())}"
-        class="alerta-opcion w-full text-left px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col gap-0.5 transition">
-        <span class="text-sm font-medium text-gray-800 dark:text-gray-100">${esc(it.etiqueta)}</span>
-        ${it.detalle ? `<span class="text-xs text-gray-500 dark:text-gray-400">${esc(it.detalle)}</span>` : ''}
-      </button>`
-      )
+        class="alerta-opcion group w-full text-left px-2.5 py-2 rounded-xl border border-transparent hover:bg-gray-50 dark:hover:bg-gray-800 flex items-center gap-3 transition">
+        <span class="shrink-0 w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold"
+          style="background:hsl(${h} 65% 92%);color:hsl(${h} 50% 35%)">${esc(av)}</span>
+        <span class="min-w-0 flex-1 flex flex-col">
+          <span class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">${esc(it.etiqueta)}</span>
+          ${it.detalle ? `<span class="text-xs text-gray-500 dark:text-gray-400 truncate">${esc(it.detalle)}</span>` : ''}
+        </span>
+        <svg class="alerta-check shrink-0 w-5 h-5 text-blue-600 opacity-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0L3.3 10a1 1 0 011.4-1.4l3.1 3.1 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd"/></svg>
+      </button>`;
+      })
       .join('');
 
+    const nOpc = items.filter((i) => i.valor !== '0').length;
     const html = `
       ${cfg.html ? `<p class="text-[13px] text-gray-600 dark:text-gray-300 mb-2">${esc(cfg.html)}</p>` : ''}
-      <input id="alerta-buscar" type="text" autocomplete="off"
-        placeholder="${esc(cfg.placeholder ?? 'Buscar por nombre o correo…')}"
-        class="w-full mb-2 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
-      <div id="alerta-opciones" class="max-h-60 overflow-y-auto flex flex-col gap-1 text-left">${filas}</div>
-      <p id="alerta-sin-resultados" class="hidden text-xs text-gray-400 py-3 text-center">Sin resultados</p>
+      <div class="relative mb-2">
+        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 103.4 9.8l3.9 3.9a1 1 0 001.4-1.4l-3.9-3.9A5.5 5.5 0 009 3.5zM5.5 9a3.5 3.5 0 117 0 3.5 3.5 0 01-7 0z" clip-rule="evenodd"/></svg>
+        <input id="alerta-buscar" type="text" autocomplete="off"
+          placeholder="${esc(cfg.placeholder ?? 'Buscar…')}"
+          class="w-full pl-9 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+      </div>
+      <div class="flex items-center justify-between px-1 mb-1">
+        <span class="text-[11px] uppercase tracking-wide text-gray-400">${nOpc} ${nOpc === 1 ? 'conductor' : 'conductores'}</span>
+        <span id="alerta-contador" class="text-[11px] text-gray-400"></span>
+      </div>
+      <div id="alerta-opciones" class="max-h-64 overflow-y-auto flex flex-col gap-0.5 text-left -mx-1 px-1">${filas}</div>
+      <p id="alerta-sin-resultados" class="hidden text-xs text-gray-400 py-4 text-center">Sin resultados</p>
     `;
 
     const r = await Swal.fire({
@@ -274,19 +314,34 @@ export class AlertaService {
         const cont = popup.querySelector('#alerta-opciones') as HTMLElement;
         const buscar = popup.querySelector('#alerta-buscar') as HTMLInputElement;
         const vacio = popup.querySelector('#alerta-sin-resultados') as HTMLElement;
+        const contador = popup.querySelector('#alerta-contador') as HTMLElement;
         const opciones = Array.from(
           cont.querySelectorAll<HTMLButtonElement>('.alerta-opcion')
         );
-        const activa = ['bg-blue-50', 'dark:bg-blue-500/10', '!border-blue-400'];
+        const activa = [
+          'bg-blue-50',
+          'dark:bg-blue-500/10',
+          '!border-blue-300',
+          'dark:!border-blue-500/40',
+        ];
         const marcar = (btn: HTMLButtonElement) => {
-          opciones.forEach((o) => o.classList.remove(...activa));
+          opciones.forEach((o) => {
+            o.classList.remove(...activa);
+            o.querySelector('.alerta-check')?.classList.add('opacity-0');
+          });
           btn.classList.add(...activa);
+          btn.querySelector('.alerta-check')?.classList.remove('opacity-0');
           seleccion = btn.dataset['valor'] ?? null;
           Swal.resetValidationMessage();
         };
-        opciones.forEach((btn) =>
-          btn.addEventListener('click', () => marcar(btn))
-        );
+        opciones.forEach((btn) => {
+          btn.addEventListener('click', () => marcar(btn));
+          // Preselección (conductor ya asignado): márcalo y hazlo visible.
+          if (cfg.valorInicial != null && btn.dataset['valor'] === cfg.valorInicial) {
+            marcar(btn);
+            btn.scrollIntoView({ block: 'nearest' });
+          }
+        });
         buscar.addEventListener('input', () => {
           const q = buscar.value.trim().toLowerCase();
           let visibles = 0;
@@ -296,6 +351,7 @@ export class AlertaService {
             if (match) visibles++;
           });
           vacio.classList.toggle('hidden', visibles > 0);
+          contador.textContent = q ? `${visibles} resultado${visibles === 1 ? '' : 's'}` : '';
         });
         buscar.focus();
       },
