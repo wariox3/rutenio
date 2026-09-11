@@ -718,6 +718,40 @@
       </div>
     </div>
     }
+    @if (detalleDespacho(); as d) {
+    <div class="px-8 pb-4 flex flex-wrap gap-2 border-b border-gray-100 dark:border-gray-700">
+      <button
+        (click)="asignarConductorDespacho(d.id)"
+        class="btn btn-sm btn-light inline-flex items-center gap-1.5"
+      >
+        <i class="ki-filled ki-user-tick"></i> Asignar / quitar conductor
+      </button>
+      <button
+        (click)="confirmarRecalcularRuta(d.id)"
+        class="btn btn-sm btn-light inline-flex items-center gap-1.5"
+      >
+        <i class="ki-filled ki-arrows-loop"></i> Recalcular ruta
+      </button>
+      <button
+        (click)="imprimirRotulos(d.id)"
+        class="btn btn-sm btn-light inline-flex items-center gap-1.5"
+      >
+        <i class="ki-filled ki-printer"></i> Imprimir rótulos
+      </button>
+      <button
+        (click)="regenerarIndicadorEntregas(d.id)"
+        class="btn btn-sm btn-light inline-flex items-center gap-1.5"
+      >
+        <i class="ki-filled ki-arrows-circle"></i> Regenerar indicador
+      </button>
+      <button
+        (click)="confirmarAnularDespacho(d.id)"
+        class="btn btn-sm btn-light inline-flex items-center gap-1.5 !text-red-600"
+      >
+        <i class="ki-filled ki-information-4"></i> Anular
+      </button>
+    </div>
+    }
     <div class="border-b border-gray-200 dark:border-gray-200">
       <nav class="flex -mb-px pl-8">
         <button
