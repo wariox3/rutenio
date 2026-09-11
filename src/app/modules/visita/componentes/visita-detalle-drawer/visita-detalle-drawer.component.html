@@ -144,7 +144,7 @@
                 </a>
               }
             </div>
-            @if (visita.vehiculo_placa || visita.conductor_nombre) {
+            @if (visita.vehiculo_placa || visita.conductor_nombre || visita.entregado_por_nombre) {
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-600 mt-2 pt-2 border-t border-green-100 dark:border-green-500/20">
                 @if (visita.vehiculo_placa) {
                   <span class="inline-flex items-center gap-1">
@@ -156,6 +156,12 @@
                   <span class="inline-flex items-center gap-1">
                     <i class="ki-outline ki-user text-sm"></i>
                     {{ visita.conductor_nombre }}
+                  </span>
+                }
+                @if (visita.entregado_por_nombre) {
+                  <span class="inline-flex items-center gap-1">
+                    <i class="ki-outline ki-check-circle text-sm text-green-600"></i>
+                    Entregó <span class="font-semibold text-gray-800">{{ visita.entregado_por_nombre }}</span>
                   </span>
                 }
               </div>

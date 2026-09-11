@@ -42,4 +42,7 @@ export interface Visita {
   fecha_entrega?: string | null;
   vehiculo_placa?: string | null;
   conductor_nombre?: string | null;
+  // Quién entregó ESTA guía (app, self-service / multi-conductor).
+  entregado_por_id?: number | null;
+  entregado_por_nombre?: string | null;
 }

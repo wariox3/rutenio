@@ -79,8 +79,21 @@
               </td>
               <td
                 class="px-4 py-3 font-bold text-gray-700 border-r border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-100"
-              ></td>
-              <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600"></td>
+              >
+                Tomada por
+              </td>
+              <td class="px-4 py-3 border-r border-gray-300 dark:border-gray-600">
+                @if (despacho().cargado_por_nombre) {
+                  {{ despacho().cargado_por_nombre }}
+                  @if (despacho().cargado_en) {
+                    <span class="text-gray-500 text-sm">
+                      · {{ despacho().cargado_en | formatFecha : "Y-m-d" }}
+                    </span>
+                  }
+                } @else {
+                  <span class="text-gray-400">—</span>
+                }
+              </td>
             </tr>
             <tr class="border-b border-gray-300 dark:border-gray-600">
               <td

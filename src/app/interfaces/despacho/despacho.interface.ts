@@ -27,6 +27,10 @@ export interface Despacho {
   codigo_complemento: number;
   entrega_id: number;
   estado_terminado: boolean;
+  // Trazabilidad "tomar por OE (self-service)": quién tomó la orden desde la app.
+  cargado_por_id?: number | null;
+  cargado_por_nombre?: string | null;
+  cargado_en?: string | null;
 }
 
 export interface DespachoDetalle {
@@ -51,6 +55,10 @@ export interface DespachoDetalle {
   estado_aprobado: boolean;
   estado_terminado: boolean;
   codigo_complemento: number;
+  // Trazabilidad "tomar por OE (self-service)": quién tomó la orden desde la app.
+  cargado_por_id?: number | null;
+  cargado_por_nombre?: string | null;
+  cargado_en?: string | null;
 }
 
 export const despachoDetalleEmpty: DespachoDetalle = {
