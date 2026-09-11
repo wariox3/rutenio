@@ -221,6 +221,104 @@ export class AlertaService {
     return r.isConfirmed ? String(r.value ?? '') : null;
   }
 
+  // Como pedirSeleccion pero con BUSCADOR y lista scrolleable: para muchas
+  // opciones (p.ej. conductores de un contenedor). Cada item: { valor, etiqueta,
+  // detalle? }. El buscador filtra por etiqueta + detalle (nombre, correo, tel).
+  // Devuelve el valor elegido, o null si cancela.
+  async pedirSeleccionBuscable(
+    title: string,
+    items: { valor: string; etiqueta: string; detalle?: string }[],
+    cfg: { html?: string; confirmButtonText?: string; placeholder?: string } = {}
+  ): Promise<string | null> {
+    const bc = this.getBaseConfig();
+    const ic = this.getIconClass('question');
+    let seleccion: string | null = null;
+    const esc = (s: string) => this.escaparHtml(s);
+
+    const filas = items
+      .map(
+        (it) => `
+      <button type="button" data-valor="${esc(it.valor)}"
+        data-buscar="${esc((it.etiqueta + ' ' + (it.detalle ?? '')).toLowerCase())}"
+        class="alerta-opcion w-full text-left px-3 py-2 rounded-lg border border-transparent hover:bg-gray-50 dark:hover:bg-gray-800 flex flex-col gap-0.5 transition">
+        <span class="text-sm font-medium text-gray-800 dark:text-gray-100">${esc(it.etiqueta)}</span>
+        ${it.detalle ? `<span class="text-xs text-gray-500 dark:text-gray-400">${esc(it.detalle)}</span>` : ''}
+      </button>`
+      )
+      .join('');
+
+    const html = `
+      ${cfg.html ? `<p class="text-[13px] text-gray-600 dark:text-gray-300 mb-2">${esc(cfg.html)}</p>` : ''}
+      <input id="alerta-buscar" type="text" autocomplete="off"
+        placeholder="${esc(cfg.placeholder ?? 'Buscar por nombre o correo…')}"
+        class="w-full mb-2 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500">
+      <div id="alerta-opciones" class="max-h-60 overflow-y-auto flex flex-col gap-1 text-left">${filas}</div>
+      <p id="alerta-sin-resultados" class="hidden text-xs text-gray-400 py-3 text-center">Sin resultados</p>
+    `;
+
+    const r = await Swal.fire({
+      ...bc,
+      title,
+      html,
+      icon: 'question',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: cfg.confirmButtonText ?? 'Aceptar',
+      customClass: {
+        ...bc.customClass,
+        icon: `${bc.customClass.icon} ${ic.icon}`,
+      },
+      didOpen: (popup) => {
+        const cont = popup.querySelector('#alerta-opciones') as HTMLElement;
+        const buscar = popup.querySelector('#alerta-buscar') as HTMLInputElement;
+        const vacio = popup.querySelector('#alerta-sin-resultados') as HTMLElement;
+        const opciones = Array.from(
+          cont.querySelectorAll<HTMLButtonElement>('.alerta-opcion')
+        );
+        const activa = ['bg-blue-50', 'dark:bg-blue-500/10', '!border-blue-400'];
+        const marcar = (btn: HTMLButtonElement) => {
+          opciones.forEach((o) => o.classList.remove(...activa));
+          btn.classList.add(...activa);
+          seleccion = btn.dataset['valor'] ?? null;
+          Swal.resetValidationMessage();
+        };
+        opciones.forEach((btn) =>
+          btn.addEventListener('click', () => marcar(btn))
+        );
+        buscar.addEventListener('input', () => {
+          const q = buscar.value.trim().toLowerCase();
+          let visibles = 0;
+          opciones.forEach((o) => {
+            const match = !q || (o.dataset['buscar'] ?? '').includes(q);
+            o.classList.toggle('hidden', !match);
+            if (match) visibles++;
+          });
+          vacio.classList.toggle('hidden', visibles > 0);
+        });
+        buscar.focus();
+      },
+      preConfirm: () => {
+        if (seleccion === null) {
+          Swal.showValidationMessage('Elegí una opción');
+          return false;
+        }
+        return seleccion;
+      },
+    });
+    return r.isConfirmed ? String(r.value ?? '') : null;
+  }
+
+  private escaparHtml(valor: string): string {
+    return String(valor)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   async mensajeEliminarEmpresa(
     empresaNombre: string | null,
     title: string,

@@ -525,14 +525,23 @@ export default class TraficoListaComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async (conductores) => {
-          const opciones: Record<string, string> = { '0': '— Sin asignar —' };
-          for (const c of conductores ?? []) opciones[String(c.id)] = c.nombre;
-          const elegido = await this.alerta.pedirSeleccion(
+          const items = [
+            { valor: '0', etiqueta: '— Sin asignar —' },
+            ...(conductores ?? []).map((c) => ({
+              valor: String(c.id),
+              etiqueta: c.nombre,
+              // Detalle para distinguir homónimos y para que el buscador matchee
+              // por correo/teléfono, no solo por nombre.
+              detalle: [c.correo, c.telefono].filter(Boolean).join(' · '),
+            })),
+          ];
+          const elegido = await this.alerta.pedirSeleccionBuscable(
             'Asignar conductor',
-            opciones,
+            items,
             {
               html: 'El conductor verá esta orden en su app al actualizar la pantalla.',
               confirmButtonText: 'Asignar',
+              placeholder: 'Buscar por nombre, correo o teléfono…',
             }
           );
           if (elegido === null) return; // canceló

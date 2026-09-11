@@ -176,9 +176,13 @@ export class DespachoApiService {
   // Conductores del contenedor (usuarios con acceso móvil y perfil conductor),
   // para el selector "Asignar conductor" en Tráfico.
   conductores() {
-    return this._httpService.get<{ id: number; nombre: string }>(
-      `ruteo/despacho/conductores/`
-    );
+    return this._httpService.get<{
+      id: number;
+      nombre: string;
+      correo: string;
+      telefono: string;
+      identificacion: string;
+    }>(`ruteo/despacho/conductores/`);
   }
 
   // Asigna (conductor_id) o desasigna (null) el conductor de un despacho. El
