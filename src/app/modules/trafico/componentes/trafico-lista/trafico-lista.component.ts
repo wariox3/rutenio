@@ -915,16 +915,22 @@ export default class TraficoListaComponent
     }
   }
 
-  confirmarAnularDespacho(id: number) {
+  confirmarAnularDespacho(despacho: any) {
+    const tieneConductor = !!despacho?.conductor_id;
+    const nombre = despacho?.conductor_nombre
+      ? ` (${despacho.conductor_nombre})`
+      : '';
     this.alerta
       .confirmar({
         titulo: '¿Estás seguro?',
-        texto: 'Esta operación no se puede revertir',
+        texto: tieneConductor
+          ? `Esta orden tiene un conductor asignado${nombre}. Podría tener novedades o entregas sin sincronizar; anularla puede perderlas. Pedile que suelte o finalice la orden, o quitale la asignación primero.`
+          : 'Esta operación no se puede revertir',
         textoBotonCofirmacion: 'Si, anular',
       })
       .then((respuesta) => {
         if (respuesta.isConfirmed) {
-          this.anular(id);
+          this.anular(despacho.id);
         }
       });
   }

@@ -696,8 +696,12 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Estás seguro?',
-        texto: 'Esta operación no se puede revertir',
+        titulo: '¿Eliminar el pool de importación?',
+        texto:
+          'Borra las guías importadas que todavía NO están en un despacho. ' +
+          'Las guías de despachos asignados o anulados quedan protegidas ' +
+          '(podrían tener novedades sin sincronizar del conductor). ' +
+          'Esta operación no se puede revertir.',
         textoBotonCofirmacion: 'Si, eliminar',
       })
       .then((respuesta) => {

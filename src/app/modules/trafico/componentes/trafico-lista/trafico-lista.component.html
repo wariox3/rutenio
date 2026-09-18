@@ -372,7 +372,7 @@
                       </div>
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
-                          (click)="confirmarAnularDespacho(despacho.id)"
+                          (click)="confirmarAnularDespacho(despacho)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
@@ -756,7 +756,7 @@
         <i class="ki-filled ki-arrows-circle"></i> Regenerar indicador
       </button>
       <button
-        (click)="confirmarAnularDespacho(d.id)"
+        (click)="confirmarAnularDespacho(d)"
         class="btn btn-sm btn-light inline-flex items-center gap-1.5 !text-red-600"
       >
         <i class="ki-filled ki-information-4"></i> Anular
