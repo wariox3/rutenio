@@ -47,7 +47,18 @@
         data-menu-accordion-expand-all="false"
         id="sidebar_menu"
       >
-        @for (menu of sidebarMenu; track $index) { @if (puedeVerMenu(menu)) { @if (!menu.tipoAcordion) {
+        @for (menu of sidebarMenu; track $index) {
+        @if (menu.esEncabezado) {
+        @if (puedeVerEncabezado($index)) {
+        <div class="menu-item pt-3.5 pb-1">
+          <span
+            class="menu-heading uppercase text-2xs font-semibold tracking-wider text-gray-400 dark:text-gray-500 pl-[10px] pr-[10px]"
+          >
+            {{ menu.nombre }}
+          </span>
+        </div>
+        }
+        } @else if (puedeVerMenu(menu)) { @if (!menu.tipoAcordion) {
         <div class="menu-item" data-menu-item-trigger="click">
           <div
             class="menu-label gap-[10px] pl-[10px] pr-[10px] py-[6px] border border-transparent rounded-lg transition-colors cursor-pointer"

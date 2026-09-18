@@ -37,12 +37,16 @@ export class SidebarComponent extends General implements OnInit {
   }
 
   public sidebarMenu: SidebarMenu[] = [
+    // ── Inicio ──────────────────────────────────────────────
     {
       nombre: 'Inicio',
       link: '/dashboard',
       iconoClase: 'ki-filled ki-home',
       activo: false,
     },
+
+    // ── Operación (el flujo diario, en orden) ───────────────
+    { nombre: 'Operación', esEncabezado: true },
     {
       nombre: 'Rutear',
       link: '/rutear',
@@ -71,6 +75,9 @@ export class SidebarComponent extends General implements OnInit {
       activo: false,
       modulo: 'mensajeria',
     },
+
+    // ── Datos (registros e informes) ────────────────────────
+    { nombre: 'Datos', esEncabezado: true },
     {
       nombre: 'Movimiento',
       link: '',
@@ -109,6 +116,9 @@ export class SidebarComponent extends General implements OnInit {
         },
       ],
     },
+
+    // ── Configuración (del contenedor) ──────────────────────
+    { nombre: 'Configuración', esEncabezado: true },
     {
       nombre: 'Administración',
       link: '',
@@ -137,6 +147,16 @@ export class SidebarComponent extends General implements OnInit {
           modulo: 'usuario',
         },
       ],
+    },
+
+    // ── Herramientas · Staff (solo admin) ───────────────────
+    { nombre: 'Herramientas', esEncabezado: true, soloAdmin: true },
+    {
+      nombre: 'Complementos',
+      link: '/complemento/lista',
+      iconoClase: 'ki-filled ki-plus-squared',
+      activo: false,
+      soloAdmin: true,
     },
     {
       nombre: 'Proceso',
@@ -172,13 +192,6 @@ export class SidebarComponent extends General implements OnInit {
           soloAdmin: true,
         },
       ],
-    },
-    {
-      nombre: 'Complementos',
-      link: '/complemento/lista',
-      iconoClase: 'ki-filled ki-plus-squared',
-      activo: false,
-      soloAdmin: true,
     },
   ];
 
@@ -229,6 +242,23 @@ export class SidebarComponent extends General implements OnInit {
       return menu.children.some((c) => this.puedeVerSubmenu(c));
     }
     return this.tienePermisoVer(menu.modulo);
+  }
+
+  /**
+   * Un encabezado de sección solo se muestra si respeta sus propios flags
+   * (soloAdmin/soloSuperAdmin) Y si al menos uno de los ítems que le siguen
+   * —hasta el próximo encabezado— es visible. Así nunca queda "huérfano".
+   */
+  puedeVerEncabezado(index: number): boolean {
+    const encabezado = this.sidebarMenu[index];
+    if (encabezado.soloSuperAdmin && !this.esSuperAdmin) return false;
+    if (encabezado.soloAdmin && !this.esAdmin && !this.esSuperAdmin) return false;
+    for (let i = index + 1; i < this.sidebarMenu.length; i++) {
+      const item = this.sidebarMenu[i];
+      if (item.esEncabezado) break;
+      if (this.puedeVerMenu(item)) return true;
+    }
+    return false;
   }
 
   puedeVerSubmenu(sub: SidebarMenuItem): boolean {
