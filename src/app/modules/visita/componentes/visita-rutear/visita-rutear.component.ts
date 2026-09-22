@@ -696,12 +696,11 @@ export default class VisitaRutearComponent extends General implements OnInit {
   confirmarEliminarTodos() {
     this.alerta
       .confirmar({
-        titulo: '¿Eliminar el pool de importación?',
+        titulo: '¿Eliminar todas las guías del pool?',
         texto:
-          'Borra las guías importadas que todavía NO están en un despacho. ' +
-          'Las guías de despachos asignados o anulados quedan protegidas ' +
-          '(podrían tener novedades sin sincronizar del conductor). ' +
-          'Esta operación no se puede revertir.',
+          'Elimina TODAS las guías que no están en un despacho, incluidas las ' +
+          'que volvieron de una orden anulada. No se puede revertir; en ' +
+          'contenedores sin complemento no se pueden re-importar.',
         textoBotonCofirmacion: 'Si, eliminar',
       })
       .then((respuesta) => {
