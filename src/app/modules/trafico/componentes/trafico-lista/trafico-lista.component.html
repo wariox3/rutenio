@@ -302,13 +302,49 @@
 
                       <div class="menu-item" data-menu-dismiss="true">
                         <button
+                          (click)="consultarSeguimiento(despacho)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-questionnaire-tablet"></i>
+                          </span>
+                          <span class="menu-title">¿Cómo va el viaje? (app)</span>
+                        </button>
+                      </div>
+
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="llamarConductor(despacho)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-phone"></i>
+                          </span>
+                          <span class="menu-title">Llamar al conductor</span>
+                        </button>
+                      </div>
+
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
+                          (click)="abrirSeguimiento(despacho.id)"
+                          class="menu-link"
+                        >
+                          <span class="menu-icon">
+                            <i class="ki-filled ki-time"></i>
+                          </span>
+                          <span class="menu-title">Seguimiento del viaje</span>
+                        </button>
+                      </div>
+
+                      <div class="menu-item" data-menu-dismiss="true">
+                        <button
                           (click)="iniciarAgente(despacho.id)"
                           class="menu-link"
                         >
                           <span class="menu-icon">
                             <i class="ki-filled ki-messages"></i>
                           </span>
-                          <span class="menu-title">Consultar al conductor</span>
+                          <span class="menu-title">Consultar por WhatsApp</span>
                         </button>
                       </div>
 
@@ -910,3 +946,90 @@
     }
   </section>
 </app-modal-standard>
+
+<!-- Timeline de seguimiento del viaje: consultas, respuestas del conductor,
+     llamadas y notas, en orden cronológico. -->
+<app-modal-default
+  size="large"
+  [id]="'trafico-seguimiento-modal'"
+  titulo="Seguimiento del viaje"
+>
+  <section modal-body>
+    <div class="mb-4 flex items-center gap-2 text-sm text-gray-600">
+      <i class="ki-filled ki-truck text-blue-500 text-lg"></i>
+      <span>
+        Despacho #{{ seguimientoDespacho()?.id }}
+        @if (seguimientoDespacho()?.conductor_nombre) {
+          · {{ seguimientoDespacho()?.conductor_nombre }}
+        }
+      </span>
+    </div>
+
+    @if (cargandoSeguimiento()) {
+      <div class="py-10 text-center text-gray-500">Cargando seguimiento…</div>
+    } @else if (seguimientos().length === 0) {
+      <div class="py-10 text-center text-gray-500">
+        <i class="ki-filled ki-time text-3xl mb-2 block"></i>
+        Todavía no hay registros de seguimiento de este viaje.
+      </div>
+    } @else {
+      <ol class="relative border-s border-gray-200 ms-3">
+        @for (evento of seguimientos(); track evento.id) {
+          <li class="mb-6 ms-6">
+            <span
+              class="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full ring-4 ring-white dark:ring-coal-500"
+              [class.bg-blue-100]="evento.tipo === 'consulta'"
+              [class.text-blue-600]="evento.tipo === 'consulta'"
+              [class.bg-green-100]="evento.tipo === 'respuesta'"
+              [class.text-green-600]="evento.tipo === 'respuesta'"
+              [class.bg-indigo-100]="evento.tipo === 'llamada'"
+              [class.text-indigo-600]="evento.tipo === 'llamada'"
+              [class.bg-gray-100]="evento.tipo === 'nota'"
+              [class.text-gray-600]="evento.tipo === 'nota'"
+            >
+              @switch (evento.tipo) {
+                @case ('consulta') { <i class="ki-filled ki-questionnaire-tablet text-xs"></i> }
+                @case ('respuesta') { <i class="ki-filled ki-check text-xs"></i> }
+                @case ('llamada') { <i class="ki-filled ki-phone text-xs"></i> }
+                @default { <i class="ki-filled ki-note text-xs"></i> }
+              }
+            </span>
+
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="font-semibold text-gray-800">
+                @switch (evento.tipo) {
+                  @case ('consulta') { Consulta enviada }
+                  @case ('respuesta') { Respondió el conductor }
+                  @case ('llamada') { Llamada telefónica }
+                  @default { Nota }
+                }
+              </span>
+
+              @if (evento.tipo === 'consulta' && evento.origen === 'automatico') {
+                <span class="badge badge-sm badge-light">Automática</span>
+              }
+              @if (evento.tipo === 'consulta' && evento.estado === 'pendiente') {
+                <span class="badge badge-sm badge-warning">Pendiente</span>
+              }
+              @if (evento.tipo === 'consulta' && evento.estado === 'respondida') {
+                <span class="badge badge-sm badge-success">Respondida</span>
+              }
+            </div>
+
+            <time class="block text-xs text-gray-400 mb-1">
+              {{ evento.fecha_registro | formatFecha : "Y-m-d H:i (24h)" }}
+              @if (evento.autor_nombre) { · {{ evento.autor_nombre }} }
+            </time>
+
+            @if (evento.tipo === 'respuesta' && evento.opcion) {
+              <p class="text-sm font-medium text-green-700">“{{ evento.opcion }}”</p>
+            }
+            @if (evento.comentario) {
+              <p class="text-sm text-gray-600">{{ evento.comentario }}</p>
+            }
+          </li>
+        }
+      </ol>
+    }
+  </section>
+</app-modal-default>

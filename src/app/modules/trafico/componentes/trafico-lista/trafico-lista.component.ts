@@ -59,6 +59,8 @@ import { VisitaService } from '../../../visita/servicios/visita.service';
 import { VisitaApiService } from '../../../visita/servicios/visita-api.service';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { TraficoService } from '../../servicios/trafico.service';
+import { SeguimientoApiService } from '../../servicios/seguimiento-api.service';
+import { Seguimiento } from '../../interfaces/seguimiento.interface';
 import { FilterTransformerService } from '../../../../core/servicios/filter-transformer.service';
 import { TRAFICO_LISTA_FILTERS } from '../../mapeos/trafico-lista-mapeo';
 import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
@@ -123,6 +125,7 @@ export default class TraficoListaComponent
   private _buscar$ = new Subject<string>();
   private _httpService = inject(HttpService);
   private _traficoService = inject(TraficoService);
+  private _seguimientoApiService = inject(SeguimientoApiService);
   private novedadService = inject(NovedadService);
   private _visitaService = inject(VisitaService);
   private _visitaApiService = inject(VisitaApiService);
@@ -136,6 +139,10 @@ export default class TraficoListaComponent
   // Despacho mostrado en el modal del "ojo" (resumen + tabs). Aparte de
   // despachoSeleccionado (que usa el modal de editar) para no pisar su semántica.
   public detalleDespacho = signal<Despacho | null>(null);
+  // Timeline de seguimiento del viaje (consultas / respuestas / llamadas / notas).
+  public seguimientos = signal<Seguimiento[]>([]);
+  public cargandoSeguimiento = signal<boolean>(false);
+  public seguimientoDespacho = signal<Despacho | null>(null);
   public novedades = signal<string[]>([]);
   public mostarModalDetalleVisita = signal(false);
   public toggleModal = signal(false);
@@ -545,6 +552,91 @@ export default class TraficoListaComponent
       .subscribe({
         next: (respuesta) => {
           this.alerta.mensajaExitoso(respuesta.mensaje);
+        },
+      });
+  }
+
+  // Check-in EN LA APP (distinto del agente WhatsApp de arriba): le manda al
+  // conductor la consulta "¿cómo va el viaje?" con opciones; su respuesta queda
+  // como registro de seguimiento del viaje. El conductor la ve en la app.
+  async consultarSeguimiento(despacho: Despacho) {
+    if (!despacho.conductor_id) {
+      this.alerta.mensajeInformativo(
+        'Sin conductor asignado',
+        'Asigná un conductor antes de consultarle en la app.'
+      );
+      return;
+    }
+    const r = await this.alerta.confirmar({
+      titulo: '¿Cómo va el viaje?',
+      texto:
+        'Se le enviará la consulta al conductor en la app. Cuando responda, ' +
+        'quedará en el seguimiento del viaje.',
+      textoBotonCofirmacion: 'Enviar consulta',
+      colorConfirmar: 'blue',
+    });
+    if (!r.isConfirmed) return;
+    this._seguimientoApiService
+      .consultar(despacho.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso(
+            'Consulta enviada al conductor.',
+            'Enviada'
+          );
+        },
+      });
+  }
+
+  // Llamada telefónica: abre el marcador del sistema (tel:) y registra la
+  // llamada como evento del seguimiento (con una nota opcional de qué se habló).
+  async llamarConductor(despacho: Despacho) {
+    const telefono = (despacho.conductor_telefono || '').trim();
+    if (!telefono) {
+      this.alerta.mensajeInformativo(
+        'Sin teléfono',
+        'El conductor asignado no tiene un teléfono registrado.'
+      );
+      return;
+    }
+    // Abre el marcador (en desktop lo maneja el SO/handler; en móvil llama).
+    window.open(`tel:${telefono}`, '_self');
+    const comentario = await this.alerta.pedirTexto('Registrar la llamada', {
+      html: `Llamaste al conductor (${telefono}).<br><small>¿Qué te dijo? (opcional)</small>`,
+      placeholder: 'Ej: va retrasado por tráfico, llega en 1h',
+    });
+    if (comentario === null) return; // canceló el registro
+    this._seguimientoApiService
+      .registrarLlamada(despacho.id, comentario || `Llamada a ${telefono}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.alerta.mensajaExitoso('Llamada registrada.', 'Registrada');
+        },
+      });
+  }
+
+  // Abre el timeline de seguimiento del viaje (todos los eventos en orden).
+  abrirSeguimiento(despacho_id: number) {
+    this.seguimientoDespacho.set(
+      this.arrDespachos.find((d) => d.id === despacho_id) ?? null
+    );
+    this.seguimientos.set([]);
+    this.cargandoSeguimiento.set(true);
+    this.openModal('trafico-seguimiento-modal');
+    this._seguimientoApiService
+      .timeline(despacho_id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (eventos) => {
+          this.seguimientos.set(eventos ?? []);
+          this.cargandoSeguimiento.set(false);
+          this.changeDetectorRef.detectChanges();
+        },
+        error: () => {
+          this.cargandoSeguimiento.set(false);
+          this.changeDetectorRef.detectChanges();
         },
       });
   }
