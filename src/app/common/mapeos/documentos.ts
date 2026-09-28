@@ -230,6 +230,15 @@ export const mapeo: any = {
         ordenable: false,
       },
       {
+        encabezado: 'Descripción',
+        campoNombre: 'destinatario_direccion_complemento',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Descripción / complemento de la dirección (apto, piso, referencia).',
+      },
+      {
         encabezado: 'Teléfono',
         campoNombre: 'destinatario_telefono',
         campoTipo: 'CharField',
