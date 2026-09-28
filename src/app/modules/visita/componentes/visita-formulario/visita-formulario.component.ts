@@ -150,6 +150,7 @@ export default class VisitaFormularioComponent
   /** Valores por defecto del formulario (usados al crear o al resetear). */
   private readonly _defaultsFormulario = {
     numero: null,
+    tipo: 'entrega',
     documento: null,
     destinatario: '',
     destinatario_direccion: '',
