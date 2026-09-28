@@ -163,6 +163,14 @@ export const mapeo: any = {
     tipo: 'Documento',
     datos: [
       {
+        encabezado: 'Placa',
+        campoNombre: 'despacho__vehiculo__placa',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
+      {
         encabezado: 'Número',
         campoNombre: 'numero',
         campoTipo: 'CharField',
@@ -224,14 +232,6 @@ export const mapeo: any = {
       {
         encabezado: 'Teléfono',
         campoNombre: 'destinatario_telefono',
-        campoTipo: 'CharField',
-        visibleTabla: true,
-        visibleFiltro: false,
-        ordenable: false,
-      },
-      {
-        encabezado: 'Placa',
-        campoNombre: 'despacho__vehiculo__placa',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
