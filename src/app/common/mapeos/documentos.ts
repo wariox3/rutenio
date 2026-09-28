@@ -198,6 +198,14 @@ export const mapeo: any = {
         tooltip: 'Día en que la guía entró al sistema (manifiesto).',
       },
       {
+        encabezado: 'Documento',
+        campoNombre: 'documento',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
+      {
         encabezado: 'Destinatario',
         campoNombre: 'destinatario',
         campoTipo: 'CharField',
@@ -208,6 +216,22 @@ export const mapeo: any = {
       {
         encabezado: 'Dirección',
         campoNombre: 'destinatario_direccion',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
+      {
+        encabezado: 'Teléfono',
+        campoNombre: 'destinatario_telefono',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+      },
+      {
+        encabezado: 'Placa',
+        campoNombre: 'despacho__vehiculo__placa',
         campoTipo: 'CharField',
         visibleTabla: true,
         visibleFiltro: false,
