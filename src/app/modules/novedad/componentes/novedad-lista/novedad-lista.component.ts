@@ -16,15 +16,15 @@ import { TablaComunComponent } from '../../../../common/components/ui/tablas/tab
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { ParametrosConsulta } from '../../../../interfaces/general/api.interface';
 import { NovedadService } from '../../servicios/novedad.service';
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { NOVEDAD_FILTERS } from '../../mapeos/novedad-mapeo';
 import { ParametrosApi } from '../../../../core/types/api.type';
 import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.directive';
+import { EstadoOpcion, FiltroSimpleComponent } from '../../../../common/components/ui/filtro-simple/filtro-simple.component';
 
 @Component({
   selector: 'app-novedad-lista',
   standalone: true,
-  imports: [TablaComunComponent, CommonModule, ButtonComponent, RouterLink, FiltroComponent, PermisoPorDirective],
+  imports: [TablaComunComponent, CommonModule, ButtonComponent, RouterLink, FiltroSimpleComponent, PermisoPorDirective],
   templateUrl: './novedad-lista.component.html',
   styleUrl: './novedad-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +39,13 @@ export default class NovedadListaComponent extends General implements OnInit {
   public nombreFiltro = '';
   public filtroKey = signal<string>('');
 
+  /** Opciones del selector de Estado de la barra de filtros simple. */
+  public readonly estadosNovedad: EstadoOpcion[] = [
+    { label: 'Todas', params: {} },
+    { label: 'Pendientes', params: { estado_solucion: 'false' } },
+    { label: 'Solucionadas', params: { estado_solucion: 'true' } },
+  ];
+
   public arrParametrosConsulta: ParametrosApi = {
     limit: 50,
     ordering: '-fecha',
@@ -50,10 +57,8 @@ export default class NovedadListaComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    this.consultaLista(this.arrParametrosConsulta);
-    this.filtroKey.set(
-      'novedad_lista_filtro'
-    );
+    // La primera consulta la dispara app-filtro-simple al emitir su estado
+    // inicial (restaurado o vacío) por (aplicar) -> filterChange.
   }
 
   consultaLista(filtros: any) {

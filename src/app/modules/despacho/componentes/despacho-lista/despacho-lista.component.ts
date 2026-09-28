@@ -14,15 +14,15 @@ import { TablaComunComponent } from '../../../../common/components/ui/tablas/tab
 import { mapeo } from '../../../../common/mapeos/documentos';
 import { despachoMapeo } from '../../../visita/mapeos/despacho-mapeo';
 import { DespachoApiService } from '../../servicios/despacho-api.service';
-import { FiltroComponent } from "../../../../common/components/ui/filtro/filtro.component";
 import { DESPACHO_LISTA_FILTERS } from '../../mapeos/despacho-lista-mapeo';
 import { ParametrosApi } from '../../../../core/types/api.type';
 import { PaginadorComponent } from "../../../../common/components/ui/paginacion/paginador/paginador.component";
+import { EstadoOpcion, FiltroSimpleComponent } from '../../../../common/components/ui/filtro-simple/filtro-simple.component';
 
 @Component({
   selector: 'app-despacho-lista',
   standalone: true,
-  imports: [CommonModule, TablaComunComponent, FiltroComponent, PaginadorComponent],
+  imports: [CommonModule, TablaComunComponent, FiltroSimpleComponent, PaginadorComponent],
   templateUrl: './despacho-lista.component.html',
   styleUrl: './despacho-lista.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +31,15 @@ export default class DespachoListaComponent extends General implements OnInit {
   private _despachoApiService = inject(DespachoApiService);
 
   public DESPACHO_LISTA_FILTERS = DESPACHO_LISTA_FILTERS
+
+  /** Opciones del selector de Estado de la barra de filtros simple. */
+  public readonly estadosDespacho: EstadoOpcion[] = [
+    { label: 'Todos', params: {} },
+    { label: 'Aprobados', params: { estado_aprobado: 'true' } },
+    { label: 'Terminados', params: { estado_terminado: 'true' } },
+    { label: 'Anulados', params: { estado_anulado: 'true' } },
+    { label: 'Sin asignar', params: { conductor_id__isnull: 'true' } },
+  ];
   public mapeoDocumento = mapeo;
   public mapeoFiltros = despachoMapeo;
   public nombreFiltro = '';
@@ -52,10 +61,8 @@ export default class DespachoListaComponent extends General implements OnInit {
   arrFiltros: Record<string, any> = { page: 1 };
 
   ngOnInit() {
-    this.filtroKey.set(
-      'despacho_lista_filtro'
-    );
-    this._consultarLista();
+    // La primera consulta la dispara app-filtro-simple al emitir su estado
+    // inicial (restaurado o vacío) por (aplicar) -> filterChange.
   }
 
   private _consultarLista(parametrosAdicionales: Record<string, any> = {}): void {

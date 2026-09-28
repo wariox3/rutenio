@@ -3,11 +3,12 @@
     <h3 class="card-title">Filtros</h3>
   </div>
   <div class="card-body">
-    <app-filtro
-      (filtersApply)="filterChange($event)"
-      [availableFields]="DESPACHO_LISTA_FILTERS"
-      [localStorageKey]="filtroKey()"
-    ></app-filtro>
+    <app-filtro-simple
+      placeholder="Buscar por OE, complemento, id o placa…"
+      [estados]="estadosDespacho"
+      localStorageKey="despacho_lista_filtro_simple"
+      (aplicar)="filterChange($event)"
+    ></app-filtro-simple>
   </div>
 </div>
 

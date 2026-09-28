@@ -32,9 +32,9 @@ import { guiaMapeo } from '../../mapeos/guia-mapeo';
 import { VisitaApiService } from '../../servicios/visita-api.service';
 import { VisitaImportarPorComplementoComponent } from '../visita-importar-por-complemento/visita-importar-por-complemento.component';
 import { PaginadorComponent } from '../../../../common/components/ui/paginacion/paginador/paginador.component';
-import { FiltroComponent } from '../../../../common/components/ui/filtro/filtro.component';
 import { FilterCondition } from '../../../../core/interfaces/filtro.interface';
 import { VISITA_LISTA_FILTERS } from '../../mapeos/visita-lista-mapeo';
+import { EstadoOpcion, FiltroSimpleComponent } from '../../../../common/components/ui/filtro-simple/filtro-simple.component';
 import { VisitaDetalleDrawerComponent } from '../visita-detalle-drawer/visita-detalle-drawer.component';
 
 @Component({
@@ -50,7 +50,7 @@ import { VisitaDetalleDrawerComponent } from '../visita-detalle-drawer/visita-de
     ReactiveFormsModule,
     RouterLink,
     PaginadorComponent,
-    FiltroComponent,
+    FiltroSimpleComponent,
     SafeUrlPipe,
     AdminDirective,
     PermisoPorDirective,
@@ -87,6 +87,14 @@ export default class VisitaListaComponent extends General implements OnInit {
   public drawerAbierto = signal<boolean>(false);
   public guiaMapeo = guiaMapeo
   public VISITA_LISTA_FILTERS = VISITA_LISTA_FILTERS
+
+  /** Opciones del selector de Estado de la barra de filtros simple. */
+  public readonly estadosVisita: EstadoOpcion[] = [
+    { label: 'Todas', params: {} },
+    { label: 'Entregadas', params: { estado_entregado: 'true' } },
+    { label: 'Pendientes', params: { estado_entregado: 'false', estado_novedad: 'false' } },
+    { label: 'Con novedad', params: { estado_novedad: 'true' } },
+  ];
   public toggleModalImportarComplemento$ = new BehaviorSubject(false);
   public toggleModalImportarExcel$ = new BehaviorSubject(false);
   public cantidadRegistros: number = 0;
@@ -122,15 +130,9 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    this.filtroKey.set(VisitaListaComponent.FILTRO_LOCALSTORAGE_KEY);
-    // Restaurar filtros guardados en localStorage antes de la primera consulta.
-    // El FiltroComponent tambien lee el storage por su cuenta para mostrar las
-    // condiciones en sus inputs; aca solo los aplicamos al payload de la API.
-    this.arrFiltros = {
-      ...this.arrFiltros,
-      ...this._restaurarFiltrosDesdeLocalStorage(),
-    };
-    this._consultarLista();
+    // La primera consulta la dispara app-filtro-simple: al inicializarse emite
+    // su estado (restaurado de localStorage o vacío) por (aplicar) -> filterChange.
+    // Así se carga una sola vez y ya con el filtro guardado aplicado.
     this._cargarResumen();
   }
 
