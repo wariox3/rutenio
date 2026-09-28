@@ -1,0 +1,70 @@
+<div class="flex flex-wrap items-end gap-3">
+  <!-- Buscador -->
+  <div class="grow min-w-[220px]">
+    <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
+      Buscar
+    </label>
+    <div class="relative">
+      <i class="ki-filled ki-magnifier absolute start-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      <input
+        type="text"
+        class="input input-sm ps-9 w-full"
+        [placeholder]="placeholder"
+        [ngModel]="buscar"
+        (input)="onBuscarInput($any($event.target).value)"
+      />
+    </div>
+  </div>
+
+  <!-- Rango de fechas -->
+  @if (conFecha) {
+    <div>
+      <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
+        Desde
+      </label>
+      <input
+        type="date"
+        class="input input-sm w-40"
+        [(ngModel)]="desde"
+        (change)="onFechaChange()"
+      />
+    </div>
+    <div>
+      <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
+        Hasta
+      </label>
+      <input
+        type="date"
+        class="input input-sm w-40"
+        [(ngModel)]="hasta"
+        (change)="onFechaChange()"
+      />
+    </div>
+  }
+
+  <!-- Estado -->
+  @if (estados.length > 0) {
+    <div>
+      <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
+        Estado
+      </label>
+      <select
+        class="select select-sm w-40"
+        [ngModel]="estadoIndex"
+        (ngModelChange)="onEstadoChange($event)"
+      >
+        @for (opcion of estados; track $index) {
+          <option [ngValue]="$index">{{ opcion.label }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  <!-- Limpiar -->
+  @if (hayFiltro) {
+    <button type="button" class="btn btn-sm btn-light" (click)="limpiar()">
+      <i class="ki-filled ki-cross text-sm"></i>
+      Limpiar
+    </button>
+  }
+</div>
