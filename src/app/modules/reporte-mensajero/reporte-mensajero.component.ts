@@ -104,6 +104,7 @@ export default class ReporteMensajeroComponent implements OnInit {
           despachos: 0,
           asignadas: 0,
           entregadas: 0,
+          recogidas: 0,
           novedades: 0,
           cumplimiento: 0,
         };
@@ -112,6 +113,7 @@ export default class ReporteMensajeroComponent implements OnInit {
       fila.despachos += 1;
       fila.asignadas += d.visitas || 0;
       fila.entregadas += d.visitas_entregadas || 0;
+      fila.recogidas += d.visitas_recogidas || 0;
       fila.novedades += d.visitas_novedad || 0;
     }
 
@@ -141,6 +143,7 @@ export default class ReporteMensajeroComponent implements OnInit {
           despachos: 0,
           asignadas: 0,
           entregadas: 0,
+          recogidas: 0,
           novedades: 0,
           cumplimiento: 0,
         };
@@ -151,6 +154,7 @@ export default class ReporteMensajeroComponent implements OnInit {
       total.despachos += f.despachos;
       total.asignadas += f.asignadas;
       total.entregadas += f.entregadas;
+      total.recogidas += f.recogidas;
       total.novedades += f.novedades;
     }
 
@@ -175,6 +179,7 @@ export default class ReporteMensajeroComponent implements OnInit {
           despachos: 0,
           asignadas: 0,
           entregadas: 0,
+          recogidas: 0,
           novedades: 0,
           cumplimiento: 0,
         };
@@ -185,6 +190,7 @@ export default class ReporteMensajeroComponent implements OnInit {
       total.despachos += f.despachos;
       total.asignadas += f.asignadas;
       total.entregadas += f.entregadas;
+      total.recogidas += f.recogidas;
       total.novedades += f.novedades;
     }
 
