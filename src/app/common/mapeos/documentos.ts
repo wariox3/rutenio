@@ -104,6 +104,18 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        // Día en que la guía salió a RUTA (fecha del despacho), distinto de
+        // 'Fecha' (manifiesto/ingreso). Deja ver cuando una guía se repartió
+        // otro día que su ingreso; se muestra en local por el pipe date.
+        encabezado: 'Día de ruta',
+        campoNombre: 'despacho__fecha',
+        campoTipo: 'DateField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Día en que salió a ruta (fecha del despacho). Puede diferir de la Fecha de ingreso.',
+      },
+      {
         encabezado: 'Estado',
         campoNombre: 'estado_dominante',
         campoTipo: 'EstadoVisita',
