@@ -140,11 +140,12 @@ export default class ReporteEntregasComponent implements OnInit, OnDestroy {
   }
 
   exportarExcel(): void {
+    // 'entrega_despacho' -> Excel LIMPIO con solo las columnas del informe.
     this._generalService.descargarArchivo('ruteo/visita', {
       ...this.base,
       ...this.arrFiltros,
       limit: 5000,
-      serializador: 'excel',
+      serializador: 'entrega_despacho',
     });
   }
 }
