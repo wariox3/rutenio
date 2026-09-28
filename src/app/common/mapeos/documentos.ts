@@ -179,6 +179,15 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
+        encabezado: 'Tipo',
+        campoNombre: 'tipo',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Entrega o Recogida.',
+      },
+      {
         encabezado: 'Día de ruta',
         campoNombre: 'despacho__fecha',
         campoTipo: 'DateField',
