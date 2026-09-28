@@ -143,6 +143,14 @@ export default class TraficoListaComponent
   public seguimientos = signal<Seguimiento[]>([]);
   public cargandoSeguimiento = signal<boolean>(false);
   public seguimientoDespacho = signal<Despacho | null>(null);
+  // Alerta: guías en el pool listas para rutear pero SIN despachar (leak: se
+  // importan después de rutear/salir la ruta y quedan invisibles).
+  public sinDespachar = signal<{
+    listas: number;
+    sin_decodificar: number;
+    por_dia: Record<string, number>;
+    guias: { numero: number; destinatario: string; direccion: string; fecha: string }[];
+  } | null>(null);
   public novedades = signal<string[]>([]);
   public mostarModalDetalleVisita = signal(false);
   public toggleModal = signal(false);
@@ -228,6 +236,7 @@ export default class TraficoListaComponent
     this.filtroKey.set('trafico_lista_filtro');
     this.consultarLista();
     this._iniciarPollingAlertas();
+    this._consultarSinDespachar();
     // Buscador rápido: debounce + dedup para no consultar en cada tecla.
     this._buscar$
       .pipe(
@@ -281,6 +290,34 @@ export default class TraficoListaComponent
         next: (respuesta) => this._procesarAlertas(respuesta.results),
         error: (error) => console.error('Error consultando alertas:', error),
       });
+  }
+
+  /** Alerta de guías LISTAS pero SIN despachar (pool): se importaron después de
+   *  rutear/salir la ruta y quedan invisibles. Read-only; ver endpoint
+   *  ruteo/visita/sin-despachar/. */
+  private _consultarSinDespachar(): void {
+    this._generalApiService
+      .consultaApi<{
+        listas: number;
+        sin_decodificar: number;
+        por_dia: Record<string, number>;
+        guias: { numero: number; destinatario: string; direccion: string; fecha: string }[];
+      }>('ruteo/visita/sin-despachar/', {})
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (r) => this.sinDespachar.set(r),
+        error: () => this.sinDespachar.set(null),
+      });
+  }
+
+  /** Reconsulta la alerta de sin-despachar (tras rutear/asignar cambia el pool). */
+  recargarSinDespachar(): void {
+    this._consultarSinDespachar();
+  }
+
+  /** Abre la lista de Visitas para rutear las guías sueltas de la alerta. */
+  irAVisitasSinDespachar(): void {
+    this.router.navigateByUrl('/movimiento/visita/lista');
   }
 
   private _consultarAlertas(): void {
@@ -468,6 +505,7 @@ export default class TraficoListaComponent
    */
   recargarDespachos(): void {
     this._cargarDespachos({}, true); // Con mensaje de éxito
+    this._consultarSinDespachar(); // el pool cambia al rutear/asignar
     // Notifica al tab de visitas (si está abierto en el modal) para que
     // refresque sus KPIs y barra de progreso.
     this._visitaService.notificarActualizacionLista();

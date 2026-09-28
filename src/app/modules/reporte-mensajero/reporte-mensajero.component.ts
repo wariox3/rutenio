@@ -50,6 +50,13 @@ export default class ReporteMensajeroComponent implements OnInit {
     return `${anio}-${mes}-${dia}`;
   }
 
+  /** Día LOCAL de una fecha ISO (el backend la manda en UTC). Sin esto,
+   *  substring(0,10) tomaría el día UTC y correría un día los despachos creados
+   *  de noche → el reporte no cuadraba con Movimiento (que muestra local). */
+  private diaLocal(fechaIso: string | null | undefined): string {
+    return fechaIso ? this.aFechaLocal(new Date(fechaIso)) : '';
+  }
+
   consultar(): void {
     if (!this.fechaDesde || !this.fechaHasta) return;
     this.cargando.set(true);
@@ -76,14 +83,14 @@ export default class ReporteMensajeroComponent implements OnInit {
     // Red de seguridad: filtra por rango en el cliente por si el backend
     // ignora los parametros de fecha.
     const enRango = despachos.filter((d) => {
-      const dia = (d.fecha || '').substring(0, 10);
+      const dia = this.diaLocal(d.fecha);
       return dia >= this.fechaDesde && dia <= this.fechaHasta;
     });
 
     // Agrupa por mensajero + placa + dia.
     const porDia = new Map<string, FilaReporteMensajero>();
     for (const d of enRango) {
-      const dia = (d.fecha || '').substring(0, 10);
+      const dia = this.diaLocal(d.fecha);
       const nombre = d.conductor_nombre || 'Sin asignar';
       const placa = d.vehiculo__placa || 'Sin placa';
       const clave = `${d.conductor_id ?? 'null'}|${placa}|${dia}`;
