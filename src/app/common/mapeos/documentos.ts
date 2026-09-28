@@ -125,6 +125,18 @@ export const mapeo: any = {
         tooltip: 'Estado dominante: Novedad > Entregado > Despachado > Pendiente',
       },
       {
+        // Usuario de la app que registró la entrega (quién entregó de verdad),
+        // distinto del conductor asignado al despacho. Se llena desde el token
+        // móvil al entregar; guías entregadas antes de habilitarlo salen vacías.
+        encabezado: 'Entregado por',
+        campoNombre: 'entregado_por_nombre',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Usuario de la app que registró la entrega.',
+      },
+      {
         encabezado: 'Cita inicio',
         campoNombre: 'cita_inicio',
         campoTipo: 'DateTimeField',
