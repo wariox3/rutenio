@@ -77,6 +77,9 @@ export default class VisitaFormularioComponent
       Validators.min(1),
       Validators.max(2147483647),
     ]),
+    // Entrega (por defecto) o Recogida. Marcar recogida deja el conteo de
+    // liquidación exacto en vez de depender del texto "RECOGIDA".
+    tipo: new FormControl<string>('entrega'),
     documento: new FormControl<string | null>(null, [NoSoloEspacios.validar]),
     destinatario: new FormControl('', [
       Validators.required,

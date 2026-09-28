@@ -32,6 +32,13 @@
       ></ui-input>
     </div>
     <div class="mb-3">
+      <app-label [required]="false">Tipo</app-label>
+      <select class="select" formControlName="tipo">
+        <option value="entrega">Entrega</option>
+        <option value="recogida">Recogida</option>
+      </select>
+    </div>
+    <div class="mb-3">
       <app-label [required]="false">Documento cliente</app-label>
       <ui-input
         placeholder=""
@@ -305,6 +312,15 @@
                 max: 'Ingresa un número menor a 2147483647',
               }"
             ></ui-input>
+          </div>
+        </div>
+        <div class="mb-5">
+          <div>
+            <app-label [required]="false">Tipo</app-label>
+            <select class="select" formControlName="tipo">
+              <option value="entrega">Entrega</option>
+              <option value="recogida">Recogida</option>
+            </select>
           </div>
         </div>
         <div class="mb-5">
