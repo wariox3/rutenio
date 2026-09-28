@@ -130,9 +130,9 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   ngOnInit(): void {
-    // La primera consulta la dispara app-filtro-simple: al inicializarse emite
-    // su estado (restaurado de localStorage o vacío) por (aplicar) -> filterChange.
-    // Así se carga una sola vez y ya con el filtro guardado aplicado.
+    // Carga inicial acá (patrón estable). app-filtro-simple re-aplica el filtro
+    // guardado de localStorage de forma diferida por (aplicar) -> filterChange.
+    this._consultarLista();
     this._cargarResumen();
   }
 

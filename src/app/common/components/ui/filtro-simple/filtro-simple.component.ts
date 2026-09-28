@@ -65,9 +65,13 @@ export class FiltroSimpleComponent implements OnInit, OnDestroy {
     this._buscar$
       .pipe(debounceTime(350), takeUntil(this._destroy$))
       .subscribe(() => this._emitir());
-    // Emite el estado inicial (restaurado o vacío) para que la lista cargue ya
-    // filtrada. La página delega su primera consulta a este emit.
-    this._emitir(false);
+    // La carga inicial la hace la PÁGINA en su ngOnInit. Aquí solo re-aplicamos
+    // el filtro guardado en localStorage (si lo hay), y DIFERIDO (setTimeout)
+    // para no disparar un detectChanges reentrante durante el init del padre
+    // (que bajo OnPush rompía la primera carga).
+    if (this.hayFiltro) {
+      setTimeout(() => this._emitir(false), 0);
+    }
   }
 
   ngOnDestroy(): void {
