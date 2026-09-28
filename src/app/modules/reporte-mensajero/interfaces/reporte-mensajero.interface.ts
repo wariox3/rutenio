@@ -6,6 +6,7 @@ export interface FilaReporteMensajero {
   despachos: number;
   asignadas: number;
   entregadas: number;
+  recogidas: number;
   novedades: number;
   cumplimiento: number;
 }
@@ -17,6 +18,7 @@ export interface TotalMensajero {
   despachos: number;
   asignadas: number;
   entregadas: number;
+  recogidas: number;
   novedades: number;
   cumplimiento: number;
 }
@@ -27,6 +29,7 @@ export interface TotalPlaca {
   despachos: number;
   asignadas: number;
   entregadas: number;
+  recogidas: number;
   novedades: number;
   cumplimiento: number;
 }

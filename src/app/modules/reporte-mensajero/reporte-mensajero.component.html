@@ -31,6 +31,18 @@
     </div>
   </div>
 
+  <!-- Nota: criterio de fecha + qué son las recogidas (evita la confusión de liquidación) -->
+  <div class="flex items-start gap-2 mb-4 px-4 py-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-xs">
+    <i class="ki-filled ki-information-2 text-sm mt-0.5"></i>
+    <span>
+      Cuenta por <strong>día de ruta</strong> (fecha del despacho); por eso puede no cuadrar con el
+      <strong>Informe de visita</strong>, que va por día de ingreso al sistema. La columna
+      <strong>Recogidas</strong> son guías marcadas “RECOGIDA” (aproximado, por el texto del destinatario):
+      ya están incluidas dentro de <strong>Entregadas</strong>, se muestran aparte para no contar una recogida
+      como una entrega al liquidar.
+    </span>
+  </div>
+
   <!-- Aviso de truncado por limite -->
   @if (truncado()) {
     <div class="flex items-center gap-2 mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
@@ -66,6 +78,7 @@
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Despachos</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Asignadas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entregadas</th>
+                <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Recogidas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Novedades</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">%</th>
               </tr>
@@ -79,6 +92,7 @@
                   <td class="px-4 py-3 text-right text-gray-600">{{ fila.despachos | number }}</td>
                   <td class="px-4 py-3 text-right text-gray-600">{{ fila.asignadas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-green-700">{{ fila.entregadas | number }}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-sky-700">{{ fila.recogidas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-amber-700">{{ fila.novedades | number }}</td>
                   <td class="px-4 py-3 text-right">
                     <span
@@ -116,6 +130,7 @@
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Despachos</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Asignadas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entregadas</th>
+                <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Recogidas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Novedades</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">%</th>
               </tr>
@@ -128,6 +143,7 @@
                   <td class="px-4 py-3 text-right text-gray-600">{{ total.despachos | number }}</td>
                   <td class="px-4 py-3 text-right text-gray-600">{{ total.asignadas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-green-700">{{ total.entregadas | number }}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-sky-700">{{ total.recogidas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-amber-700">{{ total.novedades | number }}</td>
                   <td class="px-4 py-3 text-right">
                     <span
@@ -165,6 +181,7 @@
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Despachos</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Asignadas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Entregadas</th>
+                <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Recogidas</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Novedades</th>
                 <th class="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">%</th>
               </tr>
@@ -177,6 +194,7 @@
                   <td class="px-4 py-3 text-right text-gray-600">{{ total.despachos | number }}</td>
                   <td class="px-4 py-3 text-right text-gray-600">{{ total.asignadas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-green-700">{{ total.entregadas | number }}</td>
+                  <td class="px-4 py-3 text-right font-semibold text-sky-700">{{ total.recogidas | number }}</td>
                   <td class="px-4 py-3 text-right font-semibold text-amber-700">{{ total.novedades | number }}</td>
                   <td class="px-4 py-3 text-right">
                     <span
