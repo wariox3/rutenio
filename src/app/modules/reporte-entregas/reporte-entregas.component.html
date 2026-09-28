@@ -1,0 +1,101 @@
+<div class="container-fixed max-w-[1400px] py-8">
+  <div class="mb-5">
+    <h1 class="text-2xl font-bold text-gray-900">Entregas por despacho</h1>
+    <p class="text-sm text-gray-500 mt-1">
+      Todas las guías de los despachos del rango, por <strong>día de ruta</strong> (fecha del despacho),
+      con la fecha en que se entregó cada una.
+    </p>
+  </div>
+
+  <!-- Nota del criterio -->
+  <div class="flex items-start gap-2 mb-4 px-4 py-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-xs">
+    <i class="ki-filled ki-information-2 text-sm mt-0.5"></i>
+    <span>
+      El rango de fechas filtra por <strong>día de ruta</strong> (fecha del despacho), no por día de entrega:
+      así una guía que salió un día y se entregó otro sale igual bajo su despacho. La columna
+      <strong>Fecha entrega</strong> muestra cuándo se entregó realmente.
+    </span>
+  </div>
+
+  <!-- Filtros -->
+  <div class="card mb-5">
+    <div class="card-header">
+      <h3 class="card-title">Filtros</h3>
+    </div>
+    <div class="card-body">
+      <app-filtro-simple
+        placeholder="Buscar por guía, destinatario, documento o placa…"
+        campoFecha="despacho__fecha"
+        [estados]="estados"
+        localStorageKey="entregas_despacho_filtro"
+        (aplicar)="filterChange($event)"
+      ></app-filtro-simple>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="card min-w-full">
+    <div class="card-header flex items-center justify-between">
+      <h3 class="card-title">Entregas</h3>
+      <button
+        class="btn btn-sm btn-light gap-1.5"
+        [disabled]="cantidadRegistros === 0"
+        (click)="exportarExcel()"
+      >
+        <i class="ki-filled ki-file-down text-xs"></i>
+        Excel
+      </button>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mx-8 my-3">
+        <app-paginador
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          (pageChange)="onPageChange($event)"
+          [totalItems]="cantidadRegistros"
+        ></app-paginador>
+      </div>
+
+      @if (error()) {
+        <div class="px-6 py-12 text-center">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-red-50 mb-3">
+            <i class="ki-outline ki-information-5 text-2xl text-red-500"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-700">No se pudo cargar el informe</p>
+          <p class="text-xs text-gray-500 mt-1 mb-3">{{ error() }}</p>
+          <button class="btn btn-sm btn-light" (click)="reintentar()">
+            <i class="ki-outline ki-arrows-circle text-sm"></i>
+            Reintentar
+          </button>
+        </div>
+      } @else if (actualizando() && arrGuia.length === 0) {
+        <div class="py-12 text-center">
+          <div class="inline-flex gap-1.5">
+            <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse"></span>
+            <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse" style="animation-delay:.15s"></span>
+            <span class="w-2 h-2 bg-gray-300 rounded-full animate-pulse" style="animation-delay:.3s"></span>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">Cargando entregas…</p>
+        </div>
+      } @else if (arrGuia.length === 0) {
+        <div class="px-6 py-12 text-center">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 mb-3">
+            <i class="ki-outline ki-package text-2xl text-gray-400"></i>
+          </div>
+          <p class="text-sm font-medium text-gray-600">No hay entregas con estos filtros</p>
+          <p class="text-xs text-gray-400 mt-1">Probá ajustar el rango de fechas o el buscador.</p>
+        </div>
+      } @else {
+        <app-tabla-comun
+          campoMapeo="EntregaDespacho"
+          [mapeo]="mapeoDocumento"
+          [datos]="arrGuia"
+          [ocultarEditar]="true"
+          ordenamientoInicial="-fecha_entrega"
+          (emitirOrdenamiento)="onOrdenamientoChange($event)"
+        ></app-tabla-comun>
+      }
+    </div>
+  </div>
+</div>

@@ -44,6 +44,9 @@ export class FiltroSimpleComponent implements OnInit, OnDestroy {
   @Input() placeholder = 'Buscar…';
   /** Muestra/oculta el rango de fechas. */
   @Input() conFecha = true;
+  /** Campo por el que aplica el rango de fechas. Por defecto 'fecha' (ingreso);
+   *  el informe de entregas por despacho usa 'despacho__fecha' (día de ruta). */
+  @Input() campoFecha = 'fecha';
   /** Opciones del selector de Estado. Vacío = no se muestra el selector. */
   @Input() estados: EstadoOpcion[] = [];
   /** Clave de localStorage para recordar el filtro entre visitas. Vacío = no persiste. */
@@ -110,8 +113,8 @@ export class FiltroSimpleComponent implements OnInit, OnDestroy {
     const texto = this.buscar.trim();
     if (texto) params['buscar'] = texto;
     if (this.conFecha) {
-      if (this.desde) params['fecha__gte'] = this.desde;
-      if (this.hasta) params['fecha__lt'] = this._diaSiguiente(this.hasta);
+      if (this.desde) params[`${this.campoFecha}__gte`] = this.desde;
+      if (this.hasta) params[`${this.campoFecha}__lt`] = this._diaSiguiente(this.hasta);
     }
     const estado = this.estados[this.estadoIndex];
     if (estado?.params) Object.assign(params, estado.params);
