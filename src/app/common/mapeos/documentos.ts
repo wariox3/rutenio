@@ -239,6 +239,15 @@ export const mapeo: any = {
         ordenable: false,
       },
       {
+        encabezado: 'Dirección formateada',
+        campoNombre: 'destinatario_direccion_formato',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Dirección geocodificada / normalizada.',
+      },
+      {
         encabezado: 'Descripción',
         campoNombre: 'destinatario_direccion_complemento',
         campoTipo: 'CharField',
