@@ -22,6 +22,39 @@
   </div>
 </div>
 
+@if (sinDespachar(); as sd) {
+  @if (sd.listas > 0) {
+    <div class="card mb-5 border border-amber-200 dark:border-amber-500/30 bg-amber-50 dark:bg-amber-500/10">
+      <div class="card-body py-3 flex flex-wrap items-center gap-3">
+        <i class="ki-filled ki-information-2 text-amber-500 text-xl"></i>
+        <div class="grow min-w-[240px]">
+          <p class="text-sm font-semibold text-amber-800 dark:text-amber-300">
+            {{ sd.listas }} guía{{ sd.listas === 1 ? '' : 's' }} lista{{ sd.listas === 1 ? '' : 's' }} sin despachar
+          </p>
+          <p class="text-xs text-amber-700 dark:text-amber-400">
+            Se importaron después de rutear y no están en ninguna ruta: el conductor no las verá hasta que las rutees.
+          </p>
+          <div class="flex flex-wrap gap-1.5 mt-1.5">
+            @for (entry of sd.por_dia | keyvalue; track entry.key) {
+              <span class="text-[11px] font-medium text-amber-800 dark:text-amber-300 bg-amber-100 dark:bg-amber-500/20 rounded-full px-2 py-0.5">
+                {{ entry.key }}: {{ entry.value }}
+              </span>
+            }
+            @if (sd.sin_decodificar > 0) {
+              <span class="text-[11px] font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-500/20 rounded-full px-2 py-0.5">
+                + {{ sd.sin_decodificar }} sin decodificar
+              </span>
+            }
+          </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-light" (click)="irAVisitasSinDespachar()">
+          Ver en Visitas
+        </button>
+      </div>
+    </div>
+  }
+}
+
 <div class="h-[70vh] flex flex-col p-1">
   <div class="card flex-1 flex flex-col min-h-0">
     <div class="card-header flex justify-between items-center">
