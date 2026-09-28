@@ -57,8 +57,9 @@ export default class NovedadListaComponent extends General implements OnInit {
   });
 
   ngOnInit(): void {
-    // La primera consulta la dispara app-filtro-simple al emitir su estado
-    // inicial (restaurado o vacío) por (aplicar) -> filterChange.
+    // Carga inicial acá (patrón estable). app-filtro-simple re-aplica el filtro
+    // guardado de forma diferida por (aplicar) -> filterChange.
+    this.consultaLista(this.arrParametrosConsulta);
   }
 
   consultaLista(filtros: any) {

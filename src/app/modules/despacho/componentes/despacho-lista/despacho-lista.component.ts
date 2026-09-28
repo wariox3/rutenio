@@ -61,8 +61,9 @@ export default class DespachoListaComponent extends General implements OnInit {
   arrFiltros: Record<string, any> = { page: 1 };
 
   ngOnInit() {
-    // La primera consulta la dispara app-filtro-simple al emitir su estado
-    // inicial (restaurado o vacío) por (aplicar) -> filterChange.
+    // Carga inicial acá (patrón estable). app-filtro-simple re-aplica el filtro
+    // guardado de forma diferida por (aplicar) -> filterChange.
+    this._consultarLista();
   }
 
   private _consultarLista(parametrosAdicionales: Record<string, any> = {}): void {
