@@ -47,7 +47,6 @@ import { PermisoPorDirective } from '../../../../common/directivas/permiso-por.d
 })
 export default class FranjaListaComponent extends General implements OnInit {
   @ViewChild(MapInfoWindow) infoWindow: MapInfoWindow;
-  // google variables
   public markerPositions: google.maps.LatLngLiteral[] = [];
   public nuevaVertice: google.maps.LatLngLiteral[] = [];
   public zoom = 12;
@@ -117,7 +116,6 @@ export default class FranjaListaComponent extends General implements OnInit {
       )
       .subscribe((registros) => {
         this.franjasSubject.next(registros);
-        // Auto-center map on first franja if available
         if (registros.length > 0) {
           this.centerMapOnFirstFranja(registros[0]);
         }
@@ -240,7 +238,6 @@ export default class FranjaListaComponent extends General implements OnInit {
     const coordenadasFormArray = this.formularioFranja.get('coordenadas') as FormArray;
 
     if (this.estaCreando) {
-      // Asegúrate de que las coordenadas son solo de la nueva franja
       const nuevoVertice = evento.latLng.toJSON();
       this.nuevaVertice = [...this.nuevaVertice, nuevoVertice];
       coordenadasFormArray.push(new FormControl(nuevoVertice));
@@ -276,7 +273,7 @@ export default class FranjaListaComponent extends General implements OnInit {
     this.formularioFranja.patchValue({
       codigo: `franja-${this.franjasTotales + 1}`,
       nombre: `franja-${this.franjasTotales + 1}`,
-      color: colorAleatorio, // Usamos el color generado
+      color: colorAleatorio,
     });
 
     this._franjaService
@@ -355,41 +352,30 @@ export default class FranjaListaComponent extends General implements OnInit {
       });
   }
 
-  /**
-   * Centers the map on the first franja with appropriate zoom level
-   * Uses bounds calculation to fit the entire polygon in view
-   */
   private centerMapOnFirstFranja(franja: Franja): void {
     if (!franja.coordenadas || franja.coordenadas.length === 0) {
       return;
     }
 
-    // Calculate bounds of the franja coordinates
     const bounds = new google.maps.LatLngBounds();
-    
+
     franja.coordenadas.forEach((coord: google.maps.LatLngLiteral) => {
       bounds.extend(new google.maps.LatLng(coord.lat, coord.lng));
     });
 
-    // Get the center of the bounds
     const center = bounds.getCenter();
     this.center = {
       lat: center.lat(),
       lng: center.lng()
     };
 
-    // Calculate appropriate zoom level based on bounds
-    // This ensures the entire franja is visible with some padding
     const northeast = bounds.getNorthEast();
     const southwest = bounds.getSouthWest();
-    
-    // Calculate the distance to determine zoom level
+
     const latDiff = Math.abs(northeast.lat() - southwest.lat());
     const lngDiff = Math.abs(northeast.lng() - southwest.lng());
     const maxDiff = Math.max(latDiff, lngDiff);
-    
-    // Adjust zoom based on the size of the franja
-    // Smaller franjas get higher zoom, larger ones get lower zoom
+
     if (maxDiff < 0.01) {
       this.zoom = 13; // Very small franja
     } else if (maxDiff < 0.05) {
@@ -400,7 +386,6 @@ export default class FranjaListaComponent extends General implements OnInit {
       this.zoom = 10; // Large franja
     }
 
-    // Trigger change detection to update the map
     this.changeDetectorRef.detectChanges();
   }
 }

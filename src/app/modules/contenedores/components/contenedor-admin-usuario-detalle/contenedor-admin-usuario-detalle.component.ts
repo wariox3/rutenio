@@ -180,8 +180,6 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
     return `${ver}/${total} ver · ${editar}/${total} editar`;
   }
 
-  // ---- Hacer admin de un contenedor donde ya es miembro ----
-
   hacerAdminEnContenedor(m: MembresiaDetalle) {
     const u = this.usuario();
     if (!u || !m.contenedor__schema_name) return;
@@ -201,8 +199,6 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
       });
   }
 
-  // ---- Asignar a un contenedor donde no es miembro ----
-
   modalAsignar = signal<boolean>(false);
   contenedoresDisponibles = signal<Array<{ id: number; schema_name: string; nombre: string }>>([]);
   schemaElegido: string | null = null;
@@ -210,7 +206,6 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
   asignando = signal<boolean>(false);
   errorAsignar = signal<string | null>(null);
 
-  /** Contenedores donde el usuario aun no es miembro, con etiqueta lista para el buscador. */
   contenedoresAsignables = computed(() =>
     this.contenedoresDisponibles()
       .filter((c) => this.esContenedorDisponible(c))
@@ -233,7 +228,6 @@ export default class ContenedorAdminUsuarioDetalleComponent implements OnInit {
     this.modalAsignar.set(false);
   }
 
-  /** Devuelve true si el usuario aun no es miembro de ese contenedor (para filtrar el select). */
   esContenedorDisponible(c: { id: number }): boolean {
     return !this.membresias().some((m) => m.contenedor_id === c.id);
   }

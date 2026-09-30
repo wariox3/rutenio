@@ -1,7 +1,6 @@
 @if (visualizarAlerta === true) {
   <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
     <div class="flex items-start">
-      <!-- Icono -->
       <div class="flex-shrink-0">
         <i class="ki-duotone ki-shield-tick text-2xl text-blue-500 mr-3">
           <span class="path1"></span>
@@ -10,7 +9,6 @@
         </i>
       </div>
       
-      <!-- Contenido -->
       <div class="flex-1">
         <div class="flex justify-between items-start">
           <div>
@@ -42,11 +40,9 @@
   </div>
   }
   
-  <!-- Alerta de Fecha Límite -->
   @if (usuarioVrSaldo > 0 && usuarioFechaLimitePago < hoy) {
   <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
     <div class="flex items-start">
-      <!-- Icono -->
       <div class="flex-shrink-0">
         <i class="ki-duotone ki-information-3 text-2xl text-red-500 mr-3">
           <span class="path1"></span>
@@ -55,7 +51,6 @@
         </i>
       </div>
       
-      <!-- Contenido -->
       <div class="flex-1">
         <h4 class="text-sm font-semibold text-red-800">
           Se cumplió la fecha límite de su pago

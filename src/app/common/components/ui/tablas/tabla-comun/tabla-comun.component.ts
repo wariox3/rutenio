@@ -18,13 +18,10 @@ import { General } from '../../../../clases/general';
 export interface AccionFila {
   /** Clase del icono Metronic (ki-filled o ki-outline). */
   icono: string;
-  /** Texto visible en el dropdown. */
   label: string;
-  /** Predicate opcional. Si retorna false, la accion no aparece para ese item. */
+  /** Si retorna false, la accion no aparece para ese item. */
   mostrar?: (item: any) => boolean;
-  /** Callback al hacer click. */
   ejecutar: (item: any) => void;
-  /** Estilo opcional (ej. 'danger' para acciones destructivas). */
   variante?: 'default' | 'danger';
 }
 
@@ -42,9 +39,8 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
   @Input() datos: any[] = [];
   @Input() ocultarEditar: boolean = false;
   @Input() ordenamientoInicial: string = '';
-  /** Callback opcional para marcar filas con un highlight visual (border-left amber). */
+  /** Filas marcadas se resaltan con border-left amber. */
   @Input() resaltarFila?: (item: any) => boolean;
-  /** Acciones extra disponibles en un menu kebab por fila. */
   @Input() accionesFila: AccionFila[] = [];
   @Output() emitirEditarItem: EventEmitter<number>;
   @Output() emitirDetalleItem: EventEmitter<number>;
@@ -84,7 +80,6 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['datos'] && !changes['datos'].firstChange) {
-      // Reiniciar _itemsAEliminar si los datos cambian
       this._itemsAEliminar = [];
       this.emitirItemsSeleccionados.emit(this._itemsAEliminar);
 
@@ -147,7 +142,6 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
     this._itemsAEliminar = [];
   }
 
-  /** Limpia la seleccion programaticamente desde el padre. */
   public limpiarSeleccion(): void {
     this._itemsAEliminar = [];
     if (this.checkboxGlobal) {
@@ -161,7 +155,6 @@ export class TablaComunComponent extends General implements OnInit, OnChanges {
     return this._itemsAEliminar.indexOf(id) !== -1;
   }
 
-  /** Devuelve solo las acciones que deben mostrarse para un item dado. */
   accionesVisibles(item: any): AccionFila[] {
     return (this.accionesFila || []).filter((a) => !a.mostrar || a.mostrar(item));
   }

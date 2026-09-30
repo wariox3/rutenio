@@ -121,7 +121,6 @@ export default class TraficoListaComponent
   private _modalService = inject(ModalService);
   private _generalApiService = inject(GeneralApiService);
   private destroy$ = new Subject<void>();
-  /// Buscador rápido de Tráfico (texto libre): se debouncea antes de consultar.
   private _buscar$ = new Subject<string>();
   private _httpService = inject(HttpService);
   private _traficoService = inject(TraficoService);
@@ -139,7 +138,6 @@ export default class TraficoListaComponent
   // Despacho mostrado en el modal del "ojo" (resumen + tabs). Aparte de
   // despachoSeleccionado (que usa el modal de editar) para no pisar su semántica.
   public detalleDespacho = signal<Despacho | null>(null);
-  // Timeline de seguimiento del viaje (consultas / respuestas / llamadas / notas).
   public seguimientos = signal<Seguimiento[]>([]);
   public cargandoSeguimiento = signal<boolean>(false);
   public seguimientoDespacho = signal<Despacho | null>(null);
@@ -182,10 +180,6 @@ export default class TraficoListaComponent
     strokeWeight: 3,
   };
 
-  /**
-   * Parámetros base inmutables de la vista.
-   * Estos siempre se aplican y no deben modificarse.
-   */
   private readonly arrParametrosBase: ParametrosApi = {
     ordering: 'id',
     serializador: 'trafico',
@@ -194,10 +188,6 @@ export default class TraficoListaComponent
     estado_anulado: 'False',
   };
 
-  /**
-   * Filtros dinámicos que pueden cambiar (filtros de usuario, paginación, etc.).
-   * Estos se combinan con arrParametrosBase para cada consulta.
-   */
   arrFiltros: Record<string, any> = { page: 1 };
 
   private alertasIntervaloMs = 30000;
@@ -237,7 +227,6 @@ export default class TraficoListaComponent
     this.consultarLista();
     this._iniciarPollingAlertas();
     this._consultarSinDespachar();
-    // Buscador rápido: debounce + dedup para no consultar en cada tecla.
     this._buscar$
       .pipe(
         debounceTime(350),
@@ -247,12 +236,10 @@ export default class TraficoListaComponent
       .subscribe((term) => this._aplicarBusquedaRapida(term));
   }
 
-  /// Recibe cada tecla del buscador rápido (el debounce lo hace la suscripción).
   onBuscar(term: string): void {
     this._buscar$.next(term);
   }
 
-  /// Aplica la búsqueda (reemplaza los filtros, como filterChange). Vacío = limpia.
   private _aplicarBusquedaRapida(term: string): void {
     this.currentPage.set(1);
     const { ordering } = this.arrFiltros;
@@ -292,9 +279,7 @@ export default class TraficoListaComponent
       });
   }
 
-  /** Alerta de guías LISTAS pero SIN despachar (pool): se importaron después de
-   *  rutear/salir la ruta y quedan invisibles. Read-only; ver endpoint
-   *  ruteo/visita/sin-despachar/. */
+  /** Alerta de guías listas pero sin despachar (pool). Read-only; ver endpoint ruteo/visita/sin-despachar/. */
   private _consultarSinDespachar(): void {
     this._generalApiService
       .consultaApi<{
@@ -315,7 +300,6 @@ export default class TraficoListaComponent
     this._consultarSinDespachar();
   }
 
-  /** Abre la lista de Visitas para rutear las guías sueltas de la alerta. */
   irAVisitasSinDespachar(): void {
     this.router.navigateByUrl('/movimiento/visita/lista');
   }
@@ -405,13 +389,7 @@ export default class TraficoListaComponent
     this.changeDetectorRef.detectChanges();
   }
 
-  /**
-   * Método centralizado para cargar despachos con todos los parámetros y filtros.
-   * Garantiza que siempre se aplique agregarEstadoDespacho() y se actualice cantidadRegistros.
-   *
-   * @param parametrosAdicionales - Parámetros/filtros adicionales a mergear
-   * @param mostrarMensajeExito - Si debe mostrar mensaje de éxito al completar
-   */
+  /** Centraliza la carga de despachos: garantiza agregarEstadoDespacho() y actualiza cantidadRegistros. */
   private _cargarDespachos(
     parametrosAdicionales: Record<string, any> = {},
     mostrarMensajeExito: boolean = false
@@ -461,10 +439,6 @@ export default class TraficoListaComponent
       });
   }
 
-  /**
-   * Carga la lista de despachos con filtros opcionales.
-   * Usado en: ngOnInit, callbacks de modales
-   */
   consultarLista(filtros: Record<string, any> = {}): void {
     this._cargarDespachos(filtros, false);
   }
@@ -499,12 +473,8 @@ export default class TraficoListaComponent
   }
 
 
-  /**
-   * Recarga la lista de despachos manteniendo filtros y paginación actuales.
-   * Usado en: Botón de recarga manual
-   */
   recargarDespachos(): void {
-    this._cargarDespachos({}, true); // Con mensaje de éxito
+    this._cargarDespachos({}, true);
     this._consultarSinDespachar(); // el pool cambia al rutear/asignar
     // Notifica al tab de visitas (si está abierto en el modal) para que
     // refresque sus KPIs y barra de progreso.
@@ -583,7 +553,7 @@ export default class TraficoListaComponent
       html: '¿A qué número de WhatsApp le escribimos?<br><small>Dejalo vacío para usar el conductor del despacho.</small>',
       placeholder: 'Ej: 3001234567',
     });
-    if (telefono === null) return; // canceló
+    if (telefono === null) return;
     this._despachoApiService
       .iniciarAgente(id, telefono || undefined)
       .pipe(takeUntil(this.destroy$))
@@ -644,7 +614,7 @@ export default class TraficoListaComponent
       html: `Llamaste al conductor (${telefono}).<br><small>¿Qué te dijo? (opcional)</small>`,
       placeholder: 'Ej: va retrasado por tráfico, llega en 1h',
     });
-    if (comentario === null) return; // canceló el registro
+    if (comentario === null) return;
     this._seguimientoApiService
       .registrarLlamada(despacho.id, comentario || `Llamada a ${telefono}`)
       .pipe(takeUntil(this.destroy$))
@@ -655,7 +625,6 @@ export default class TraficoListaComponent
       });
   }
 
-  // Abre el timeline de seguimiento del viaje (todos los eventos en orden).
   abrirSeguimiento(despacho_id: number) {
     this.seguimientoDespacho.set(
       this.arrDespachos.find((d) => d.id === despacho_id) ?? null
@@ -707,7 +676,7 @@ export default class TraficoListaComponent
               placeholder: 'Buscar por nombre, correo o teléfono…',
             }
           );
-          if (elegido === null) return; // canceló
+          if (elegido === null) return;
           const conductorId = elegido === '0' ? null : Number(elegido);
           this._despachoApiService
             .asignarConductor(id, conductorId)
@@ -843,10 +812,8 @@ export default class TraficoListaComponent
     entregadas: number,
     totales: number
   ): string {
-    // La barra representa el PROGRESO de entrega, no el horario. El retraso se
-    // indica aparte (etiqueta de estado). Antes se pintaba roja por 'retrazado'
-    // aunque el % fuera alto -> el color contradecia el numero. Ahora: verde si
-    // hay avance, roja solo si no se ha entregado nada.
+    // La barra representa el PROGRESO de entrega (no el horario); no pintarla de
+    // rojo por 'retrazado' o contradice el % mostrado.
     return entregadas > 0 ? 'bg-green-500' : 'bg-red-500';
   }
 
@@ -1034,7 +1001,6 @@ export default class TraficoListaComponent
     if (this.mostrarUbicaciones) {
       this.obtenerUbicaciones(despacho_id);
     } else {
-      // Limpiar solo lo relacionado a ubicaciones
       this.directionsResultsUbicaciones = null;
       this.arrUbicaciones = [];
       this.marcarPosicionesUbicacionesOrdenadas = [];
@@ -1127,19 +1093,12 @@ export default class TraficoListaComponent
     this.consultarLista();
   }
 
-  /**
-   * Maneja el cambio de página en el paginador.
-   */
   onPageChange(page: number): void {
     this.currentPage.set(page);
     this._cargarDespachos({ page }, false);
   }
 
-  /**
-   * Maneja el cambio de filtros desde el componente de filtros.
-   * Si recibe un objeto vacío, limpia todos los filtros.
-   * Siempre resetea a página 1 al aplicar nuevos filtros.
-   */
+  /** Objeto vacío limpia todos los filtros; siempre resetea a página 1. */
   filterChange(filters: Record<string, any>): void {
     this.currentPage.set(1);
     const { ordering, page, ..._ } = this.arrFiltros;
@@ -1147,10 +1106,6 @@ export default class TraficoListaComponent
     this._cargarDespachos({}, false);
   }
 
-  /**
-   * Limpia todos los filtros dinámicos y recarga con solo los parámetros base.
-   * Útil para el botón "Limpiar filtros" o cuando el usuario resetea los filtros.
-   */
   limpiarFiltros(): void {
     this.currentPage.set(1);
     this.arrFiltros = { page: 1 };

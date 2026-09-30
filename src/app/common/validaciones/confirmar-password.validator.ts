@@ -1,25 +1,18 @@
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 export class ConfirmarPasswordValidator {
-  /**
-   * Check matching password with confirm password
-   * @param control AbstractControl
-   */
   static validarClave(control: AbstractControl): ValidationErrors | null {
     const clave = control.get('clave')?.value;
     const confirmarClave = control.get('confirmarClave')?.value;
 
     if (!clave || !confirmarClave) {
-      return null; // No validar si alguno está vacío
+      return null;
     }
 
     if (clave !== confirmarClave) {
-      // Establecer error en el campo confirmarClave
       control.get('confirmarClave')?.setErrors({ clavesDiferentes: true });
-      // También retornar error a nivel de formulario
       return { clavesDiferentes: true };
     } else {
-      // Limpiar error si las contraseñas coinciden
       const confirmarClaveControl = control.get('confirmarClave');
       if (confirmarClaveControl?.errors?.['clavesDiferentes']) {
         const errors = { ...confirmarClaveControl.errors };
@@ -30,7 +23,6 @@ export class ConfirmarPasswordValidator {
     }
   }
 
-  // Tus otros métodos pueden permanecer igual o aplicar lógica similar
   static validarCambioClave(control: AbstractControl): ValidationErrors | null {
     const clave = control.get('nuevaClave')?.value;
     const confirmarClave = control.get('confirmarNuevaClave')?.value;

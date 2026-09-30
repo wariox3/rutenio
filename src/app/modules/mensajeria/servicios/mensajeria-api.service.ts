@@ -23,7 +23,6 @@ import { PlantillaWhatsapp } from '../interfaces/plantilla.interface';
 export class MensajeriaApiService {
   private _http = inject(HttpService);
 
-  // === Conexión ===
   obtenerConexion(): Observable<WhatsappConexion> {
     return this._http.getDetalle<WhatsappConexion>('mensajeria/conexion/');
   }
@@ -36,7 +35,6 @@ export class MensajeriaApiService {
     return this._http.post<WhatsappProbarRespuesta>('mensajeria/conexion/probar/', {});
   }
 
-  // === Conversaciones ===
   listarConversaciones(parametros: Record<string, any> = {}): Observable<ListaConversaciones> {
     const query = new URLSearchParams(parametros as Record<string, string>).toString();
     const endpoint = query ? `mensajeria/conversacion/?${query}` : 'mensajeria/conversacion/';
@@ -72,7 +70,6 @@ export class MensajeriaApiService {
     return this._http.post<Conversacion>(`mensajeria/conversacion/${conversacionId}/resolver-apoyo/`, {});
   }
 
-  // === Plantillas + iniciar conversacion nueva ===
   listarPlantillas(): Observable<PlantillaWhatsapp[]> {
     return this._http.getDetalle<PlantillaWhatsapp[]>('mensajeria/conversacion/plantillas/');
   }

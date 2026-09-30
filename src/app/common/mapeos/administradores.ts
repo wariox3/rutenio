@@ -52,14 +52,6 @@ export const mapeo: any = {
         visibleFiltro: true,
         ordenable: false,
       },
-      // {
-      //   encabezado: 'Franja Nombre',
-      //   campoNombre: 'franja_nombre',
-      //   campoTipo: 'CharField',
-      //   visibleTabla: false,
-      //   visibleFiltro: false,
-      //   ordenable: true,
-      // },
       {
         encabezado: 'Activo',
         campoNombre: 'estado_activo',

@@ -15,18 +15,14 @@ export class FormatoPaginacionDirective {
     if (this.appSoloNumeros === false) {
       return input.value;
     } else {
-      // Verifica que el valor cumpla con la expresión regular.
       if (!this.regex.test(input.value)) {
-        // Elimina caracteres no permitidos y asegura un único guion.
-        let cleanValue = input.value.replace(/[^0-9-]/g, ''); // Elimina caracteres no numéricos ni guion.
+        let cleanValue = input.value.replace(/[^0-9-]/g, '');
 
-        // Asegura que solo haya un guion.
         const parts = cleanValue.split('-');
         if (parts.length > 2) {
           cleanValue = `${parts[0]}-${parts.slice(1).join('')}`;
         }
 
-        // Reemplaza cualquier guion después del último número.
         cleanValue = cleanValue.replace(/-+$/, '');
 
         input.value = cleanValue;

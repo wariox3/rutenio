@@ -50,9 +50,7 @@ export default class ReporteMensajeroComponent implements OnInit {
     return `${anio}-${mes}-${dia}`;
   }
 
-  /** Día LOCAL de una fecha ISO (el backend la manda en UTC). Sin esto,
-   *  substring(0,10) tomaría el día UTC y correría un día los despachos creados
-   *  de noche → el reporte no cuadraba con Movimiento (que muestra local). */
+  /** Día LOCAL de una fecha ISO (el backend la manda en UTC); evita correr un día los despachos nocturnos. */
   private diaLocal(fechaIso: string | null | undefined): string {
     return fechaIso ? this.aFechaLocal(new Date(fechaIso)) : '';
   }
@@ -87,7 +85,6 @@ export default class ReporteMensajeroComponent implements OnInit {
       return dia >= this.fechaDesde && dia <= this.fechaHasta;
     });
 
-    // Agrupa por mensajero + placa + dia.
     const porDia = new Map<string, FilaReporteMensajero>();
     for (const d of enRango) {
       const dia = this.diaLocal(d.fecha);
@@ -129,7 +126,6 @@ export default class ReporteMensajeroComponent implements OnInit {
           a.placa.localeCompare(b.placa)
       );
 
-    // Agregado por mensajero (todos sus dias). dias = dias distintos.
     const porMensajero = new Map<string, TotalMensajero>();
     const diasMensajero = new Map<string, Set<string>>();
     for (const f of filasCalculadas) {
@@ -166,7 +162,6 @@ export default class ReporteMensajeroComponent implements OnInit {
       }))
       .sort((a, b) => a.conductorNombre.localeCompare(b.conductorNombre));
 
-    // Agregado por placa (todos sus dias). dias = dias distintos.
     const porPlaca = new Map<string, TotalPlaca>();
     const diasPlaca = new Map<string, Set<string>>();
     for (const f of filasCalculadas) {

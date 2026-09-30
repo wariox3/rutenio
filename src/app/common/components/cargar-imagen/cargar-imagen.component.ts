@@ -121,7 +121,6 @@ export class CargarImagenComponent extends General implements OnChanges {
 
   }
   cropperReady() {
-    // cropper ready
   }
   loadImageFailed() {
   }

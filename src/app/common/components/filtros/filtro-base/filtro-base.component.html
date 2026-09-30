@@ -134,25 +134,8 @@
         >
           <div class="row align-items-center">
             <div class="col-12 col-md-3 mb-2">
-              <!-- <nb-select size="small" fullWidth placeholder="Seleccionar" formControlName="propiedad"
-                  (selectedChange)="seleccionarPropiedadModal($event, i)">
-                  <nb-option value="">Seleccionar</nb-option>
-                  <nb-option *ngFor="let propiedad of arrPropiedadBusquedaAvanzada" [value]="
-                  propiedad.esFk
-                    ? propiedad.modeloFk.toLocaleLowerCase().substring(3) +
-                      '_id'
-                    : propiedad.nombre.toLocaleLowerCase()
-                " [attr.data-tipo]="propiedad.campoTipo">{{ propiedad.nombre }}</nb-option>
-                </nb-select> -->
             </div>
             <div class="col-12 col-md-3 mb-2">
-              <!-- <nb-select size="small" formControlName="operador" fullWidth placeholder="Seleccionar" [selected]="">
-                  {{ criterioBusqueda }}
-                  <nb-option value="">Seleccionar</nb-option>
-                  <nb-option *ngFor="let criterioBusqueda of criteriosBusquedaModal[i]" [value]="criterioBusqueda.valor">
-                    {{ criterioBusqueda.texto }}
-                  </nb-option>
-                </nb-select> -->
             </div>
             <div class="col-12 col-md-4 mb-2">
               <input
@@ -171,11 +154,6 @@
               />
             </div>
             <div class="col-12 col-md-2 mb-2">
-              <!-- <button class="border-0 bg-transparent button-remover" *ngIf="filtros.length >= 1"
-                  (click)="agregarNuevoFiltroModal()"><nb-icon icon="plus-outline"></nb-icon></button>
-                <button class="border-0 bg-transparent button-remover" *ngIf="filtrosModal.length > 1"
-                  (click)="eliminarFiltroModal(i)"><nb-icon icon="trash-outline"></nb-icon></button> -->
-
               <button clas (click)="agregarNuevoFiltroModal()">
                 <i class="ki-filled ki-plus"></i>
               </button>
@@ -240,7 +218,6 @@
                   ngbTooltip="Seleccionar registro"
                   container="body"
                 >
-                  <!-- <nb-icon icon="checkmark-outline"></nb-icon> -->
                 </button>
               </td>
             </ng-container>

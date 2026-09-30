@@ -26,7 +26,6 @@ export default class DecodificarDireccionComponent extends General {
   public direccionControl = new FormControl('', [Validators.required]);
   public resultado$ = signal<DecodificarDireccionResponse | null>(null);
 
-  // Propiedades del mapa
   public readonly mapCenter = computed<google.maps.LatLngLiteral>(() => {
     const datos = this.resultado$()?.datos;
     if (datos?.latitud && datos?.longitud) {

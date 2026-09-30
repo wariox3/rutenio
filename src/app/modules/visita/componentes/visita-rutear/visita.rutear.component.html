@@ -411,7 +411,6 @@
                   </div>
 
                   <section class="flex gap-1 items-center">
-                    <!-- Badges con tamaño mejorado -->
                     <div class="flex gap-1 items-center">
                       <span
                         *ngIf="!visita.estado_decodificado"
@@ -521,7 +520,6 @@
       </div>
       <div class="flex items-center gap-2">
         @if (markerPositions.length > 0) {
-          <!-- Leyenda compacta de markers -->
           <div class="hidden md:flex items-center gap-2 text-[11px] text-gray-600 dark:text-gray-400 pr-2 border-r border-gray-200 dark:border-gray-300">
             <span class="inline-flex items-center gap-1">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Normal
@@ -600,7 +598,6 @@
         }
         <map-info-window>
           <section class="min-w-[240px] max-w-[300px] p-1 space-y-2">
-            <!-- Header: destinatario + badges -->
             <div class="space-y-1">
               <div class="flex items-start justify-between gap-2">
                 <p class="font-semibold text-gray-900 text-sm leading-snug">
@@ -640,13 +637,11 @@
               </div>
             </div>
 
-            <!-- Direccion -->
             <div class="flex items-start gap-1.5 text-[12px] text-gray-700">
               <i class="ki-filled ki-geolocation text-gray-400 mt-0.5"></i>
               <span class="leading-snug">{{ selectedVisita?.destinatario_direccion }}</span>
             </div>
 
-            <!-- Stats -->
             <div class="flex items-center gap-3 text-[11px] text-gray-600 pt-1 border-t border-gray-100">
               <span class="inline-flex items-center gap-1" title="Peso">
                 <i class="ki-filled ki-package text-gray-400"></i>
@@ -662,7 +657,6 @@
               </span>
             </div>
 
-            <!-- Ventana de cita -->
             @if (selectedVisita?.cita_inicio) {
               <div class="text-[11px] text-purple-700 bg-purple-50 dark:bg-purple-500/10 px-2 py-1.5 rounded">
                 <i class="ki-filled ki-time mr-1"></i>

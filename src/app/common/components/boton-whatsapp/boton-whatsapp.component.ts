@@ -4,11 +4,7 @@ import { filter } from 'rxjs/operators';
 
 export const WHATSAPP_NUMBER = '573106097801';
 
-/**
- * Rutas donde NO se debe mostrar el boton flotante de WhatsApp porque
- * la pantalla tiene un footer sticky propio (ej. /configuracion con el
- * boton Guardar) y el FAB obstruiria la accion principal.
- */
+// Rutas con footer sticky propio (ej. boton Guardar) que el FAB taparia.
 const RUTAS_OCULTAR = ['/configuracion'];
 
 @Component({

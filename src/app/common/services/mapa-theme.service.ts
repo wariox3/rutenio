@@ -25,7 +25,6 @@ export class MapaThemeService {
   );
 
   constructor() {
-    // Observa cambios de la clase del <html> (cuando el usuario hace toggle).
     if (typeof document !== 'undefined') {
       this._observer = new MutationObserver(() => {
         const ahora = this._detectarDark();

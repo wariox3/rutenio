@@ -91,7 +91,6 @@ export class ImportarComponent extends General {
   }
 
   private processFile(file: File) {
-    // Validar tipo de archivo si se especifica
     if (this.archivosAdmitidos) {
       const acceptedTypes = this.archivosAdmitidos
         .split(',')
@@ -219,18 +218,12 @@ export class ImportarComponent extends General {
     saveAs(data, nombreArchivo);
   }
 
-  /**
-   * Descarga el archivo de ejemplo
-   * Soporta tanto URLs locales como externas
-   */
   descargarEjemploImportar() {
-    // Si se proporciona una URL externa, usamos esa primero
     if (this.exampleFileUrl) {
       this.downloadExampleFile();
       return;
     }
 
-    // Si no hay URL externa, usamos el método local tradicional
     if (this.archivoEjemplo?.ruta) {
       this._generalService.descargarArchivoLocal(
         this.archivoEjemplo.ruta,
@@ -246,9 +239,6 @@ export class ImportarComponent extends General {
     }
   }
 
-  /**
-   * Descarga el archivo de ejemplo desde una URL externa
-   */
   downloadExampleFile(): void {
     if (!this.exampleFileUrl) {
       this.errorMessage =
@@ -259,12 +249,10 @@ export class ImportarComponent extends General {
     this.isDownloadingExample$.next(true);
 
     try {
-      // Si la URL es relativa, usamos el servicio HTTP para descargar
       if (!this.exampleFileUrl.startsWith('http')) {
         this._httpService.descargarArchivo(this.exampleFileUrl, {});
         this.isDownloadingExample$.next(false);
       } else {
-        // Si es una URL absoluta, creamos un enlace y simulamos un clic
         const link = document.createElement('a');
         link.href = this.exampleFileUrl;
         link.target = '_blank';

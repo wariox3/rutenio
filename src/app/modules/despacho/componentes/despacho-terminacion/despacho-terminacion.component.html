@@ -1,5 +1,4 @@
 <section class="p-1">
-  <!-- Encabezado del viaje -->
   <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm mb-4">
     <div><span class="text-gray-500">Agencia:</span> <span class="font-semibold text-gray-900">{{ datos.agencia || 'N/A' }}</span></div>
     <div><span class="text-gray-500">OE:</span> <span class="font-semibold text-gray-900">{{ datos.consecutivo || 'N/A' }}</span></div>
@@ -9,7 +8,6 @@
     <div><span class="text-gray-500">Fecha:</span> <span class="font-semibold text-gray-900">{{ (datos.fecha_viaje | date: 'yyyy-MM-dd') || 'N/A' }}</span></div>
   </div>
 
-  <!-- Resumen -->
   <div class="grid grid-cols-4 gap-2 mb-4">
     <div class="rounded-lg border border-gray-200 p-3 text-center">
       <div class="text-xl font-bold text-gray-900">{{ datos.total_guias }}</div>
@@ -29,7 +27,6 @@
     </div>
   </div>
 
-  <!-- Detalle de guías con novedad -->
   <div class="mb-4">
     <h4 class="text-sm font-semibold text-gray-800 mb-2">Guías con novedad</h4>
     @if (datos.detalle_novedades.length === 0) {
@@ -62,13 +59,11 @@
     }
   </div>
 
-  <!-- Aviso -->
   <div class="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs">
     <i class="ki-filled ki-information-2 text-base"></i>
     <span>Al confirmar, el viaje se cerrará definitivamente (no se puede revertir) y se guardará el documento.</span>
   </div>
 
-  <!-- Acciones -->
   <div class="flex justify-end gap-2">
     <button (click)="cancelar.emit()" [disabled]="cargando" class="btn btn-sm btn-light">Volver</button>
     <button (click)="confirmar.emit()" [disabled]="cargando" class="btn btn-sm btn-primary gap-1.5">

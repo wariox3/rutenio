@@ -53,7 +53,6 @@ export default class ReporteEntregasComponent implements OnInit, OnDestroy {
   public currentPage = signal(1);
   public totalPages = signal(1);
 
-  /** Estados para la barra de filtros. */
   public readonly estados: EstadoOpcion[] = [
     { label: 'Todas', params: {} },
     { label: 'Entregadas', params: { estado_entregado: 'true' } },

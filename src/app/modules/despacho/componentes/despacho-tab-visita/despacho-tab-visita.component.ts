@@ -61,7 +61,6 @@ export class DespachoTabVisitaComponent
   drawerAbierto = signal<boolean>(false);
   drawerVisitaId = signal<number | null>(null);
 
-  // KPIs derivados — se actualizan solos cuando cambia la lista.
   totalVisitas = computed(() => this.visitas().length);
   entregadas = computed(
     () => this.visitas().filter((v) => v.estado_entregado).length
@@ -115,19 +114,14 @@ export class DespachoTabVisitaComponent
     return new Date(v.cita_fin).getTime() < Date.now();
   }
 
-  // --- Modelo de estado en DOS dimensiones independientes ------------------
-  // El badge viejo mezclaba "¿se entregó?" con "¿la dirección está bien?", así
-  // que una visita pendiente con dirección ambigua se veía solo como "Alerta"
-  // y el operador no sabía si faltaba entregarla o corregir el dato.
-
-  // 1) ENTREGA — lo único que decide si la visita bloquea el cierre.
+  /** Lo único que decide si la visita bloquea el cierre del despacho. */
   estadoEntrega(v: Visita): 'entregada' | 'novedad' | 'pendiente' {
     if (v.estado_entregado) return 'entregada';
     if (v.estado_novedad) return 'novedad';
     return 'pendiente';
   }
 
-  // 2) DIRECCION — calidad del geocodificado, contexto secundario.
+  /** Calidad del geocodificado; contexto secundario, no bloquea el cierre. */
   problemaDireccion(
     v: Visita
   ): { tipo: 'sin-ubicar' | 'ambigua'; label: string; detalle: string } | null {
@@ -152,7 +146,6 @@ export class DespachoTabVisitaComponent
     return null;
   }
 
-  // --- Filtro por estado (en cliente, instantáneo) -------------------------
   filtroEstado = signal<
     'todas' | 'pendiente' | 'entregada' | 'novedad' | 'direccion'
   >('todas');
@@ -180,7 +173,6 @@ export class DespachoTabVisitaComponent
     }
   });
 
-  // Visitas con problema de dirección (para el chip-filtro secundario).
   conProblemaDireccion = computed(
     () => this.visitas().filter((v) => !!this.problemaDireccion(v)).length
   );

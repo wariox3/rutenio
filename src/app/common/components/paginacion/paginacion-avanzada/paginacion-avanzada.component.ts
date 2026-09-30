@@ -36,10 +36,6 @@ export class PaginacionAvanzadaComponent {
     `${this.desplazamientoActual + 1}-${this.limiteActual}`
   );
 
-  /**
-   * Avanza el desplazamiento actual por el valor del incremento (limiteActual) y actualiza la paginación.
-   * También emite el evento con los nuevos valores.
-   */
   aumentarDesplazamiento() {
     this.desplazamientoActual += this.incrementar;
     this.valorDerecha += this.incrementar;
@@ -55,10 +51,6 @@ export class PaginacionAvanzadaComponent {
     });
   }
 
-  /**
-   * Resetea la paginación al valor inicial (0-REGISTROS_POR_PAGINA).
-   * También emite el evento con los valores iniciales.
-   */
   resetearFiltrado() {
     this.desplazamientoActual = 0;
     this.limiteActual = this.registrosAMostrar;
@@ -76,13 +68,9 @@ export class PaginacionAvanzadaComponent {
     );
   }
 
-  /**
-   * Retrocede el desplazamiento actual por el valor del incremento (limiteActual) y actualiza la paginación.
-   * Si el desplazamiento no permite retroceder, resetea la paginación.
-   * También emite el evento con los nuevos valores.
-   */
   disminuirDesplazamiento() {
     const diferencia = this.valorDerecha - this.desplazamientoActual;
+    // Sin suficiente historial para retroceder: se resetea la paginación.
     if (diferencia > this.desplazamientoActual) {
       this.resetearFiltrado();
       return;
@@ -101,11 +89,6 @@ export class PaginacionAvanzadaComponent {
     }
   }
 
-  /**
-   * Calcula y actualiza el rango de paginación basado en el valor ingresado manualmente en el input.
-   * Si el valor ingresado no es válido, resetea la paginación.
-   * @param evento - El evento de entrada que contiene el valor ingresado.
-   */
   calcularValorMostrar(evento: Event) {
     const input = evento.target as HTMLInputElement;
     let valorInicial = input.value.trim();

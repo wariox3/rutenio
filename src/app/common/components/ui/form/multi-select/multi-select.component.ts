@@ -34,8 +34,6 @@ export class MultiSelectComponent {
   constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
     if (changes['selectedOptions']) {
       console.log(changes['selectedOptions'].currentValue);
       this.selectedOptions = this._transformSelectedOptions(changes['selectedOptions'].currentValue);

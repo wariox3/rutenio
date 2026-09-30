@@ -80,7 +80,6 @@ export class VisitaImportarPorComplementoComponent extends General {
     { validators: [this.validarRango(), this.validarRangoFecha()] }
   );
 
-  // Signals derivados para el UI
   private _formValueSignal = signal(this.formularioComplementos.value);
   cantidadFiltrosActivos = computed(() => {
     const v = this._formValueSignal();
@@ -100,8 +99,6 @@ export class VisitaImportarPorComplementoComponent extends General {
     this.emitirCerrarModal = new EventEmitter();
     this.estaImportandoComplementos$ = new BehaviorSubject(false);
     this.getComplementos();
-    // Mantener el signal sincronizado con el form para que los computed
-    // (cantidadFiltrosActivos, textoBotonImportar) reaccionen.
     this.formularioComplementos.valueChanges.subscribe((v) =>
       this._formValueSignal.set(v)
     );
@@ -118,8 +115,6 @@ export class VisitaImportarPorComplementoComponent extends General {
       const desde = formGroup.get('desde')?.value;
       const hasta = formGroup.get('hasta')?.value;
 
-      // Si "hasta" es menor que "desde", retorna el error. Solo aplica si
-      // ambos estan definidos.
       if (desde == null || hasta == null) return null;
       return hasta < desde ? { rangoInvalido: true } : null;
     };
@@ -140,11 +135,8 @@ export class VisitaImportarPorComplementoComponent extends General {
     this._ejecutarImport(pendienteDespacho);
   }
 
-  // Ejecuta el import con el filtro "solo pendientes" indicado. Se separa del
-  // handler para poder REINTENTAR sin ese filtro ("importar de todas maneras")
-  // cuando el primer intento no trae nada porque las guias ya estan despachadas
-  // en el origen. El modal queda abierto entre intentos (no se resetea nada
-  // hasta el resumen final).
+  // Separado de importarComplemento() para poder reintentar sin el filtro
+  // "solo pendientes" (ver "Importar de todas maneras" más abajo).
   private _ejecutarImport(pendienteDespacho: boolean) {
     this.estaImportandoComplementos$.next(true);
 
@@ -177,9 +169,8 @@ export class VisitaImportarPorComplementoComponent extends General {
         codigo_despacho
       })
       .pipe(
-        // finalize SOLO apaga el loading. NO cerramos ni reseteamos aca: si el
-        // import falla, el modal debe quedar ABIERTO con los datos para
-        // reintentar sin re-llenar todo.
+        // finalize solo apaga el loading: si falla, el modal queda abierto
+        // para reintentar sin perder los datos ingresados.
         finalize(() => this.estaImportandoComplementos$.next(false))
       )
       .subscribe({
@@ -196,12 +187,9 @@ export class VisitaImportarPorComplementoComponent extends General {
           const cantidad = respuesta.cantidad ?? 0;
           const duplicadas = respuesta.duplicadas ?? 0;
 
-          // "Importar de todas maneras": si con el filtro de SOLO PENDIENTES no
-          // entro ninguna guia Y no fue porque ya estaban en Ruteo (duplicadas),
-          // lo mas probable es que el origen ya las tenga DESPACHADAS y el filtro
-          // las excluya. En vez de dejar un "0" seco (y obligar al usuario a
-          // saber que hay que apagar un toggle), se avisa y se ofrece traerlas
-          // igual: reintento SIN el filtro. Solo aplica si el filtro estaba ON.
+          // 0 resultados sin duplicadas y con el filtro ON probablemente significa
+          // que las guias ya estan despachadas en el origen; se ofrece reintentar
+          // sin el filtro ("Importar de todas maneras").
           if (cantidad === 0 && duplicadas === 0 && pendienteDespacho) {
             const r = await this.alerta.confirmar({
               titulo: 'No se encontraron guias pendientes',
@@ -213,33 +201,27 @@ export class VisitaImportarPorComplementoComponent extends General {
               colorConfirmar: 'blue',
             });
             if (r.isConfirmed) {
-              // Reintenta SIN el filtro; el modal sigue abierto. No vuelve a
-              // preguntar (pendienteDespacho es false en la 2da vuelta).
+              // Reintenta sin el filtro; no vuelve a preguntar porque
+              // pendienteDespacho ya es false en esta segunda llamada.
               this._ejecutarImport(false);
               return;
             }
-            // Si cancela, sigue el flujo normal: ve el resumen (0) y se cierra.
           }
 
-          // Modal de resumen con el desglose (importadas / ya estaban /
-          // sin geocodificar / fuera de zona / inválidas), diseño de Ruteo.
           this.alerta.resultadoImportacion(respuesta);
-          // Solo en EXITO (o tras decidir) cerramos el modal y limpiamos.
           this.modalDismiss();
           this.reiniciarFormulario();
           this.changeDetectorRef.detectChanges();
         },
         error: () => {
-          // El interceptor global ya mostro el toast de error. Dejamos el modal
-          // ABIERTO con los datos para que el usuario corrija y reintente.
+          // El interceptor global ya mostro el toast de error.
           this.changeDetectorRef.detectChanges();
         },
       });
   }
 
   reiniciarFormulario() {
-    // Preserva el complemento elegido para que el usuario pueda importar
-    // otra tanda con distintos filtros sin re-seleccionarlo.
+    // Preserva el complemento elegido para no obligar a re-seleccionarlo.
     const complementoActual = this.formularioComplementos.controls.complemento.value;
     this.formularioComplementos.reset({
       numeroRegistros: 100,

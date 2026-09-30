@@ -33,13 +33,7 @@ export class MenuComponent {
   private _authService = inject(AuthService);
   public url_reddoc_cuenta = environment.url_reddoc_cuenta;
 
-  /**
-   * Devuelve el mejor identificador disponible para mostrar como nombre
-   * del usuario. Algunos endpoints/legacy users no devuelven `nombre`
-   * (cuenta nueva sin perfil completado, registro movil, etc.); ahi
-   * caemos a nombre_corto, despues a la parte local del correo y por
-   * ultimo al username para no dejar el dropdown vacio.
-   */
+  /** Fallback nombre -> nombreCorto -> correo -> username: hay cuentas legacy sin `nombre`. */
   get nombreVisible(): string {
     const nombreCompleto = [this.nombre, this.apellido]
       .filter((s) => !!s && s.trim().length > 0)
@@ -58,7 +52,6 @@ export class MenuComponent {
     if (this.rolContenedor === 'propietario') {
       return { texto: 'Admin', clase: 'badge-success' };
     }
-    // Perfil web define el rol operativo del usuario dentro del contenedor.
     switch ((this.perfilWeb || '').toLowerCase()) {
       case 'supervisor':
         return { texto: 'Supervisor', clase: 'badge-warning' };

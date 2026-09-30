@@ -1,10 +1,8 @@
 <div class="card bg-white dark:bg-gray-100 dark:bg-coal-300 rounded-lg shadow-md p-6 w-full">
-  <!-- Card principal - Facturación -->
   <div class="mb-6">
     <h5 class="card-title">Facturación</h5>
   </div>
 
-  <!-- Sección Pendiente por pagar -->
   <div
     class="bg-white dark:bg-gray-100 dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-200 dark:border-gray-600"
   >
@@ -16,7 +14,6 @@
     </div>
     <p class="mb-4 text-gray-600 text-sm">Seleccione las facturas para pago.</p>
 
-    <!-- Tabla de facturas -->
     <div class="overflow-x-auto">
       <table class="table align-middle">
         <thead class="bg-gray-50 dark:bg-gray-800/40 dark:bg-coal-400">
@@ -72,14 +69,12 @@
               : 'border-gray-200 dark:border-gray-200 hover:border-blue-300'
           }}"
         >
-          <!-- Área principal de selección -->
           <div
             class="w-full h-full"
             (click)="seleccionarInformacion(informacion.id)"
           >
             <div class="flex justify-between w-full">
               <div class="space-y-2 w-full">
-                <!-- Información -->
                 <div class="flex items-center">
                   <span class="text-gray-600 text-xs font-medium mr-2"
                     >ID:</span
@@ -100,7 +95,6 @@
                   {{ informacion.nombre_corto }}
                 </h6>
 
-                <!-- Iconos y detalles -->
                 <div class="flex items-center text-sm text-gray-600">
                   <i
                     class="ki-outline ki-phone text-gray-500 mr-2 text-base"
@@ -124,7 +118,6 @@
                 </div>
               </div>
 
-              <!-- Checkmark de selección -->
               <div class="absolute top-3 right-3">
                 <div
                   [class]="
@@ -140,11 +133,9 @@
             </div>
           </div>
 
-          <!-- Contenedor de acciones (Eliminar + Editar) -->
           <div
             class="absolute bottom-3 right-3 z-10 flex items-center space-x-2"
           >
-            <!-- Icono Eliminar -->
             <button
               (click)="eliminarInformacion(informacion.id)"
               class="text-red-500 hover:text-red-700 bg-white/90 backdrop-blur-sm p-1 rounded-md border border-gray-200 dark:border-gray-200 hover:bg-red-50 transition-all"
@@ -152,7 +143,6 @@
               <i class="ki-outline ki-trash text-base"></i>
             </button>
 
-            <!-- Botón Editar (conservando el div y su data-modal-toggle) -->
             <div data-modal-toggle="#informacion-facturacion">
               <button
                 (click)="editarInformacion(informacion.id)"
@@ -167,7 +157,6 @@
       </div>
       }
 
-      <!-- Tarjeta para agregar nueva información -->
       <div class="col h-full" *appPermisoPor="'facturacion.editar'">
         <div
           (click)="abrirModalParaNuevo()"
@@ -181,7 +170,6 @@
     </div>
   </div>
 
-  <!-- Sección Valor estimado -->
   <div class="bg-white dark:bg-gray-100 dark:bg-coal-300 rounded-lg shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-200 dark:border-gray-600">
     <div class="flex items-center">
       <h5 class="d-inline-block">Valor estimado</h5>
@@ -198,7 +186,6 @@
     </p>
     <div class="mb-0">
       <div class="flex flex-wrap">
-        <!-- Columna 1 -->
         <div class="w-full sm:w-full md:w-1/4 p-2">
           <div class="font-bold">
             {{
@@ -209,7 +196,6 @@
           <p>Fecha de pago</p>
         </div>
 
-        <!-- Columna 2 -->
         <div class="w-full sm:w-full md:w-1/4 p-2">
           <div class="font-bold">{{ 0 | convertir_valor_moneda }}</div>
           <p>
@@ -218,7 +204,6 @@
           </p>
         </div>
 
-        <!-- Columna 3 -->
         <div class="w-full sm:w-full md:w-1/4 p-2">
           <div class="font-bold">
             {{ consumoTotal | convertir_valor_moneda }}
@@ -229,7 +214,6 @@
           </p>
         </div>
 
-        <!-- Columna 4 -->
         <div class="w-full sm:w-full md:w-1/4 p-2">
           <div class="font-bold">
             {{ consumoTotal | convertir_valor_moneda }}

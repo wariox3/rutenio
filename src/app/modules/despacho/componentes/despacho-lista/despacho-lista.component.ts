@@ -32,7 +32,6 @@ export default class DespachoListaComponent extends General implements OnInit {
 
   public DESPACHO_LISTA_FILTERS = DESPACHO_LISTA_FILTERS
 
-  /** Opciones del selector de Estado de la barra de filtros simple. */
   public readonly estadosDespacho: EstadoOpcion[] = [
     { label: 'Todos', params: {} },
     { label: 'Aprobados', params: { estado_aprobado: 'true' } },

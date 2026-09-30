@@ -57,12 +57,10 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
   public mostrarModalConfiguracion = signal<boolean>(true);
 
   ngOnInit(): void {
-    // Refresca permisos al cargar el layout (mount inicial / refresh de pagina).
     this._refrescarPermisos();
 
-    // Y tambien en cada navegacion router (porque admin-layout no se remonta
-    // entre rutas hijas que comparten parent — el ngOnInit no vuelve a correr).
-    // Throttle de 5s para no spamear el endpoint si el usuario navega rapido.
+    // admin-layout no se remonta entre rutas hijas del mismo parent, por lo
+    // que ngOnInit no vuelve a correr en cada navegacion; throttle de 5s.
     this.router.events
       .pipe(
         filter((e) => e instanceof NavigationEnd),
@@ -71,10 +69,8 @@ export default class AdminLayoutComponent implements AfterViewInit, OnInit, OnDe
       )
       .subscribe(() => this._refrescarPermisos());
 
-    // Modal "Configurar direccion": reactivo al state de configuracion.
-    // Solo se muestra a quienes pueden guardarla (propietario/admin o quien
-    // tenga permiso configuracion.editar). A operativo/consulta no se le
-    // empuja a un dead-end donde el boton Guardar esta oculto.
+    // Solo se muestra a quien tiene permiso configuracion.editar, para no
+    // empujar a operativo/consulta a un dead-end sin boton Guardar.
     combineLatest([
       this.store.select(obtenerConfiguracionDireccionOrigenVacia),
       this.store.select(obtenerPermisoPor('configuracion', 'editar')),

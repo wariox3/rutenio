@@ -17,6 +17,7 @@ import {
 } from '../../../../interfaces/despacho/despacho.interface';
 import { VisitaLiberarComponent } from '../../../visita/componentes/visita-liberar/visita-liberar.component';
 import { DespachoApiService } from '../../servicios/despacho-api.service';
+import { DespachoTabEventoComponent } from '../despacho-tab-evento/despacho-tab-evento.component';
 import { DespachoTabUbicacionComponent } from '../despacho-tab-ubicacion/despacho-tab-ubicacion.component';
 import { DespachoTabVisitaComponent } from '../despacho-tab-visita/despacho-tab-visita.component';
 
@@ -29,6 +30,7 @@ import { DespachoTabVisitaComponent } from '../despacho-tab-visita/despacho-tab-
     DespachoTabVisitaComponent,
     FormatFechaPipe,
     DespachoTabUbicacionComponent,
+    DespachoTabEventoComponent,
     ModalDefaultComponent,
     VisitaLiberarComponent,
   ],

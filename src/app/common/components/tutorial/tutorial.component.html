@@ -1,4 +1,3 @@
-<!-- Botón flotante para abrir tutorial -->
 @if (!tutorialService.visible()) {
   <button
     (click)="tutorialService.abrir()"
@@ -16,10 +15,8 @@
   </button>
 }
 
-<!-- Panel del tutorial -->
 @if (tutorialService.visible()) {
   <div class="tutorial-panel fixed bottom-6 right-6 z-40 w-[380px] max-h-[calc(100vh-120px)] bg-white dark:bg-coal-300 rounded-2xl shadow-2xl border border-gray-100 dark:border-gray-200 flex flex-col overflow-hidden animate-slide-up">
-    <!-- Header -->
     <div class="p-4 pb-3 border-b border-gray-100 dark:border-gray-200 shrink-0">
       <div class="flex items-center justify-between mb-2">
         <div class="flex items-center gap-2">
@@ -50,7 +47,6 @@
           </button>
         </div>
       </div>
-      <!-- Barra de progreso -->
       <div class="w-full bg-gray-100 dark:bg-coal-400 rounded-full h-1.5 overflow-hidden">
         <div
           class="h-1.5 rounded-full bg-[#0098d7] transition-all duration-500 ease-out"
@@ -60,7 +56,6 @@
       <p class="text-[10px] text-gray-400 dark:text-gray-500 mt-1">{{ tutorialService.progreso() }}% completado</p>
     </div>
 
-    <!-- Lista de pasos -->
     <div class="flex-1 overflow-y-auto p-3 space-y-1.5">
       @for (paso of tutorialService.pasos(); track paso.id; let i = $index) {
         <div
@@ -72,7 +67,6 @@
           [class.opacity-60]="paso.completado"
           (click)="navegarAPaso(paso, i)"
         >
-          <!-- Indicador de estado -->
           <div class="relative shrink-0 mt-0.5">
             @if (paso.completado) {
               <div class="flex items-center justify-center w-8 h-8 rounded-lg bg-[#17c65315]">
@@ -86,13 +80,11 @@
                 <i class="{{ paso.icono }} text-sm" [style.color]="paso.colorIcono"></i>
               </div>
             }
-            <!-- Línea conectora -->
             @if (i < tutorialService.pasos().length - 1) {
               <div class="absolute left-1/2 top-9 -translate-x-1/2 w-px h-[calc(100%+2px)] bg-gray-100 dark:bg-gray-200"></div>
             }
           </div>
 
-          <!-- Contenido -->
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
               <span
@@ -125,7 +117,6 @@
       }
     </div>
 
-    <!-- Footer -->
     @if (tutorialService.tutorialCompletado()) {
       <div class="p-4 pt-3 border-t border-gray-100 dark:border-gray-200 shrink-0">
         <div class="flex items-center gap-2 bg-[#17c65310] rounded-xl p-3">

@@ -414,7 +414,6 @@ export class TutorialService {
         this.pasos.set(actualizados);
       }
     } catch {
-      // Si falla la lectura, se usan los valores por defecto
     }
   }
 
@@ -432,7 +431,6 @@ export class TutorialService {
         return JSON.parse(guardado);
       }
     } catch {
-      // valor por defecto
     }
     return true;
   }

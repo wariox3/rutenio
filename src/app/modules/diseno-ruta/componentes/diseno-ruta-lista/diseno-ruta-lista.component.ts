@@ -176,7 +176,7 @@ export default class DisenoRutaListaComponent
             lat: origen.rut_latitud,
             lng: origen.rut_longitud,
           };
-          this.changeDetectorRef.detectChanges(); // Asegúrate de detectar cambios
+          this.changeDetectorRef.detectChanges();
         }
       },
       error: (error) => {
@@ -333,7 +333,6 @@ export default class DisenoRutaListaComponent
               duracion: response.respuesta.duracion,
             };
 
-            // Generar tramos coloreados por cita
             const puntosPorTramo = response.respuesta.puntos_por_tramo;
             const tieneCitas = response.respuesta.tiene_citas || [];
             if (puntosPorTramo && puntosPorTramo.length > 0) {
@@ -352,7 +351,6 @@ export default class DisenoRutaListaComponent
               this.tramosRuta = [];
             }
 
-            // Ajustar vista del mapa
             const bounds = new google.maps.LatLngBounds();
             path.forEach((p) => bounds.extend(p));
             this.map.fitBounds(bounds);
@@ -379,7 +377,6 @@ export default class DisenoRutaListaComponent
     const route = result.routes[0];
     const legs = route.legs;
 
-    // Agregar marcador para el punto de inicio
     this.customMarkers.push({
       position: {
         lat: legs[0].start_location.lat,
@@ -457,7 +454,6 @@ export default class DisenoRutaListaComponent
 
   aprobarDespacho(id: number) {
     this._despachoApiService.aprobar(id).subscribe((respuesta: any) => {
-      // Mensaje principal segun resultado de notificaciones WhatsApp.
       const notif = respuesta?.notificaciones;
       if (notif?.enviado) {
         const n = notif.destinatarios;
@@ -467,7 +463,6 @@ export default class DisenoRutaListaComponent
             : 'Despacho aprobado. (Sin destinatarios con teléfono válido).',
         );
       } else if (notif && notif.razon !== 'ok') {
-        // No se enviaron — mostrar la razón al usuario.
         this.alerta.mensajaExitoso(
           `Despacho aprobado. WhatsApp no enviado: ${notif.mensaje || notif.razon}`,
         );

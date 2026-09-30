@@ -13,7 +13,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'; // Added FormsModule for ngModel
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { General } from '../../clases/general';
 import { debounceTime, distinctUntilChanged, finalize, Subject } from 'rxjs';
 import { ConfiguracionApiService } from '../../../modules/configuracion/servicios/configuracion-api.service';
@@ -24,7 +24,7 @@ import { AlertaService } from '../../services/alerta.service';
 @Component({
   selector: 'app-buscador-direcciones',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, FormsModule, LabelComponent], // Added FormsModule
+  imports: [CommonModule, ReactiveFormsModule, NgSelectModule, FormsModule, LabelComponent],
   templateUrl: './buscador-direcciones.component.html',
   styleUrl: './buscador-direcciones.component.css',
 })
@@ -42,7 +42,7 @@ export default class BuscadorDireccionesComponent
   searchInput$ = new Subject<string>();
   loading = signal(false);
   predictions = signal<any[]>([]);
-  public selectedAddressModel: { description: string } | undefined; // Property for ngModel
+  public selectedAddressModel: { description: string } | undefined;
 
   ngOnInit(): void {
     this.setupAddressSearch();
@@ -59,13 +59,11 @@ export default class BuscadorDireccionesComponent
       const currentValue = changes['direccionSeleccionada'].currentValue as string | undefined;
       if (currentValue && currentValue.trim() !== '') {
         this.selectedAddressModel = { description: currentValue };
-        // Trigger search for the default value to populate predictions and potentially fetch details if needed upon initial load.
-        // This assumes that if a default value is provided, we want to treat it as if the user typed it.
         this.searchInput$.next(currentValue);
       } else {
         this.selectedAddressModel = undefined;
-        this.predictions.set([]); // Clear any existing predictions
-        this.searchInput$.next(''); // Ensure search state is also cleared
+        this.predictions.set([]);
+        this.searchInput$.next('');
       }
     }
   }
@@ -110,21 +108,14 @@ export default class BuscadorDireccionesComponent
     });
   }
 
-  selectAddress(selectedItem: any): void { // selectedItem is the item object from ng-select when using ngModel
-    // selectedAddressModel is already updated by the ngModel binding.
+  selectAddress(selectedItem: any): void {
     if (selectedItem && selectedItem.place_id) {
-      // The input field of ng-select is already updated with selectedItem.description due to bindLabel and ngModel.
-      // this.searchInput$.next(selectedItem.description); // This might be redundant or cause a double search.
-      this.predictions.set([]); // Clear dropdown after selection
+      this.predictions.set([]);
       this.getPlaceDetails(selectedItem.place_id);
     } else if (!selectedItem) {
-      // This case handles when the selection is cleared (e.g., user presses backspace or clear button in ng-select)
-      this.addressSelected.emit(null); // Notify parent component that selection is cleared
+      this.addressSelected.emit(null);
       this.predictions.set([]);
-      // this.searchInput$.next(''); // ng-select input field should be clear, model is undefined.
     }
-    // If selectedItem is the initial default object (e.g., { description: 'Default Address' }) without a place_id,
-    // getPlaceDetails won't be called, which is correct. Details are fetched upon explicit selection from search results.
   }
 
   getPlaceDetails(placeId: string): void {
@@ -148,16 +139,13 @@ export default class BuscadorDireccionesComponent
         }
       },
       error: (error) => {
-        // El backend traduce el status de Google (ZERO_RESULTS,
-        // OVER_QUERY_LIMIT, REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR)
-        // a un mensaje claro y lo devuelve en error.mensaje. Si esta ausente,
-        // mostramos uno generico.
+        // El backend traduce el status de Google (ZERO_RESULTS, OVER_QUERY_LIMIT,
+        // REQUEST_DENIED, INVALID_REQUEST, UNKNOWN_ERROR) a error.mensaje.
         console.error('Error al obtener detalles:', error);
         const mensaje =
           error?.error?.mensaje ||
           'No se pudo obtener la información de la dirección. Intenta de nuevo.';
         this._alertaService.mensajeError('Dirección no disponible', mensaje);
-        // Limpiamos la seleccion para que el usuario sepa que debe elegir otra.
         this.selectedAddressModel = undefined;
         this.addressSelected.emit(null);
       },

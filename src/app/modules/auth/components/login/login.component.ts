@@ -109,8 +109,7 @@ export default class LoginComponent extends General implements OnInit {
 
     this.isLoading$.next(true);
     const loginData = { ...this.formularioLogin.value };
-    
-    // Solo incluir cf_turnstile_response si Turnstile está habilitado
+
     if (!this.enableTurnstile) {
       delete loginData.cf_turnstile_response;
     }

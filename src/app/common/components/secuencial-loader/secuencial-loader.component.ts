@@ -26,47 +26,45 @@ import {
   styleUrl: './secuencial-loader.component.css',
   animations: [
     trigger('fadeInOut', [
-      state('void', style({ opacity: 0 })), // Estado inicial (invisible)
+      state('void', style({ opacity: 0 })),
       transition('void => *', [
-        style({ opacity: 0 }), // Inicia invisible
-        animate('500ms ease-in', style({ opacity: 1 })), // Fade in
+        style({ opacity: 0 }),
+        animate('500ms ease-in', style({ opacity: 1 })),
       ]),
       transition('* => void', [
-        animate('500ms ease-out', style({ opacity: 0 })), // Fade out
+        animate('500ms ease-out', style({ opacity: 0 })),
       ]),
     ]),
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecuencialLoaderComponent implements OnInit, OnDestroy {
-  @Input() texts: string[] = []; // Textos a mostrar
-  @Input() interval: number = 3000; // Intervalo en milisegundos
+  @Input() texts: string[] = [];
+  @Input() interval: number = 3000;
 
-  public currentText = signal<string>(''); // Texto actual
-  private currentIndex: number = 0; // Índice del texto actual
-  private intervalId: any; // ID del intervalo
-  private isLastText: boolean = false; // Bandera para saber si es el último texto
+  public currentText = signal<string>('');
+  private currentIndex: number = 0;
+  private intervalId: any;
+  private isLastText: boolean = false;
 
 
   ngOnInit(): void {
     if (this.texts.length > 0) {
-      this.currentText.set(this.texts[this.currentIndex]); // Mostrar el primer texto
-      this.startSequence(); // Iniciar la secuencia
+      this.currentText.set(this.texts[this.currentIndex]);
+      this.startSequence();
     }
   }
 
   ngOnDestroy(): void {
-    this.clearSequence(); // Limpiar el intervalo al destruir el componente
+    this.clearSequence();
   }
 
   startSequence(): void {
     this.intervalId = setInterval(() => {
       if (this.currentIndex < this.texts.length - 1) {
-        // Si no es el último texto, avanzar
         this.currentIndex++;
         this.currentText.set(this.texts[this.currentIndex]);
       } else {
-        // Si es el último texto, detener el intervalo
         this.isLastText = true;
         this.clearSequence();
       }
@@ -75,7 +73,7 @@ export class SecuencialLoaderComponent implements OnInit, OnDestroy {
 
   clearSequence(): void {
     if (this.intervalId) {
-      clearInterval(this.intervalId); // Limpiar el intervalo
+      clearInterval(this.intervalId);
     }
   }
 }

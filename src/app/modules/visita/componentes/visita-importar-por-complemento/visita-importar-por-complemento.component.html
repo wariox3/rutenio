@@ -1,5 +1,4 @@
 <form [formGroup]="formularioComplementos">
-  <!-- Seccion 1: Origen + identificador del despacho -->
   <section class="mb-5">
     <div class="flex items-baseline gap-2 mb-2">
       <h4 class="text-sm font-semibold text-gray-800">1. ¿Qué importar?</h4>
@@ -58,7 +57,6 @@
     </div>
   </section>
 
-  <!-- Seccion 2: Filtros opcionales (collapsable) -->
   <section class="mb-5 border border-gray-200 dark:border-gray-300 rounded-lg overflow-hidden">
     <button
       type="button"
@@ -87,7 +85,6 @@
 
     @if (filtrosAbiertos()) {
       <div class="p-4 space-y-4">
-        <!-- Por rango de numero de guia -->
         <div>
           <app-label>Rango de número de guía</app-label>
           <div class="grid grid-cols-2 gap-3">
@@ -115,7 +112,6 @@
           </div>
         </div>
 
-        <!-- Por rango de fechas -->
         <div>
           <app-label>Rango de fechas</app-label>
           <div class="grid grid-cols-2 gap-3">
@@ -133,7 +129,6 @@
           }
         </div>
 
-        <!-- Codigos remitente / destino -->
         <div>
           <app-label>Códigos de contacto</app-label>
           <div class="grid grid-cols-2 gap-3">
@@ -155,7 +150,6 @@
           </p>
         </div>
 
-        <!-- Zona de Semántica (filtra en el ORIGEN, no por franjas de ruteo) -->
         <div>
           <app-label>Zona (sistema origen)</app-label>
           <app-input
@@ -172,14 +166,12 @@
     }
   </section>
 
-  <!-- Seccion 3: Opciones -->
   <section class="mb-5">
     <div class="flex items-baseline gap-2 mb-3">
       <h4 class="text-sm font-semibold text-gray-800">3. Opciones</h4>
     </div>
 
     <div class="space-y-3">
-      <!-- Numero de registros -->
       <div>
         <app-label [required]="true">Cantidad a importar</app-label>
         <app-input
@@ -203,7 +195,6 @@
         </p>
       </div>
 
-      <!-- Switches con descripcion -->
       <div class="space-y-2.5 pt-1">
         <label class="flex items-start gap-3 cursor-pointer">
           <app-switch
@@ -234,7 +225,6 @@
     </div>
   </section>
 
-  <!-- Footer -->
   <div class="flex justify-end gap-3 w-full pt-3 border-t border-gray-100" modal-footer>
     <button
       type="button"

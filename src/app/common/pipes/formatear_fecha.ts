@@ -6,12 +6,10 @@ export class FormatFechaPipe implements PipeTransform {
     if (!fechaISO) return '';
     
     const fecha = new Date(fechaISO);
-    
-    // Ajustar a la zona horaria de Colombia (UTC-5)
-    const offsetColombia = -5 * 60 * 60 * 1000; // -5 horas en milisegundos
+
+    const offsetColombia = -5 * 60 * 60 * 1000;
     const fechaColombia = new Date(fecha.getTime() + offsetColombia);
-    
-    // Obtener componentes de fecha/hora
+
     const año = fechaColombia.getUTCFullYear();
     const mes = String(fechaColombia.getUTCMonth() + 1).padStart(2, '0');
     const dia = String(fechaColombia.getUTCDate()).padStart(2, '0');
@@ -20,12 +18,10 @@ export class FormatFechaPipe implements PipeTransform {
     const segundos = String(fechaColombia.getUTCSeconds()).padStart(2, '0');
     const ampm = horas >= 12 ? 'PM' : 'AM';
     
-    // Convertir a formato 12 horas
     horas = horas % 12;
-    horas = horas ? horas : 12; // Las 0 horas se convierten en 12 AM
+    horas = horas ? horas : 12; // 0 horas -> 12 AM
     const horas12 = String(horas).padStart(2, '0');
 
-    // Formato 24 horas para combinaciones con fecha
     const horas24 = String(fechaColombia.getUTCHours()).padStart(2, '0');
 
     switch (formato) {

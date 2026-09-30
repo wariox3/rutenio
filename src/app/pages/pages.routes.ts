@@ -64,8 +64,7 @@ export default [
     ],
   },
   {
-    // Facturacion vive bajo el panel administrativo: requiere admin_token
-    // (is_staff/is_superuser de la plataforma), no solo authGuard.
+    // Requiere admin_token (is_staff/is_superuser), no solo authGuard.
     path: 'facturacion',
     canActivate: [adminGuard],
     loadComponent: () =>
@@ -169,6 +168,19 @@ export default [
     ]
   },
   {
+    path: 'conductores-en-ruta',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () =>
+      import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('../modules/conductores-en-ruta/conductores-en-ruta.component'),
+      },
+    ]
+  },
+  {
     path: 'complemento',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () =>
@@ -214,9 +226,8 @@ export default [
     ],
   },
   {
-    // Gestion de miembros del contenedor activo: invitar, perfiles,
-    // permisos, ceder admin. El gating por 'usuario.editar' lo hace el
-    // sidebar (item oculto) y el backend (puede_editar_modulo).
+    // El gating por 'usuario.editar' lo hacen el sidebar y el backend
+    // (puede_editar_modulo), no este guard.
     path: 'usuarios',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () => import('./admin-layout/admin-layout.component'),

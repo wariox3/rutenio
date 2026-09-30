@@ -9,7 +9,6 @@
        role="dialog"
        aria-labelledby="enviar-plantilla-titulo">
 
-    <!-- Header con jerarquía -->
     <div class="flex items-start gap-3 px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-200">
       <div class="shrink-0 w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -34,7 +33,6 @@
       </button>
     </div>
 
-    <!-- Body -->
     <div class="px-5 py-4 overflow-y-auto">
       <app-plantilla-selector
         [resetSignal]="resetSelectorSignal"
@@ -43,7 +41,6 @@
       </app-plantilla-selector>
     </div>
 
-    <!-- Footer -->
     <div class="flex items-center justify-end gap-2 px-5 py-3 border-t border-gray-100 dark:border-gray-200 bg-gray-50/60 dark:bg-gray-950/40">
       <button type="button" (click)="cerrarSinEnviar()" [disabled]="enviando"
               class="px-4 py-2 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-100 dark:hover:bg-coal-200 disabled:opacity-50 transition">

@@ -1,4 +1,3 @@
-// input-textarea.component.ts
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
