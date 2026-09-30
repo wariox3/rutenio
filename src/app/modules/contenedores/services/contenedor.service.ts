@@ -45,7 +45,6 @@ export class ContenedorService {
       )
       .pipe(
         map((res) => {
-          // Store the total count for pagination
           this.totalItems = res.count;
           return {
             ...res,
@@ -214,7 +213,6 @@ export class ContenedorService {
     valorSaldo: number,
     fechaLimitePago: string
   ) {
-    // Si no hay fecha límite, no hay restricción
     if (!fechaLimitePago) {
       return false;
     }
@@ -222,7 +220,6 @@ export class ContenedorService {
     const fechaHoy = new Date();
     const fechaLimite = new Date(fechaLimitePago);
 
-    // Normalizar las fechas para comparar solo año, mes y día
     const hoy = new Date(
       fechaHoy.getFullYear(),
       fechaHoy.getMonth(),
@@ -234,16 +231,14 @@ export class ContenedorService {
       fechaLimite.getDate()
     );
 
-    // Si el saldo es mayor a 0 y la fecha límite ya pasó
     if (valorSaldo > 0 && hoy > limite) {
-      return true; // Contenedor restringido
+      return true;
     }
 
-    return false; // Contenedor no restringido
+    return false;
   }
 
   private _agregarPropiedades(contenedores: ContenedorLista[]) {
-    // Obtener el usuario de la cookie para verificar saldo y fecha límite
     const usuarioCookie = this._cookieService?.get('usuario');
     let valorSaldo = 0;
     let fechaLimitePago = '';

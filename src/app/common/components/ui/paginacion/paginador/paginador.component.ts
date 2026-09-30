@@ -25,23 +25,17 @@ export class PaginadorComponent implements OnChanges, OnInit, OnDestroy {
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      // Cuando la URL cambia (detectado por NavigationEnd),
-      // reiniciamos currentPage a 1 y recalculamos.
       this.currentPage = 1;
       this.calculateTotalPages();
-      // No se emite pageChange aquí, según la preferencia del usuario.
+      // No se emite pageChange aquí: el reset por navegación es silencioso a propósito.
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['totalItems']) {
-      // Cuando totalItems cambia, reiniciamos currentPage a 1.
-      // Esto puede ser por una navegación (redundante con ngOnInit si la URL cambió)
-      // o por un cambio de datos sin navegación (ej. filtro local).
       this.currentPage = 1;
       this.calculateTotalPages();
     } else if (changes['itemsPerPage']) {
-      // Si solo itemsPerPage cambia, recalculamos las páginas.
       this.calculateTotalPages();
     }
   }
@@ -51,7 +45,6 @@ export class PaginadorComponent implements OnChanges, OnInit, OnDestroy {
     if (this.currentPage > this.totalPages) {
       this.currentPage = this.totalPages > 0 ? this.totalPages : 1;
     }
-    // Asegurar que currentPage sea al menos 1 si totalPages es 0
     if (this.totalPages === 0) {
         this.currentPage = 1;
     }
@@ -59,12 +52,10 @@ export class PaginadorComponent implements OnChanges, OnInit, OnDestroy {
 
   onPageChange(newPage: number): void {
     const parsedPage = Number(newPage);
-    // Permitir 0 páginas si no hay items, pero el input debe ser >= 1 si hay páginas.
     const maxAllowedPage = this.totalPages > 0 ? this.totalPages : 1;
 
     if (isNaN(parsedPage) || parsedPage < 1 || parsedPage > maxAllowedPage) {
       setTimeout(() => {
-        // Revertir al valor actual o a 1 si el actual es inválido (ej. después de un reset)
         const validCurrentPage = (this.currentPage >= 1 && this.currentPage <= maxAllowedPage) ? this.currentPage : 1;
         this.currentPage = validCurrentPage;
       });

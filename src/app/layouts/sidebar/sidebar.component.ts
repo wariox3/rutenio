@@ -37,7 +37,6 @@ export class SidebarComponent extends General implements OnInit {
   }
 
   public sidebarMenu: SidebarMenu[] = [
-    // ── Inicio ──────────────────────────────────────────────
     {
       nombre: 'Inicio',
       link: '/dashboard',
@@ -45,7 +44,6 @@ export class SidebarComponent extends General implements OnInit {
       activo: false,
     },
 
-    // ── Operación (el flujo diario, en orden) ───────────────
     { nombre: 'Operación', esEncabezado: true },
     {
       nombre: 'Rutear',
@@ -76,7 +74,6 @@ export class SidebarComponent extends General implements OnInit {
       modulo: 'mensajeria',
     },
 
-    // ── Datos (registros e informes) ────────────────────────
     { nombre: 'Datos', esEncabezado: true },
     {
       nombre: 'Movimiento',
@@ -122,7 +119,6 @@ export class SidebarComponent extends General implements OnInit {
       ],
     },
 
-    // ── Configuración (del contenedor) ──────────────────────
     { nombre: 'Configuración', esEncabezado: true },
     {
       nombre: 'Administración',
@@ -136,11 +132,6 @@ export class SidebarComponent extends General implements OnInit {
           link: '/administracion/vehiculo/lista',
           modulo: 'vehiculo',
         },
-        // {
-        //   nombre: 'Contactos',
-        //   link: '/administracion/contacto/lista',
-        //   modulo: 'contacto',
-        // },
         {
           nombre: 'Franjas',
           link: '/administracion/franja/lista',
@@ -154,7 +145,6 @@ export class SidebarComponent extends General implements OnInit {
       ],
     },
 
-    // ── Herramientas · Staff (solo admin) ───────────────────
     { nombre: 'Herramientas', esEncabezado: true, soloAdmin: true },
     {
       nombre: 'Complementos',
@@ -243,7 +233,6 @@ export class SidebarComponent extends General implements OnInit {
     if (menu.soloSuperAdmin) return this.esSuperAdmin;
     if (menu.soloAdmin && !this.esAdmin && !this.esSuperAdmin) return false;
     if (menu.children?.length) {
-      // Acordeón: visible si al menos uno de sus hijos lo es.
       return menu.children.some((c) => this.puedeVerSubmenu(c));
     }
     return this.tienePermisoVer(menu.modulo);
@@ -326,10 +315,8 @@ export class SidebarComponent extends General implements OnInit {
   }
 
   private hideDrawerOnMobile(): void {
-    // Solo ocultar en dispositivos móviles donde el drawer está activo
     const drawerElement = this.elementRef.nativeElement;
     if (drawerElement && drawerElement.classList.contains('open')) {
-      // Importar dinámicamente la clase KTDrawer
       import('../../../metronic/core/components/drawer/drawer').then(({ KTDrawer }) => {
         const drawer = KTDrawer.getInstance(drawerElement);
         if (drawer && drawer.isOpen()) {

@@ -24,7 +24,6 @@
     <div class="card-body p-6">
       <form [formGroup]="formularioConfiguracion" class="space-y-8">
 
-        <!-- ================== Identidad / Logo ================== -->
         <section>
           <h2 class="text-base font-semibold text-gray-900 mb-3">Identidad</h2>
           <div class="relative w-[100px] lg:w-[160px] h-[100px] lg:h-[160px]">
@@ -36,7 +35,6 @@
           </div>
         </section>
 
-        <!-- ================== Ruteo ================== -->
         <section>
           <h2 class="text-base font-semibold text-gray-900 mb-3">Ruteo</h2>
           <div class="space-y-4">
@@ -101,7 +99,6 @@
           </div>
         </section>
 
-        <!-- ================== Sincronización ================== -->
         <section>
           <h2 class="text-base font-semibold text-gray-900 mb-3">Sincronización con Complemento</h2>
           <div class="space-y-4">
@@ -137,7 +134,6 @@
           </div>
         </section>
 
-        <!-- ================== Notificaciones ================== -->
         <section>
           <h2 class="text-base font-semibold text-gray-900 mb-3">Notificaciones</h2>
           <div class="space-y-4">
@@ -184,7 +180,6 @@
           </div>
         </section>
 
-        <!-- ================== Alertas ================== -->
         <section id="tour-config-opciones">
           <h2 class="text-base font-semibold text-gray-900 mb-3">Alertas de Tráfico</h2>
           <div class="space-y-4">
@@ -242,7 +237,6 @@
   </div>
 </div>
 
-<!-- Barra de guardado sticky en el footer -->
 <div
   *appPermisoPor="'configuracion.editar'"
   class="fixed bottom-0 left-0 right-0 lg:left-[var(--tw-sidebar-width,260px)] bg-white border-t border-gray-200 px-4 py-3 z-30 shadow-lg"
@@ -272,7 +266,6 @@
   </div>
 </div>
 
-<!-- Modal de confirmación al cambiar switch crítico -->
 <div *ngIf="mostrarModalConfirmacion" class="fixed inset-0 z-50 flex items-center justify-center">
   <div class="fixed inset-0 bg-black/50" (click)="cerrarConfirmacion()"></div>
   <div class="relative bg-white dark:bg-gray-100 rounded-lg shadow-xl w-full max-w-md mx-4 z-10">

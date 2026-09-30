@@ -81,8 +81,6 @@ export default class VisitaImportarPorExcelComponent extends General {
           })
         )
         .subscribe((response) => {
-          // Modal de resumen con el desglose real (importadas / duplicadas),
-          // igual que los imports por complemento.
           this.alerta.resultadoImportacion(response ?? {});
         });
     } else {

@@ -1,9 +1,6 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
-/**
- * Opciones para la configuración de cookies
- */
 export interface CookieOptions {
   path?: string;
   domain?: string;
@@ -27,11 +24,6 @@ export class CookieService {
     this.documentIsAccessible = isPlatformBrowser(this.platformId);
   }
 
-  /**
-   * Obtiene el valor de una cookie por nombre
-   * @param name Nombre de la cookie
-   * @returns Valor de la cookie o null si no existe
-   */
   get(name: string): string | null {
     if (!this.documentIsAccessible) {
       return null;
@@ -50,12 +42,6 @@ export class CookieService {
     return null;
   }
 
-  /**
-   * Establece una cookie con el nombre y valor proporcionados
-   * @param name Nombre de la cookie
-   * @param value Valor de la cookie
-   * @param options Opciones adicionales para la cookie
-   */
   set(name: string, value: string, options: CookieOptions = {}): void {
     if (!this.documentIsAccessible) {
       return;
@@ -63,7 +49,6 @@ export class CookieService {
 
     let cookieString = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
-    // Procesar opciones
     if (options.path) {
       cookieString += `; path=${options.path}`;
     }
@@ -104,12 +89,6 @@ export class CookieService {
     this.document.cookie = cookieString;
   }
 
-  /**
-   * Elimina una cookie por nombre
-   * @param name Nombre de la cookie a eliminar
-   * @param path Ruta de la cookie (debe coincidir con la usada al crearla)
-   * @param domain Dominio de la cookie (debe coincidir con la usada al crearla)
-   */
   delete(name: string, path?: string, domain?: string): void {
     this.set(name, '', {
       path,
@@ -118,11 +97,6 @@ export class CookieService {
     });
   }
 
-  /**
-   * Verifica si existe una cookie con el nombre proporcionado
-   * @param name Nombre de la cookie
-   * @returns true si la cookie existe, false en caso contrario
-   */
   has(name: string): boolean {
     if (!this.documentIsAccessible) {
       return false;
@@ -131,10 +105,6 @@ export class CookieService {
     return this.get(name) !== null;
   }
 
-  /**
-   * Obtiene todas las cookies como un objeto clave-valor
-   * @returns Objeto con todas las cookies
-   */
   getAll(): Record<string, string> {
     if (!this.documentIsAccessible) {
       return {};
@@ -157,13 +127,8 @@ export class CookieService {
     return new Date(new Date().getTime() + hora * 60 * 60 * 1000);
   }
 
-  /**
-   * Verifica si el navegador soporta la bandera HttpOnly
-   * @returns true si soporta HttpOnly, false en caso contrario
-   */
   private isHttpOnlySupported(): boolean {
-    // HttpOnly no puede ser establecido desde JavaScript en navegadores modernos
-    // Esta función es más para documentación que para uso real
+    // HttpOnly no puede establecerse desde JavaScript en navegadores modernos
     return false;
   }
 }

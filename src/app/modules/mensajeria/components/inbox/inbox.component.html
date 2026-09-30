@@ -1,10 +1,8 @@
 <div class="flex h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-950 overflow-hidden">
 
-  <!-- ================= LISTA DE CONVERSACIONES ================= -->
   <aside class="w-full md:w-[340px] md:flex-shrink-0 md:border-r border-gray-200 dark:border-gray-200 bg-white dark:bg-gray-100 flex-col"
          [ngClass]="{ 'flex': !conversacionActiva, 'hidden md:flex': conversacionActiva }">
 
-    <!-- Header lista -->
     <div class="px-5 pt-5 pb-3 border-b border-gray-100 dark:border-gray-200">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-baseline gap-2">
@@ -22,7 +20,6 @@
         </button>
       </div>
 
-      <!-- Buscador -->
       <div class="relative">
         <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-gray-500"
              fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -52,10 +49,8 @@
       </button>
     </div>
 
-    <!-- Scroll lista -->
     <div class="flex-1 overflow-y-auto">
 
-      <!-- Loading -->
       <div *ngIf="cargandoConversaciones" class="p-6 text-center">
         <div class="inline-flex gap-1.5">
           <span class="w-1.5 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-full animate-pulse"></span>
@@ -64,7 +59,6 @@
         </div>
       </div>
 
-      <!-- Vacío -->
       <div *ngIf="!cargandoConversaciones && conversacionesFiltradas.length === 0"
            class="px-6 py-12 text-center">
         <div class="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-100 mb-3">
@@ -80,7 +74,6 @@
         </p>
       </div>
 
-      <!-- Items -->
       <button *ngFor="let conv of conversacionesFiltradas; trackBy: trackById"
               type="button"
               (click)="seleccionar(conv)"
@@ -89,7 +82,6 @@
                 ? 'bg-green-50/60 dark:bg-green-500/10 border-l-green-500'
                 : 'border-l-transparent hover:bg-gray-50 dark:hover:bg-coal-200/60'">
 
-        <!-- Avatar -->
         <div class="shrink-0 w-11 h-11 rounded-full flex items-center justify-center ring-1 text-[13px] font-semibold tracking-tight"
              [ngClass]="[colorAvatar(conv.cliente_telefono).bg, colorAvatar(conv.cliente_telefono).text, colorAvatar(conv.cliente_telefono).ring]">
           <ng-container *ngIf="conv.cliente_nombre; else sinNombre">
@@ -102,7 +94,6 @@
           </ng-template>
         </div>
 
-        <!-- Texto -->
         <div class="flex-1 min-w-0">
           <div class="flex items-baseline justify-between gap-2">
             <span class="font-semibold text-[14px] text-gray-800 truncate">
@@ -141,11 +132,9 @@
     </div>
   </aside>
 
-  <!-- ================= PANEL CHAT ================= -->
   <section class="flex-1 flex-col bg-gray-50 dark:bg-gray-950"
            [ngClass]="{ 'hidden md:flex': !conversacionActiva, 'flex': conversacionActiva }">
 
-    <!-- Empty state chat -->
     <ng-container *ngIf="!conversacionActiva">
       <div class="flex-1 flex flex-col items-center justify-center px-8 text-center">
         <div class="relative mb-6">
@@ -164,10 +153,8 @@
       </div>
     </ng-container>
 
-    <!-- Chat activo -->
     <ng-container *ngIf="conversacionActiva as conv">
 
-      <!-- Header -->
       <header class="flex items-center gap-3 px-4 md:px-5 py-3 bg-white dark:bg-gray-100 border-b border-gray-200 dark:border-gray-200">
         <button type="button" (click)="volverALista()"
                 class="md:hidden shrink-0 -ml-1 p-1.5 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-100">
@@ -228,7 +215,6 @@
         </div>
       </header>
 
-      <!-- Mensajes -->
       <div #mensajesContenedor class="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-1
            bg-[linear-gradient(180deg,#f9fafb_0%,#f3f4f6_100%)]
            dark:bg-[linear-gradient(180deg,#0b1120_0%,#111827_100%)]">
@@ -244,14 +230,12 @@
 
         <ng-container *ngFor="let m of mensajes; let i = index; trackBy: trackById">
 
-          <!-- Separador de fecha -->
           <div *ngIf="mostrarSeparadorFecha(i)" class="flex justify-center my-4">
             <span class="text-[10.5px] font-medium tracking-wide text-gray-500 bg-white dark:bg-gray-100 border border-gray-200 dark:border-gray-200 rounded-full px-2.5 py-1 shadow-sm">
               {{ etiquetaFecha(m.fecha) }}
             </span>
           </div>
 
-          <!-- Burbuja -->
           <div class="flex" [class.justify-end]="m.direccion === 'out'">
             <div class="max-w-[78%] md:max-w-[62%] text-[13.5px] leading-snug
                         rounded-2xl px-3.5 py-2.5 shadow-sm"
@@ -317,14 +301,12 @@
           </div>
         </ng-container>
 
-        <!-- Empty state mensajes -->
         <div *ngIf="!cargandoMensajes && mensajes.length === 0"
              class="text-center py-10 text-xs text-gray-400 dark:text-gray-500">
           Sin mensajes todavía en esta conversación
         </div>
       </div>
 
-      <!-- Input envío -->
       <div class="bg-white dark:bg-gray-100 border-t border-gray-200 dark:border-gray-200 px-3 md:px-5 py-3">
 
         <div *ngIf="conv.estado === 'cerrada'"
@@ -332,7 +314,6 @@
           Conversación cerrada — reabrir para enviar mensajes
         </div>
 
-        <!-- Aviso ventana 24h vencida: WhatsApp solo permite plantillas pre-aprobadas. -->
         <div *ngIf="conv.estado === 'abierta' && ventana24hVencida"
              class="flex items-start gap-2 mb-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 text-[12px] text-amber-800 dark:text-amber-300">
           <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -347,7 +328,6 @@
           </span>
         </div>
 
-        <!-- Dentro de la ventana de 24h: composer normal (texto libre + plantilla). -->
         <div *ngIf="conv.estado === 'abierta' && !ventana24hVencida" class="flex items-center gap-2">
           <button type="button"
                   (click)="abrirEnvioPlantilla()"
@@ -384,8 +364,6 @@
           </button>
         </div>
 
-        <!-- Fuera de la ventana de 24h: solo se permiten plantillas → un único CTA
-             claro, sin caja de texto (escribir libre daría error de todos modos). -->
         <button *ngIf="conv.estado === 'abierta' && ventana24hVencida"
                 type="button" (click)="abrirEnvioPlantilla()"
                 class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-full text-sm font-semibold shadow-sm shadow-green-600/30 hover:bg-green-700 active:scale-[.98] transition">

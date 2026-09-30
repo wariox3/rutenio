@@ -117,5 +117,3 @@ export const  criteriosFiltros: BaseCriteriosFiltro = {
     }
   ],
 };
-
-// descripcionisnull=True 

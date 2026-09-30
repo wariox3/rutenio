@@ -122,7 +122,6 @@ export default class ContenedorListaComponent
             page: this.currentPage(),
           };
 
-          // Agregar el parámetro de búsqueda solo si hay un término
           if (this.searchTerm) {
             params['contenedor__nombre'] = this.searchTerm;
           }
@@ -233,11 +232,7 @@ export default class ContenedorListaComponent
       });
   }
 
-  /**
-   * Mismo criterio que el badge del avatar: prioriza propietario, luego
-   * perfil_web (supervisor/operativo/consulta) y al final rol crudo. Asi
-   * la lista y el header muestran el mismo lenguaje al usuario.
-   */
+  /** Debe mantenerse igual al criterio usado por el badge del avatar. */
   getRolEtiqueta(c: ContenedorLista): { texto: string; clase: string } {
     if (c.rol === 'propietario') {
       return { texto: 'Admin', clase: 'badge-success' };
@@ -284,7 +279,6 @@ export default class ContenedorListaComponent
     this.openModal('eliminarContenedor');
   }
 
-  // new modal implementation
   openModal(id: string) {
     this._modalService.open(id);
   }

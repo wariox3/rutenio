@@ -1,5 +1,4 @@
 <div class="flex flex-wrap items-end gap-3">
-  <!-- Buscador -->
   <div class="grow min-w-[220px]">
     <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
       Buscar
@@ -16,7 +15,6 @@
     </div>
   </div>
 
-  <!-- Rango de fechas -->
   @if (conFecha) {
     <div>
       <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
@@ -42,7 +40,6 @@
     </div>
   }
 
-  <!-- Estado -->
   @if (estados.length > 0) {
     <div>
       <label class="block text-[11px] uppercase tracking-wide text-gray-500 font-medium mb-1">
@@ -60,7 +57,6 @@
     </div>
   }
 
-  <!-- Limpiar -->
   @if (hayFiltro) {
     <button type="button" class="btn btn-sm btn-light" (click)="limpiar()">
       <i class="ki-filled ki-cross text-sm"></i>

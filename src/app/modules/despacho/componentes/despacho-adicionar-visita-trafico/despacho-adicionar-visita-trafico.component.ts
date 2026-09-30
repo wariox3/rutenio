@@ -64,7 +64,6 @@ export class VisitaAdicionarTraficoComponent extends General implements OnInit {
 
 
   aplicarFiltros() {
-    // Filtros base permanentes
     const filtrosBase = [
       { propiedad: 'estado_despacho', valor1: true },
       { propiedad: 'estado_entregado', valor1: false },

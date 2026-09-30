@@ -7,14 +7,6 @@ import { Despacho } from '../../../interfaces/despacho/despacho.interface';
 export class TraficoService {
   constructor() {}
 
-  /**
-   * Calcula el estado de un despacho
-   * @param fechaSalida fecha de salida del despacho
-   * @param tiempo tiempo del despacho
-   * @param visitas visitas del despacho
-   * @param visitasEntregadas visitas entregadas del despacho
-   * @returns estado del despacho
-   */
   calcularEstadoDespacho(
     fechaSalida: string,
     tiempo: number,
@@ -49,11 +41,6 @@ export class TraficoService {
     };
   }
 
-  /**
-   * Agrega el estado de cada despacho a la lista de despachos
-   * @param arrDespachos lista de despachos
-   * @returns lista de despachos con el estado agregado
-   */
   agregarEstadoDespacho(arrDespachos: Despacho[]): Despacho[] {
     return arrDespachos.map((despacho) => ({
       ...despacho,
@@ -66,11 +53,6 @@ export class TraficoService {
     }));
   }
 
-  /**
-   * Calcula el tiempo de trafico
-   * @param fechaSalida fecha de salida del despacho
-   * @returns tiempo de trafico
-   */
   private _calcularTiempoTrafico(fechaSalida: string) {
     const fechaActual = new Date();
     const fechaSalidaDate = new Date(fechaSalida);

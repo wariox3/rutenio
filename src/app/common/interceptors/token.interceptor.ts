@@ -12,12 +12,9 @@ import { TokenService } from '../../modules/auth/services/token.service';
 export const tokenInterceptor: HttpInterceptorFn = (request, next: HttpHandlerFn) => {
   const authService = inject(TokenService);
   if (request.context.get(requiereToken)) {
-    //validar vigencia
     const tokenValido = authService.validarToken();
     if (tokenValido) {
       return adicionarToken(request, next);
-    } else {
-      // return this.actualizarTokenPorVencimiento(request, next);
     }
   }
 

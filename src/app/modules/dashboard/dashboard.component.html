@@ -1,5 +1,4 @@
 <div class="dashboard-contenedor">
-  <!-- Header -->
   <div class="flex items-center justify-between mb-6">
     <div>
       <h1 class="text-3xl font-extrabold text-gray-800 leading-tight">
@@ -17,28 +16,23 @@
     </div>
   </div>
 
-  <!-- KPIs principales (primera fila: 3 tarjetas grandes) -->
   <div id="tour-dashboard-kpis" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
     @for (kpi of kpis().slice(0, 3); track kpi.titulo) {
       <app-dashboard-kpi-tarjeta [kpi]="kpi" [esGrande]="true" (ayudaClick)="mostrarAyuda($event)"></app-dashboard-kpi-tarjeta>
     }
   </div>
 
-  <!-- KPIs secundarios (segunda fila: 3 tarjetas medianas) -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
     @for (kpi of kpis().slice(3, 6); track kpi.titulo) {
       <app-dashboard-kpi-tarjeta [kpi]="kpi" (ayudaClick)="mostrarAyuda($event)"></app-dashboard-kpi-tarjeta>
     }
   </div>
 
-  <!-- Fila inferior: Cumplimiento Operativo + Utilización Flota -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <!-- Cumplimiento Operativo (gráfico de líneas) -->
     <div id="tour-dashboard-zonas">
       <app-dashboard-cumplimiento-zona [datos]="datosGrafico()"></app-dashboard-cumplimiento-zona>
     </div>
 
-    <!-- Utilización Flota -->
     <div>
       @if (utilizacionFlota()) {
         <app-dashboard-utilizacion-flota [datos]="utilizacionFlota()!"></app-dashboard-utilizacion-flota>
@@ -51,7 +45,6 @@
   </div>
 </div>
 
-<!-- Modal de ayuda KPI -->
 <app-modal-standard
   modalId="modalAyudaKpi"
   [title]="kpiSeleccionado()?.titulo || ''"

@@ -1,5 +1,4 @@
 <div class="container-fixed max-w-[1200px] py-8">
-  <!-- Header + Filtros -->
   <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
     <div>
       <h1 class="text-2xl font-bold text-gray-900">Reporte por mensajero</h1>
@@ -31,7 +30,6 @@
     </div>
   </div>
 
-  <!-- Nota: criterio de fecha + qué son las recogidas (evita la confusión de liquidación) -->
   <div class="flex items-start gap-2 mb-4 px-4 py-3 rounded-lg bg-sky-50 border border-sky-200 text-sky-800 text-xs">
     <i class="ki-filled ki-information-2 text-sm mt-0.5"></i>
     <span>
@@ -43,7 +41,6 @@
     </span>
   </div>
 
-  <!-- Aviso de truncado por limite -->
   @if (truncado()) {
     <div class="flex items-center gap-2 mb-4 px-4 py-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
       <i class="ki-filled ki-information-2 text-base"></i>
@@ -51,7 +48,6 @@
     </div>
   }
 
-  <!-- Detalle diario -->
   <div class="card shadow-sm mb-6">
     <div class="card-header px-5 py-4">
       <h3 class="card-title text-sm font-semibold text-gray-900">Detalle diario</h3>
@@ -114,7 +110,6 @@
     </div>
   </div>
 
-  <!-- Totales por mensajero -->
   @if (!cargando() && totalesPorMensajero().length > 0) {
     <div class="card shadow-sm">
       <div class="card-header px-5 py-4">
@@ -165,7 +160,6 @@
     </div>
   }
 
-  <!-- Totales por placa -->
   @if (!cargando() && totalesPorPlaca().length > 0) {
     <div class="card shadow-sm mt-6">
       <div class="card-header px-5 py-4">
@@ -216,7 +210,6 @@
     </div>
   }
 
-  <!-- Entregas por zona (factor de pago) -->
   <div class="card shadow-sm mt-6">
     <div class="card-header px-5 py-4 flex items-center justify-between">
       <div>

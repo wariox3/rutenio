@@ -47,7 +47,6 @@ export class VisitaDetalleDrawerComponent implements OnChanges, OnDestroy {
       this._cargar(this.visitaId);
     }
     if (changes['abierto'] && !this.abierto) {
-      // Limpiar al cerrar para que el siguiente abrir muestre loading.
       this.visita = null;
       this._limpiarEvidencias();
     }
@@ -77,8 +76,7 @@ export class VisitaDetalleDrawerComponent implements OnChanges, OnDestroy {
     });
   }
 
-  /** Fotos/firma de la entrega: lista de archivos del modelo + contenido como blob.
-      Best-effort: si un archivo falla, se omite sin romper el drawer. */
+  /** Best-effort: si un archivo falla al cargar, se omite sin romper el drawer. */
   private _cargarEvidencias(visitaId: number): void {
     this._generalService
       .consultaApi<any>('general/archivo', { codigo: visitaId, modelo: 'RutVisita' })
@@ -114,7 +112,6 @@ export class VisitaDetalleDrawerComponent implements OnChanges, OnDestroy {
     this.cerrar.emit();
   }
 
-  /** Estado dominante visible como badge en el header. */
   get estadoDominante(): 'novedad' | 'entregado' | 'despachado' | 'pendiente' {
     if (this.visita?.estado_novedad) return 'novedad';
     if (this.visita?.estado_entregado) return 'entregado';

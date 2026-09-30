@@ -33,12 +33,6 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideStore(StoreApp),
     provideEffects(EffectsApp),
-    // importProvidersFrom(
-    //   provideStoreDevtools({
-    //     maxAge: 25,
-    //     logOnly: environment.production,
-    //   })
-    // ),
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
     provideHttpClient(),

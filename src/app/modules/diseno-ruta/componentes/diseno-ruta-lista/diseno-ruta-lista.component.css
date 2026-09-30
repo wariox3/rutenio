@@ -13,11 +13,10 @@
   color: red !important;
 }
 
-/* Estilo del elemento que se arrastra */
 .cdk-drag-preview {
   background-color: #f3f4f6; /* gray-100 */
   display: flex;
-  color: #1f2937; /* gray-800 — legible sobre fondo claro */
+  color: #1f2937; /* gray-800 */
   border-radius: 8px;
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
   opacity: 0.95;
@@ -31,17 +30,14 @@
   color: #f3f4f6; /* gray-100 */
 }
 
-/* Placeholder: espacio que deja el elemento arrastrado */
 .cdk-drag-placeholder {
-  visibility: hidden; /* Oculta el espacio temporalmente */
+  visibility: hidden;
 }
 
-/* Al soltar el elemento */
 .cdk-drag-animating {
   transition: transform 0.15s ease-in-out;
 }
 
-/* Destacar todas las áreas donde se puede soltar */
 .cdk-drop-list {
   border: 2px dashed transparent;
   border-radius: 8px;
@@ -49,41 +45,38 @@
 }
 
 .cdk-drop-list-dragging {
-  border-color: #007bff; /* Cambia el color del borde */
-  background-color: rgba(0, 123, 255, 0.1); /* Fondo sutil */
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.1);
 }
 
-/* Destacar el área debajo del mouse */
 .cdk-drag-over {
-  background-color: rgba(0, 123, 255, 0.2); /* Fondo más destacado */
-  border: 2px dashed #007bff; /* Cambia a un borde más visible */
+  background-color: rgba(0, 123, 255, 0.2);
+  border: 2px dashed #007bff;
 }
 
-/* Resaltar el despacho seleccionado */
 .cdk-drop-list.cdk-drag-over {
-  border: 3px solid #28a745; /* Verde para indicar selección */
-  background-color: rgba(40, 167, 69, 0.1); /* Fondo suave verde */
+  border: 3px solid #28a745;
+  background-color: rgba(40, 167, 69, 0.1);
 }
 
-/* Resalta visitas con cita programada con borde lateral morado. */
 .fila-cita > td:first-child {
   border-left: 3px solid #8b5cf6;
 }
 
   .menu-dropdown {
-    width: auto !important;  /* Ancho automático */
-    min-width: 48px;        /* Ancho mínimo por si acaso */
-    white-space: nowrap;    /* Evita que el texto se parta en varias líneas */
-    padding-right: 1rem;    /* Espaciado derecho adicional */
-    padding-left: 1rem;     /* Espaciado izquierdo adicional */
+    width: auto !important;
+    min-width: 48px;
+    white-space: nowrap;
+    padding-right: 1rem;
+    padding-left: 1rem;
   }
-  
+
   .menu-link {
     display: flex;
     align-items: center;
-    gap: 0.5rem;           /* Espacio entre icono y texto */
+    gap: 0.5rem;
   }
-  
+
   .menu-title {
-    flex-grow: 1;          /* Permite que el título ocupe el espacio necesario */
+    flex-grow: 1;
   }

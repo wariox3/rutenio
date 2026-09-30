@@ -29,7 +29,6 @@ export class AdminDirective implements OnDestroy {
   private _ultimoEstado: boolean | null = null;
 
   @Input() set appAdmin(valor: boolean | '' | undefined) {
-    // Por defecto (sin valor o vacío): renderizar si es admin
     this._expected = valor === false ? false : true;
     this._evaluar(this._ultimoEstado);
   }

@@ -100,7 +100,6 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
   acceder(c: ContenedorGlobal) {
     if (this.accediendoId()) return;
     this.accediendoId.set(c.id);
-    // Pedir el detalle del contenedor desde el endpoint público (auth normal del user)
     this.http
       .get<any>(`${environment.url_api}/contenedor/contenedor/${c.id}/`)
       .pipe(
@@ -128,9 +127,8 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
               } as any,
             })
           );
-          // Hidratar empresa y configuracion del contenedor en el store. Sin
-          // esto, la direccion de origen queda vacia y el modal "Configurar
-          // direccion" salta en falso al entrar desde el panel admin.
+          // Sin hidratar empresa/configuracion, rut_direccion_origen queda vacia y
+          // el modal "Configurar direccion" salta en falso al entrar desde el panel admin.
           return forkJoin({
             empresa: this._empresaService.detalle().pipe(catchError(() => of(null))),
             configuracion: this._generalApiService

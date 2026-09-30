@@ -7,12 +7,6 @@ import { ContenedorInvitarComponent } from '../contenedor-invitar/contenedor-inv
 
 const obtenerContenedorState = createFeatureSelector<Contenedor>('contenedor');
 
-/**
- * Pantalla dedicada de gestion de miembros del contenedor activo. Antes
- * solo se llegaba via /contenedor/lista → engranaje → "Invitar" (modal
- * embebida). Esta pantalla envuelve ContenedorInvitarComponent y le
- * pasa el contenedor seleccionado actualmente.
- */
 @Component({
   selector: 'app-usuarios-contenedor',
   standalone: true,
@@ -40,7 +34,6 @@ export default class UsuariosContenedorComponent implements OnInit, OnDestroy {
   }
 
   get estaCerca(): boolean {
-    // Aviso amarillo cuando queda solo 1 slot o el ratio supera 80%.
     if (this.limiteUsuarios <= 0) return false;
     const disponibles = this.limiteUsuarios - this.usuariosActuales;
     return disponibles <= 1 || this.usuariosActuales / this.limiteUsuarios >= 0.8;
@@ -63,11 +56,7 @@ export default class UsuariosContenedorComponent implements OnInit, OnDestroy {
     this._destroy$.complete();
   }
 
-  /**
-   * Adapta el shape del store (Contenedor) al que espera el
-   * ContenedorInvitarComponent (ContenedorLista, con los campos
-   * doble-guion-bajo del backend).
-   */
+  /** ContenedorLista usa el naming con doble guion bajo del backend. */
   private _mapearAContenedorLista(c: Contenedor): ContenedorLista {
     return {
       ...c,

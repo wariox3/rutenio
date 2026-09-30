@@ -1,6 +1,5 @@
 <div class="max-w-5xl mx-auto px-4 py-6">
 
-  <!-- Volver -->
   <button
     (click)="goBack()"
     class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary transition-colors mb-4"
@@ -9,19 +8,15 @@
     Volver
   </button>
 
-  <!-- Card cabecera con cover -->
   <div class="card overflow-hidden">
-    <!-- Banner gradient -->
     <div
       class="relative h-32 lg:h-40"
       style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);"
     >
-      <!-- Patrón decorativo -->
       <div
         class="absolute inset-0 opacity-20"
         style="background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.15) 0%, transparent 50%);"
       ></div>
-      <!-- Botón editar arriba a la derecha -->
       <button
         class="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border border-white/30 transition-colors"
         (click)="openModal('editar-perfil')"
@@ -31,9 +26,7 @@
       </button>
     </div>
 
-    <!-- Avatar + datos -->
     <div class="relative px-5 lg:px-8 pb-5 lg:pb-6">
-      <!-- Avatar superpuesto -->
       <div class="absolute -top-14 lg:-top-16 left-5 lg:left-8">
         <div class="relative w-28 h-28 lg:w-32 lg:h-32 rounded-full ring-4 ring-white dark:ring-coal-500 shadow-lg overflow-hidden bg-white dark:bg-gray-100">
           <app-cargar-imagen
@@ -44,7 +37,6 @@
         </div>
       </div>
 
-      <!-- Espacio para el avatar -->
       <div class="pt-16 lg:pt-20">
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-2 flex-wrap">
@@ -60,7 +52,6 @@
           </div>
           <p class="text-sm text-gray-500">{{ (usuario$ | async).correo }}</p>
 
-          <!-- Badges de rol -->
           <div class="flex items-center flex-wrap gap-1.5 mt-3">
             @if ((usuario$ | async)?.is_superuser) {
               <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold bg-primary/10 text-primary">
@@ -100,10 +91,8 @@
     </div>
   </div>
 
-  <!-- Grid de información -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
 
-    <!-- Datos personales -->
     <div class="card lg:col-span-2">
       <div class="card-header">
         <h3 class="card-title">Información personal</h3>
@@ -199,7 +188,6 @@
       </div>
     </div>
 
-    <!-- Resumen lateral -->
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">Cuenta</h3>
@@ -249,7 +237,6 @@
     </div>
   </div>
 
-  <!-- Lista de contenedores -->
   <div class="card mt-4">
     <div class="card-header flex items-center justify-between">
       <div>

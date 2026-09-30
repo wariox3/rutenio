@@ -1,6 +1,5 @@
 <div class="flex items-center">
   <div class="pagination">
-    <!-- Botón anterior -->
     <button
       (click)="disminuirDesplazamiento()"
       class="btn"
@@ -9,7 +8,6 @@
       <i class="ki-outline ki-black-left"></i>
     </button>
   
-    <!-- Botones de páginas dinámicas -->
     <button
       *ngFor="let pagina of paginasVisibles"
       class="btn"
@@ -19,7 +17,6 @@
       {{ pagina }}
     </button>
   
-    <!-- Botón siguiente -->
     <button
       (click)="aumentarDesplazamiento()"
       class="btn"

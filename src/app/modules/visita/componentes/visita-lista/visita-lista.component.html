@@ -56,7 +56,6 @@
     <h3 class="card-title">Visitas</h3>
 
     @if (cantidadSeleccionada > 0) {
-      <!-- Barra contextual: solo cuando hay items seleccionados -->
       <div class="flex items-center gap-2 flex-wrap">
         <span class="text-sm font-medium text-gray-700 mr-1">
           {{ cantidadSeleccionada }} seleccionada{{ cantidadSeleccionada === 1 ? '' : 's' }}
@@ -74,7 +73,6 @@
         </button>
       </div>
     } @else {
-      <!-- Header normal: acción primaria + actualizar + dropdowns secundarios -->
       <div class="flex items-center gap-2 flex-wrap">
         <app-button
           *appPermisoPor="'visita.editar'"

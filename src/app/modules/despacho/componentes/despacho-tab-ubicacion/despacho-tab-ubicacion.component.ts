@@ -50,7 +50,6 @@ export class DespachoTabUbicacionComponent
   cargando = signal<boolean>(false);
   puntoSeleccionadoId = signal<number | null>(null);
 
-  // Configuración de mapa.
   center: google.maps.LatLngLiteral = { lat: 4.6097, lng: -74.0817 };
   zoom = 11;
   polylinePath = signal<google.maps.LatLngLiteral[]>([]);
@@ -62,7 +61,6 @@ export class DespachoTabUbicacionComponent
     strokeWeight: 4,
   };
 
-  // Métricas derivadas para el strip superior.
   puntosTotales = computed(() => this.ubicaciones().length);
   paradasTotales = computed(
     () => this.ubicaciones().filter((u) => u.detenido).length
@@ -186,7 +184,6 @@ export class DespachoTabUbicacionComponent
     if (puntos.length > 0) this._fitBoundsAlMapa(puntos);
   }
 
-  // Hace foco en un punto desde el timeline → centra el mapa.
   enfocarPunto(ubicacion: Ubicacion): void {
     this.puntoSeleccionadoId.set(ubicacion.id);
     const pos: google.maps.LatLngLiteral = {

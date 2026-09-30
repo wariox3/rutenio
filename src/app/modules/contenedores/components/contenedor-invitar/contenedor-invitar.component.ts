@@ -102,8 +102,8 @@ export class ContenedorInvitarComponent extends General implements OnInit {
   private _inicializarBusquedaUsuarios() {
     this._busquedaUsuarioSubject$
       .pipe(
-        debounceTime(300), // Espera 300ms después de que el usuario deje de escribir
-        distinctUntilChanged(), // Solo emite si el valor cambió
+        debounceTime(300),
+        distinctUntilChanged(),
         tap((email) => this._buscarUsuarios(email))
       )
       .subscribe();
@@ -152,8 +152,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
           })
         ),
         tap((respuesta) => {
-          // Backend devuelve { creados, ya_existian, mensaje }. Mostramos
-          // feedback diferenciado: si ya estaba en algun contenedor avisamos.
+          // Backend devuelve { creados, ya_existian, mensaje }.
           const creados = respuesta?.creados?.length || 0;
           const yaExistian = respuesta?.ya_existian?.length || 0;
           if (creados > 0 && yaExistian === 0) {
@@ -181,8 +180,7 @@ export class ContenedorInvitarComponent extends General implements OnInit {
           this._consultarContenedorUsuarios(this.contenedor.contenedor_id);
         },
         error: (err) => {
-          // 400 con codigo 24 => limite del plan alcanzado en uno o mas
-          // contenedores. El mensaje del backend ya es descriptivo.
+          // codigo 24 = limite del plan alcanzado; el mensaje del backend ya es descriptivo.
           const mensaje =
             err?.error?.mensaje || 'No se pudo procesar la invitación.';
           this._alertaService.mensajeError('Invitación bloqueada', mensaje);

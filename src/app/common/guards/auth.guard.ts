@@ -14,7 +14,6 @@ export const authGuard: CanMatchFn = (route, segments) => {
     return false;
   }
 
-  // Si el usuario tiene cambio de clave pendiente, redirigir antes de permitir el acceso.
   let cambioPendiente = false;
   inject(Store)
     .select(obtenerUsuario)

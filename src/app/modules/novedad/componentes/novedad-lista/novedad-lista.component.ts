@@ -39,7 +39,6 @@ export default class NovedadListaComponent extends General implements OnInit {
   public nombreFiltro = '';
   public filtroKey = signal<string>('');
 
-  /** Opciones del selector de Estado de la barra de filtros simple. */
   public readonly estadosNovedad: EstadoOpcion[] = [
     { label: 'Todas', params: {} },
     { label: 'Pendientes', params: { estado_solucion: 'false' } },

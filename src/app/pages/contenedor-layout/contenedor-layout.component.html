@@ -1,18 +1,13 @@
 <ng-container>
-	<!-- <app-sidebar></app-sidebar> -->
 	<div class="flex grow flex-col">
 		<app-header-basic></app-header-basic>
 		<main class="grow mt-[70px] content pt-5" id="content" role="content">
-			<!-- begin: container -->
 			<div class="container-fixed" id="content_container">
 				<app-alerta-suspension></app-alerta-suspension>
 			</div>
-			<!-- end: container -->
-			<!-- begin: container -->
 			<div class="container-fixed">
 				<router-outlet></router-outlet>
 			</div>
-			<!-- end: container -->
 		</main>
 		<app-footer></app-footer>
 	</div>

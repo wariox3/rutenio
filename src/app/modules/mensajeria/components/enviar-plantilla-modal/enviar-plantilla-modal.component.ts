@@ -15,12 +15,6 @@ import {
   PlantillaSeleccion,
 } from '../plantilla-selector/plantilla-selector.component';
 
-/**
- * Modal de "Enviar plantilla" para una conversación EXISTENTE.
- *
- * Reusa PlantillaSelector para todo lo de elegir plantilla + variables + preview,
- * y llama enviarMensaje(conversacionId, {tipo:'template', ...}) al confirmar.
- */
 @Component({
   selector: 'app-enviar-plantilla-modal',
   standalone: true,

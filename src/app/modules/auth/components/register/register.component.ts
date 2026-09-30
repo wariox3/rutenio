@@ -101,8 +101,7 @@ export default class RegisterComponent extends General implements OnInit {
     this.registrando$.next(true);
     
     const registroData = { ...this.formulario.value };
-    
-    // Solo incluir cf_turnstile_response si Turnstile está habilitado
+
     if (!this.enableTurnstile) {
       delete registroData.cf_turnstile_response;
     }

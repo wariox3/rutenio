@@ -99,12 +99,11 @@ export default class VisitaFormularioComponent
     destinatario_correo: new FormControl<string | null>(null, [
       Validators.pattern(this.PATRON_EMAIL),
     ]),
-    // Unidades: minimo 1 (al menos una unidad real para entregar).
     unidades: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(1),
     ]),
-    // Peso, volumen: aceptamos 0 (ej. documentos). Si quieren forzar, lo cambian luego.
+    // Peso, volumen: se acepta 0 (ej. documentos sin peso).
     peso: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(0),
@@ -130,7 +129,6 @@ export default class VisitaFormularioComponent
     cita_fin: new FormControl<string | null>(null),
   }, { validators: CitaRangoValidator.validar });
 
-  // Loading state expuesto al template para desactivar el boton Guardar.
   public guardando = false;
 
   /** True si el telefono actual cumple formato y ademas parece celular CO (recibira WhatsApp). */
@@ -147,7 +145,6 @@ export default class VisitaFormularioComponent
     return !TelefonoWhatsappValidator.esCelularCO(ctrl.value);
   }
 
-  /** Valores por defecto del formulario (usados al crear o al resetear). */
   private readonly _defaultsFormulario = {
     numero: null,
     tipo: 'entrega',
@@ -267,8 +264,6 @@ export default class VisitaFormularioComponent
     }
     const datos = this.prepararDatosEnvio(this.formularioVisita.value);
 
-    // En modo editar el modal delega al padre (que decide el endpoint).
-    // En modo crear, sigue llamando guardar() directo.
     if (this.formularioTipo === 'editar') {
       this.guardando = true;
       this.dataFormulario.emit(datos);

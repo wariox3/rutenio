@@ -78,11 +78,9 @@ export class ContenedorAdminMembresiaEditarComponent {
     const p = this.permisoLocal[modulo];
     p[accion] = !p[accion];
     if (accion === 'ver' && !p.ver) {
-      // si no puede ver, tampoco puede editar
       p.editar = false;
     }
     if (accion === 'editar' && p.editar) {
-      // si puede editar, debe poder ver
       p.ver = true;
     }
   }

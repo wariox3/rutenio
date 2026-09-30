@@ -158,12 +158,6 @@ export class FiltroBaseComponent extends General {
     this.agregarNuevoFiltroModal();
     this.criteriosBusquedaModal = [];
     this.consultarLista([], tituloModal);
-    // this.windowRef = this.windowService.open(this.modalFiltrosAvanzado, {
-    //   title: 'Filtros avanzados',
-    //   context: {
-    //     tituloModal,
-    //   },
-    // });
     this.changeDetectorRef.detectChanges();
   }
 
@@ -174,7 +168,6 @@ export class FiltroBaseComponent extends General {
     filtro.patchValue({
       valor1: Object.values(item)[0],
     });
-    // this.windowRef.close();
   }
 
   consultarLista(listaFiltros: any, modelo: string) {
@@ -357,10 +350,6 @@ export class FiltroBaseComponent extends General {
       const resultadoCriterioFiltro = criteriosFiltros[propiedades.tipo];
       this.criteriosBusqueda[index] = resultadoCriterioFiltro;
     }
-
-    // if (modeloBusquedaAvanzada) {
-    //   this.consultarEntidad(null, valor1);
-    // }
 
     return this.formBuilder.group({
       propiedad: [campo],
@@ -585,9 +574,9 @@ export class FiltroBaseComponent extends General {
   }
 
   generarIdUnico() {
-    const timestamp = Date.now(); // Obtiene la marca de tiempo actual en milisegundos
-    const numeroAleatorio = Math.floor(Math.random() * 10000); // Genera un número aleatorio entre 0 y 9999
-    const idUnico = `${timestamp}-${numeroAleatorio}`; // Combina la marca de tiempo y el número aleatorio
+    const timestamp = Date.now();
+    const numeroAleatorio = Math.floor(Math.random() * 10000);
+    const idUnico = `${timestamp}-${numeroAleatorio}`;
     return idUnico;
   }
 

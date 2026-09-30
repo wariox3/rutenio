@@ -54,22 +54,12 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   modalDescripcion = '';
   private modalControl: FormControl | null = null;
   private ignorarCambios = false;
-  /**
-   * Snapshot del form tal como vino del backend (o tal como se guardo por
-   * ultima vez). Lo usamos para comparar el value actual y decidir si
-   * mostrar "Cambios sin guardar" — asi seleccionar la misma direccion u
-   * otros cambios que terminan equivalentes no marcan el form como sucio.
-   */
   private _baselineGuardado: any = null;
 
   public guardando = signal<boolean>(false);
   public tieneCambiosSinGuardar = signal<boolean>(false);
   public avisoFranjasVacias = signal<boolean>(false);
 
-  /**
-   * Solo los switches con impacto operativo amplio piden confirmacion al
-   * usuario. Los demas (decodificar, geocerca) son seguros — toggle directo.
-   */
   private switchDescripciones: Record<string, { titulo: string; descripcion: string; confirmar: boolean }> = {
     rut_sincronizar_complemento: {
       titulo: 'Sincronizar con Complemento',
@@ -103,19 +93,11 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     },
   };
 
-  /**
-   * Flag para no re-hidratar el form despues del primer load exitoso.
-   * Sin esto, el patchValue post-submit (disparado por el dispatch al
-   * store) sobreescribiria los cambios que el usuario pudiera estar
-   * haciendo entre tanto. El baseline se sigue actualizando manualmente
-   * en el tap del submit.
-   */
+  // Evita que el patchValue post-submit (disparado por el dispatch al store)
+  // sobreescriba cambios del usuario hechos entre tanto.
   private _yaHidratado = false;
 
   formularioConfiguracion = new FormGroup({
-    // id y empresa siempre son 1 dentro del tenant (singleton). El form
-    // los arranca asi para que si por algun motivo no llega a hidratar
-    // del store, el payload ya tenga los valores correctos.
     id: new FormControl(1),
     empresa: new FormControl(1),
     rut_sincronizar_complemento: new FormControl(true),
@@ -164,12 +146,6 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   ngOnInit(): void {
-    // Hidratacion del form a partir del store. Si el store esta vacio
-    // (caso al entrar via /admin/contenedores sin pasar por
-    // /contenedor/lista), pedimos la configuracion al backend y la
-    // dispatchamos. Una vez hidratado, _yaHidratado bloquea futuros
-    // patchValue para no sobreescribir cambios del usuario (el baseline
-    // post-submit se actualiza manualmente en el tap del submit).
     this.store
       .select(obtenerConfiguracionInformacion)
       .pipe(takeUntil(this.destroy$))
@@ -185,8 +161,6 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         this._yaHidratado = true;
       });
 
-    // Switches con confirmacion: capturan el cambio y abren modal antes
-    // de aplicar. El usuario puede cancelar.
     const switches = Object.entries(this.switchDescripciones);
     for (const [key, info] of switches) {
       const control = this.formularioConfiguracion.get(key) as FormControl;
@@ -204,7 +178,6 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         });
     }
 
-    // "Rutear por franjas": al activarlo, consulta franjas y avisa si no hay.
     this.formularioConfiguracion.controls.rut_rutear_franja.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((activo) => {
@@ -216,10 +189,6 @@ export default class ConfiguracionComponent extends General implements OnDestroy
         }
       });
 
-    // Marca el form como sucio solo si el value actual difiere del
-    // baseline guardado. Asi seleccionar la misma direccion (o cualquier
-    // cambio que termine en el mismo estado) no muestra "Cambios sin
-    // guardar" innecesariamente.
     this.formularioConfiguracion.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -295,7 +264,6 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             res?.count ?? res?.cantidad_registros ?? (res?.results?.length ?? 0);
           this.avisoFranjasVacias.set(total === 0);
         },
-        // Si el endpoint falla, no rompemos el toggle — solo no mostramos aviso.
         error: () => this.avisoFranjasVacias.set(false),
       });
   }
@@ -324,11 +292,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
     if (this.guardando()) return;
     this.guardando.set(true);
 
-    // GenConfiguracion es singleton por tenant (PK = 1, empresa = 1) — el
-    // form ya arranca asi. Aqui solo normalizamos lat/lon de "" a null
-    // por si el form todavia los tiene asi (cargas legacy) y reforzamos
-    // los IDs en 1 como cinturon-y-tirantes ante cualquier mutacion del
-    // form que los pusiera a 0.
+    // GenConfiguracion es singleton (id=empresa=1); se fuerzan los IDs por si
+    // el form los tuviera en 0, y se normaliza lat/lon de "" a null (cargas legacy).
     const raw = this.formularioConfiguracion.value as any;
     const payload = {
       ...raw,
@@ -346,23 +311,17 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             configuracionActualizacionAction({ configuracion: response })
           );
           this.alerta.mensajaExitoso('Configuración guardada correctamente');
-          // Despues del save exitoso, el form actual ES el baseline.
           this._baselineGuardado = this._snapshotForm();
           this.tieneCambiosSinGuardar.set(false);
         }),
         catchError((err) => {
-          // Loggea siempre el error completo para facilitar diagnostico en
-          // produccion. El usuario ve solo el toast amigable.
           console.error('[configuracion.submit] error:', err);
           const status = err?.status ?? 0;
           let titulo = 'No se pudo guardar';
           let mensaje =
             err?.error?.detail || err?.error?.mensaje || 'Intenta nuevamente.';
 
-          // El exception handler global envuelve los 400 de DRF en
-          // {mensaje, codigo: 14, validaciones: {campo: [errores]}}. Si vienen
-          // validaciones especificas, las mostramos para que el usuario sepa
-          // exactamente que campo esta mal.
+          // El exception handler global envuelve los 400 de DRF en {mensaje, codigo: 14, validaciones: {campo: [errores]}}.
           const validaciones = err?.error?.validaciones;
           if (status === 400 && validaciones && typeof validaciones === 'object') {
             const detalles = Object.entries(validaciones)
@@ -379,8 +338,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
             mensaje =
               'Tu rol actual no permite modificar la configuración. Solicita acceso al administrador.';
           } else if (status === 0) {
-            // status:0 puede ser red caida real (offline) o un error del
-            // backend bloqueado por CORS/proxy. Distinguimos con navigator.onLine.
+            // status 0: puede ser red caida real u offline, o backend bloqueado por CORS/proxy.
             if (typeof navigator !== 'undefined' && navigator.onLine === false) {
               titulo = 'Sin conexión';
               mensaje = 'Revisa tu conexión a internet e intenta de nuevo.';
@@ -399,10 +357,8 @@ export default class ConfiguracionComponent extends General implements OnDestroy
   }
 
   onAddressSelected(addressData: any) {
-    // El ng-select de buscador-direcciones emite null cuando el usuario limpia
-    // la seleccion (boton "x"). Sin este guard se cae con TypeError leyendo
-    // .address de null. Lat/lon van como null (no "") para que el backend los
-    // acepte como NULL en DecimalField; "" rechazaria con 400.
+    // buscador-direcciones emite null al limpiar (boton "x"); sin este guard truena con TypeError.
+    // Lat/lon van como null (no "") porque el backend rechaza "" en el DecimalField.
     if (!addressData) {
       this.formularioConfiguracion.patchValue({
         rut_direccion_origen: '',
@@ -411,9 +367,7 @@ export default class ConfiguracionComponent extends General implements OnDestroy
       });
       return;
     }
-    // Solo patcheamos lat/lon si la API de detalle realmente las trajo —
-    // a veces no vienen (response incompleto, place sin coordenadas). En
-    // ese caso conservamos lo que ya tenia el form para no perderlas.
+    // La API de detalle a veces no trae lat/lon (place sin coordenadas); solo se patchean si vienen.
     const patch: Record<string, any> = {
       rut_direccion_origen: addressData.address,
     };

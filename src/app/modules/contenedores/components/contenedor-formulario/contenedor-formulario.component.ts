@@ -62,7 +62,7 @@ export class ContenedorFormularioComponent extends General {
       Validators.compose([
         Validators.required,
         Validators.minLength(3),
-        Validators.maxLength(100), // Se ha removido la restricción de mayúsculas
+        Validators.maxLength(100),
       ])
     ),
     plan_id: new FormControl(8),

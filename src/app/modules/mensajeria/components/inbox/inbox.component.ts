@@ -231,7 +231,6 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     return Date.now() - new Date(fecha).getTime() > ms24h;
   }
 
-  /** Horas desde el ultimo mensaje del cliente — util para mostrar advertencia. */
   get horasDesdeUltimoMensajeCliente(): number | null {
     const fecha = this.conversacionActiva?.fecha_ventana_24h;
     if (!fecha) return null;
@@ -258,7 +257,6 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     return item.id;
   }
 
-  // ---- Nueva conversacion ----
   abrirNueva(): void {
     this.modalNuevaAbierto = true;
   }
@@ -267,7 +265,6 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     this.modalNuevaAbierto = false;
   }
 
-  // ---- Enviar plantilla en conversacion existente ----
   abrirEnvioPlantilla(): void {
     if (!this.conversacionActiva) return;
     this.modalEnviarPlantillaAbierto = true;
@@ -277,7 +274,6 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
     this.modalEnviarPlantillaAbierto = false;
   }
 
-  /** Etiqueta legible del destinatario para el header del modal de envio. */
   get destinatarioLabel(): string | null {
     const c = this.conversacionActiva;
     if (!c) return null;
@@ -303,8 +299,6 @@ export default class InboxComponent implements OnInit, AfterViewChecked {
 
   onConversacionCreada(conversacionId: number): void {
     this.modalNuevaAbierto = false;
-    // Refresca la lista de abiertas y selecciona la nueva. Si por algun motivo no
-    // aparece (filtro distinto), pedimos el detalle y la insertamos arriba.
     this._api.listarConversaciones({ estado: 'abierta' }).subscribe({
       next: (resp) => {
         this.conversaciones = resp.results;

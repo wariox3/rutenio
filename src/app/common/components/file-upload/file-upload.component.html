@@ -1,12 +1,10 @@
 <div class="file-upload-container">
-  <!-- Mensaje de error -->
   @if (errorMessage) {
     <div class="alert alert-danger mb-3">
       {{ errorMessage }}
     </div>
   }
 
-  <!-- Formulario de carga -->
   <form class="mb-4">
     <div class="file-input-container">
       <label for="fileInput" class="file-input-label">
@@ -22,7 +20,6 @@
       />
     </div>
     
-    <!-- Información del archivo seleccionado -->
     @if (fileName && !fileSizeExceeded) {
       <div class="file-info mt-2">
         <span class="file-name">{{ fileName }}</span>
@@ -35,9 +32,7 @@
     }
   </form>
 
-  <!-- Botones de acción -->
   <div class="flex justify-between items-center">
-    <!-- Botón de ejemplo (izquierda) -->
     <div *ngIf="showExampleButton">
       <app-button
         [texto]="exampleButtonText"
@@ -49,10 +44,9 @@
       ></app-button>
     </div>
     
-    <!-- Espacio vacío si no hay botón de ejemplo para mantener la estructura -->
+    <!-- Placeholder para mantener el layout cuando no hay botón de ejemplo -->
     <div *ngIf="!showExampleButton"></div>
-    
-    <!-- Botones de cancelar e importar (derecha) -->
+
     <div class="flex gap-3">
       <button 
         type="button" 

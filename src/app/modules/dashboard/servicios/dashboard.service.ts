@@ -91,7 +91,6 @@ export class DashboardService {
           ? Math.round((novedadesResueltas / cantidadNovedadesTotales) * 1000) / 10
           : 0;
 
-        // Métricas de flota
         const despachosConCapacidad = todosDespachos.filter(d => d.vehiculo__capacidad > 0);
         const utilizacionFlota = despachosConCapacidad.length > 0
           ? Math.round(despachosConCapacidad.reduce((acc, d) => acc + (d.peso / d.vehiculo__capacidad) * 100, 0) / despachosConCapacidad.length * 10) / 10
@@ -101,7 +100,6 @@ export class DashboardService {
         const volumenTotal = Math.round(todosDespachos.reduce((acc, d) => acc + d.volumen, 0) * 10) / 10;
         const unidadesTotal = todosDespachos.reduce((acc, d) => acc + d.unidades, 0);
 
-        // Métricas de tiempo
         const tiempoServicioPromedio = todosDespachos.length > 0
           ? Math.round(todosDespachos.reduce((acc, d) => acc + d.tiempo_servicio, 0) / todosDespachos.length)
           : 0;

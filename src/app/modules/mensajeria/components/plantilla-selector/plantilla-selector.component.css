@@ -1,4 +1,3 @@
-/* Scrollbar discreto para la lista de plantillas en navegadores tipo webkit. */
 .plantilla-scroll::-webkit-scrollbar {
   width: 6px;
 }

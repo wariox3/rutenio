@@ -153,12 +153,10 @@ export default class VisitaListaComponent extends General implements OnInit {
       });
   }
 
-  /** Atajo desde los KPIs: aplica un filtro y recarga. */
   aplicarFiltroPreset(filtros: Record<string, any>): void {
     this.filterChange(filtros);
   }
 
-  /** Etiquetas legibles para los chips de filtros activos. */
   private static readonly FILTRO_LABELS: Record<string, string> = {
     id: 'Id',
     numero: 'Número',
@@ -173,7 +171,6 @@ export default class VisitaListaComponent extends General implements OnInit {
     estado_novedad: 'Con novedad',
   };
 
-  /** Filtros activos derivados de arrFiltros, listos para mostrar como chips. */
   get chipsFiltrosActivos(): { key: string; label: string; valor: string }[] {
     const ignorar = new Set(['page', 'ordering', 'limit', 'serializador']);
     return Object.entries(this.arrFiltros)
@@ -564,8 +561,6 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   detalleVisita(id: number) {
-    // Abrir drawer en lugar de navegar — la pagina completa sigue accesible
-    // desde el boton "Abrir pagina completa" dentro del drawer y vía URL directa.
     this.drawerVisitaId.set(id);
     this.drawerAbierto.set(true);
   }
@@ -616,8 +611,6 @@ export default class VisitaListaComponent extends General implements OnInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  /** Estado dominante para mostrar como un solo badge en la columna "Estado".
-   *  Prioridad: novedad > entregado > despachado > pendiente. */
   private _derivarEstadoDominante(visita: any): 'novedad' | 'entregado' | 'despachado' | 'pendiente' {
     if (visita?.estado_novedad) return 'novedad';
     if (visita?.estado_entregado) return 'entregado';
@@ -625,10 +618,8 @@ export default class VisitaListaComponent extends General implements OnInit {
     return 'pendiente';
   }
 
-  /** Resalta filas con geocodificacion dudosa para que el operador las arregle. */
   resaltarFilaConAlerta = (item: any): boolean => !!item?.estado_decodificado_alerta;
 
-  /** Acciones disponibles en el menu kebab de cada fila. Se filtran segun estado. */
   accionesFila: AccionFila[] = [
     {
       icono: 'ki-outline ki-exit-up',
@@ -679,9 +670,6 @@ export default class VisitaListaComponent extends General implements OnInit {
   }
 
   private _cambiarDespacho(visita: any): void {
-    // Implementacion mínima: pedir el id del nuevo despacho. Una version mas
-    // pulida abriria un modal con buscador de despachos pendientes; por ahora
-    // resuelve el caso comun y aprovecha el endpoint existente.
     const inputDespacho = window.prompt('ID del despacho destino:');
     if (!inputDespacho) return;
     const despachoId = Number(inputDespacho);

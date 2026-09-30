@@ -36,6 +36,6 @@ export const OPERADORES_FILTRO: Operator[] = [
     symbol: 'in',
     name: 'En',
     types: ['relation'],
-    default: true, // ⚠️ No debe ser default si ya tienes '=' como default
+    default: true, // No debe ser default si ya existe '=' como default
   },
 ];

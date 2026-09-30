@@ -43,17 +43,13 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   @Output() filtersApplyCrudo = new EventEmitter<FilterCondition[]>();
   @Input() localStorageKey: string | null = null;
 
-  public filterConditions: FilterCondition[] = []; // Inicializar como vacío, se poblará en ngOnInit
+  public filterConditions: FilterCondition[] = [];
   operators: Operator[] = OPERADORES_FILTRO;
 
-  // Almacenar opciones de relación para cada campo
   relationOptions: { [fieldName: string]: RelationOption[] } = {};
-  // Seguimiento del estado de carga para cada campo
   loadingRelationOptions: { [fieldName: string]: boolean } = {};
-  // Término de búsqueda para campos de relación
   searchTerms: { [fieldName: string]: string } = {};
 
-  // Subject para búsqueda con debounce
   private searchSubjects: { [fieldName: string]: Subject<string> } = {};
   private searchSubscriptions: Subscription[] = [];
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -63,7 +59,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['localStorageKey'] && !changes['localStorageKey'].firstChange) {
-      // Verificar si la clave realmente cambió a un nuevo valor
       if (
         changes['localStorageKey'].currentValue !==
         changes['localStorageKey'].previousValue
@@ -72,7 +67,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    // Precargar datos de relación para campos marcados con preload=true
     if (changes['availableFields'] && this.availableFields) {
       this._preloadRelationData();
     }
@@ -85,21 +79,17 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar todas las suscripciones
     this.searchSubscriptions.forEach((subscription) =>
       subscription.unsubscribe(),
     );
   }
 
   private _setupSearchSubjects(): void {
-    // Crear subjects de búsqueda para todos los campos de relación
     this.availableFields.forEach((field) => {
       if (field.type === 'relation') {
-        // Crear un subject para este campo si no existe
         if (!this.searchSubjects[field.name]) {
           const subject = new Subject<string>();
 
-          // Suscribirse al subject con debounce
           const subscription = subject
             .pipe(
               debounceTime(500),
@@ -137,13 +127,11 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   removeFilterCondition(index: number): void {
     this.filterConditions.splice(index, 1);
     if (this.filterConditions.length === 0) {
-      // Asegurar que siempre haya al menos una fila de filtro si todas son eliminadas
       this.filterConditions.push(this.createEmptyCondition());
     }
   }
 
   onFieldChange(condition: FilterCondition, index: number): void {
-    // Reiniciar valores primero
     condition.value = '';
     condition.displayValue = '';
     condition.operator = '';
@@ -167,18 +155,15 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       condition.operator = defaultOperator.symbol;
     }
 
-    // Si es un campo de relación con precarga, cargar las opciones
     if (selectedField.type === 'relation' && selectedField.relationConfig) {
       this._loadRelationOptions(selectedField.name, '');
       condition.multiple = selectedField.relationConfig?.multiple || false;
 
-      // Asegurarse de que tenemos un subject de búsqueda para este campo
       if (!this.searchSubjects[selectedField.name]) {
         this._setupSearchSubjectForField(selectedField.name);
       }
     }
 
-    // Autoenfocar el input/select de valor
     setTimeout(() => {
       const inputElement = this.valueInputElements?.toArray()[index];
       if (inputElement && inputElement.nativeElement) {
@@ -187,13 +172,12 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  // Configurar subject de búsqueda para un campo específico
   private _setupSearchSubjectForField(fieldName: string): void {
     const subject = new Subject<string>();
 
     const subscription = subject
       .pipe(
-        debounceTime(2000), // 2 segundos de tiempo de debounce
+        debounceTime(2000),
         distinctUntilChanged(),
       )
       .subscribe((searchTerm) => {
@@ -205,8 +189,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   handleEnterKey(): void {
-    // Verificar si hay al menos una condición de filtro con un campo, operador y valor
-    // Esto evita aplicar filtros si el usuario solo presiona enter en una fila vacía o un filtro incompleto
     const canApply = this.filterConditions.some(
       (fc) =>
         fc.field && fc.operator && fc.value !== undefined && fc.value !== '',
@@ -233,7 +215,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       this._filterTransformerService.transformToApiParams(validFilters);
     this.filtersApply.emit(parametros);
     this.filtersApplyCrudo.emit(validFilters);
-    this._saveFiltersToLocalStorage(); // Guardar el estado actual de filterConditions al aplicar
+    this._saveFiltersToLocalStorage();
   }
 
   getOperatorsForField(fieldName: string): Operator[] {
@@ -298,7 +280,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
         }
       });
 
-      // Cargar valores de visualización para campos de relación
       this._loadRelationDisplayValues();
     } catch (error) {
       console.error('Error al cargar filtros desde localStorage:', error);
@@ -315,9 +296,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
       );
       if (!field || field.type !== 'relation' || !field.relationConfig) return;
 
-      // Si tenemos un valor pero no un valor de visualización, obtenerlo
       if (condition.value) {
-        // Sincronizar con searchTerms para que el ngModel lo muestre
         if (!this.searchTerms) {
           this.searchTerms = {};
         }
@@ -340,8 +319,7 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
 
   clearAllFilters(): void {
     this.clearFiltersFromLocalStorage();
-    // Emitir un filtro válido vacío o un array con una condición vacía para indicar reinicio
-    this.filtersApply.emit([]); // O this.filtersApply.emit(this.filterConditions) si el padre espera al menos una fila
+    this.filtersApply.emit([]);
     this.filtersApplyCrudo.emit([]);
   }
 
@@ -373,7 +351,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     return `Ingrese ${field.displayName.toLowerCase()}`;
   }
 
-  // Método para cargar opciones de relación desde la API
   private _loadRelationOptions(
     fieldName: string,
     searchTerm: string = '',
@@ -386,10 +363,8 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     const config = field.relationConfig;
     this.loadingRelationOptions[fieldName] = true;
 
-    // Preparar parámetros de consulta
     const queryParams = { ...(config.queryParams || {}) };
     if (searchTerm) {
-      // Usar el campo de búsqueda configurado o por defecto 'search'
       const searchField = config.searchField || 'search';
       queryParams[searchField] = searchTerm;
     }
@@ -426,39 +401,32 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onFocusDropdown(toggleButton: HTMLButtonElement): void {
-    // Abre el dropdown de Metronic al hacer focus en el input
+    // Click programático en el dropdown-toggle oculto de Metronic para abrirlo al enfocar el input.
     setTimeout(() => {
-      toggleButton.click(); // simula el click en el dropdown-toggle oculto
+      toggleButton.click();
     }, 0);
   }
 
-  // Método para manejar la entrada de búsqueda para campos de relación
   onRelationSearch(fieldName: string, searchTerm: string): void {
     if (!fieldName) return;
 
-    // Asegurar que searchTerms esté inicializado
     if (!this.searchTerms) {
       this.searchTerms = {};
     }
     this.searchTerms[fieldName] = searchTerm;
 
-    // Verificar si el subject existe antes de usarlo
     if (!this.searchSubjects || !this.searchSubjects[fieldName]) {
-      // Si el subject no existe, crearlo
       this._setupSearchSubjectForField(fieldName);
     }
 
-    // Después de intentar crear el subject, verificar nuevamente antes de usarlo
     if (this.searchSubjects && this.searchSubjects[fieldName]) {
       this.searchSubjects[fieldName].next(searchTerm);
     } else {
-      // Si aún no hay subject, cargar opciones directamente como respaldo
       console.warn(`No hay subject de búsqueda disponible para el campo: ${fieldName}`);
       this._loadRelationOptions(fieldName, searchTerm);
     }
   }
 
-  // Método para manejar la selección de una opción de relación
   onRelationOptionSelected(
     condition: FilterCondition,
     option: RelationOption,
@@ -479,7 +447,6 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     this.changeDetectorRef.detectChanges();
   }
 
-  // Verificar si un campo es un campo de relación
   isRelationField(fieldName: string): boolean {
     if (!fieldName) return false;
 
@@ -487,12 +454,10 @@ export class FiltroComponent implements OnInit, OnChanges, OnDestroy {
     return field?.type === 'relation';
   }
 
-  // Obtener opciones de relación para un campo
   getRelationOptions(fieldName: string): RelationOption[] {
     return this.relationOptions[fieldName] || [];
   }
 
-  // Verificar si las opciones de relación están cargando para un campo
   isLoadingRelationOptions(fieldName: string): boolean {
     return this.loadingRelationOptions[fieldName] || false;
   }

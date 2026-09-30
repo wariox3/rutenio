@@ -83,7 +83,6 @@ export default class FranjaEditarComponent extends General {
     const color = this.formularioFranja.get('color').value;
     const colorOriginal = color;
     
-    // Crear una copia de los datos del formulario para el envío
     const datosParaEnvio = {
       ...this.formularioFranja.value,
       color: color.slice(1), // Remover el # solo para el envío
@@ -102,7 +101,6 @@ export default class FranjaEditarComponent extends General {
           this.emitirCerrarModal.emit();
         },
         error: (error) => {
-          // Restaurar el color original en caso de error
           this.formularioFranja.patchValue({
             color: colorOriginal,
           });

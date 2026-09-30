@@ -99,7 +99,6 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
           ...p,
           meta: obtenerPlantillaMeta(p.nombre, p.variables.length),
         }));
-        // Ordenar: Utility primero (más baratas y sin opt-in), Marketing al final.
         conMeta.sort((a, b) => {
           const ca = a.meta.categoria === 'marketing' ? 1 : 0;
           const cb = b.meta.categoria === 'marketing' ? 1 : 0;
@@ -126,7 +125,6 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     });
   }
 
-  /** Plantilla actualmente seleccionada (con metadatos). */
   get plantillaSeleccionada(): PlantillaUI | null {
     const nombre = this.form.controls.plantilla_nombre.value;
     return this.plantillas.find((p) => p.nombre === nombre) ?? null;
@@ -138,7 +136,6 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     this._reconstruirVariables();
   }
 
-  /** Devuelve el preview troceado en segmentos para resaltar partes variables. */
   get previewSegmentos(): PreviewSegment[] {
     const plantilla = this.plantillaSeleccionada;
     if (!plantilla) return [];
@@ -187,9 +184,7 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     while (arr.length) arr.removeAt(0);
     if (plantilla) {
       plantilla.variables.forEach((_, i) => {
-        // Prellenar con el ejemplo (si lo hay): el botón queda habilitado de una
-        // y el usuario edita si quiere. Antes arrancaba vacío y confundía (el
-        // ejemplo se veía como placeholder → parecía lleno estando vacío).
+        // Se prellena con el ejemplo como valor real (no placeholder), para que no parezca vacía.
         const ejemplo = plantilla.meta.variables[i]?.ejemplo ?? '';
         arr.push(new FormControl<string>(ejemplo, { nonNullable: true, validators: [Validators.required] }));
       });
@@ -219,23 +214,20 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     this._reconstruirVariables();
   }
 
-  /** Devuelve el meta de la variable en posición `i` para la plantilla actual. */
   variableMeta(i: number): VariableMeta | null {
     return this.plantillaSeleccionada?.meta.variables[i] ?? null;
   }
 
-  /** Devuelve el FormControl de la variable en posición `i`, si existe. */
   variableControl(i: number): FormControl<string> | null {
     return (this.form.controls.variables.at(i) as FormControl<string>) ?? null;
   }
 
-  /** True si la variable en posición `i` está marcada como tocada y es inválida. */
+  /** True si está marcada como tocada y es inválida (no solo inválida). */
   variableConError(i: number): boolean {
     const c = this.variableControl(i);
     return !!(c && c.invalid && c.touched);
   }
 
-  /** Aplica el ejemplo sugerido a la variable en posición `i`. */
   usarEjemplo(i: number): void {
     const meta = this.variableMeta(i);
     const ctrl = this.variableControl(i);
@@ -245,7 +237,6 @@ export class PlantillaSelectorComponent implements OnInit, OnChanges {
     }
   }
 
-  /** True si esta plantilla es la seleccionada (helper para el template). */
   esSeleccionada(nombre: string): boolean {
     return this.plantillaSeleccionada?.nombre === nombre;
   }

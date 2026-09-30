@@ -3,8 +3,7 @@
     <h3 class="card-title">Filtros</h3>
   </div>
   <div class="card-body">
-    <!-- Buscador rápido: texto libre por OE / complemento / placa (server-side,
-         debounced). Complementa el filtro estructurado de abajo. -->
+    <!-- Buscador libre (server-side, debounced); complementa el filtro estructurado de abajo. -->
     <div class="relative mb-4 max-w-md">
       <i class="ki-filled ki-magnifier absolute start-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <input
@@ -252,7 +251,6 @@
                 <div
                   class="progress-container bg-gray-200 dark:bg-gray-100 rounded-full h-4 w-full relative overflow-hidden"
                 >
-                  <!-- Fondo difuminado -->
                   <div
                     class="absolute h-4 rounded-full w-full"
                     [ngClass]="{
@@ -261,7 +259,6 @@
                     }"
                   ></div>
 
-                  <!-- Barra de progreso -->
                   <div
                     class="progress-bar h-4 rounded-full absolute"
                     [ngClass]="
@@ -279,7 +276,6 @@
                     "
                   ></div>
 
-                  <!-- Texto del porcentaje centrado en el contenedor -->
                   <div
                     class="absolute inset-0 flex items-center justify-center"
                   >
@@ -294,7 +290,6 @@
                   </div>
                 </div>
 
-                <!-- Texto informativo simplificado -->
                 <div class="text-xs text-gray-500 text-right">
                   Entregadas: {{ despacho.visitas_entregadas }}/{{
                     despacho.visitas
@@ -579,7 +574,6 @@
               {{ visitaSeleccionada?.destinatario }}
             </p>
 
-            <!-- Dirección -->
             <div class="flex items-center text-gray-700">
               <i class="ki-filled ki-geolocation text-blue-500 text-lg"></i>
               <span class="ml-2">{{
@@ -980,8 +974,6 @@
   </section>
 </app-modal-standard>
 
-<!-- Timeline de seguimiento del viaje: consultas, respuestas del conductor,
-     llamadas y notas, en orden cronológico. -->
 <app-modal-standard
   modalId="trafico-seguimiento-modal"
   title="Seguimiento del viaje"

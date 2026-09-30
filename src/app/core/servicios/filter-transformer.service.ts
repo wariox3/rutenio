@@ -1,4 +1,3 @@
-// filter-transformer.service.ts
 import { Injectable } from '@angular/core';
 import { FilterCondition } from '../interfaces/filtro.interface';
 import { ParametrosApiPost } from '../types/api.type';
@@ -7,11 +6,6 @@ import { ParametrosApiPost } from '../types/api.type';
   providedIn: 'root'
 })
 export class FilterTransformerService {
-  /**
-   * Transforma un array de condiciones de filtro a un objeto de parámetros para la API
-   * @param filters Array de condiciones de filtro
-   * @returns Objeto con los parámetros para la API
-   */
   transformToApiParams(filters: FilterCondition[]): Record<string, any> {
     if (!filters || filters.length === 0) {
       return {};
@@ -21,7 +15,7 @@ export class FilterTransformerService {
 
     filters.forEach(filter => {
       if (!this.isValidFilter(filter)) {
-        return; // Saltar filtros inválidos
+        return;
       }
 
       const apiKey = this.getApiKey(filter.field, filter.operator);
@@ -33,11 +27,6 @@ export class FilterTransformerService {
     return apiParams;
   }
 
-  /**
-   * Transforma un array de condiciones de filtro a un array de parámetros para la API
-   * @param filters Array de condiciones de filtro
-   * @returns Array de parámetros para la API
-   */
   transformToApiPostParams (filters: FilterCondition[]): ParametrosApiPost[] {
     if (!filters || filters.length === 0) {
       return [];
@@ -68,11 +57,6 @@ export class FilterTransformerService {
     return apiParams;
   }
 
-  /**
-   * Convierte los parámetros de la API a un string de query
-   * @param params Objeto con los parámetros
-   * @returns String de query (ej: "param1=value1&param2=value2")
-   */
   toQueryString(params: Record<string, any>): string {
     return Object.keys(params)
       .filter(key => params[key] !== undefined && params[key] !== null && params[key] !== '')
@@ -85,21 +69,10 @@ export class FilterTransformerService {
       .join('&');
   }
 
-  /**
-   * Verifica si un filtro es válido
-   * @param filter Condición de filtro
-   * @returns boolean
-   */
   private isValidFilter(filter: FilterCondition): boolean {
     return !!filter.field && !!filter.operator && filter.value !== undefined && filter.value !== '';
   }
 
-  /**
-   * Genera la clave para el parámetro de la API basado en el campo y operador
-   * @param field Nombre del campo
-   * @param operator Operador
-   * @returns string
-   */
   private getApiKey(field: string, operator: string): string {
     const operatorMap: Record<string, string> = {
       '=': '',
@@ -135,15 +108,7 @@ export class FilterTransformerService {
     return operatorMap[operator] || operator;
   }
 
-  /**
-   * Transforma el valor según el tipo de campo si es necesario
-   * @param value Valor original
-   * @param field Nombre del campo (opcional, para transformaciones específicas)
-   * @returns any
-   */
   private transformValue(value: any, field?: string): any {
-    // Aquí puedes agregar lógica adicional para transformar valores específicos
-    // Ejemplo: convertir strings a números para ciertos campos
     if (field?.endsWith('_id') || field === 'id') {
       return Number(value) || value;
     }

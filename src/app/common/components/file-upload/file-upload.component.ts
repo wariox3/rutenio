@@ -23,30 +23,26 @@ import { HttpService } from '../../services/http.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileUploadComponent extends General implements OnInit {
-  // Configuración del componente
   @Input() endpoint: string = '';
-  @Input() acceptedFileTypes: string = '*'; // Por defecto acepta cualquier tipo de archivo
+  @Input() acceptedFileTypes: string = '*';
   @Input() buttonText: string = 'Importar';
   @Input() buttonLoadingText: string = 'Importando...';
   @Input() cancelButtonText: string = 'Cancelar';
-  @Input() maxFileSize: number = 10; // Tamaño máximo en MB
+  @Input() maxFileSize: number = 10; // en MB
   @Input() additionalParams: { [key: string]: any } = {};
-  @Input() useBase64: boolean = true; // Si es true, envía el archivo como base64, si es false, envía como FormData
-  
-  // Configuración del botón de ejemplo
+  @Input() useBase64: boolean = true; // true: envía base64; false: envía FormData
+
   @Input() showExampleButton: boolean = false;
   @Input() exampleButtonText: string = 'Ejemplo';
   @Input() exampleFileUrl: string = '';
   @Input() exampleFileName: string = 'ejemplo';
 
-  // Eventos de salida
   @Output() uploadSuccess: EventEmitter<any> = new EventEmitter<any>();
   @Output() uploadError: EventEmitter<any> = new EventEmitter<any>();
   @Output() fileSelected: EventEmitter<File> = new EventEmitter<File>();
   @Output() cancel: EventEmitter<void> = new EventEmitter<void>();
   @Output() exampleDownloadError: EventEmitter<any> = new EventEmitter<any>();
 
-  // Variables internas
   public selectedFile: File | null = null;
   public base64File: string | null = null;
   public fileName: string = '';
@@ -74,17 +70,12 @@ export class FileUploadComponent extends General implements OnInit {
     }
   }
 
-  /**
-   * Maneja el cambio de archivo seleccionado
-   * @param event Evento del input file
-   */
   onFileChange(event: any): void {
     const file = event.target.files[0];
     this.errorMessage = null;
     this.fileSizeExceeded = false;
-    
+
     if (file) {
-      // Validar tamaño del archivo
       const fileSizeInMB = file.size / (1024 * 1024);
       if (fileSizeInMB > this.maxFileSize) {
         this.fileSizeExceeded = true;
@@ -105,10 +96,6 @@ export class FileUploadComponent extends General implements OnInit {
     }
   }
 
-  /**
-   * Convierte un archivo a base64
-   * @param file Archivo a convertir
-   */
   convertToBase64(file: File): void {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -122,9 +109,6 @@ export class FileUploadComponent extends General implements OnInit {
     };
   }
 
-  /**
-   * Sube el archivo al servidor
-   */
   uploadFile(): void {
     if (!this.selectedFile) {
       this.errorMessage = 'No se ha seleccionado ningún archivo';
@@ -145,9 +129,6 @@ export class FileUploadComponent extends General implements OnInit {
     }
   }
 
-  /**
-   * Sube el archivo como base64
-   */
   private uploadBase64File(): void {
     if (!this.base64File) {
       this.isUploading$.next(false);
@@ -155,7 +136,6 @@ export class FileUploadComponent extends General implements OnInit {
       return;
     }
 
-    // Crear objeto con los parámetros adicionales y el archivo en base64
     const requestData = {
       ...this.additionalParams,
       archivo_base64: this.base64File,
@@ -178,30 +158,19 @@ export class FileUploadComponent extends General implements OnInit {
       });
   }
 
-  /**
-   * Sube el archivo como FormData
-   */
   private uploadFormDataFile(): void {
     const formData = new FormData();
-    
-    // Añadir el archivo al FormData
     formData.append('archivo', this.selectedFile as File);
-    
-    // Añadir parámetros adicionales al FormData
     Object.keys(this.additionalParams).forEach(key => {
       formData.append(key, this.additionalParams[key]);
     });
 
-    // Aquí se usaría un método específico para subir FormData que no está implementado en el GeneralApiService
-    // Por ahora, mostramos un error
+    // TODO: subida por FormData aún no implementada en GeneralApiService.
     this.isUploading$.next(false);
     this.errorMessage = 'La subida como FormData no está implementada en este componente';
     console.error('La subida como FormData no está implementada en el GeneralApiService');
   }
 
-  /**
-   * Descarga el archivo de ejemplo
-   */
   downloadExampleFile(): void {
     if (!this.exampleFileUrl) {
       this.errorMessage = 'No se ha configurado una URL para el archivo de ejemplo';
@@ -211,12 +180,10 @@ export class FileUploadComponent extends General implements OnInit {
     this.isDownloadingExample$.next(true);
     
     try {
-      // Si la URL es relativa, usamos el servicio HTTP para descargar
       if (!this.exampleFileUrl.startsWith('http')) {
         this._httpService.descargarArchivo(this.exampleFileUrl, {});
         this.isDownloadingExample$.next(false);
       } else {
-        // Si es una URL absoluta, creamos un enlace y simulamos un clic
         const link = document.createElement('a');
         link.href = this.exampleFileUrl;
         link.target = '_blank';
@@ -234,9 +201,6 @@ export class FileUploadComponent extends General implements OnInit {
     }
   }
 
-  /**
-   * Reinicia el formulario
-   */
   resetForm(): void {
     this.selectedFile = null;
     this.base64File = null;
@@ -245,9 +209,6 @@ export class FileUploadComponent extends General implements OnInit {
     this.fileSizeExceeded = false;
   }
 
-  /**
-   * Cancela la subida y emite evento
-   */
   onCancel(): void {
     this.resetForm();
     this.cancel.emit();

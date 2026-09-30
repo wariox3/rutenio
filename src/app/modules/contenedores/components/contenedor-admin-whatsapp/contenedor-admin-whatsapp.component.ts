@@ -57,7 +57,6 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
   controlBusqueda = new FormControl('');
   filtroEstado: FiltroEstado = 'todos';
 
-  // Modal de asignación
   modalAbierto = false;
   contenedorSeleccionado: ContenedorAdmin | null = null;
   numeroSeleccionadoId: string | null = null;
@@ -124,11 +123,9 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
   onClickToggle(c: ContenedorAdmin) {
     if (this.procesandoId === c.id) return;
     if (c.acceso_whatsapp) {
-      // Desactivar = desasignar
       if (!confirm(`¿Seguro querés desasignar el número de ${c.nombre}?`)) return;
       this._desasignar(c);
     } else {
-      // Activar = abrir modal para elegir número
       this.abrirModal(c);
     }
   }
@@ -218,8 +215,6 @@ export default class ContenedorAdminWhatsappComponent implements OnInit {
         error: () => { this.procesandoId = null; this._cdr.markForCheck(); },
       });
   }
-
-  // Helpers
 
   seleccionarFiltro(f: FiltroEstado) { this.filtroEstado = f; }
 

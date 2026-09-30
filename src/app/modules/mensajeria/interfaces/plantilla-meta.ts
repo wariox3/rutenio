@@ -1,11 +1,4 @@
-/**
- * Metadatos UX por plantilla: nombre humano, descripción corta, icono y labels
- * descriptivos para cada variable.
- *
- * Las plantillas vienen del backend (`PLANTILLAS_TEXTO`) y la UI las ofrece
- * con esta capa de presentación encima. Si una plantilla no aparece acá, se
- * usa un fallback razonable (nombre técnico tal cual + labels genéricos).
- */
+/** Metadatos UX por plantilla. Las plantillas en sí vienen del backend (`PLANTILLAS_TEXTO`). */
 export type CategoriaPlantilla = 'utility' | 'marketing';
 
 export interface PlantillaMeta {
@@ -166,7 +159,6 @@ export function obtenerPlantillaMeta(
 ): PlantillaMeta {
   const meta = META_BY_NAME[nombre];
   if (meta) return meta;
-  // Fallback para plantillas no mapeadas: nombre técnico + variables genéricas.
   return {
     nombre,
     titulo: nombre,

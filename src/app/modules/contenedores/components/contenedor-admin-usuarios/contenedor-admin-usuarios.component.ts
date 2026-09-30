@@ -110,7 +110,6 @@ export default class ContenedorAdminUsuariosComponent implements OnInit, OnDestr
   private busqueda$ = new Subject<string>();
   private destroy$ = new Subject<void>();
 
-  // Modal asignar contenedor
   modalAsignar = signal<boolean>(false);
   usuarioSeleccionado = signal<UsuarioGlobal | null>(null);
   contenedoresDisponibles = signal<ContenedorOpcion[]>([]);

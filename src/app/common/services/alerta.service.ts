@@ -7,8 +7,6 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 export class AlertaService {
   constructor() {}
 
-  // ========== Estilos base compartidos ==========
-
   /** Estilos para modales centrados (confirmación, validación, esperar). */
   private getBaseConfig() {
     return {
@@ -20,11 +18,7 @@ export class AlertaService {
           '!bg-white dark:!bg-gray-900 !p-6 !max-w-md',
         title: '!text-[17px] !font-semibold !text-gray-800 dark:!text-gray-100 !tracking-tight !mt-3',
         htmlContainer: '!text-[14px] !text-gray-600 dark:!text-gray-300 !leading-relaxed !mt-2',
-        // OJO: NO pisar el tamano ni el borde del icono. SweetAlert2 dibuja el
-        // check/X/! con lineas absolutas calibradas al icono nativo (80px) y su
-        // anillo; forzar w/h o quitar el borde descoloca la figura (la "X" del
-        // error se veia como un "techo" rojo roto). Solo se centra y se escala
-        // parejo con transform (scale preserva la geometria interna).
+        // No forzar w/h ni quitar el borde del icono: descoloca el dibujo de SweetAlert2 (la "X" de error se veía rota).
         icon: '!mx-auto !mt-1 !mb-3 !scale-90',
         closeButton:
           '!w-8 !h-8 !rounded-full !text-gray-400 dark:!text-gray-500 ' +
@@ -61,12 +55,7 @@ export class AlertaService {
     };
   }
 
-  /**
-   * Modal centrado genérico (éxito / error / info / advertencia). Toda la app
-   * usa este mismo formato: título + mensaje + botón "Entendido", con el icono
-   * y color según la severidad. Reemplaza a los toasts (decisión de UX: todas
-   * las alertas son modales centrados que piden acuse, no avisos fugaces).
-   */
+  /** Modal centrado genérico (éxito/error/info/advertencia): título + mensaje + botón "Entendido". */
   private modalCentrado(title: string, html: string, icon: SweetAlertIcon) {
     const bc = this.getBaseConfig();
     const ic = this.getIconClass(icon);
@@ -85,7 +74,6 @@ export class AlertaService {
     });
   }
 
-  /** Retorna clases tailwind y color de progressbar según el tipo. */
   private getIconClass(icon: SweetAlertIcon): { icon: string; progress: string } {
     switch (icon) {
       case 'success':
@@ -100,8 +88,6 @@ export class AlertaService {
         return { icon: '!text-gray-600 dark:!text-gray-300', progress: '!bg-gray-400' };
     }
   }
-
-  // ========== Mensajes ==========
 
   mensajeInformativo(title: string, text: string) {
     return this.modalCentrado(title, text, 'info');
@@ -130,8 +116,7 @@ export class AlertaService {
       customClass: {
         ...bc.customClass,
         icon: `${bc.customClass.icon} ${ic.icon}`,
-        // El spinner de showLoading() vive en el area de acciones; la config
-        // base la deja en justify-end, por eso quedaba a la derecha. Se centra.
+        // showLoading() posiciona el spinner en .actions, que por defecto queda a la derecha; se centra.
         actions: '!mt-5 !flex !justify-center !gap-2 !w-full',
       },
     }),
@@ -162,7 +147,6 @@ export class AlertaService {
     });
   }
 
-  // Pide un texto al usuario (input). Devuelve el valor (trim) o null si cancela.
   async pedirTexto(
     title: string,
     opciones: { html?: string; placeholder?: string; valorInicial?: string; confirmButtonText?: string } = {}
@@ -190,8 +174,6 @@ export class AlertaService {
     return r.isConfirmed ? String(r.value ?? '').trim() : null;
   }
 
-  // Pide elegir una opción de una lista (input select). `opciones` es un mapa
-  // { valor: etiqueta }. Devuelve el valor elegido, o null si cancela.
   async pedirSeleccion(
     title: string,
     opciones: Record<string, string>,
@@ -221,10 +203,7 @@ export class AlertaService {
     return r.isConfirmed ? String(r.value ?? '') : null;
   }
 
-  // Como pedirSeleccion pero con BUSCADOR y lista scrolleable: para muchas
-  // opciones (p.ej. conductores de un contenedor). Cada item: { valor, etiqueta,
-  // detalle? }. El buscador filtra por etiqueta + detalle (nombre, correo, tel).
-  // Devuelve el valor elegido, o null si cancela.
+  // Como pedirSeleccion pero con buscador, para listas largas (p.ej. conductores). Filtra por etiqueta + detalle.
   async pedirSeleccionBuscable(
     title: string,
     items: {
@@ -247,7 +226,6 @@ export class AlertaService {
     let seleccion: string | null = cfg.valorInicial ?? null;
     const esc = (s: string) => this.escaparHtml(s);
 
-    // Iniciales para el avatar: primeras letras de las 2 primeras palabras.
     const iniciales = (s: string) => {
       const p = s.trim().split(/\s+/).filter((w) => /[\wÀ-ÿ]/.test(w));
       if (!p.length) return '·';
@@ -336,7 +314,6 @@ export class AlertaService {
         };
         opciones.forEach((btn) => {
           btn.addEventListener('click', () => marcar(btn));
-          // Preselección (conductor ya asignado): márcalo y hazlo visible.
           if (cfg.valorInicial != null && btn.dataset['valor'] === cfg.valorInicial) {
             marcar(btn);
             btn.scrollIntoView({ block: 'nearest' });
@@ -424,15 +401,8 @@ export class AlertaService {
   }
 
   /**
-   * Resumen visual de una importación (Excel / complemento / nuevo desde
-   * complemento). Recibe los conteos que devuelve el backend y muestra un
-   * desglose con el diseño de Ruteo. Solo lista las filas con valor > 0.
-   * - success: entraron guías y sin problemas.
-   * - warning: entraron pero hubo sin-geocodificar / fuera de zona / inválidas.
-   * - info: no entró ninguna guía nueva (p. ej. todas ya estaban).
-   * Las clases de color son las mismas que ya emite getIconClass(), así que
-   * están garantizadas en el build (sin riesgo de purge de Tailwind); el
-   * layout va por estilos inline para no depender de clases dinámicas.
+   * Resumen visual de una importación: solo lista las filas con valor > 0.
+   * Usa las mismas clases de getIconClass() para evitar que Tailwind purgue clases dinámicas.
    */
   async resultadoImportacion(
     resumen: {
@@ -565,7 +535,6 @@ export class AlertaService {
       green: '!bg-green-600 hover:!bg-green-700 focus:!ring-green-500/30',
       yellow: '!bg-yellow-500 hover:!bg-yellow-600 focus:!ring-yellow-500/30',
     };
-    // Compatibilidad hacia atrás: hex legacy → rojo
     const claseBoton = mapColor[colorConfirmar] || mapColor['red'];
 
     return await Swal.fire({

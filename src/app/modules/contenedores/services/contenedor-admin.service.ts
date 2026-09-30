@@ -114,7 +114,6 @@ export class ContenedorAdminService {
     );
   }
 
-  /** Lista de contenedores existentes (para el modal de asignacion). */
   listaContenedoresAdmin() {
     return this.http.get<Array<{ id: number; schema_name: string; nombre: string }>>(
       `${environment.url_api}/contenedor/contenedor/admin-lista/`,

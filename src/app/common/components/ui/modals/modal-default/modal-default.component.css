@@ -9,7 +9,7 @@
 
 :host-context(.dark) .spinner {
   border: 5px solid rgba(255, 255, 255, 0.15);
-  border-top: 5px solid #3b82f6; /* blue-500 */
+  border-top: 5px solid #3b82f6;
 }
 
 @keyframes spin {

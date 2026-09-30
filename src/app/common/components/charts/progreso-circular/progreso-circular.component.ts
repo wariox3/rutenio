@@ -14,25 +14,19 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgresoCircularComponent {
-  @Input() progress: number = 0; // Valor entre 0 y 100
-  @Input() barraProgreso: number = 0; // Valor entre 0 y 100
+  @Input() progress: number = 0;
+  @Input() barraProgreso: number = 0;
   @Input() error: boolean = true;
 
   strokeDashoffset: number = 0;
 
-  // Circunferencia del círculo con r = 16 (perímetro = 2 * π * r)
   readonly circumference = 2 * Math.PI * 22;
 
   ngOnChanges(): void {
     this.strokeDashoffset = this.circumference * (1 - this.barraProgreso / 100);
   }
 
-  /**
-   * Formatea el porcentaje de manera inteligente para evitar desbordamiento
-   * 0-999%: Mostrar normal (ej: "85%")
-   * 1000-9999%: Mostrar en miles con 1 decimal (ej: "9.3K%")
-   * 10000+%: Mostrar abreviado sin decimales (ej: "92K%")
-   */
+  // Abrevia en K a partir de 1000% para evitar desbordamiento visual.
   get formattedProgress(): string {
     const value = Math.round(this.progress);
     
@@ -47,11 +41,6 @@ export class ProgresoCircularComponent {
     }
   }
 
-  /**
-   * Determina el tamaño de fuente según el valor del porcentaje
-   * >= 1000: text-[11px] (más pequeño para valores grandes)
-   * < 1000: text-xs (tamaño normal)
-   */
   get fontSizeClass(): string {
     const value = Math.round(this.progress);
     return value >= 1000 ? 'text-[11px]' : 'text-xs';
