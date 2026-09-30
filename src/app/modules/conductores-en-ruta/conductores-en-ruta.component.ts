@@ -15,6 +15,7 @@ import { interval, take } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { FormatFechaPipe } from '../../common/pipes/formatear_fecha';
 import { HttpService } from '../../common/services/http.service';
+import { WebPushService } from '../../common/services/web-push.service';
 import { GeneralApiService } from '../../core';
 import { obtenerContenedorSubdominio } from '../../redux/selectors/contenedor.selector';
 import { TokenService } from '../auth/services/token.service';
@@ -60,6 +61,7 @@ export default class ConductoresEnRutaComponent implements OnInit, OnDestroy {
   private _destroy = inject(DestroyRef);
   private _store = inject(Store);
   private _token = inject(TokenService);
+  private _webPush = inject(WebPushService);
 
   conductores = signal<ConductorEnRuta[]>([]);
   seleccionado = signal<ConductorEnRuta | null>(null);
@@ -74,6 +76,7 @@ export default class ConductoresEnRutaComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.consultarLista();
     this.conectarWs();
+    this._webPush.activar();
     // Fallback si el WS se cae: poll lento.
     interval(30000)
       .pipe(takeUntilDestroyed(this._destroy))
