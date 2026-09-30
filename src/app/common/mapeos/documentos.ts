@@ -104,9 +104,6 @@ export const mapeo: any = {
         ordenable: true,
       },
       {
-        // Día en que la guía salió a RUTA (fecha del despacho), distinto de
-        // 'Fecha' (manifiesto/ingreso). Deja ver cuando una guía se repartió
-        // otro día que su ingreso; se muestra en local por el pipe date.
         encabezado: 'Día de ruta',
         campoNombre: 'despacho__fecha',
         campoTipo: 'DateField',
@@ -125,9 +122,6 @@ export const mapeo: any = {
         tooltip: 'Estado dominante: Novedad > Entregado > Despachado > Pendiente',
       },
       {
-        // Usuario de la app que registró la entrega (quién entregó de verdad),
-        // distinto del conductor asignado al despacho. Se llena desde el token
-        // móvil al entregar; guías entregadas antes de habilitarlo salen vacías.
         encabezado: 'Entregado por',
         campoNombre: 'entregado_por_nombre',
         campoTipo: 'CharField',
@@ -154,9 +148,6 @@ export const mapeo: any = {
       },
     ],
   },
-  // Informe "Entregas por despacho": igual al de Visita pero pensado para
-  // liquidar por día de RUTA (fecha del despacho) y viendo cuándo se entregó
-  // cada guía (columna "Fecha entrega") y quién la entregó.
   EntregaDespacho: {
     modulo: 'general',
     modelo: 'visita',
@@ -466,6 +457,15 @@ export const mapeo: any = {
         visibleTabla: true,
         visibleFiltro: true,
         ordenable: true,
+      },
+      {
+        encabezado: 'Solucionada por',
+        campoNombre: 'solucionado_por_nombre',
+        campoTipo: 'CharField',
+        visibleTabla: true,
+        visibleFiltro: false,
+        ordenable: false,
+        tooltip: 'Usuario que marcó la novedad como solucionada.',
       },
     ],
   },
