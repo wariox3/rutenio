@@ -168,6 +168,19 @@ export default [
     ]
   },
   {
+    path: 'conductores-en-ruta',
+    canActivate: [authGuard, contenedorGuard],
+    loadComponent: () =>
+      import('./admin-layout/admin-layout.component'),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('../modules/conductores-en-ruta/conductores-en-ruta.component'),
+      },
+    ]
+  },
+  {
     path: 'complemento',
     canActivate: [authGuard, contenedorGuard],
     loadComponent: () =>

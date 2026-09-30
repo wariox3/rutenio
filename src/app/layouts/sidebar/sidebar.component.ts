@@ -67,6 +67,13 @@ export class SidebarComponent extends General implements OnInit {
       modulo: 'despacho',
     },
     {
+      nombre: 'Conductores en ruta',
+      link: '/conductores-en-ruta',
+      iconoClase: 'ki-filled ki-geolocation',
+      activo: false,
+      modulo: 'despacho',
+    },
+    {
       nombre: 'Mensajería',
       link: '/mensajeria',
       iconoClase: 'ki-filled ki-messages',

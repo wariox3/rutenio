@@ -1,0 +1,124 @@
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-lg font-semibold text-gray-900">Conductores en ruta</h1>
+  <button class="btn btn-sm btn-light" (click)="consultarLista()">
+    <i class="ki-filled ki-arrows-circle mr-1"></i> Actualizar
+  </button>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4" style="min-height: 70vh">
+  <!-- Lista de conductores -->
+  <div class="card lg:col-span-1">
+    <div class="card-header">
+      <h3 class="card-title">
+        {{ conductores().length }} en ruta
+      </h3>
+    </div>
+    <div class="card-body p-0 overflow-y-auto" style="max-height: 70vh">
+      @if (conductores().length === 0) {
+        <div class="py-10 text-center text-gray-400 text-sm">
+          @if (cargandoLista()) { Cargando… } @else { No hay conductores en ruta. }
+        </div>
+      } @else {
+        @for (c of conductores(); track c.conductor_id) {
+          <button
+            class="w-full text-left px-4 py-3 border-b border-gray-200 hover:bg-gray-50"
+            [class.bg-blue-50]="seleccionado()?.conductor_id === c.conductor_id"
+            (click)="seleccionar(c)"
+          >
+            <div class="flex items-center justify-between">
+              <span class="font-semibold text-gray-900">{{ c.conductor_nombre }}</span>
+              <span class="flex items-center gap-1">
+                @if (c.consulta_pendiente) {
+                  <span class="badge badge-sm badge-warning">esperando</span>
+                }
+                @if (c.no_leidos > 0) {
+                  <span class="badge badge-sm badge-danger">{{ c.no_leidos }}</span>
+                }
+              </span>
+            </div>
+            <div class="text-xs text-gray-500 mt-0.5">
+              {{ c.ordenes }} {{ c.ordenes === 1 ? 'orden' : 'órdenes' }} ·
+              {{ c.entregadas }}/{{ c.visitas }} entregadas
+            </div>
+            @if (c.ultimo_mensaje) {
+              <div class="text-xs text-gray-400 mt-1 truncate">
+                {{ c.ultimo_mensaje.es_conductor ? '' : 'Vos: ' }}{{ c.ultimo_mensaje.comentario }}
+              </div>
+            }
+          </button>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Chat -->
+  <div class="card lg:col-span-2 flex flex-col">
+    @if (!seleccionado()) {
+      <div class="flex-1 flex items-center justify-center text-gray-400 text-sm">
+        Elegí un conductor para ver el chat.
+      </div>
+    } @else {
+      <div class="card-header flex items-center justify-between">
+        <h3 class="card-title">{{ seleccionado()!.conductor_nombre }}</h3>
+        <div class="flex items-center gap-2">
+          <button
+            class="btn btn-sm btn-primary"
+            [disabled]="seleccionado()!.consulta_pendiente"
+            (click)="consultarEstado(seleccionado()!)"
+          >
+            ¿Todo bien?
+          </button>
+          @if (seleccionado()!.telefono) {
+            <button class="btn btn-sm btn-light" (click)="llamar(seleccionado()!.telefono)">
+              <i class="ki-filled ki-phone"></i>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="card-body flex-1 overflow-y-auto space-y-2" style="max-height: 60vh">
+        @for (m of conversacion(); track m.id) {
+          <div class="flex" [class.justify-end]="!m.es_conductor">
+            <div
+              class="max-w-[75%] rounded-lg px-3 py-2 text-sm"
+              [class]="m.es_conductor ? 'bg-gray-100 text-gray-900' : 'bg-blue-500 text-white'"
+            >
+              @if (m.tipo === 'consulta') {
+                <div class="font-semibold">{{ m.comentario }}</div>
+                @if (m.opciones?.length) {
+                  <div class="text-xs mt-1 opacity-80">
+                    Opciones: {{ m.opciones!.join(' · ') }}
+                  </div>
+                }
+              } @else if (m.tipo === 'respuesta') {
+                <div class="font-semibold">{{ m.opcion }}</div>
+                @if (m.comentario) { <div>{{ m.comentario }}</div> }
+              } @else {
+                <div>{{ m.comentario }}</div>
+              }
+              <div class="text-[10px] mt-1 opacity-70">
+                {{ m.fecha_registro | formatFecha : 'Y-m-d H:i' }}
+              </div>
+            </div>
+          </div>
+        }
+        @if (conversacion().length === 0) {
+          <div class="py-8 text-center text-gray-400 text-sm">Sin mensajes todavía.</div>
+        }
+      </div>
+
+      <div class="card-footer flex items-center gap-2">
+        <input
+          type="text"
+          class="input flex-1"
+          placeholder="Escribí un mensaje…"
+          [(ngModel)]="texto"
+          (keyup.enter)="enviar()"
+        />
+        <button class="btn btn-primary" [disabled]="!texto.trim()" (click)="enviar()">
+          Enviar
+        </button>
+      </div>
+    }
+  </div>
+</div>
