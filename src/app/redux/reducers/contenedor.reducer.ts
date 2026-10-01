@@ -25,6 +25,7 @@ let estadoInicializado: Contenedor = {
   acceso_restringido: false,
   reddoc: false,
   ruteo: true,
+  acceso_seguimiento: false,
   permisos: null,
 };
 

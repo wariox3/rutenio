@@ -9,6 +9,8 @@ export interface SidebarMenu {
     soloAdmin?: boolean;
     soloSuperAdmin?: boolean;
     modulo?: string;
+    /** Solo visible si el contenedor tiene habilitado "Conductores en ruta". */
+    requiereSeguimiento?: boolean;
     children?: SidebarMenuItem[];
   }
 

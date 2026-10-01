@@ -51,11 +51,13 @@ export interface Contenedor extends BaseContenedor, BaseUsuarioAcceso, BasePlanU
   perfil_web?: 'operativo' | 'supervisor' | 'consulta' | null;
   perfil_movil?: 'conductor' | 'coordinador' | null;
   permisos?: Record<string, { ver: boolean; editar: boolean }> | null;
+  acceso_seguimiento?: boolean;
 }
 
 export interface ContenedorDetalle extends BaseContenedor, BaseUsuarioAcceso {
   plan_usuarios_base: number;
   plan_limite_usuarios: number;
+  acceso_seguimiento: boolean;
 }
 
 export interface ContenedorLista extends Contenedor {}

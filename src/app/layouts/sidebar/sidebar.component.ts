@@ -3,6 +3,7 @@ import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { SidebarMenu, SidebarMenuItem } from '../../interfaces/general/sidebar/menu.interface';
 import { Store } from '@ngrx/store';
 import {
+  obtenerAccesoSeguimiento,
   obtenerEsAdminContenedor,
   obtenerPermisos,
 } from '../../redux/selectors/contenedor.selector';
@@ -72,6 +73,7 @@ export class SidebarComponent extends General implements OnInit {
       iconoClase: 'ki-filled ki-geolocation',
       activo: false,
       modulo: 'despacho',
+      requiereSeguimiento: true,
     },
     {
       nombre: 'Mensajería',
@@ -199,6 +201,7 @@ export class SidebarComponent extends General implements OnInit {
 
   public esAdmin = false;
   public esSuperAdmin = false;
+  public accesoSeguimiento = false;
   public permisos: Record<string, { ver: boolean; editar: boolean }> | null = null;
   private _destroy$ = new Subject<void>();
 
@@ -221,6 +224,12 @@ export class SidebarComponent extends General implements OnInit {
       .subscribe((p) => {
         this.permisos = p;
       });
+    this.store
+      .select(obtenerAccesoSeguimiento)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((v) => {
+        this.accesoSeguimiento = v;
+      });
     this.initializeAccordionStates();
     this.subscribeToRouteChanges();
   }
@@ -237,6 +246,7 @@ export class SidebarComponent extends General implements OnInit {
   }
 
   puedeVerMenu(menu: SidebarMenu): boolean {
+    if (menu.requiereSeguimiento && !this.accesoSeguimiento) return false;
     if (menu.soloSuperAdmin) return this.esSuperAdmin;
     if (menu.soloAdmin && !this.esAdmin && !this.esSuperAdmin) return false;
     if (menu.children?.length) {

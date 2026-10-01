@@ -181,6 +181,7 @@ export default class ContenedorListaComponent
             reddoc: respuesta.reddoc,
             ruteo: respuesta.ruteo,
             acceso_restringido: respuesta.acceso_restringido,
+            acceso_seguimiento: respuesta.acceso_seguimiento,
           };
           this.store.dispatch(ContenedorActionInit({ contenedor }));
 
