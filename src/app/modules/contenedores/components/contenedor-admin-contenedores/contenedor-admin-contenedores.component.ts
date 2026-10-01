@@ -28,6 +28,7 @@ interface ContenedorGlobal {
   usuarios: number;
   acceso_whatsapp: boolean;
   acceso_whatsapp_notificaciones: boolean;
+  acceso_seguimiento: boolean;
   whatsapp_phone_number_id: string | null;
   whatsapp_display: string | null;
   whatsapp_estado: string | null;
@@ -51,6 +52,7 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
   contenedores = signal<ContenedorGlobal[]>([]);
   busqueda = '';
   accediendoId = signal<number | null>(null);
+  seguimientoId = signal<number | null>(null);
 
   private get headers(): HttpHeaders {
     const token = getCookie('admin_token');
@@ -97,6 +99,28 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
     return this.contenedores().filter((c) => c.whatsapp_phone_number_id).length;
   }
 
+  toggleSeguimiento(c: ContenedorGlobal) {
+    if (this.seguimientoId()) return;
+    this.seguimientoId.set(c.id);
+    this.http
+      .post<{ mensaje: string; acceso_seguimiento: boolean }>(
+        `${environment.url_api}/contenedor/contenedor/toggle-seguimiento/`,
+        { id: c.id },
+        { headers: this.headers }
+      )
+      .subscribe({
+        next: (resp) => {
+          this.contenedores.update((lista) =>
+            lista.map((x) =>
+              x.id === c.id ? { ...x, acceso_seguimiento: resp.acceso_seguimiento } : x
+            )
+          );
+          this.seguimientoId.set(null);
+        },
+        error: () => this.seguimientoId.set(null),
+      });
+  }
+
   acceder(c: ContenedorGlobal) {
     if (this.accediendoId()) return;
     this.accediendoId.set(c.id);
@@ -124,6 +148,7 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
                 reddoc: resp.reddoc,
                 ruteo: resp.ruteo,
                 acceso_restringido: resp.acceso_restringido,
+                acceso_seguimiento: resp.acceso_seguimiento,
               } as any,
             })
           );

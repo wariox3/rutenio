@@ -63,6 +63,11 @@ export const obtenerPermisos = createSelector(
   (Contenedor) => Contenedor?.permisos || null
 );
 
+export const obtenerAccesoSeguimiento = createSelector(
+  Contenedor,
+  (Contenedor) => !!Contenedor?.acceso_seguimiento
+);
+
 /**
  * Devuelve true si el usuario activo puede `ver` o `editar` el modulo dado.
  * Admin/propietario tiene acceso total. Si no hay permisos cargados, asume false
