@@ -981,12 +981,10 @@
 >
   <section modal-body>
     <div class="mb-4 flex items-center gap-2 text-sm text-gray-600">
-      <i class="ki-filled ki-truck text-blue-500 text-lg"></i>
+      <i class="ki-filled ki-profile-circle text-blue-500 text-lg"></i>
       <span>
-        Despacho #{{ seguimientoDespacho()?.id }}
-        @if (seguimientoDespacho()?.conductor_nombre) {
-          · {{ seguimientoDespacho()?.conductor_nombre }}
-        }
+        {{ seguimientoDespacho()?.conductor_nombre || 'Conductor' }}
+        · incluye todas sus órdenes (desde despacho #{{ seguimientoDespacho()?.id }})
       </span>
     </div>
 
@@ -995,7 +993,7 @@
     } @else if (seguimientos().length === 0) {
       <div class="py-10 text-center text-gray-500">
         <i class="ki-filled ki-time text-3xl mb-2 block"></i>
-        Todavía no hay registros de seguimiento de este viaje.
+        Todavía no hay registros de seguimiento de este conductor.
       </div>
     } @else {
       <ol class="relative border-s border-gray-200 ms-3">
