@@ -68,6 +68,11 @@ export const obtenerAccesoSeguimiento = createSelector(
   (Contenedor) => !!Contenedor?.acceso_seguimiento
 );
 
+export const obtenerAccesoWhatsappNotificaciones = createSelector(
+  Contenedor,
+  (Contenedor) => !!Contenedor?.acceso_whatsapp_notificaciones
+);
+
 /**
  * Devuelve true si el usuario activo puede `ver` o `editar` el modulo dado.
  * Admin/propietario tiene acceso total. Si no hay permisos cargados, asume false

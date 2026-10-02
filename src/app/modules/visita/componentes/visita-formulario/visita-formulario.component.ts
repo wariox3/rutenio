@@ -28,6 +28,7 @@ import { cambiarVacioPorNulo } from '../../../../common/validaciones/campo-no-ob
 import { CitaRangoValidator } from '../../../../common/validaciones/cita-rango.validator';
 import { NoSoloEspacios } from '../../../../common/validaciones/no-solo-espacios.validator';
 import { TelefonoWhatsappValidator } from '../../../../common/validaciones/telefono-whatsapp.validator';
+import { obtenerAccesoWhatsappNotificaciones } from '../../../../redux/selectors/contenedor.selector';
 import { InputComponent as InputUiComponent } from '@tamerlantian/ui-components';
 import { InputNumericoValidator } from '../../../../common/validaciones/input-numerico.validator';
 
@@ -130,9 +131,13 @@ export default class VisitaFormularioComponent
   }, { validators: CitaRangoValidator.validar });
 
   public guardando = false;
+  // El aviso de WhatsApp solo aplica si el contenedor tiene las notificaciones
+  // habilitadas; si no, no se envia nada al aprobar y el aviso enganiaria.
+  public accesoWhatsappNotificaciones = false;
 
   /** True si el telefono actual cumple formato y ademas parece celular CO (recibira WhatsApp). */
   get telefonoRecibiraWhatsapp(): boolean {
+    if (!this.accesoWhatsappNotificaciones) return false;
     const ctrl = this.formularioVisita.get('destinatario_telefono');
     if (!ctrl || ctrl.invalid || !ctrl.value) return false;
     return TelefonoWhatsappValidator.esCelularCO(ctrl.value);
@@ -140,6 +145,7 @@ export default class VisitaFormularioComponent
 
   /** True si el telefono es valido pero NO parece celular CO (no recibira la plantilla). */
   get telefonoSinWhatsapp(): boolean {
+    if (!this.accesoWhatsappNotificaciones) return false;
     const ctrl = this.formularioVisita.get('destinatario_telefono');
     if (!ctrl || ctrl.invalid || !ctrl.value) return false;
     return !TelefonoWhatsappValidator.esCelularCO(ctrl.value);
@@ -169,6 +175,10 @@ export default class VisitaFormularioComponent
   };
 
   ngOnInit(): void {
+    this.store
+      .select(obtenerAccesoWhatsappNotificaciones)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((v) => (this.accesoWhatsappNotificaciones = v));
     if (this.formularioTipo === 'editar') {
       this.formularioVisita.reset(this._defaultsFormulario);
       this.formularioVisita.patchValue({

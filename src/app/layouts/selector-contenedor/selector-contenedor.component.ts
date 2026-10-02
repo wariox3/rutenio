@@ -105,6 +105,8 @@ export class SelectorContenedorComponent extends General implements OnInit {
             ruteo: respuesta.ruteo,
             acceso_restringido: respuesta.acceso_restringido,
             acceso_seguimiento: respuesta.acceso_seguimiento,
+            acceso_whatsapp: respuesta.acceso_whatsapp,
+            acceso_whatsapp_notificaciones: respuesta.acceso_whatsapp_notificaciones,
           };
           this.store.dispatch(ContenedorActionInit({ contenedor }));
           return forkJoin({

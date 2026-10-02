@@ -52,12 +52,16 @@ export interface Contenedor extends BaseContenedor, BaseUsuarioAcceso, BasePlanU
   perfil_movil?: 'conductor' | 'coordinador' | null;
   permisos?: Record<string, { ver: boolean; editar: boolean }> | null;
   acceso_seguimiento?: boolean;
+  acceso_whatsapp?: boolean;
+  acceso_whatsapp_notificaciones?: boolean;
 }
 
 export interface ContenedorDetalle extends BaseContenedor, BaseUsuarioAcceso {
   plan_usuarios_base: number;
   plan_limite_usuarios: number;
   acceso_seguimiento: boolean;
+  acceso_whatsapp: boolean;
+  acceso_whatsapp_notificaciones: boolean;
 }
 
 export interface ContenedorLista extends Contenedor {}

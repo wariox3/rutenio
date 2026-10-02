@@ -149,6 +149,8 @@ export default class ContenedorAdminContenedoresComponent implements OnInit {
                 ruteo: resp.ruteo,
                 acceso_restringido: resp.acceso_restringido,
                 acceso_seguimiento: resp.acceso_seguimiento,
+                acceso_whatsapp: resp.acceso_whatsapp,
+                acceso_whatsapp_notificaciones: resp.acceso_whatsapp_notificaciones,
               } as any,
             })
           );
