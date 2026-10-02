@@ -585,7 +585,7 @@ export default class TraficoListaComponent
     });
     if (!r.isConfirmed) return;
     this._seguimientoApiService
-      .consultar(despacho.id)
+      .consultar(despacho.conductor_id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -615,8 +615,12 @@ export default class TraficoListaComponent
       placeholder: 'Ej: va retrasado por tráfico, llega en 1h',
     });
     if (comentario === null) return;
+    if (!despacho.conductor_id) return;
     this._seguimientoApiService
-      .registrarLlamada(despacho.id, comentario || `Llamada a ${telefono}`)
+      .registrarLlamada(
+        despacho.conductor_id,
+        comentario || `Llamada a ${telefono}`
+      )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -626,14 +630,20 @@ export default class TraficoListaComponent
   }
 
   abrirSeguimiento(despacho_id: number) {
-    this.seguimientoDespacho.set(
-      this.arrDespachos.find((d) => d.id === despacho_id) ?? null
-    );
+    const despacho =
+      this.arrDespachos.find((d) => d.id === despacho_id) ?? null;
+    this.seguimientoDespacho.set(despacho);
     this.seguimientos.set([]);
-    this.cargandoSeguimiento.set(true);
     this.openModal('trafico-seguimiento-modal');
+    // El seguimiento es por CONDUCTOR (muestra todas sus órdenes, no solo esta).
+    const conductorId = despacho?.conductor_id;
+    if (!conductorId) {
+      this.cargandoSeguimiento.set(false);
+      return;
+    }
+    this.cargandoSeguimiento.set(true);
     this._seguimientoApiService
-      .timeline(despacho_id)
+      .timeline(conductorId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (eventos) => {
