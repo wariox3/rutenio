@@ -26,6 +26,8 @@ let estadoInicializado: Contenedor = {
   reddoc: false,
   ruteo: true,
   acceso_seguimiento: false,
+  acceso_whatsapp: false,
+  acceso_whatsapp_notificaciones: false,
   permisos: null,
 };
 
